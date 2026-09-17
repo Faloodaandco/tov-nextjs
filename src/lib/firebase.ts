@@ -31,9 +31,9 @@ if (typeof window !== 'undefined') {
   }
 }
 
-const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-});
+const db = typeof window !== 'undefined' 
+  ? initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) })
+  : initializeFirestore(app, {});
 
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
