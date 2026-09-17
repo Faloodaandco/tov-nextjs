@@ -1,0 +1,206 @@
+@import "tailwindcss";
+
+@theme {
+  --color-terracotta: #8a3d2a;
+  --color-terracotta-light: #a3503a;
+  --color-bg-sand: #FDF5F2;
+  --color-pine: #1A3C34;
+  --color-pine-light: #254d47;
+
+  /* Legacy brand color aliases */
+  --color-brand-pink: #8a3d2a;
+  --color-brand-pinkLight: #a3503a;
+  --color-brand-cream: #FDF5F2;
+  --color-brand-text: #1A3C34;
+  --color-brand-blue: #254d47;
+  --color-brand-obsidian: #0b1a16;
+
+  --font-serif: "Cinzel", serif;
+  --font-sans: "Outfit", sans-serif;
+  --font-display: "Cinzel", serif;
+
+  --animate-swing: tov-swing 5s ease-in-out infinite;
+  @keyframes tov-swing {
+    0%, 100% { transform: rotate(-4deg); }
+    50% { transform: rotate(4deg); }
+  }
+
+  --animate-ken-burns: ken-burns 20s ease-in-out infinite alternate;
+  --animate-fade-in-up: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-slide-in-left: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  --animate-slide-in-right: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+
+  @keyframes slideInLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+  @keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  @keyframes ken-burns {
+    0% { transform: scale(1) translate(0, 0); }
+    100% { transform: scale(1.1) translate(-1%, -1%); }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Base resets & theme application */
+@layer base {
+  body {
+    @apply bg-bg-sand text-pine font-sans uppercase;
+    color-scheme: light;
+    overscroll-behavior-y: none;
+  }
+
+  input, textarea {
+    -webkit-user-select: auto;
+    user-select: auto;
+  }
+
+  /* Sharp corners enforcement */
+  * {
+    border-radius: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans font-bold tracking-wider;
+    text-transform: uppercase;
+  }
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+@layer utilities {
+  .bibi-hover-image {
+    filter: grayscale(100%);
+    transition: filter 0.6s ease, transform 0.6s ease;
+  }
+
+  .bibi-hover-container:hover .bibi-hover-image {
+    filter: grayscale(0%);
+    transform: scale(1.05);
+  }
+
+  .glass-pine {
+    @apply bg-pine/90 backdrop-blur-xl border border-pine-light/30 shadow-none;
+  }
+  .pine-card {
+    @apply bg-white/50 border border-terracotta/20 backdrop-blur-md;
+  }
+  .warm-glow {
+    box-shadow: none;
+  }
+  .glass-premium {
+    @apply bg-white/80 backdrop-blur-2xl border border-black/10 shadow-none;
+  }
+  .glass-panel {
+    @apply bg-white/90 backdrop-blur-3xl border border-black/5 shadow-none;
+  }
+  .cinematic-overlay {
+    background: radial-gradient(circle at center, transparent 0%, rgba(253, 245, 242, 0.8) 100%);
+  }
+  .cinematic-overlay-dark {
+    background: radial-gradient(circle at center, transparent 0%, rgba(26, 60, 52, 0.95) 100%);
+  }
+
+  .tov-pattern {
+    position: relative;
+  }
+  .tov-pattern > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  .tov-feature-wall {
+    position: relative;
+  }
+  .tov-feature-wall > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  .tov-arch-glow {
+    box-shadow: inset 0 0 30px rgba(138, 61, 42, 0.08);
+    transition: box-shadow 0.5s ease;
+  }
+  .tov-arch-glow:hover {
+    box-shadow: inset 0 0 40px rgba(138, 61, 42, 0.15), 0 0 20px rgba(138, 61, 42, 0.05);
+  }
+
+  .tov-frieze {
+    height: 3px;
+    background: repeating-linear-gradient(
+      90deg,
+      #8a3d2a 0px,
+      #8a3d2a 8px,
+      transparent 8px,
+      transparent 12px,
+      #8a3d2a 12px,
+      #8a3d2a 14px,
+      transparent 14px,
+      transparent 24px
+    );
+    opacity: 0.3;
+  }
+}
+
+/* Input autofill overrides */
+@layer base {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: #1A3C34 !important;
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Premium Scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(138, 61, 42, 0.05);
+  border-radius: 0px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #8a3d2a;
+  border-radius: 0px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a3503a;
+}
+
+/* Apple Pay Button */
+@supports (-webkit-appearance: -apple-pay-button) {
+  .apple-pay-button {
+    display: inline-block;
+    -webkit-appearance: -apple-pay-button;
+    -apple-pay-button-type: order;
+    -apple-pay-button-style: black;
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+  }
+}

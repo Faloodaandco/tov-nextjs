@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Allow: /menu
+
+# Sitemaps
+Sitemap: https://tasteofvillagerestaurants.co.uk/sitemap.xml

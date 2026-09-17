@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <style>
+      .stroke { fill: none; stroke: #8a3d2a; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+      .heavy { fill: none; stroke: #8a3d2a; stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+    </style>
+  </defs>
+  
+  <!-- Outer Box -->
+  <rect class="heavy" x="0" y="0" width="400" height="400"/>
+  
+  <!-- Grid Lines -->
+  <path class="heavy" d="M100,0 V400 M200,0 V400 M300,0 V400 M0,100 H400 M0,200 H400 M0,300 H400"/>
+  
+  <!-- Tile 0,0: 8-point star (Solid Fill variation) -->
+  <g transform="translate(0,0)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <path class="stroke" d="M50,25 L58,42 L75,50 L58,58 L50,75 L42,58 L25,50 L42,42 Z"/>
+    <path class="stroke" d="M32,32 L46,46 M68,32 L54,46 M32,68 L46,54 M68,68 L54,54"/>
+  </g>
+  
+  <!-- Tile 1,0: Double Arch -->
+  <g transform="translate(100,0)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <path class="stroke" d="M25,85 V50 A25,25 0 0,1 75,50 V85"/>
+    <path class="stroke" d="M35,85 V50 A15,15 0 0,1 65,50 V85"/>
+  </g>
+
+  <!-- Tile 2,0: Sunburst -->
+  <g transform="translate(200,0)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <circle class="stroke" cx="50" cy="50" r="15"/>
+    <path class="stroke" d="M50,20 V30 M50,70 V80 M20,50 H30 M70,50 H80 M28,28 L36,36 M64,64 L72,72 M28,72 L36,64 M72,28 L64,36"/>
+  </g>
+  
+  <!-- Tile 3,0: Diamond inside square -->
+  <g transform="translate(300,0)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <rect class="stroke" x="50" y="22" width="39.6" height="39.6" transform="rotate(45 50 50)"/>
+    <circle class="stroke" cx="50" cy="50" r="8"/>
+  </g>
+  
+  <!-- Tile 0,1: Minaret Dome -->
+  <g transform="translate(0,100)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <path class="stroke" d="M25,85 V60 C25,35 50,20 50,15 C50,20 75,35 75,60 V85"/>
+  </g>
+  
+  <!-- Tile 1,1: Vertical Chevrons -->
+  <g transform="translate(100,100)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <path class="stroke" d="M30,15 L45,25 L30,35 L45,45 L30,55 L45,65 L30,75 L45,85"/>
+    <path class="stroke" d="M55,15 L70,25 L55,35 L70,45 L55,55 L70,65 L55,75 L70,85"/>
+  </g>
+  
+  <!-- Tile 2,1: Column Capital -->
+  <g transform="translate(200,100)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <path class="stroke" d="M30,30 H70 M25,45 H75 M35,85 V45 M65,85 V45 M35,65 H65"/>
+    <circle class="stroke" cx="42" cy="37" r="3"/>
+    <circle class="stroke" cx="58" cy="37" r="3"/>
+  </g>
+
+  <!-- Tile 3,1: 8-point star (offset) -->
+  <g transform="translate(300,100)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <path class="stroke" d="M50,25 L58,42 L75,50 L58,58 L50,75 L42,58 L25,50 L42,42 Z"/>
+  </g>
+  
+  <!-- Tile 0,2: Geometric Flower -->
+  <g transform="translate(0,200)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <path class="stroke" d="M50,25 C65,40 65,60 50,75 C35,60 35,40 50,25 Z"/>
+    <path class="stroke" d="M25,50 C40,65 60,65 75,50 C60,35 40,35 25,50 Z"/>
+  </g>
+  
+  <!-- Tile 1,2: Sunburst -->
+  <g transform="translate(100,200)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <circle class="stroke" cx="50" cy="50" r="15"/>
+    <path class="stroke" d="M50,20 V30 M50,70 V80 M20,50 H30 M70,50 H80 M28,28 L36,36 M64,64 L72,72 M28,72 L36,64 M72,28 L64,36"/>
+  </g>
+
+  <!-- Tile 2,2: Arch -->
+  <g transform="translate(200,200)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <path class="stroke" d="M25,85 V50 A25,25 0 0,1 75,50 V85"/>
+  </g>
+  
+  <!-- Tile 3,2: Minaret Dome -->
+  <g transform="translate(300,200)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <path class="stroke" d="M25,85 V60 C25,35 50,20 50,15 C50,20 75,35 75,60 V85"/>
+    <path class="stroke" d="M40,85 V65 A10,10 0 0,1 60,65 V85"/>
+  </g>
+
+  <!-- Tile 0,3: Vertical Chevrons -->
+  <g transform="translate(0,300)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <path class="stroke" d="M30,15 L45,25 L30,35 L45,45 L30,55 L45,65 L30,75 L45,85"/>
+    <path class="stroke" d="M55,15 L70,25 L55,35 L70,45 L55,55 L70,65 L55,75 L70,85"/>
+  </g>
+  
+  <!-- Tile 1,3: Diamond -->
+  <g transform="translate(100,300)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <rect class="stroke" x="50" y="22" width="39.6" height="39.6" transform="rotate(45 50 50)"/>
+  </g>
+
+  <!-- Tile 2,3: 8-point star -->
+  <g transform="translate(200,300)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <path class="stroke" d="M50,25 L58,42 L75,50 L58,58 L50,75 L42,58 L25,50 L42,42 Z"/>
+    <path class="stroke" d="M32,32 L46,46 M68,32 L54,46 M32,68 L46,54 M68,68 L54,54"/>
+  </g>
+  
+  <!-- Tile 3,3: Geometric Flower -->
+  <g transform="translate(300,300)">
+    <rect class="stroke" x="15" y="15" width="70" height="70"/>
+    <path class="stroke" d="M50,25 C65,40 65,60 50,75 C35,60 35,40 50,25 Z"/>
+    <path class="stroke" d="M25,50 C40,65 60,65 75,50 C60,35 40,35 25,50 Z"/>
+  </g>
+</svg>
