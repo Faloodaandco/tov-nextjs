@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { SHOP_CONFIG } from '@/config/shopConfig';
+import { SHOP_CONFIG, LOCATIONS } from '@/config/shopConfig';
 
 export interface StoreSettings {
   isOpen: boolean;
@@ -19,7 +19,7 @@ export const useStoreSettings = (locationId: string = 'camden') => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const locationConfig = SHOP_CONFIG.locations.find(l => l.id === locationId);
+    const locationConfig = Object.values(LOCATIONS).find((l: any) => l.id === locationId);
     if (!locationConfig) {
       setLoading(false);
       return;

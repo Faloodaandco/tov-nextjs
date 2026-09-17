@@ -28,6 +28,8 @@ interface AuthContextType {
   sendPhoneCode: (phoneNumber: string) => Promise<void>;
   confirmPhoneCode: (code: string) => Promise<void>;
   linkPhone: (phoneNumber: string) => Promise<void>;
+  isLoggedIn: boolean;
+  isAuthLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -149,7 +151,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setupRecaptcha,
       sendPhoneCode,
       confirmPhoneCode,
-      linkPhone
+      linkPhone,
+      isLoggedIn: !!user,
+      isAuthLoading: loading
     }}>
       {children}
     </AuthContext.Provider>

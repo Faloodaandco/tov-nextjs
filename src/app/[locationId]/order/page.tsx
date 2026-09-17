@@ -45,99 +45,21 @@ const SquareCheckoutForm = ({ cart, cartTotal, onCreateOrder, onPaymentSuccess, 
          </div>
          
          <div className="mt-8 mb-4 border-t pt-6">
-            <label className="block text-sm font-bold mb-4">Secure Payment</label>
-            <PaymentForm
-              applicationId={squareConfig.appId}
-              locationId={squareConfig.locationId}
-              cardTokenizeResponseReceived={async (tokenResult, verifyBuyer) => {
-                if (tokenResult.status !== 'OK' || !(tokenResult as any).token) {
-                   setPaymentError((tokenResult as any).errors?.[0]?.message || 'Failed to tokenize card');
-                   return;
-                }
+            <SquareCheckout 
+              amount={cartTotal}
+              onCreateOrder={async () => {
                 if (!customerInfo.name && isCollection) {
-                   setPaymentError("Name is required");
-                   return;
+                   throw new Error("Name is required");
                 }
                 setIsProcessing(true);
-                setPaymentError(null);
-                try {
-                  const orderId = await onCreateOrder(true);
-                  
-                  const verificationDetails = {
-                    amount: cartTotal.toFixed(2),
-                    billingContact: {
-                      givenName: customerInfo.name.split(' ')[0] || 'Guest',
-                      familyName: customerInfo.name.split(' ').slice(1).join(' ') || '',
-                      email: customerInfo.email || '',
-                    },
-                    currencyCode: 'GBP',
-                    intent: 'CHARGE',
-                  };
-
-                  let verificationToken;
-                  if (verifyBuyer) {
-                    // @ts-ignore
-                    const results = await verifyBuyer((tokenResult as any).token, verificationDetails);
-                    verificationToken = results?.token;
-                  }
-
-                  const payload = {
-                    sourceId: (tokenResult as any).token,
-                    verification_token: verificationToken,
-                    order_id: orderId,
-                    amount: Math.round(cartTotal * 100),
-                    branch: activeLocation.id,
-                    cart: cart,
-                    customer: customerInfo,
-                  };
-
-                  const res = await apiClient('/api/v1/square/checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                  });
-
-                  if (!res.ok) {
-                    throw new Error('Payment failed on server');
-                  }
-
-                  onPaymentSuccess(orderId);
-                } catch (err: any) {
-                  setPaymentError(err.message || 'Payment could not be completed.');
-                  setIsProcessing(false);
-                }
+                return await onCreateOrder(true);
               }}
-              createVerificationDetails={() => ({
-                amount: cartTotal.toFixed(2),
-                currencyCode: 'GBP',
-                intent: 'CHARGE',
-                billingContact: {
-                  givenName: customerInfo.name.split(' ')[0] || 'Guest',
-                  familyName: customerInfo.name.split(' ').slice(1).join(' ') || '',
-                  email: customerInfo.email || '',
-                },
-              })}
-            >
-               <div className="space-y-4">
-                 <ApplePay />
-                 <GooglePay />
-                 <CreditCard
-                  buttonProps={{
-                    css: {
-                      backgroundColor: '#2A1B18', // Pine/dark tone equivalent
-                      fontSize: '16px',
-                      color: '#fff',
-                      '&:hover': {
-                        backgroundColor: '#ff6b6b', // Brand pink equivalent
-                      },
-                    },
-                  }}
-                 >
-                   Pay £{cartTotal.toFixed(2)}
-                 </CreditCard>
-               </div>
-            </PaymentForm>
-            
+              onPaymentSuccess={(orderId) => {
+                setIsProcessing(false);
+                onPaymentSuccess(orderId);
+              }}
+              onCancel={onBack}
+            />
             {isCollection && (
               <div className="mt-4 pt-4 border-t border-gray-200">
                 <button 
@@ -279,7 +201,7 @@ const OrderInner = () => {
 
     try {
       await addOrder(newOrder as any);
-      sendOrderNotificationEmail(newOrder as any);
+      sendOrderNotificationEmail(newOrder.id, newOrder.customerEmail, newOrder as any);
       return orderId;
     } catch (e: any) {
       throw new Error('Order creation failed: ' + e.message);

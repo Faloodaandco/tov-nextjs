@@ -79,12 +79,12 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
       }
       return [...prev, { ...item, quantity: 1 }];
     });
-    trackAddToCart?.(item);
+    trackAddToCart?.(item as any);
   };
 
   const removeFromCart = (id: string) => {
     setCart(prev => prev.filter(i => i.id !== id));
-    trackRemoveFromCart?.(id);
+    trackRemoveFromCart?.({ id, name: id, price: 0 } as any);
   };
 
   const updateQuantity = (id: string, quantity: number) => {

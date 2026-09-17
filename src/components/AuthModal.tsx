@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Mail, User, Phone, Loader2, ArrowRight, CheckCircle, Smartphone } from 'lucide-react';

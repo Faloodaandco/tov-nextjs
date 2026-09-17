@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client';
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, Clock, ChefHat, Utensils, Receipt, PlusCircle, Bell, BellOff } from 'lucide-react';

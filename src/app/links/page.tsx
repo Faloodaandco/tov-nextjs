@@ -146,7 +146,7 @@ export default function Links() {
       <SEOHead 
         title={`Socials | ${SHOP_CONFIG.name}`}
         description="Quick links to our menu, ordering, reviews, and social media."
-        canonicalUrl="/links"
+        canonical="/links"
       />
       
       <AnimatedTree />
