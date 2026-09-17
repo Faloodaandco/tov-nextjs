@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { MapPin, Clock, Sparkles } from 'lucide-react';
+import { MapPin, Clock, Sparkles, Car } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
