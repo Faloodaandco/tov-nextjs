@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Star, MessageSquare, Send, Heart, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { SHOP_CONFIG } from '@/config/shopConfig';
 
 export const ReviewGate = () => {
@@ -26,8 +28,16 @@ export const ReviewGate = () => {
 
   const submitFeedback = async () => {
     setIsSubmitting(true);
-    // Simulate API call to store negative feedback privately
-    await new Promise(r => setTimeout(r, 1500));
+    try {
+      await addDoc(collection(db, 'private_feedback'), {
+        rating,
+        feedback,
+        source: 'review_gate',
+        createdAt: Timestamp.now(),
+      });
+    } catch (error) {
+      console.error('Failed to submit feedback:', error);
+    }
     setStep('thanks');
     setIsSubmitting(false);
   };

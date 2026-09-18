@@ -201,7 +201,7 @@ const OrderInner = () => {
 
     try {
       await addOrder(newOrder as any);
-      sendOrderNotificationEmail(newOrder.id, newOrder.customerEmail, newOrder as any);
+      sendOrderNotificationEmail(newOrder as any);
       return orderId;
     } catch (e: any) {
       throw new Error('Order creation failed: ' + e.message);

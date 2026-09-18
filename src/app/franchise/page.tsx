@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { TrendingUp, ShieldCheck, ChefHat, ChevronRight, CheckCircle2 } from 'lucide-react';
 
 // TODO: metadata export
@@ -11,13 +13,24 @@ export default function Franchise() {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Franchise Inquiry Submitted:', formData);
-    setSubmitted(true);
-    setTimeout(() => { 
-      if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' }); 
-    }, 100);
+    try {
+      await addDoc(collection(db, 'leads'), {
+        ...formData,
+        type: 'franchise',
+        source: 'website',
+        createdAt: Timestamp.now(),
+        status: 'new',
+      });
+      setSubmitted(true);
+      setTimeout(() => {
+        if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
+    } catch (error) {
+      console.error('Franchise form submission failed:', error);
+      alert('Failed to submit. Please try again or call us directly.');
+    }
   };
 
   if (submitted) {
