@@ -1459,6 +1459,17 @@ function MenuPageContent() {
                   </div>
                 </div>
               )}
+              {isDeliveryOrder && !isBelowMinOrder && activeDeliveryTier?.tier?.freeDeliveryThreshold && discountedSubtotal < activeDeliveryTier.tier.freeDeliveryThreshold && (
+                <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                  <div className="flex justify-between text-xs font-bold text-emerald-800 mb-2">
+                    <span>🚗 Free delivery at £{activeDeliveryTier.tier.freeDeliveryThreshold.toFixed(2)}</span>
+                    <span>£{(activeDeliveryTier.tier.freeDeliveryThreshold - discountedSubtotal).toFixed(2)} more</span>
+                  </div>
+                  <div className="w-full bg-emerald-200 rounded-full h-2 overflow-hidden">
+                    <div className="bg-emerald-600 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, (discountedSubtotal / activeDeliveryTier.tier.freeDeliveryThreshold) * 100)}%` }} />
+                  </div>
+                </div>
+              )}
               <button
                 onClick={handleProceedToDetails}
                 disabled={cart.length === 0 || isKitchenClosed || isBelowMinOrder}

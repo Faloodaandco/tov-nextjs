@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Cinzel, Outfit, Jost } from "next/font/google";
 import Providers from "./providers";
 import "./globals.css";
@@ -87,83 +88,103 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cinzel.variable} ${outfit.variable} ${jost.variable}`}>
       <head>
-        {/* Schema.org Restaurant Structured Data */}
+        {/* Schema.org Restaurant Structured Data — Both Branches */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Restaurant",
-              name: "Taste of Village",
-              alternateName: "Taste of Village Hayes",
-              image: "https://tasteofvillagerestaurants.co.uk/assets/chicken_karahi_hero.webp",
-              url: "https://tasteofvillagerestaurants.co.uk",
-              telephone: "+442034093786",
-              address: {
-                "@type": "PostalAddress",
-                streetAddress: "766B Uxbridge Road",
-                addressLocality: "Hayes",
-                addressRegion: "London",
-                postalCode: "UB4 0RU",
-                addressCountry: "GB",
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "Restaurant",
+                name: "Taste of Village Hayes",
+                alternateName: "Taste of Village",
+                image: "https://tasteofvillagerestaurants.co.uk/assets/chicken_karahi_hero.webp",
+                url: "https://tasteofvillagerestaurants.co.uk/hayes",
+                telephone: "+442034093786",
+                address: {
+                  "@type": "PostalAddress",
+                  streetAddress: "766B Uxbridge Road",
+                  addressLocality: "Hayes",
+                  addressRegion: "London",
+                  postalCode: "UB4 0RU",
+                  addressCountry: "GB",
+                },
+                geo: { "@type": "GeoCoordinates", latitude: 51.5127, longitude: -0.4211 },
+                openingHoursSpecification: {
+                  "@type": "OpeningHoursSpecification",
+                  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                  opens: "12:00",
+                  closes: "23:00",
+                },
+                servesCuisine: ["Pakistani", "Halal", "South Asian", "Lahori"],
+                priceRange: "££",
+                menu: "https://tasteofvillagerestaurants.co.uk/hayes/menu",
+                acceptsReservations: "True",
+                hasMenu: { "@type": "Menu", name: "Hayes Menu", url: "https://tasteofvillagerestaurants.co.uk/hayes/menu" },
+                sameAs: [
+                  "https://www.instagram.com/tasteofvillagehayes/",
+                  "https://www.facebook.com/p/Taste-of-Village-61551672639808/",
+                  "https://www.tiktok.com/@tasteofvillage1",
+                ],
               },
-              geo: {
-                "@type": "GeoCoordinates",
-                latitude: 51.5127,
-                longitude: -0.4211,
+              {
+                "@context": "https://schema.org",
+                "@type": "Restaurant",
+                name: "Taste of Village Slough",
+                alternateName: "Taste of Village Farnham Road",
+                image: "https://tasteofvillagerestaurants.co.uk/assets/chicken_karahi_hero.webp",
+                url: "https://tasteofvillagerestaurants.co.uk/slough",
+                telephone: "+441234567890",
+                address: {
+                  "@type": "PostalAddress",
+                  streetAddress: "260 Farnham Road",
+                  addressLocality: "Slough",
+                  addressRegion: "Berkshire",
+                  postalCode: "SL1 4XL",
+                  addressCountry: "GB",
+                },
+                geo: { "@type": "GeoCoordinates", latitude: 51.5273, longitude: -0.6128 },
+                openingHoursSpecification: {
+                  "@type": "OpeningHoursSpecification",
+                  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                  opens: "12:00",
+                  closes: "23:00",
+                },
+                servesCuisine: ["Pakistani", "Halal", "South Asian", "Gujranwala"],
+                priceRange: "££",
+                menu: "https://tasteofvillagerestaurants.co.uk/slough/menu",
+                acceptsReservations: "True",
+                hasMenu: { "@type": "Menu", name: "Slough Menu", url: "https://tasteofvillagerestaurants.co.uk/slough/menu" },
+                sameAs: [
+                  "https://www.instagram.com/tasteofvillageslough/",
+                ],
               },
-              openingHoursSpecification: {
-                "@type": "OpeningHoursSpecification",
-                dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-                opens: "12:00",
-                closes: "23:00",
-              },
-              servesCuisine: ["Pakistani", "Halal", "South Asian", "Lahori"],
-              priceRange: "££",
-              menu: "https://tasteofvillagerestaurants.co.uk/menu",
-              acceptsReservations: "True",
-              hasMenu: {
-                "@type": "Menu",
-                name: "Main Menu",
-                url: "https://tasteofvillagerestaurants.co.uk/menu",
-              },
-              sameAs: [
-                "https://www.instagram.com/tasteofvillagehayes/",
-                "https://www.facebook.com/p/Taste-of-Village-61551672639808/",
-                "https://www.tiktok.com/@tasteofvillage1",
-              ],
-            }),
-          }}
-        />
-        {/* Deferred Analytics Scripts */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.addEventListener('load', function() {
-                // Microsoft Clarity
-                (function(c,l,a,r,i,t,y){
-                  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-                  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-                  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-                })(window, document, "clarity", "script", "ydv01vt483");
-
-                // Google Analytics 4
-                var gaScript = document.createElement('script');
-                gaScript.async = true;
-                gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-DLX86F7LBK";
-                document.head.appendChild(gaScript);
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                window.gtag = gtag;
-                gtag('js', new Date());
-                gtag('config', 'G-DLX86F7LBK');
-              });
-            `,
+            ]),
           }}
         />
       </head>
       <body className="antialiased">
         <Providers>{children}</Providers>
+        {/* Microsoft Clarity */}
+        <Script
+          id="clarity"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "ydv01vt483");`
+          }}
+        />
+        {/* Google Analytics 4 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-DLX86F7LBK"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="ga4-config"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','G-DLX86F7LBK');`
+          }}
+        />
       </body>
     </html>
   );

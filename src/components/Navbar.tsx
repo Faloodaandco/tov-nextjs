@@ -24,6 +24,16 @@ export const Navbar = () => {
   const router = useRouter();
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
   const [scrolled, setScrolled] = React.useState(false);
+  const [hasRecentOrder, setHasRecentOrder] = React.useState(false);
+
+  // Check for recent order (live badge for 60 min)
+  React.useEffect(() => {
+    const lastOrderTime = typeof window !== 'undefined' ? localStorage.getItem('last_order_time') : null;
+    if (lastOrderTime) {
+      const elapsed = Date.now() - parseInt(lastOrderTime, 10);
+      setHasRecentOrder(elapsed < 60 * 60 * 1000);
+    }
+  }, []);
 
   // Scroll Detection for Glassmorphism
   React.useEffect(() => {
@@ -138,6 +148,9 @@ export const Navbar = () => {
                 <span className={`absolute -top-1 -right-1 bg-terracotta text-white rounded-full text-[10px] sm:text-xs font-black w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center border-2 border-bg-sand transition-all duration-300 transform origin-center ${isBumping ? 'scale-[1.6] shadow-lg shadow-terracotta/50' : 'scale-100'}`}>
                   {cartCount}
                 </span>
+              )}
+              {hasRecentOrder && cartCount === 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full animate-pulse border-2 border-bg-sand" title="Order in progress" />
               )}
             </button>
 
