@@ -8,10 +8,6 @@ import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { SHOP_CONFIG, LOCATIONS } from '@/config/shopConfig';
 import { LocationSelectorModal } from '@/components/LocationSelectorModal';
 import { useLocationConfig } from '@/hooks/useLocationConfig';
-import { db, auth } from '@/lib/firebase';
-import { collection, addDoc } from 'firebase/firestore';
-import { signInAnonymously } from 'firebase/auth';
-
 import { getBranchSeoMeta, getRestaurantSchema, getFaqSchema } from '@/lib/seoData';
 
 const HERO_IMAGES = [
@@ -151,11 +147,11 @@ export default function TOVHome() {
             className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full max-w-md"
           >
             <Link
-              to={`/${activeLocation.id}/menu`}
+              href={`/${branchLoc.id}/menu`}
               className="w-full sm:w-auto bg-terracotta text-white py-3.5 px-8 font-sans uppercase font-black text-xs sm:text-sm hover:bg-terracotta-light hover:-translate-y-0.5 active:scale-[0.98] transition-all shadow-[0_6px_20px_rgba(209,72,54,0.45)] tracking-[0.18em] rounded-full border border-terracotta-light/30 flex items-center justify-center gap-2.5"
             >
               <UtensilsCrossed size={16} />
-              <span>Order {activeLocation.id === 'hayes' ? 'Hayes' : 'Slough'} Menu</span>
+              <span>Order {branchLoc.id === 'hayes' ? 'Hayes' : 'Slough'} Menu</span>
               <ArrowRight size={16} />
             </Link>
             <button 
@@ -227,7 +223,7 @@ export default function TOVHome() {
                     </p>
                   </div>
                   <Link
-                    to={`/${nearestBranch.id}/menu`}
+                    href={`/${nearestBranch.id}/menu`}
                     className="bg-terracotta hover:bg-terracotta-light text-white text-xs font-black uppercase tracking-wider px-5 py-2.5 rounded-full transition-all shadow-md flex items-center justify-center gap-1.5 flex-shrink-0"
                   >
                     Order Collection →
@@ -309,7 +305,7 @@ export default function TOVHome() {
                     Family Banquets • Groups
                   </span>
                   <Link 
-                    to="/book"
+                    href="/book"
                     className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-terracotta-light group-hover:text-white transition-colors"
                   >
                     <span>Reserve a Table</span>
@@ -364,7 +360,7 @@ export default function TOVHome() {
                     Dine-In • Booth Seating
                   </span>
                   <Link 
-                    to={`/${activeLocation.id}/menu`}
+                    href={`/${branchLoc.id}/menu`}
                     className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-terracotta-light group-hover:text-white transition-colors"
                   >
                     <span>View Menu</span>
@@ -717,8 +713,8 @@ export default function TOVHome() {
                 a: "Yes, 100%. All meat, poultry, and ingredients across both our Hayes and Slough branches are strictly Halal certified and sourced from accredited, trusted UK suppliers."
               },
               {
-                q: `Can I order online for collection at ${activeLocation.name}?`,
-                a: `Yes! You can order directly on our website for fast collection at ${activeLocation.address}. We support 1-tap Apple Pay, Google Pay, and major cards with zero marketplace commission fees.`
+                q: `Can I order online for collection at ${branchLoc.name}?`,
+                a: `Yes! You can order directly on our website for fast collection at ${branchLoc.address}. We support 1-tap Apple Pay, Google Pay, and major cards with zero marketplace commission fees.`
               },
               {
                 q: "Do you serve traditional weekend Pakistani breakfast (Nashta)?",
