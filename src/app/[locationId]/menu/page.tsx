@@ -715,21 +715,23 @@ function MenuPageContent() {
         fulfillment_type: isDeliveryOrder ? 'delivery' : 'collection',
         delivery_address: isDeliveryOrder ? deliveryAddress : null,
         delivery_fee: deliveryFee,
+        service_fee: serviceFee,
+        branch: activeLocation.id,
       };
 
-      // 1. Try relative rewrite endpoint first
+      // 1. Hit Next.js Route Handler (same-origin, no CORS)
       let res: Response | null = null;
       try {
-        res = await fetch('/api/v1/square/checkout', {
+        res = await fetch('/api/checkout/square', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
       } catch (netErr) {
-        console.warn('[Square] Relative endpoint fetch failed:', netErr);
+        console.warn('[Square] Route Handler fetch failed:', netErr);
       }
 
-      // 2. Direct Cloud Function fallback ONLY on network errors
+      // 2. Cloud Function fallback ONLY on network errors
       if (!res) {
         const directUrl = 'https://europe-west2-taste-of-village-21052.cloudfunctions.net/createSquareOrderAndPayment';
         res = await fetch(directUrl, {
