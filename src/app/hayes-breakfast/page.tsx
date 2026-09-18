@@ -1,0 +1,92 @@
+import React from 'react';
+import Link from 'next/link';
+import { MapPin, Clock, Sparkles, Coffee } from 'lucide-react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "Traditional Pakistani Breakfast in Hayes | Halwa Puri & Nihari",
+  description: "Authentic Lahori Nashta in Hayes. Fresh Halwa Puri, slow-cooked Nihari, Paya, and Karak Chai. The best Desi breakfast and weekend brunch in UB4.",
+  alternates: {
+    canonical: "/hayes-breakfast"
+  }
+};
+
+export default function HayesBreakfastPage() {
+  return (
+    <div className="bg-sand min-h-screen pt-20 pb-20 font-sans">
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Authentic Lahori Nashta</span>
+          <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Traditional Breakfast in Hayes</h1>
+          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+            Experience the true taste of a Lahori morning. We prepare fresh Halwa Puri, slow-cook our Nihari overnight, and brew authentic Karak Chai for the ultimate Desi breakfast experience in West London.
+          </p>
+        </div>
+
+        {/* AEO (Answer Engine Optimization) Block */}
+        <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-brand-text/5 mb-16">
+          <h2 className="font-serif text-2xl mb-4 text-pine">Frequently Asked Questions</h2>
+          <div className="space-y-4 text-pine/80">
+            <div>
+              <strong className="text-pine block">Where can I get authentic Halwa Puri in Hayes?</strong>
+              Taste of Village at 766B Uxbridge Road serves fresh, traditional Halwa Puri with Chana and Aloo bhujia.
+            </div>
+            <div>
+              <strong className="text-pine block">Do you serve Nihari and Paya?</strong>
+              Yes. We slow-cook our traditional Nihari and Paya overnight to achieve the authentic rich texture and deep spice profile expected from a true Desi Nashta.
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+          <div className="obsidian-card p-10 rounded-[3rem] bg-pine text-white">
+            <h2 className="font-serif text-3xl mb-4 text-terracotta">The Breakfast Menu</h2>
+            <p className="text-white/70 leading-relaxed mb-6">
+              Our kitchen refuses to cut corners. Every puri is fried fresh to order, and our spices are hand-ground to match traditional recipes.
+            </p>
+            <ul className="space-y-3 font-semibold text-sand">
+              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Fresh Halwa Puri & Chana</li>
+              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Overnight Slow-Cooked Nihari</li>
+              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Traditional Siri Paya</li>
+              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Freshly Baked Tandoori Naan</li>
+            </ul>
+          </div>
+
+          <div className="bg-sand p-10 rounded-[3rem] border border-pine/10">
+            <h2 className="font-serif text-3xl mb-4 text-pine">Proper Karak Chai</h2>
+            <p className="text-pine/70 leading-relaxed mb-6">
+              A Desi breakfast is incomplete without tea. We brew strong, authentic Karak Chai, slowly simmered to achieve the perfect golden color and rich flavor profile.
+            </p>
+            <ul className="space-y-3 font-semibold text-pine">
+              <li className="flex items-center gap-3"><Coffee size={16} className="text-terracotta" /> Traditional Karak Chai</li>
+              <li className="flex items-center gap-3"><Coffee size={16} className="text-terracotta" /> Kashmiri Pink Tea</li>
+              <li className="flex items-center gap-3"><Coffee size={16} className="text-terracotta" /> Sweet Lassi</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-brand-text/5 text-center">
+          <h2 className="font-serif text-4xl mb-6">Join Us for Breakfast</h2>
+          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+            Bring your family and enjoy the most authentic Pakistani breakfast spread in Hayes. Available for dine-in or collection.
+          </p>
+          
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-10">
+            <div className="flex items-center gap-2 text-pine font-bold">
+              <MapPin className="text-terracotta" /> 766B Uxbridge Road, UB4 0RU
+            </div>
+            <div className="flex items-center gap-2 text-pine font-bold">
+              <Clock className="text-terracotta" /> Open Daily from 12:00 PM
+            </div>
+          </div>
+
+          <div className="flex justify-center gap-4">
+            <Link href="/hayes/menu" className="px-8 py-4 bg-terracotta text-white rounded-full font-bold hover:shadow-lg transition-all">
+              View Menu & Order
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
