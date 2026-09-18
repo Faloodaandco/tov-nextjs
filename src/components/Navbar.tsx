@@ -6,7 +6,7 @@ import { ShoppingBag, Menu as MenuIcon, Phone, MessageCircle, X, UserCircle2, Ma
 import { useStore } from '@/context/StoreContext';
 import { useAuth } from '@/context/AuthContext';
 import { AuthModal } from '@/components/AuthModal';
-import { SHOP_CONFIG, buildWhatsAppLink } from '@/config/shopConfig';
+import { SHOP_CONFIG, LOCATIONS, buildWhatsAppLink } from '@/config/shopConfig';
 import { useLocationConfig } from '@/hooks/useLocationConfig';
 import { LocationSelectorModal } from '@/components/LocationSelectorModal';
 import { PromoBanner } from '@/components/PromoBanner';
@@ -18,6 +18,7 @@ export const Navbar = () => {
   const [showAuth, setShowAuth] = React.useState(false);
   const [showLocationModal, setShowLocationModal] = React.useState(false);
   const { activeLocation, hasSelected } = useLocationConfig();
+  const loc = activeLocation || LOCATIONS.hayes;
   const [authTab, setAuthTab] = React.useState<'login' | 'signup'>('login');
   const [isBumping, setIsBumping] = React.useState(false);
   const pathname = usePathname();
@@ -97,14 +98,14 @@ export const Navbar = () => {
               className={`hidden sm:flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 rounded-full hover:-translate-y-0.5 px-5 py-2 sm:py-3 ${pillClasses}`}
             >
               <MapPin size={16} />
-              {activeLocation.name.replace('Taste Of Village ', '')}
+              {(loc?.name || 'Taste Of Village Hayes').replace('Taste Of Village ', '')}
             </button>
           </div>
 
           {/* Center: Brand Logo */}
-          {pathname !== '/' && pathname !== `/${activeLocation.id}` && (
+          {pathname !== '/' && pathname !== `/${loc?.id || 'hayes'}` && (
             <div className={`absolute left-1/2 -translate-x-1/2 top-1 sm:top-2 transition-all duration-500 ${scrolled ? 'opacity-0 -translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0 pointer-events-auto'}`}>
-              <Link href={`/${activeLocation.id}`} className="flex flex-col items-center group">
+              <Link href={`/${loc?.id || 'hayes'}`} className="flex flex-col items-center group">
                 <img src="/assets/tov-logo-full-terracotta-alpha.png" alt="Taste of Village" className={`w-auto h-12 sm:h-16 object-contain drop-shadow-sm transition-transform duration-500 group-hover:-translate-y-0.5 ${useWhiteLogo ? 'brightness-0 invert opacity-90' : ''}`} />
               </Link>
             </div>
@@ -137,7 +138,7 @@ export const Navbar = () => {
               onClick={() => {
                 setIsCartOpen(true);
                 if (!pathname.includes('/menu')) {
-                  router.push(`/${activeLocation.id}/menu`);
+                  router.push(`/${loc?.id || 'hayes'}/menu`);
                 }
               }}
               aria-label="View basket"
@@ -156,7 +157,7 @@ export const Navbar = () => {
 
             {/* Desktop Order Now CTA */}
             {!pathname.includes('/menu') && (
-              <Link href={`/${activeLocation.id}/menu`} onClick={handleOrderNowClick} className={`hidden sm:flex items-center justify-center bg-terracotta rounded-full text-white font-black uppercase tracking-[0.2em] hover:bg-pine transition-all border border-terracotta hover:border-pine relative overflow-hidden group duration-500 shadow-md hover:shadow-lg hover:-translate-y-0.5 ${scrolled ? 'px-6 py-3.5 text-xs' : 'px-8 py-4 text-sm'}`}>
+              <Link href={`/${loc?.id || 'hayes'}/menu`} onClick={handleOrderNowClick} className={`hidden sm:flex items-center justify-center bg-terracotta rounded-full text-white font-black uppercase tracking-[0.2em] hover:bg-pine transition-all border border-terracotta hover:border-pine relative overflow-hidden group duration-500 shadow-md hover:shadow-lg hover:-translate-y-0.5 ${scrolled ? 'px-6 py-3.5 text-xs' : 'px-8 py-4 text-sm'}`}>
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
                 <span className="relative z-10">Order Now</span>
               </Link>
@@ -189,8 +190,8 @@ export const Navbar = () => {
                 
                 {/* Main Links - Elegant List */}
                 <div className="flex flex-col py-4">
-                  <Link href={`/${activeLocation.id}`} className={`px-8 py-4 text-2xl font-display font-black tracking-widest uppercase transition-colors hover:bg-pine/5 ${pathname === `/${activeLocation.id}` ? 'text-terracotta' : 'text-pine'}`}>Home</Link>
-                  <Link href={`/${activeLocation.id}/menu`} className={`px-8 py-4 text-2xl font-display font-black tracking-widest uppercase transition-colors hover:bg-pine/5 ${pathname.includes('/menu') ? 'text-terracotta' : 'text-pine'}`}>Our Menu</Link>
+                  <Link href={`/${loc?.id || 'hayes'}`} className={`px-8 py-4 text-2xl font-display font-black tracking-widest uppercase transition-colors hover:bg-pine/5 ${pathname === `/${loc?.id || 'hayes'}` ? 'text-terracotta' : 'text-pine'}`}>Home</Link>
+                  <Link href={`/${loc?.id || 'hayes'}/menu`} className={`px-8 py-4 text-2xl font-display font-black tracking-widest uppercase transition-colors hover:bg-pine/5 ${pathname.includes('/menu') ? 'text-terracotta' : 'text-pine'}`}>Our Menu</Link>
                   <Link href="/franchise" className={`px-8 py-4 text-2xl font-display font-black tracking-widest uppercase transition-colors hover:bg-pine/5 ${pathname === '/franchise' ? 'text-terracotta' : 'text-pine'}`}>Franchise</Link>
                   <Link href="/rewards" className={`px-8 py-4 text-2xl font-display font-black tracking-widest uppercase transition-colors hover:bg-pine/5 border-b border-pine/10 pb-6 ${pathname === '/rewards' ? 'text-terracotta' : 'text-pine'}`}>Rewards</Link>
                 </div>
@@ -216,7 +217,7 @@ export const Navbar = () => {
                     className="text-xs font-black tracking-[0.2em] uppercase flex items-center justify-between w-full p-4 border border-pine/20 hover:border-terracotta hover:text-terracotta transition-colors text-pine bg-white/50 shadow-sm"
                   >
                     <span className="flex items-center gap-3"><MapPin size={16} /> Change Location</span>
-                    <span className="text-terracotta">{activeLocation.name.replace('Taste Of Village ', '')}</span>
+                    <span className="text-terracotta">{(loc?.name || 'Taste Of Village Hayes').replace('Taste Of Village ', '')}</span>
                   </button>
 
                   <div className="flex items-center justify-between mt-2 px-2">
@@ -247,12 +248,12 @@ export const Navbar = () => {
       {!pathname.includes('/menu') && scrolled && (
         <div className="sm:hidden fixed bottom-4 left-4 right-4 z-40 animate-fade-in-up">
           <Link 
-            href={`/${activeLocation.id}/menu`} 
+            href={`/${loc?.id || 'hayes'}/menu`} 
             onClick={handleOrderNowClick} 
             className="w-full flex justify-center items-center gap-2 bg-terracotta text-white py-3.5 px-6 rounded-full font-black uppercase tracking-[0.15em] text-sm shadow-2xl border border-terracotta-light/30 active:scale-95 transition-all"
           >
             <ShoppingBag size={18} />
-            <span>Order Now • {activeLocation.id === 'hayes' ? 'Hayes' : 'Slough'}</span>
+            <span>Order Now • {loc?.id === 'slough' ? 'Slough' : 'Hayes'}</span>
           </Link>
         </div>
       )}

@@ -7,24 +7,32 @@ import crypto from 'crypto';
  * Receives Square webhook events (payment.updated, order.updated).
  * Verifies the webhook signature using the Square webhook signature key.
  *
- * Env: SQUARE_WEBHOOK_SIGNATURE_KEY
+ * Env: SQUARE_WEBHOOK_SIGNATURE_KEY, SQUARE_HAYES_WEBHOOK_SIGNATURE_KEY, SQUARE_SLOUGH_WEBHOOK_SIGNATURE_KEY
  */
 export async function POST(req: NextRequest) {
   try {
-    const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
+    const signatureKeys = [
+      process.env.SQUARE_WEBHOOK_SIGNATURE_KEY,
+      process.env.SQUARE_HAYES_WEBHOOK_SIGNATURE_KEY,
+      process.env.SQUARE_SLOUGH_WEBHOOK_SIGNATURE_KEY,
+    ].filter(Boolean) as string[];
+
     const body = await req.text();
 
-    // Signature verification
-    if (signatureKey) {
+    // Signature verification (if any signature key is configured)
+    if (signatureKeys.length > 0) {
       const signature = req.headers.get('x-square-hmacsha256-signature');
       const notificationUrl = `${req.headers.get('x-forwarded-proto') || 'https'}://${req.headers.get('host')}/api/webhooks/square`;
 
-      const hmac = crypto
-        .createHmac('sha256', signatureKey)
-        .update(notificationUrl + body)
-        .digest('base64');
+      const isValid = signatureKeys.some((key) => {
+        const hmac = crypto
+          .createHmac('sha256', key)
+          .update(notificationUrl + body)
+          .digest('base64');
+        return signature === hmac;
+      });
 
-      if (signature !== hmac) {
+      if (!isValid) {
         console.warn('[Square Webhook] Invalid signature');
         return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
       }

@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChefHat, UtensilsCrossed, Clock, MapPin, ChevronDown, ChevronUp, Flame, CheckCircle, HelpCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { SHOP_CONFIG } from '@/config/shopConfig';
+import { SHOP_CONFIG, LOCATIONS } from '@/config/shopConfig';
 import { LocationSelectorModal } from '@/components/LocationSelectorModal';
 import { useLocationConfig } from '@/hooks/useLocationConfig';
 import { db, auth } from '@/lib/firebase';
@@ -22,14 +22,17 @@ const HERO_IMAGES = [
 
 export default function TOVHome() {
   const navigate = useRouter();
+  const params = useParams();
+  const routeLocationId = ((params?.locationId as string) || '').toLowerCase() === 'slough' ? 'slough' : 'hayes';
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(0);
   const { scrollYProgress } = useScroll();
   const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
 
   const { activeLocation } = useLocationConfig();
-  const isSlough = activeLocation.id === 'slough';
-  const seoMeta = getBranchSeoMeta(activeLocation.id);
+  const branchLoc = activeLocation || LOCATIONS[routeLocationId] || LOCATIONS.hayes;
+  const isSlough = branchLoc.id === 'slough';
+  const seoMeta = getBranchSeoMeta(branchLoc.id);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   // Postcode Proximity / Fast Collection Checker State

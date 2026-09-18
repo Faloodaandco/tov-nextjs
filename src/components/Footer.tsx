@@ -9,12 +9,13 @@ const Instagram = ({ size = 20, ...props }: { size?: number; [key: string]: any 
 const Facebook = ({ size = 20, ...props }: { size?: number; [key: string]: any }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
 );
-import { SHOP_CONFIG, buildWhatsAppLink } from '@/config/shopConfig';
+import { SHOP_CONFIG, LOCATIONS, buildWhatsAppLink } from '@/config/shopConfig';
 import { useLocationConfig } from '@/hooks/useLocationConfig';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
   const { activeLocation } = useLocationConfig();
+  const loc = activeLocation || LOCATIONS.hayes;
 
   return (
     <footer className="relative bg-pine text-bg-sand pt-24 pb-12 mt-20 border-t border-terracotta/20 overflow-hidden">
@@ -52,9 +53,9 @@ export const Footer = () => {
           <div>
             <h4 className="font-sans font-bold text-xs mb-8 tracking-[0.2em] uppercase text-bg-sand/40">Explore</h4>
             <ul className="space-y-5">
-              <li><Link href={`/${activeLocation.id}/home`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Home</Link></li>
-              <li><Link href={`/${activeLocation.id}/menu`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Our Menu</Link></li>
-              <li><Link href={`/${activeLocation.id}/menu`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Order Takeaway</Link></li>
+              <li><Link href={`/${loc.id}/home`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Home</Link></li>
+              <li><Link href={`/${loc.id}/menu`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Our Menu</Link></li>
+              <li><Link href={`/${loc.id}/menu`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Order Takeaway</Link></li>
               <li><Link href="/book" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Book A Table</Link></li>
             </ul>
           </div>
