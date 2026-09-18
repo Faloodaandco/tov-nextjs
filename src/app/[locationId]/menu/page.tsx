@@ -268,6 +268,11 @@ function MenuPageContent() {
   const [sizePickerItem, setSizePickerItem] = useState<MenuItem | null>(null);
   const [customisationItem, setCustomisationItem] = useState<FullMenuItem | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isKitchenClosed = useMemo(() => {
+    const now = new Date();
+    const hour = now.getHours();
+    return hour >= 23 || hour < 12; // 11PM to 12PM
+  }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -547,7 +552,19 @@ function MenuPageContent() {
       : HAYES_DELIVERY_TIERS.UB4.fee;
   }, [isDeliveryOrder, activeDeliveryTier, discountedSubtotal, activeLocation.id]);
 
-  const finalCartTotal = discountedSubtotal + deliveryFee;
+  // C5: 10% service fee on food subtotal
+  const serviceFee = useMemo(() => {
+    const rate = activeLocation.delivery?.serviceFeePercent || 10;
+    return Math.round(discountedSubtotal * rate) / 100;
+  }, [discountedSubtotal, activeLocation]);
+
+  const finalCartTotal = discountedSubtotal + deliveryFee + serviceFee;
+
+  // C3: Minimum order enforcement for delivery
+  const minOrder = activeLocation.delivery?.minOrder || 15;
+  const isBelowMinOrder = isDeliveryOrder && discountedSubtotal < minOrder;
+  const minOrderProgress = isDeliveryOrder ? Math.min(100, (discountedSubtotal / minOrder) * 100) : 100;
+  const minOrderRemaining = Math.max(0, minOrder - discountedSubtotal);
 
   // ─── Smart Cart Upsell Engine ───
   const hasMain = cart.some(i => ['curries', 'desi_handi', 'karahi_e_khaas', 'rice', 'burgers', 'rolls', 'bbq'].includes(i.category));
@@ -912,6 +929,13 @@ function MenuPageContent() {
             <span className={deliveryFee === 0 ? 'text-emerald-700 font-bold' : ''}>
               {deliveryFee === 0 ? 'FREE' : `£${deliveryFee.toFixed(2)}`}
             </span>
+          </div>
+        )}
+
+        {serviceFee > 0 && (
+          <div className="flex justify-between text-pine/70 font-semibold">
+            <span>Service Fee (10%)</span>
+            <span>£{serviceFee.toFixed(2)}</span>
           </div>
         )}
 
@@ -1401,20 +1425,48 @@ function MenuPageContent() {
                       : 'Add breakfast items to your cart to get 40% off.'}
                   </div>
                 )}
+                {isDeliveryOrder && deliveryFee > 0 && (
+                  <div className="flex justify-between items-center text-xs text-pine/70 font-semibold uppercase tracking-wider">
+                    <span>Delivery Fee</span>
+                    <span>{deliveryFee === 0 ? 'FREE' : `£${deliveryFee.toFixed(2)}`}</span>
+                  </div>
+                )}
+                {serviceFee > 0 && (
+                  <div className="flex justify-between items-center text-xs text-pine/70 font-semibold uppercase tracking-wider">
+                    <span>Service Fee (10%)</span>
+                    <span>£{serviceFee.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-baseline pt-2 border-t border-pine/10 text-xl font-bold">
                   <span className="font-display text-sm uppercase tracking-[0.2em] font-bold">Total</span>
                   <span className="font-display text-2xl font-bold">£{finalCartTotal.toFixed(2)}</span>
                 </div>
               </div>
               
+              {isKitchenClosed && (
+                <div className="bg-pine/10 text-pine rounded-xl p-3 mb-4 text-center text-sm font-bold">
+                  🕐 Kitchen opens at 12:00 PM — Browse our menu and order when we open!
+                </div>
+              )}
+              {isBelowMinOrder && (
+                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                  <div className="flex justify-between text-xs font-bold text-amber-800 mb-2">
+                    <span>Minimum order for delivery: £{minOrder.toFixed(2)}</span>
+                    <span>£{minOrderRemaining.toFixed(2)} more</span>
+                  </div>
+                  <div className="w-full bg-amber-200 rounded-full h-2 overflow-hidden">
+                    <div className="bg-amber-600 h-full rounded-full transition-all duration-500" style={{ width: `${minOrderProgress}%` }} />
+                  </div>
+                </div>
+              )}
               <button
                 onClick={handleProceedToDetails}
-                disabled={cart.length === 0}
+                disabled={cart.length === 0 || isKitchenClosed || isBelowMinOrder}
                 className="w-full py-5 bg-pine text-white font-black hover:bg-terracotta active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed uppercase tracking-[0.2em] shadow-xl hover:shadow-2xl relative overflow-hidden group mb-4 rounded-full"
               >
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
                 <span className="relative z-10 flex justify-between px-8 items-center w-full">
-                  <span>Checkout</span>
+                  <span>{isBelowMinOrder ? `Add £${minOrderRemaining.toFixed(2)} more` : 'Checkout'}</span>
                   <span className="text-lg">£{finalCartTotal.toFixed(2)}</span>
                 </span>
               </button>
@@ -1740,10 +1792,15 @@ function MenuPageContent() {
 
                 {/* Pinned Bottom in Left Column */}
                 <div className="shrink-0 p-5 md:px-8 border-t border-pine/10 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.04)] z-20 space-y-3">
+                      {isKitchenClosed && (
+                        <div className="bg-pine/10 text-pine rounded-xl p-3 mb-4 text-center text-sm font-bold">
+                          🕐 Kitchen opens at 12:00 PM — Browse our menu and order when we open!
+                        </div>
+                      )}
                       <button
                         type="button"
                         onClick={(e) => {
-                          if (isSubmitting || customerInfo.name.trim() === '' || customerInfo.phone.trim() === '' || customerInfo.email.trim() === '' || !!phoneError) return;
+                          if (isKitchenClosed || isSubmitting || customerInfo.name.trim() === '' || customerInfo.phone.trim() === '' || customerInfo.email.trim() === '' || !!phoneError) return;
                           
                           // Delivery validation
                           if (isDeliveryOrder) {
@@ -1773,7 +1830,7 @@ function MenuPageContent() {
                             submitOrder(e as any, 'collection');
                           }
                         }}
-                        disabled={isSubmitting || customerInfo.name.trim() === '' || customerInfo.phone.trim() === '' || customerInfo.email.trim() === '' || !!phoneError}
+                        disabled={isKitchenClosed || isSubmitting || customerInfo.name.trim() === '' || customerInfo.phone.trim() === '' || customerInfo.email.trim() === '' || !!phoneError}
                         className="w-full py-4 md:py-5 px-6 bg-pine text-white font-black hover:bg-terracotta active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed uppercase tracking-[0.2em] shadow-xl hover:shadow-2xl relative overflow-hidden group rounded-xl"
                       >
                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
@@ -1837,6 +1894,11 @@ function MenuPageContent() {
                         )
                       )}
                       
+                      <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-xs text-amber-800">
+                        <p className="font-bold mb-1">⚠️ Allergen Notice</p>
+                        <p>Our dishes may contain nuts, gluten, dairy, and other allergens. If you have a food allergy, please call us before ordering: <a href={`tel:${activeLocation.phone}`} className="font-bold underline">{activeLocation.phone}</a></p>
+                      </div>
+
                       {(activeLocation as any).square?.enabled && (activeLocation as any).square?.appId && (activeLocation as any).square?.locationId ? (
                         <SquarePaymentForm
                           total={finalCartTotal}

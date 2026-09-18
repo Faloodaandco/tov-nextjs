@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Gift, ChevronRight, QrCode, Loader2, Store, Smartphone, UserCircle2, LogOut, Crown, Star, Award, ChevronDown } from 'lucide-react';
+import { Gift, ChevronRight, Loader2, Store, Smartphone, UserCircle2, LogOut, Crown, Star, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getCustomer } from '@/services/customerService';
 import { useAuth } from '@/context/AuthContext';
@@ -38,7 +38,6 @@ export default function Rewards() {
   const [loading, setLoading] = useState(false);
   const [account, setAccount] = useState<LoyaltyAccount | null>(null);
   const [error, setError] = useState('');
-  const [showQr, setShowQr] = useState(false);
 
   useEffect(() => {
     if (user?.phoneNumber) {
@@ -109,7 +108,6 @@ export default function Rewards() {
     );
   }
 
-  const qrPayload = account ? `TASTE OF VILLAGE-REWARDS:${account.phone}` : '';
   const points = account?.points || 0;
   const tier = getTierInfo(points);
   const TierIcon = tier.icon;
@@ -152,7 +150,7 @@ export default function Rewards() {
               <div className="text-center mb-10">
                 <h2 className="font-display font-black text-2xl tracking-widest text-pine uppercase">Join The Club</h2>
                 <p className="text-pine/60 text-sm mt-4 font-medium leading-relaxed max-w-sm mx-auto">
-                  Sign in to securely access your rewards, track orders, and easily link your points at our kiosks.
+                  Sign in to access your rewards, track orders, and redeem points when you order online.
                 </p>
               </div>
 
@@ -219,7 +217,7 @@ export default function Rewards() {
               </div>
               
               <p className="text-pine/60 text-sm mb-8 font-medium leading-relaxed">
-                To securely track your points and use them at our kiosks, please link your mobile number to your account.
+                To track your points and redeem rewards online, please link your mobile number to your account.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -377,41 +375,6 @@ export default function Rewards() {
                 </div>
               </div>
 
-              {/* Digital Card / QR */}
-              <div className="bg-pine text-bg-sand p-8 md:p-12 border border-pine/10 text-center relative overflow-hidden shadow-2xl">
-                {/* Visual architectural flair */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-terracotta to-transparent"></div>
-                
-                <h3 className="font-black text-xs uppercase tracking-[0.3em] text-bg-sand/70 mb-4 flex items-center justify-center gap-3">
-                  <QrCode size={16} className="text-terracotta-light" /> Digital Loyalty Card
-                </h3>
-                <p className="text-bg-sand/60 text-sm mb-10 max-w-md mx-auto font-medium leading-relaxed">
-                  Scan this code at the till or kiosk to instantly link your order, earn points, and redeem rewards.
-                </p>
-                
-                {!showQr ? (
-                  <button onClick={() => setShowQr(true)} className="px-10 py-5 bg-terracotta text-white font-black tracking-[0.2em] uppercase text-sm hover:bg-terracotta-light transition-all inline-flex items-center gap-4 shadow-[6px_6px_0px_rgba(0,0,0,0.2)] hover:-translate-y-1">
-                    <QrCode size={20} /> Reveal My Card
-                  </button>
-                ) : (
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="mt-4 inline-flex flex-col items-center bg-white p-8 border-[4px] border-terracotta shadow-2xl"
-                  >
-                    <div className="w-64 h-64 bg-white flex items-center justify-center p-2">
-                      <img src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrPayload)}&color=1A3C34&bgcolor=FFFFFF&qzone=1`} alt="Rewards QR code" className="w-full h-full drop-shadow-sm" />
-                    </div>
-                    <div className="w-full h-px bg-pine/10 my-6"></div>
-                    <p className="text-pine font-display font-black tracking-[0.1em] text-xl">{user.displayName}</p>
-                    <p className="text-pine/50 text-sm mt-1 font-mono font-bold tracking-widest">{account.phone}</p>
-                    
-                    <button onClick={() => setShowQr(false)} className="mt-8 text-xs text-pine/50 font-black tracking-[0.2em] uppercase hover:text-terracotta transition-colors underline underline-offset-4 flex items-center gap-2">
-                      <ChevronDown size={14} /> Hide Card
-                    </button>
-                  </motion.div>
-                )}
-              </div>
 
               {/* Call to Action */}
               <div className="text-center pt-8 pb-12">
