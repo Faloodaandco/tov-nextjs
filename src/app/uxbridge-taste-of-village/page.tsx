@@ -57,7 +57,7 @@ export default function SeoPage() {
                 <Clock size={20} className="text-terracotta" /> Open until midnight, 7 days a week
               </div>
               <div className="flex items-center gap-3 text-pine font-bold">
-                <MapPin size={20} className="text-terracotta" /> 268 Farnham Road, Slough SL1 4XL
+                <MapPin size={20} className="text-terracotta" /> 260 Farnham Road, Slough SL1 4XL
               </div>
             </div>
           </div>
@@ -72,7 +72,7 @@ export default function SeoPage() {
           </p>
           
           <div className="flex justify-center gap-4">
-            <Link href="/menu" className="px-8 py-4 bg-terracotta text-white text-pine rounded-full font-bold hover:shadow-lg transition-all">
+            <Link href="/hayes/menu" className="px-8 py-4 bg-terracotta text-white text-pine rounded-full font-bold hover:shadow-lg transition-all">
               View Full Menu
             </Link>
             <Link href="/book" className="px-8 py-4 bg-transparent border-2 border-brand-text/10 text-pine rounded-full font-bold hover:bg-brand-text/5 transition-all">

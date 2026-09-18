@@ -100,7 +100,7 @@ const OrderInner = () => {
   const storeParam = searchParams.get('store');
   const isCollection = !tableParam;
 
-  const { cart, addToCart, removeFromCart, clearCart, soldOutItems, addOrder, orders } = useStore();
+  const { cart, addToCart, removeFromCart, clearCart, addOrder, orders } = useStore();
   const [activeCategory, setActiveCategory] = useState<string>('');
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'details' | 'success'>('cart');
@@ -118,7 +118,7 @@ const OrderInner = () => {
     async function loadMenu() {
       try {
         setIsLoading(true);
-        const fallback = (await getMenuItems()).filter(item => !soldOutItems.includes(item.id));
+        const fallback = await getMenuItems();
         setMenuItems(fallback);
         if (fallback.length > 0) setActiveCategory(fallback[0].category);
       } catch (err: any) {
@@ -128,7 +128,7 @@ const OrderInner = () => {
       }
     }
     loadMenu();
-  }, [soldOutItems]);
+  }, []);
 
   // Derive categories automatically from items
   const categoriesMap = new Map();

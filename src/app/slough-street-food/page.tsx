@@ -94,7 +94,7 @@ export default function SloughStreetFood() {
           
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-10">
             <div className="flex items-center gap-2 text-brand-text font-bold">
-              <MapPin className="text-brand-electricPeach" /> 268 Farnham Road, Slough
+              <MapPin className="text-brand-electricPeach" /> 260 Farnham Road, Slough
             </div>
             <div className="flex items-center gap-2 text-brand-text font-bold">
               <Clock className="text-brand-electricPeach" /> Open until 11:00 PM
@@ -102,10 +102,10 @@ export default function SloughStreetFood() {
           </div>
 
           <div className="flex justify-center gap-4">
-            <Link to="/menu" className="px-8 py-4 bg-brand-blue text-brand-text rounded-full font-bold hover:shadow-lg transition-all">
+            <Link href="/slough/menu" className="px-8 py-4 bg-brand-blue text-brand-text rounded-full font-bold hover:shadow-lg transition-all">
               View Full Menu
             </Link>
-            <Link to="/book" className="px-8 py-4 bg-transparent border-2 border-brand-text/10 text-brand-text rounded-full font-bold hover:bg-brand-text/5 transition-all">
+            <Link href="/book" className="px-8 py-4 bg-transparent border-2 border-brand-text/10 text-brand-text rounded-full font-bold hover:bg-brand-text/5 transition-all">
               Book a Table
             </Link>
           </div>

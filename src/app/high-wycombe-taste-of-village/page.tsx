@@ -67,7 +67,7 @@ export default function SeoPage() {
           
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-10">
             <div className="flex items-center gap-2 text-pine font-bold">
-              <MapPin className="text-terracotta" /> 268 Farnham Road, Slough
+              <MapPin className="text-terracotta" /> 260 Farnham Road, Slough
             </div>
             <div className="flex items-center gap-2 text-pine font-bold">
               <Clock className="text-terracotta" /> Open until Midnight

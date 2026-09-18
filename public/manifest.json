@@ -1,16 +1,27 @@
 {
-  "name": "Taste of Village POS",
-  "short_name": "TOV POS",
-  "start_url": "/pos/taste-of-village",
-  "display": "fullscreen",
-  "orientation": "landscape",
-  "background_color": "#FDF5F2",
-  "theme_color": "#1A3C34",
+  "name": "Taste of Village",
+  "short_name": "TOV",
+  "description": "Authentic Desi Food — Order for Collection or Delivery from Hayes & Slough",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#1a1a2e",
+  "background_color": "#1a1a2e",
   "icons": [
     {
-      "src": "/vite.svg",
+      "src": "/assets/tov-monogram-transparent.png",
       "sizes": "192x192",
-      "type": "image/svg+xml"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/tov-monogram-transparent.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "categories": ["food", "lifestyle"],
+  "lang": "en-GB"
 }

@@ -227,7 +227,7 @@ function MenuPageContent() {
   const { activeLocation } = useLocationConfig();
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? (typeof window !== 'undefined' ? window : {}).location.search : '');
   const tableParam = searchParams.get('table') || searchParams.get('t');
-  const { addToCart, cart, removeFromCart, addOrder, clearCart, soldOutItems, tableSession, activePromo, isCartOpen, setIsCartOpen } = useStore();
+  const { addToCart, cart, removeFromCart, addOrder, clearCart, activePromo, isCartOpen, setIsCartOpen } = useStore();
   const seoMeta = useMemo(() => getBranchSeoMeta(activeLocation.id), [activeLocation.id]);
   const [activeCategory, setActiveCategory] = useState<string>('starters');
   const [activeDietaryFilters, setActiveDietaryFilters] = useState<string[]>([]);
@@ -433,12 +433,12 @@ function MenuPageContent() {
           ...item,
           price: tableParam ? (item.dineInPrice ?? item.price) : (item.onlinePrice ?? item.price),
           originalPrice: tableParam ? (item.dineInPrice ?? item.originalPrice ?? item.price) : (item.onlinePrice ?? item.originalPrice ?? item.price),
-          is86d: soldOutItems.includes(item.id) || item.is86d || isTimeGated,
+          is86d: item.is86d || isTimeGated,
           name: isTimeGated && !item.name.includes('Fri-Sun') ? `${item.name} (Available Fri-Sun)` : item.name
         };
       })
     })).filter(group => group.items.length > 0);
-  }, [menuItems, soldOutItems, tableParam, searchQuery, activeDietaryFilters]);
+  }, [menuItems, tableParam, searchQuery, activeDietaryFilters]);
 
   // ScrollSpy Logic
   useEffect(() => {

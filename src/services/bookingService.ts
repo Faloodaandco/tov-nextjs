@@ -1,4 +1,4 @@
-import { collection, addDoc, doc, updateDoc, onSnapshot, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Booking } from '@/types';
 
@@ -14,16 +14,5 @@ export const updateBookingStatus = async (bookingId: string, status: string): Pr
   await updateDoc(bookingRef, {
     status,
     updatedAt: Timestamp.now()
-  });
-};
-
-export const streamBookings = (callback: (bookings: Booking[]) => void) => {
-  const bookingsRef = collection(db, 'bookings');
-  return onSnapshot(bookingsRef, (snapshot) => {
-    const bookings = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    })) as Booking[];
-    callback(bookings);
   });
 };

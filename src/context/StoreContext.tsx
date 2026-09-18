@@ -18,9 +18,6 @@ interface StoreContextType {
   isOffline: boolean;
   isCartOpen: boolean;
   setIsCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  soldOutItems: string[];
-  isAdmin: boolean;
-  toggleAdmin: () => void;
   activePromo: string | null;
   setActivePromo: React.Dispatch<React.SetStateAction<string | null>>;
   isHydrated: boolean;
@@ -37,8 +34,6 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isOffline, setIsOffline] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [soldOutItems, setSoldOutItems] = useState<string[]>([]);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [activePromo, setActivePromo] = useState<string | null>(null);
 
   useEffect(() => {
@@ -110,8 +105,6 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
     setBookings(prev => [...prev, booking]);
   };
 
-  const toggleAdmin = () => setIsAdmin(prev => !prev);
-
   const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
   const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
 
@@ -130,9 +123,6 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
         isOffline,
         isCartOpen,
         setIsCartOpen,
-        soldOutItems,
-        isAdmin,
-        toggleAdmin,
         activePromo,
         setActivePromo,
         isHydrated,

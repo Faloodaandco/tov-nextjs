@@ -14,8 +14,11 @@ export const LOCATIONS = {
     tenant_id: HAYES_TENANT,
     address: '766B Uxbridge Rd',
     postcode: 'UB4 0RU',
+    city: 'Hayes',
     phone: '020 3409 3786',
     w3w: '///example.words.here',
+    coords: { lat: 51.5127, lng: -0.4211 },
+    googleReviewUrl: 'https://g.page/r/CU4P6ZjGio6HECE/review',
     square: {
       enabled: true,
       appId: 'sq0idp-ANAbi4bOc4sroonK7d45BA',
@@ -24,11 +27,12 @@ export const LOCATIONS = {
     delivery: {
       enabled: true,
       method: 'own_drivers' as const,
-      fee: 2.50,
+      maxRadiusMiles: 5,
       minOrder: 15.00,
-      freeDeliveryThreshold: 40.00,
-      zones: ['UB3', 'UB4', 'UB7', 'UB8', 'UB10'] as readonly string[],
-      estimatedMinutes: 40,
+      serviceFeePercent: 10,
+      fallbackFee: 3.99,
+      noContactEnabled: true,
+      estimatedMinutes: { collection: { min: 15, max: 25 }, delivery: { min: 35, max: 55 } },
     },
   },
   slough: {
@@ -37,8 +41,11 @@ export const LOCATIONS = {
     tenant_id: SLOUGH_TENANT,
     address: '260 Farnham Road',
     postcode: 'SL1 4XL',
+    city: 'Slough',
     phone: '01753 326341',
     w3w: '///slough.words.here',
+    coords: { lat: 51.5273, lng: -0.6128 },
+    googleReviewUrl: 'https://g.page/r/slough-placeholder/review',
     square: {
       enabled: true,
       appId: 'sq0idp-ZEv7rUulY8UD5q8eZTPR8A',
@@ -46,17 +53,45 @@ export const LOCATIONS = {
     },
     delivery: {
       enabled: true,
-      method: 'square_on_demand' as const,
-      fee: 3.50,
-      minOrder: 15.00,
-      freeDeliveryThreshold: 50.00,
-      zones: ['SL1', 'SL2', 'SL3', 'SL4'] as readonly string[],
-      estimatedMinutes: 45,
+      method: 'own_drivers' as const,
+      maxRadiusMiles: 5,
+      minOrder: 20.00,
+      serviceFeePercent: 10,
+      fallbackFee: 3.99,
+      noContactEnabled: true,
+      estimatedMinutes: { collection: { min: 15, max: 25 }, delivery: { min: 35, max: 55 } },
     },
   }
 } as const;
 
 export type LocationId = keyof typeof LOCATIONS;
+
+// ─── Distance-Based Delivery Fee Tiers (Matches Square Dashboard Exactly) ────
+
+export interface DistanceDeliveryTier {
+  minMiles: number;
+  maxMiles: number;
+  fee: number;
+  freeThreshold: number;
+}
+
+/** Hayes (Kitchencorner LTD) — Square Dashboard: 5mi radius, min £15 */
+export const HAYES_DISTANCE_TIERS: DistanceDeliveryTier[] = [
+  { minMiles: 0, maxMiles: 2, fee: 3.00, freeThreshold: 30.00 },
+  { minMiles: 2, maxMiles: 3, fee: 4.00, freeThreshold: 35.00 },
+  { minMiles: 3, maxMiles: 4, fee: 5.00, freeThreshold: 45.00 },
+  { minMiles: 4, maxMiles: 5, fee: 6.00, freeThreshold: 55.00 },
+];
+
+/** Slough (Taste Of Village) — Square Dashboard: 5mi radius, min £20 */
+export const SLOUGH_DISTANCE_TIERS: DistanceDeliveryTier[] = [
+  { minMiles: 0, maxMiles: 2, fee: 3.99, freeThreshold: 30.00 },
+  { minMiles: 2, maxMiles: 3, fee: 5.99, freeThreshold: 35.00 },
+  { minMiles: 3, maxMiles: 4, fee: 6.99, freeThreshold: 40.00 },
+  { minMiles: 4, maxMiles: 5, fee: 7.99, freeThreshold: 50.00 },
+];
+
+// ─── Legacy Outcode Lookup (Kept as Immediate Fallback) ──────────────────────
 
 export interface DeliveryTier {
   fee: number;
@@ -67,73 +102,103 @@ export interface DeliveryTier {
 }
 
 export const HAYES_DELIVERY_TIERS: Record<string, DeliveryTier> = {
-  UB4: {
-    fee: 2.99,
-    minOrder: 15.00,
-    freeDeliveryThreshold: 35.00,
-    estimatedMinutes: 30,
-    areaName: 'Hayes North & Yeading',
-  },
-  UB3: {
-    fee: 3.99,
-    minOrder: 15.00,
-    freeDeliveryThreshold: 40.00,
-    estimatedMinutes: 35,
-    areaName: 'Hayes Town & Harlington',
-  },
-  UB10: {
-    fee: 4.99,
-    minOrder: 15.00,
-    freeDeliveryThreshold: 45.00,
-    estimatedMinutes: 40,
-    areaName: 'Hillingdon & Ickenham',
-  },
-  UB8: {
-    fee: 5.99,
-    minOrder: 20.00,
-    freeDeliveryThreshold: 50.00,
-    estimatedMinutes: 45,
-    areaName: 'Uxbridge & Cowley',
-  },
-  UB7: {
-    fee: 6.99,
-    minOrder: 20.00,
-    freeDeliveryThreshold: 55.00,
-    estimatedMinutes: 50,
-    areaName: 'West Drayton & Heathrow North',
-  },
+  UB4: { fee: 3.00, minOrder: 15.00, freeDeliveryThreshold: 30.00, estimatedMinutes: 30, areaName: 'Hayes North & Yeading' },
+  UB3: { fee: 4.00, minOrder: 15.00, freeDeliveryThreshold: 35.00, estimatedMinutes: 35, areaName: 'Hayes Town & Harlington' },
+  UB10: { fee: 5.00, minOrder: 15.00, freeDeliveryThreshold: 45.00, estimatedMinutes: 40, areaName: 'Hillingdon & Ickenham' },
+  UB8: { fee: 5.00, minOrder: 15.00, freeDeliveryThreshold: 45.00, estimatedMinutes: 45, areaName: 'Uxbridge & Cowley' },
+  UB7: { fee: 6.00, minOrder: 15.00, freeDeliveryThreshold: 55.00, estimatedMinutes: 50, areaName: 'West Drayton & Heathrow North' },
 };
 
 export const SLOUGH_DELIVERY_TIERS: Record<string, DeliveryTier> = {
-  SL1: {
-    fee: 3.50,
-    minOrder: 15.00,
-    freeDeliveryThreshold: 50.00,
-    estimatedMinutes: 35,
-    areaName: 'Central Slough & Farnham Rd',
-  },
-  SL2: {
-    fee: 3.99,
-    minOrder: 15.00,
-    freeDeliveryThreshold: 50.00,
-    estimatedMinutes: 40,
-    areaName: 'Slough East & Stoke Poges',
-  },
-  SL3: {
-    fee: 4.99,
-    minOrder: 20.00,
-    freeDeliveryThreshold: 55.00,
-    estimatedMinutes: 45,
-    areaName: 'Langley & Datchet',
-  },
-  SL4: {
-    fee: 5.99,
-    minOrder: 20.00,
-    freeDeliveryThreshold: 60.00,
-    estimatedMinutes: 50,
-    areaName: 'Windsor & Eton',
-  },
+  SL1: { fee: 3.99, minOrder: 20.00, freeDeliveryThreshold: 30.00, estimatedMinutes: 35, areaName: 'Central Slough & Farnham Rd' },
+  SL2: { fee: 5.99, minOrder: 20.00, freeDeliveryThreshold: 35.00, estimatedMinutes: 40, areaName: 'Slough East & Stoke Poges' },
+  SL3: { fee: 6.99, minOrder: 20.00, freeDeliveryThreshold: 40.00, estimatedMinutes: 45, areaName: 'Langley & Datchet' },
+  SL4: { fee: 7.99, minOrder: 20.00, freeDeliveryThreshold: 50.00, estimatedMinutes: 50, areaName: 'Windsor & Eton' },
 };
+
+// ─── Haversine Distance Calculator ───────────────────────────────────────────
+
+/** Straight-line distance in miles between two lat/lng pairs. */
+export function haversineDistanceMiles(
+  lat1: number, lng1: number, lat2: number, lng2: number
+): number {
+  const R = 3958.8; // Earth radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+/** Calculate the 10% service fee on the food subtotal. */
+export function calculateServiceFee(foodSubtotal: number, branchId: LocationId = 'hayes'): number {
+  const loc = LOCATIONS[branchId];
+  const percent = loc.delivery.serviceFeePercent;
+  return Math.round(foodSubtotal * (percent / 100) * 100) / 100;
+}
+
+/**
+ * Resolves delivery fee from distance (miles) against the branch tier table.
+ * Returns the exact tier matching the Square Dashboard distance-based rules.
+ */
+export function getDeliveryFeeByDistance(miles: number, branchId: LocationId = 'hayes'): {
+  eligible: boolean;
+  miles: number;
+  fee: number;
+  freeThreshold: number;
+  minOrder: number;
+  reason?: string;
+} {
+  const loc = LOCATIONS[branchId];
+  const tiers = branchId === 'slough' ? SLOUGH_DISTANCE_TIERS : HAYES_DISTANCE_TIERS;
+
+  if (miles > loc.delivery.maxRadiusMiles) {
+    return {
+      eligible: false,
+      miles,
+      fee: 0,
+      freeThreshold: 0,
+      minOrder: loc.delivery.minOrder,
+      reason: `You are ${miles.toFixed(1)} miles away. Our maximum delivery radius is ${loc.delivery.maxRadiusMiles} miles to ensure your food arrives sizzling hot. Please select Store Collection!`,
+    };
+  }
+
+  for (const tier of tiers) {
+    if (miles >= tier.minMiles && miles < tier.maxMiles) {
+      return {
+        eligible: true,
+        miles,
+        fee: tier.fee,
+        freeThreshold: tier.freeThreshold,
+        minOrder: loc.delivery.minOrder,
+      };
+    }
+  }
+
+  // Edge case: exactly 5.0 miles — use last tier
+  const last = tiers[tiers.length - 1];
+  if (miles <= loc.delivery.maxRadiusMiles) {
+    return {
+      eligible: true,
+      miles,
+      fee: last.fee,
+      freeThreshold: last.freeThreshold,
+      minOrder: loc.delivery.minOrder,
+    };
+  }
+
+  return {
+    eligible: false,
+    miles,
+    fee: 0,
+    freeThreshold: 0,
+    minOrder: loc.delivery.minOrder,
+    reason: `Delivery is not available for your location. Please select Collection.`,
+  };
+}
+
+// ─── Legacy Outcode-Based Lookup (Fallback when geocoding unavailable) ────────
 
 /**
  * Normalises and extracts UK outward postcode (e.g. 'UB4 0RU' -> 'UB4')
@@ -141,21 +206,24 @@ export const SLOUGH_DELIVERY_TIERS: Record<string, DeliveryTier> = {
 export function extractUKOutcode(postcode: string): string {
   const clean = postcode.toUpperCase().replace(/[^A-Z0-9]/g, '');
   if (!clean) return '';
-  // Standard full UK postcode ends with 1 digit + 2 letters (e.g. 4XL, 0RU)
   if (clean.length >= 5 && /^[A-Z]{1,2}[0-9][A-Z0-9]?[0-9][A-Z]{2}$/.test(clean)) {
     return clean.slice(0, clean.length - 3);
   }
-  if (clean.length <= 4) {
-    return clean;
-  }
-  if (clean.length > 3) {
-    return clean.slice(0, clean.length - 3);
-  }
-  return clean;
+  if (clean.length <= 4) return clean;
+  return clean.slice(0, clean.length - 3);
 }
 
 /**
- * Returns delivery tier details based on UK postcode and branch.
+ * Formats a raw UK postcode string into standard form: 'ub40ru' -> 'UB4 0RU'
+ */
+export function formatUKPostcode(postcode: string): string {
+  const clean = postcode.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (clean.length < 5) return clean;
+  return clean.slice(0, clean.length - 3) + ' ' + clean.slice(clean.length - 3);
+}
+
+/**
+ * Returns delivery tier details based on UK outcode and branch (fallback).
  */
 export function getDeliveryTier(postcode: string, branchId: string = 'hayes'): {
   isValid: boolean;
@@ -165,28 +233,20 @@ export function getDeliveryTier(postcode: string, branchId: string = 'hayes'): {
 } {
   const loc = LOCATIONS[branchId as LocationId] || LOCATIONS.hayes;
   if (!loc.delivery?.enabled) {
-    return {
-      isValid: false,
-      outcode: '',
-      reason: `${loc.name} currently offers Collection Only.`,
-    };
+    return { isValid: false, outcode: '', reason: `${loc.name} currently offers Collection Only.` };
   }
 
   const outcode = extractUKOutcode(postcode);
   const tiers = branchId === 'slough' ? SLOUGH_DELIVERY_TIERS : HAYES_DELIVERY_TIERS;
   const tier = tiers[outcode];
   if (!tier) {
-    if (branchId === 'slough') {
-      return {
-        isValid: false,
-        outcode,
-        reason: `We deliver to SL1 (£3.50), SL2 (£3.99), SL3 (£4.99), and SL4 (£5.99) from ${loc.name}. Please choose Collection or enter a valid local postcode.`,
-      };
-    }
+    const available = Object.entries(tiers)
+      .map(([code, t]) => `${code} (£${t.fee.toFixed(2)})`)
+      .join(', ');
     return {
       isValid: false,
       outcode,
-      reason: `We deliver to UB4 (£2.99), UB3 (£3.99), UB10 (£4.99), UB8 (£5.99), and UB7 (£6.99) from ${loc.name}. Please choose Collection or enter a valid local postcode.`,
+      reason: `We deliver to ${available} from ${loc.name}. Please choose Collection or enter a valid local postcode.`,
     };
   }
 
@@ -202,11 +262,7 @@ export function isPostcodeInDeliveryZone(postcode: string, branchId: string = 'h
   reason?: string;
 } {
   const res = getDeliveryTier(postcode, branchId);
-  return {
-    isValid: res.isValid,
-    outcode: res.outcode,
-    reason: res.reason,
-  };
+  return { isValid: res.isValid, outcode: res.outcode, reason: res.reason };
 }
 
 export function getActiveLocation() {
@@ -265,19 +321,21 @@ export const SHOP_CONFIG = {
   get name() { return getActiveLocation().name; },
   get address() { return getActiveLocation().address; },
   get postcode() { return getActiveLocation().postcode; },
+  get city() { return getActiveLocation().city; },
   get w3w() { return getActiveLocation().w3w; },
+  get coords() { return getActiveLocation().coords; },
 
   tagline: 'Authentic Desi Taste from Lahore & Gujranwala',
   get whatsappNumber() { return getActiveLocation().phone.replace(/\s+/g, '').replace(/^0/, '44'); },
   get phoneNumber() { return getActiveLocation().phone; },
   get phoneNumberRaw() { return '+' + getActiveLocation().phone.replace(/\s+/g, '').replace(/^0/, '44'); },
+  get googleReviewUrl() { return getActiveLocation().googleReviewUrl; },
   instagram: 'https://www.instagram.com/tasteofvillageuk/',
   facebook: 'https://www.facebook.com/profile.php?id=61590779182784',
   tiktok: 'https://www.tiktok.com/@tasteofvillage1',
   website: 'https://tasteofvillagerestaurants.co.uk',
   openingHours: '12:00 PM – 11:00 PM',
   openingDays: 'Monday – Sunday',
-  googleReviewUrl: 'https://g.page/r/CU4P6ZjGio6HECE/review',
 };
 
 export const KITCHEN_SLA = {

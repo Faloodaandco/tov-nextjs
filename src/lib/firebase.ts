@@ -35,9 +35,9 @@ const db = typeof window !== 'undefined'
   ? initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) })
   : initializeFirestore(app, {});
 
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
-const storage = getStorage(app);
+const auth = typeof window !== 'undefined' ? getAuth(app) : (undefined as any);
+const googleProvider = typeof window !== 'undefined' ? new GoogleAuthProvider() : (undefined as any);
+const storage = typeof window !== 'undefined' ? getStorage(app) : (undefined as any);
 
 let messagingPromise: Promise<any> | null = null;
 if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {

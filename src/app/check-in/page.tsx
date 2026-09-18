@@ -618,7 +618,7 @@ function CheckInContent() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="e.g. sales@tekrenewed.co.uk"
+                    placeholder="e.g. hello@tasteofvillage.co.uk"
                     style={{
                       background: 'rgba(255, 255, 255, 0.6)',
                       backdropFilter: 'blur(16px)',
