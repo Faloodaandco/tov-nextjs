@@ -10,7 +10,7 @@ import { useStore } from '@/context/StoreContext';
 import { Plus, Minus, ShoppingBag, X, CheckCircle2, MessageCircle, Phone, MapPin, Search, ChevronRight, CreditCard, Store, Clock, Bell, Ticket, Printer, Zap, AlertCircle } from 'lucide-react';
 import { getMenuItems } from '@/services/menuService';
 import { MenuItem } from '@/types';
-import { buildWhatsAppLink, buildOrderWhatsAppMessage, SHOP_CONFIG, ACTIVE_PROMO, calculatePromoDiscount, isBreakfastPromoTime, isPostcodeInDeliveryZone, getDeliveryTier, HAYES_DELIVERY_TIERS, SLOUGH_DELIVERY_TIERS } from '@/config/shopConfig';
+import { buildWhatsAppLink, buildOrderWhatsAppMessage, SHOP_CONFIG, LOCATIONS, ACTIVE_PROMO, calculatePromoDiscount, isBreakfastPromoTime, isPostcodeInDeliveryZone, getDeliveryTier, HAYES_DELIVERY_TIERS, SLOUGH_DELIVERY_TIERS } from '@/config/shopConfig';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { CustomisationModal } from '@/components/CustomisationModal';
@@ -224,11 +224,13 @@ const CATEGORY_DESCRIPTIONS: Record<string, { title: string; text: string }> = {
 
 function MenuPageContent() {
   const router = useRouter();
-  const { activeLocation } = useLocationConfig();
+  const params = useParams();
+  const routeLocationId = ((params?.locationId as string) || '').toLowerCase() === 'slough' ? 'slough' : 'hayes';
+  const { activeLocation: contextLocation } = useLocationConfig();
+  const activeLocation = contextLocation || LOCATIONS[routeLocationId] || LOCATIONS.hayes;
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? (typeof window !== 'undefined' ? window : {}).location.search : '');
   const tableParam = searchParams.get('table') || searchParams.get('t');
   const { addToCart, cart, removeFromCart, addOrder, clearCart, activePromo, isCartOpen, setIsCartOpen } = useStore();
-  const seoMeta = useMemo(() => getBranchSeoMeta(activeLocation.id), [activeLocation.id]);
   const [activeCategory, setActiveCategory] = useState<string>('starters');
   const [activeDietaryFilters, setActiveDietaryFilters] = useState<string[]>([]);
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'details' | 'payment' | 'success'>('cart');

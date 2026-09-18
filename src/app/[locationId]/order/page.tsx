@@ -7,7 +7,7 @@ import { Plus, Minus, ShoppingBag, X, CheckCircle2, AlertCircle, Clock, ChefHat,
 import { MenuItem } from '@/types';
 import { getMenuItems } from '@/services/menuService';
 import { streamSingleOrder } from '@/services/orderService';
-import { SHOP_CONFIG, getActiveLocation } from '@/config/shopConfig';
+import { SHOP_CONFIG, getActiveLocation, LOCATIONS } from '@/config/shopConfig';
 import { SquareCheckout } from '@/components/SquareCheckout';
 import { apiClient } from '@/lib/apiClient';
 import { generateId } from '@/utils/generateId';
@@ -17,8 +17,8 @@ const SquareCheckoutForm = ({ cart, cartTotal, onCreateOrder, onPaymentSuccess, 
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
   
-  const activeLocation = getActiveLocation();
-  const squareConfig = activeLocation.square;
+  const activeLocation = getActiveLocation() || LOCATIONS.hayes;
+  const squareConfig = activeLocation?.square || {};
 
   if (!squareConfig.enabled || !squareConfig.appId || !squareConfig.locationId) {
     return <div className="p-6 bg-red-50 text-red-700">Square Payments are not configured.</div>;
