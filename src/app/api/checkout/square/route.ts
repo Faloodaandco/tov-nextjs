@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
         (delivery_address?.noContact ? '\n⚠️ NO-CONTACT DELIVERY — Leave at door' : '')
       : `Online Order ${cleanOrderId} - Ready for Collection at ${loc.name} (${loc.address})`;
 
-    const orderPayload = {
+    const orderPayload: any = {
       location_id: locationId,
       reference_id: cleanOrderId,
       ticket_name: ticketName,
@@ -194,6 +194,25 @@ export async function POST(req: NextRequest) {
         },
       ],
     };
+
+    // ── Search for Customer ID (For Loyalty Accumulation) ──────────────
+    try {
+      const searchCustomerRes = await fetch(`${squareBaseUrl}/v2/customers/search`, {
+        method: 'POST',
+        headers: squareHeaders,
+        body: JSON.stringify({
+          query: { filter: { phone_number: { exact: formattedPhone } } }
+        }),
+      });
+      if (searchCustomerRes.ok) {
+        const searchCustomerData = await searchCustomerRes.json();
+        if (searchCustomerData.customers && searchCustomerData.customers.length > 0) {
+          orderPayload.customer_id = searchCustomerData.customers[0].id;
+        }
+      }
+    } catch (err) {
+      console.warn('[Square] Failed to attach customer_id for loyalty', err);
+    }
 
     // ── 1. Create Square Order ────────────────────────────────────────
     const orderIdempotencyKey = idempotency_key ? idempotency_key + '-order' : crypto.randomUUID();

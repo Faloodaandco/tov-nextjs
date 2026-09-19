@@ -43,6 +43,49 @@ const SquareCheckoutForm = ({ cart, cartTotal, onCreateOrder, onPaymentSuccess, 
            <label className="block text-sm font-bold mt-4">Email Address {isCollection ? '*' : '(Optional)'}</label>
            <input required={isCollection} type="email" value={customerInfo.email} onChange={e => setCustomerInfo({...customerInfo, email: e.target.value})} className="w-full p-4 bg-gray-50 rounded-xl" placeholder="john@example.com" />
          </div>
+
+         {/* Loyalty Integration */}
+         <div className="mt-6 p-4 bg-terracotta/5 border border-terracotta/20 rounded-xl">
+           <h3 className="font-bold text-pine flex items-center gap-2"><Sparkles size={18} className="text-terracotta" /> Taste of Village Loyalty</h3>
+           <p className="text-xs text-pine/70 mt-1 mb-3">Earn points on every order. Enter your phone number above to check your balance or join!</p>
+           <div className="flex items-center gap-3">
+             <button
+               type="button"
+               disabled={!customerInfo.phone || isProcessing}
+               onClick={async () => {
+                 setIsProcessing(true);
+                 try {
+                   const res = await fetch('/api/loyalty', {
+                     method: 'POST',
+                     headers: { 'Content-Type': 'application/json' },
+                     body: JSON.stringify({ action: 'check', phone: customerInfo.phone, branch: activeLocation.square.locationId })
+                   });
+                   const data = await res.json();
+                   if (data.status === 'found') {
+                     alert(`You have ${data.balance} points! They will automatically accumulate on this order.`);
+                   } else if (data.status === 'no_account' || data.status === 'no_loyalty_account') {
+                     const enroll = confirm("You don't have a loyalty account yet. Would you like to join and start earning points?");
+                     if (enroll) {
+                       await fetch('/api/loyalty', {
+                         method: 'POST',
+                         headers: { 'Content-Type': 'application/json' },
+                         body: JSON.stringify({ action: 'enroll', phone: customerInfo.phone, customerName: customerInfo.name, branch: activeLocation.square.locationId })
+                       });
+                       alert('Successfully enrolled! Points for this order will be credited to your new account.');
+                     }
+                   }
+                 } catch (err) {
+                   console.error('Loyalty error', err);
+                   alert('Failed to check loyalty status.');
+                 }
+                 setIsProcessing(false);
+               }}
+               className="text-xs font-bold px-4 py-2 bg-pine text-white rounded-full hover:bg-pine/90 disabled:opacity-50"
+             >
+               Check Balance / Join
+             </button>
+           </div>
+         </div>
          
          <div className="mt-8 mb-4 border-t pt-6">
             <SquareCheckout 
