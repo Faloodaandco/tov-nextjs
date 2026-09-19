@@ -12,8 +12,80 @@ export const metadata: Metadata = {
 };
 
 export default function SloughBreakfastPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Restaurant",
+        "name": "Taste of Village Slough - Authentic Breakfast",
+        "image": "https://tasteofvillagerestaurants.co.uk/assets/og-share-preview.jpg",
+        "url": "https://tasteofvillagerestaurants.co.uk/slough-breakfast",
+        "telephone": "+441234567890",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "260 Farnham Road",
+          "addressLocality": "Slough",
+          "addressRegion": "Berkshire",
+          "postalCode": "SL1 4XL",
+          "addressCountry": "GB"
+        },
+        "servesCuisine": ["Pakistani", "Halal", "South Asian", "Gujranwala Breakfast"],
+        "priceRange": "££",
+        "hasMenu": {
+          "@type": "Menu",
+          "name": "Breakfast Menu",
+          "hasMenuSection": [
+            {
+              "@type": "MenuSection",
+              "name": "Traditional Nashta",
+              "hasMenuItem": [
+                { "@type": "MenuItem", "name": "Halwa Puri & Chana" },
+                { "@type": "MenuItem", "name": "Authentic Beef Nihari" },
+                { "@type": "MenuItem", "name": "Traditional Paya" }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Where can I find Halwa Puri on Farnham Road?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Taste of Village at 260 Farnham Road serves authentic, fresh-fried Halwa Puri alongside Chana and Aloo bhujia for breakfast."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you serve traditional Pakistani breakfast dishes?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Our breakfast and brunch menu features overnight slow-cooked beef Nihari, traditional Siri Paya, and authentic Karak Chai, prepared exactly like in Gujranwala."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is your breakfast Halal?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, our entire menu, including our traditional Pakistani breakfast, is 100% Halal certified."
+            }
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="bg-sand min-h-screen pt-20 pb-20 font-sans">
+      {/* JSON-LD Schema for SEO/AEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Gujranwala Kitchen Heritage</span>
@@ -29,11 +101,15 @@ export default function SloughBreakfastPage() {
           <div className="space-y-4 text-pine/80">
             <div>
               <strong className="text-pine block">Where can I find Halwa Puri on Farnham Road?</strong>
-              Taste of Village at 260 Farnham Road serves authentic, fresh-fried Halwa Puri alongside Chana and Aloo bhujia.
+              Taste of Village at 260 Farnham Road serves authentic, fresh-fried Halwa Puri alongside Chana and Aloo bhujia for breakfast.
             </div>
             <div>
               <strong className="text-pine block">Do you serve traditional Pakistani breakfast dishes?</strong>
-              Yes. Our breakfast and brunch menu features overnight slow-cooked Nihari, traditional Siri Paya, and authentic Karak Chai.
+              Yes. Our breakfast and brunch menu features overnight slow-cooked beef Nihari, traditional Siri Paya, and authentic Karak Chai, prepared exactly like in Gujranwala.
+            </div>
+            <div>
+              <strong className="text-pine block">Is your breakfast Halal?</strong>
+              Yes, our entire menu, including our traditional Pakistani breakfast, is 100% Halal certified.
             </div>
           </div>
         </div>

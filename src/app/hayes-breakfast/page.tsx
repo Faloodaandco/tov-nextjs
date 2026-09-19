@@ -12,8 +12,80 @@ export const metadata: Metadata = {
 };
 
 export default function HayesBreakfastPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Restaurant",
+        "name": "Taste of Village Hayes - Authentic Breakfast",
+        "image": "https://tasteofvillagerestaurants.co.uk/assets/og-share-preview.jpg",
+        "url": "https://tasteofvillagerestaurants.co.uk/hayes-breakfast",
+        "telephone": "+442034093786",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "766B Uxbridge Road",
+          "addressLocality": "Hayes",
+          "addressRegion": "London",
+          "postalCode": "UB4 0RU",
+          "addressCountry": "GB"
+        },
+        "servesCuisine": ["Pakistani", "Halal", "South Asian", "Lahori Breakfast"],
+        "priceRange": "££",
+        "hasMenu": {
+          "@type": "Menu",
+          "name": "Breakfast Menu",
+          "hasMenuSection": [
+            {
+              "@type": "MenuSection",
+              "name": "Traditional Nashta",
+              "hasMenuItem": [
+                { "@type": "MenuItem", "name": "Halwa Puri & Chana" },
+                { "@type": "MenuItem", "name": "Lahori Beef Nihari" },
+                { "@type": "MenuItem", "name": "Traditional Siri Paya" }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Where can I get authentic Halwa Puri in Hayes?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Taste of Village at 766B Uxbridge Road serves fresh, traditional Halwa Puri with Chana and Aloo bhujia. Our puris are fried fresh to order."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you serve Nihari and Paya for breakfast?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. We slow-cook our traditional Nihari and Siri Paya overnight to achieve the authentic rich texture and deep spice profile expected from a true Lahori Desi Nashta."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is your breakfast Halal?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, our entire menu, including our traditional Pakistani breakfast, is 100% Halal certified."
+            }
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="bg-sand min-h-screen pt-20 pb-20 font-sans">
+      {/* JSON-LD Schema for SEO/AEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Authentic Lahori Nashta</span>
@@ -29,11 +101,15 @@ export default function HayesBreakfastPage() {
           <div className="space-y-4 text-pine/80">
             <div>
               <strong className="text-pine block">Where can I get authentic Halwa Puri in Hayes?</strong>
-              Taste of Village at 766B Uxbridge Road serves fresh, traditional Halwa Puri with Chana and Aloo bhujia.
+              Taste of Village at 766B Uxbridge Road serves fresh, traditional Halwa Puri with Chana and Aloo bhujia. Our puris are fried fresh to order.
             </div>
             <div>
-              <strong className="text-pine block">Do you serve Nihari and Paya?</strong>
-              Yes. We slow-cook our traditional Nihari and Paya overnight to achieve the authentic rich texture and deep spice profile expected from a true Desi Nashta.
+              <strong className="text-pine block">Do you serve Nihari and Paya for breakfast?</strong>
+              Yes. We slow-cook our traditional Nihari and Siri Paya overnight to achieve the authentic rich texture and deep spice profile expected from a true Lahori Desi Nashta.
+            </div>
+            <div>
+              <strong className="text-pine block">Is your breakfast Halal?</strong>
+              Yes, our entire menu, including our traditional Pakistani breakfast, is 100% Halal certified.
             </div>
           </div>
         </div>
