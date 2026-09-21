@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { LOCATIONS, LocationId, calculateServiceFee } from '@/config/shopConfig';
+import { LOCATIONS, LocationId, calculateServiceFee, calculatePromoDiscount, isEligibleForBreakfastPromo, ACTIVE_PROMO } from '@/config/shopConfig';
 import { getMenuItems } from '@/services/menuService';
+import { db } from '@/lib/firebase';
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
 
 /**
  * POST /api/checkout/square
@@ -29,6 +31,7 @@ export async function POST(req: NextRequest) {
       delivery_address = null,
       delivery_fee = 0,
       service_fee = 0,
+      voucher_code = null,
     } = body || {};
 
     // ── Input Validation ──────────────────────────────────────────────
@@ -72,15 +75,19 @@ export async function POST(req: NextRequest) {
     let subtotalPence = 0;
 
     for (const item of cart) {
-      let trustedPrice = Number(item.price || item.unit_price || 0);
-
-      if (item.id) {
-        const found = activeMenu.find((m) => m.id === item.id);
-        if (found) {
-          trustedPrice = found.price;
-        }
+      if (!item.id) {
+        return NextResponse.json({ error: 'Each cart item must have an id' }, { status: 400 });
       }
 
+      const found = activeMenu.find((m) => m.id === item.id);
+      if (!found) {
+        return NextResponse.json(
+          { error: `Unknown menu item: ${String(item.id).slice(0, 50)}. Please refresh and try again.` },
+          { status: 400 }
+        );
+      }
+
+      const trustedPrice = found.price;
       item.price = trustedPrice;
       item.unit_price = trustedPrice;
 
@@ -98,11 +105,37 @@ export async function POST(req: NextRequest) {
     const serverServiceFee = calculateServiceFee(subtotalPence / 100, branchId);
     const serviceFeePence = Math.round(serverServiceFee * 100);
 
+    // ── Server-Side Discount Calculation ──────────────────────────────
+    // Recalculate on the server — NEVER trust client-supplied discount amounts.
+    // The cart items already have server-verified prices from the loop above.
+    let discountPence = 0;
+    let discountLabel = '';
+
+    if (voucher_code) {
+      const cartForPromo = cart.map((item: any) => {
+        const found = activeMenu.find((m) => m.id === item.id);
+        return {
+          price: found?.price || item.price,
+          quantity: Math.max(1, Math.floor(Number(item.quantity || 1))),
+          category: found?.category || '',
+          name: found?.name || item.name || '',
+        };
+      });
+
+      const promoResult = calculatePromoDiscount(cartForPromo, voucher_code);
+
+      if (promoResult.discount > 0 && promoResult.isTimeValid) {
+        discountPence = Math.round(promoResult.discount * 100);
+        discountLabel = `🎟️ ${ACTIVE_PROMO.cartLabel}`;
+        console.log(`[Square] Promo ${voucher_code}: -£${promoResult.discount.toFixed(2)} on ${promoResult.eligibleItemsCount} items`);
+      }
+    }
+
     if (subtotalPence < 50) {
       return NextResponse.json({ error: 'Minimum order is £0.50' }, { status: 400 });
     }
 
-    // Enforce minimum order for delivery
+    // Enforce minimum order for delivery (checked BEFORE discount)
     if (isDelivery && subtotalPence < loc.delivery.minOrder * 100) {
       return NextResponse.json(
         { error: `Minimum order for delivery is £${loc.delivery.minOrder.toFixed(2)}` },
@@ -110,7 +143,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const totalPence = subtotalPence + deliveryFeePence + serviceFeePence;
+    const totalPence = subtotalPence - discountPence + deliveryFeePence + serviceFeePence;
     const totalPounds = totalPence / 100;
 
     const cleanOrderId = typeof order_id === 'string' && order_id.startsWith('ORD-')
@@ -195,6 +228,20 @@ export async function POST(req: NextRequest) {
       ],
     };
 
+    // Apply discount to Square order so it shows on staff ticket
+    if (discountPence > 0 && discountLabel) {
+      orderPayload.discounts = [
+        {
+          name: discountLabel,
+          type: 'FIXED_AMOUNT',
+          amount_money: {
+            amount: discountPence,
+            currency: 'GBP',
+          },
+          scope: 'ORDER',
+        },
+      ];
+    }
     // ── Search for Customer ID (For Loyalty Accumulation) ──────────────
     try {
       const searchCustomerRes = await fetch(`${squareBaseUrl}/v2/customers/search`, {
@@ -282,7 +329,40 @@ export async function POST(req: NextRequest) {
     const estimatedMinutes = isDelivery ? 45 : 25;
     const estimatedReadyAt = new Date(Date.now() + estimatedMinutes * 60_000);
 
-    // ── 3. Return Success ─────────────────────────────────────────────
+    // ── 3. Persist Order to Firestore (server-side, survives client disconnect) ──
+    try {
+      await setDoc(doc(db, 'orders', cleanOrderId), {
+        orderId: cleanOrderId,
+        squareOrderId: squareOrder.id,
+        squarePaymentId: squarePayment.id,
+        status: 'paid',
+        items: cart.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity || 1,
+        })),
+        customer: { name: customer.name, phone: customer.phone },
+        branch: branchId,
+        fulfillmentType: isDelivery ? 'delivery' : 'collection',
+        deliveryAddress: isDelivery ? delivery_address : null,
+        total: totalPounds,
+        subtotal: subtotalPence / 100,
+        discount: discountPence / 100,
+        deliveryFee: deliveryFeePence / 100,
+        serviceFee: serviceFeePence / 100,
+        estimatedReadyMinutes: estimatedMinutes,
+        estimatedReadyAt: estimatedReadyAt.toISOString(),
+        createdAt: new Date().toISOString(),
+        source: 'web',
+      });
+      console.log(`[Square] Order ${cleanOrderId} persisted to Firestore`);
+    } catch (dbErr) {
+      // Log but never fail — customer is already charged
+      console.error(`[Square] Firestore write failed for ${cleanOrderId}:`, dbErr);
+    }
+
+    // ── 4. Return Success ─────────────────────────────────────────────
     return NextResponse.json({
       success: true,
       orderId: cleanOrderId,
@@ -291,6 +371,7 @@ export async function POST(req: NextRequest) {
       status: 'paid',
       total: totalPounds,
       subtotal: subtotalPence / 100,
+      discount: discountPence / 100,
       deliveryFee: deliveryFeePence / 100,
       serviceFee: serviceFeePence / 100,
       fulfillmentType: isDelivery ? 'delivery' : 'collection',

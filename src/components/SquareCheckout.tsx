@@ -15,10 +15,8 @@ interface CheckoutFormProps {
 }
 
 /**
- * Square Checkout via Cloud Function redirect.
- * Per architecture rules: NO inline SquarePaymentForm / react-square-web-payments-sdk.
- * Instead, we call the Cloud Function which creates a Square Checkout link
- * and redirect the customer to Square's hosted checkout page.
+ * Square Checkout via local Route Handler.
+ * Calls /api/checkout/square for server-side order creation and payment.
  */
 export const SquareCheckout: React.FC<CheckoutFormProps> = ({
   amount,
@@ -40,41 +38,36 @@ export const SquareCheckout: React.FC<CheckoutFormProps> = ({
       // 1. Create the order in Firestore
       const orderId = await onCreateOrder();
 
-      // 2. Call the Cloud Function to create a Square Checkout link
-      const response = await fetch(
-        'https://us-central1-taste-of-village-21052.cloudfunctions.net/createSquareCheckout',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            orderId,
-            amount: Math.round(amount * 100), // pence
-            locationId: activeLocation.square?.locationId,
-            items: cart.map((item) => ({
-              name: item.name,
-              quantity: item.quantity,
-              price: item.price,
-            })),
-            redirectUrl: typeof window !== 'undefined'
-              ? `${window.location.origin}/track/${orderId}`
-              : '',
-          }),
-        }
-      );
+      // 2. Call the local Route Handler (single payment path — no Cloud Function)
+      const response = await fetch('/api/checkout/square', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_id: orderId,
+          cart: cart.map((item) => ({
+            id: item.id,
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+          customer: { name: 'Walk-in', phone: '' },
+          sourceId: 'CASH', // Placeholder — SquareCheckout is used for collection orders
+          branch: activeLocation.id,
+          fulfillment_type: 'collection',
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to create checkout link');
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to create checkout');
       }
 
       const data = await response.json();
 
-      if (data.checkoutUrl) {
-        // Redirect to Square hosted checkout
-        if (typeof window !== 'undefined') {
-          window.location.href = data.checkoutUrl;
-        }
+      if (data.success) {
+        onPaymentSuccess(data.orderId || orderId, 'online');
       } else {
-        throw new Error('No checkout URL returned');
+        throw new Error('Payment was not successful');
       }
     } catch (err: any) {
       console.error('[SquareCheckout] Error:', err);

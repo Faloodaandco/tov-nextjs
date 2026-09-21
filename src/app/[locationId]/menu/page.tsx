@@ -721,27 +721,12 @@ function MenuPageContent() {
         branch: activeLocation.id,
       };
 
-      // 1. Hit Next.js Route Handler (same-origin, no CORS)
-      let res: Response | null = null;
-      try {
-        res = await fetch('/api/checkout/square', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-      } catch (netErr) {
-        console.warn('[Square] Route Handler fetch failed:', netErr);
-      }
-
-      // 2. Cloud Function fallback ONLY on network errors
-      if (!res) {
-        const directUrl = 'https://europe-west2-taste-of-village-21052.cloudfunctions.net/createSquareOrderAndPayment';
-        res = await fetch(directUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-      }
+      // Hit Next.js Route Handler (single payment path — no Cloud Function fallback)
+      const res = await fetch('/api/checkout/square', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
       if (!res.ok) {
         let errData;

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
-import { Plus, Minus, ShoppingBag, X, CheckCircle2, AlertCircle, Clock, ChefHat, Check } from 'lucide-react';
+import { Plus, Minus, ShoppingBag, X, CheckCircle2, AlertCircle, Clock, ChefHat, Check, Sparkles } from 'lucide-react';
 import { MenuItem } from '@/types';
 import { getMenuItems } from '@/services/menuService';
 import { streamSingleOrder } from '@/services/orderService';
@@ -58,7 +58,7 @@ const SquareCheckoutForm = ({ cart, cartTotal, onCreateOrder, onPaymentSuccess, 
                    const res = await fetch('/api/loyalty', {
                      method: 'POST',
                      headers: { 'Content-Type': 'application/json' },
-                     body: JSON.stringify({ action: 'check', phone: customerInfo.phone, branch: activeLocation.square.locationId })
+                     body: JSON.stringify({ action: 'check', phone: customerInfo.phone, branch: activeLocation.id })
                    });
                    const data = await res.json();
                    if (data.status === 'found') {
@@ -69,7 +69,7 @@ const SquareCheckoutForm = ({ cart, cartTotal, onCreateOrder, onPaymentSuccess, 
                        await fetch('/api/loyalty', {
                          method: 'POST',
                          headers: { 'Content-Type': 'application/json' },
-                         body: JSON.stringify({ action: 'enroll', phone: customerInfo.phone, customerName: customerInfo.name, branch: activeLocation.square.locationId })
+                         body: JSON.stringify({ action: 'enroll', phone: customerInfo.phone, customerName: customerInfo.name, branch: activeLocation.id })
                        });
                        alert('Successfully enrolled! Points for this order will be credited to your new account.');
                      }

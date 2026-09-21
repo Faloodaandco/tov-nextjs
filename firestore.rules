@@ -35,18 +35,23 @@ service cloud.firestore {
       allow write: if hasModule('menu') || hasModule('itembuilder');
     }
 
-    // Orders - Public read (needed for print bridge), public create (web checkout)
-    // Write access remains restricted to staff
+    // Orders - Staff read only (PII protection), public create (web checkout)
+    // Customer order tracking via server-side API route, NOT direct Firestore reads
     match /orders/{document=**} {
-      allow read: if true;
+      allow read: if isStaff();
       allow create: if true;
       allow update: if isStaff() || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['needsPrinting', 'printed', 'printStatus']));
       allow delete: if isStaff();
     }
 
-    // Mail queue - Public can create (order alerts), only Admin can read/update
+    // Mail queue - Public can create (order alerts) with strict validation, only Admin can read/update
     match /mail/{document=**} {
-      allow create: if true;
+      allow create: if true
+        && request.resource.data.keys().hasOnly(['to', 'replyTo', 'message', 'orderId', 'timestamp', 'status'])
+        && request.resource.data.to is list
+        && request.resource.data.message is map
+        && request.resource.data.orderId is string
+        && request.resource.data.orderId.size() < 50;
       allow read, update, delete: if isAdmin();
     }
 
@@ -72,17 +77,6 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
-    // Print Queue - Public read/write (bridge reads, POS writes)
-    // POS may run with offline PIN auth (no Firebase token)
-    match /print_queue/{document=**} {
-      allow read, write: if true;
-    }
-
-    // Drawer logs - Staff can log drawer opens
-    match /drawer_logs/{document=**} {
-      allow write: if isStaff();
-    }
-
     // Review queue and private feedback — Cloud Functions write, Admin reads
     match /review_queue/{document=**} {
       allow read: if isAdmin();
@@ -90,34 +84,14 @@ service cloud.firestore {
     }
     match /private_feedback/{document=**} {
       allow read: if isAdmin();
-      allow create: if true; // Anonymous customers can submit feedback
+      allow create: if true
+        && request.resource.data.keys().hasOnly(['rating', 'comment', 'branch', 'orderId', 'createdAt', 'phone', 'name'])
+        && request.resource.data.comment is string
+        && request.resource.data.comment.size() < 2000;
       allow update, delete: if isAdmin();
     }
 
-    // ─── Staff & Scheduling Collections ───
-    // Secured via Go backend custom tokens (IAM fix applied 2026-05-12)
-
-    // Staff records — read for staff, write for admin
-    match /staff/{document=**} {
-      allow read: if isStaff();
-      allow write: if isAdmin();
-    }
-
-    // Shifts (clock in/out records) — read/write for staff
-    match /shifts/{document=**} {
-      allow read, write: if isStaff();
-    }
-
-    // Rota (weekly schedule) — read for staff, write for admin or 'staff' module
-    match /rota/{document=**} {
-      allow read: if isStaff();
-      allow write: if hasModule('staff');
-    }
-
-    // Staff availability (for scheduling)
-    match /staff_availability/{document=**} {
-      allow read, write: if isStaff();
-    }
+    // ─── Customer Data Collections ───
 
     // Customer loyalty profiles — Zero-Trust Security Lockdown
     // Reads are restricted to the authenticated customer (via Phone Auth) OR staff.

@@ -19,23 +19,26 @@ export async function POST(req: NextRequest) {
 
     const body = await req.text();
 
-    // Signature verification (if any signature key is configured)
-    if (signatureKeys.length > 0) {
-      const signature = req.headers.get('x-square-hmacsha256-signature');
-      const notificationUrl = `${req.headers.get('x-forwarded-proto') || 'https'}://${req.headers.get('host')}/api/webhooks/square`;
+    // Signature verification — fail-closed: no keys = reject
+    if (signatureKeys.length === 0) {
+      console.error('[Square Webhook] No signature keys configured — rejecting all webhooks');
+      return NextResponse.json({ error: 'Webhook signature verification not configured' }, { status: 500 });
+    }
 
-      const isValid = signatureKeys.some((key) => {
-        const hmac = crypto
-          .createHmac('sha256', key)
-          .update(notificationUrl + body)
-          .digest('base64');
-        return signature === hmac;
-      });
+    const signature = req.headers.get('x-square-hmacsha256-signature');
+    const notificationUrl = `${req.headers.get('x-forwarded-proto') || 'https'}://${req.headers.get('host')}/api/webhooks/square`;
 
-      if (!isValid) {
-        console.warn('[Square Webhook] Invalid signature');
-        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
-      }
+    const isValid = signatureKeys.some((key) => {
+      const hmac = crypto
+        .createHmac('sha256', key)
+        .update(notificationUrl + body)
+        .digest('base64');
+      return signature === hmac;
+    });
+
+    if (!isValid) {
+      console.warn('[Square Webhook] Invalid signature');
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
 
     const event = JSON.parse(body);

@@ -24,7 +24,8 @@ const nextConfig: NextConfig = {
       { source: "/print-qrs", destination: "/print-qr", permanent: true },
       { source: "/qr", destination: "/links", permanent: true },
       { source: "/menu", destination: "/hayes/menu", permanent: false },
-      { source: "/order", destination: "/hayes/order", permanent: false },
+      { source: "/order", destination: "/hayes/menu", permanent: true },
+      { source: "/:locationId/order", destination: "/:locationId/menu", permanent: true },
     ];
   },
 };

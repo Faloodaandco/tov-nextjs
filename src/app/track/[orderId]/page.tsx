@@ -1,11 +1,9 @@
 // @ts-nocheck
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { streamSingleOrder } from '@/services/orderService';
-import { Order } from '@/types';
 import { Clock, CheckCircle2, ChefHat, Package, MapPin, ChevronLeft, Phone, MessageCircle, Sparkles, Timer, Bell, Coffee, Plus } from 'lucide-react';
 import { SHOP_CONFIG, buildWhatsAppLink } from '@/config/shopConfig';
 import { requestPushPermission, setupForegroundNotifications } from '@/utils/pushService';
@@ -21,7 +19,7 @@ const TRACKING_STEPS = [
 export default function TrackOrder() {
   const params = useParams();
   const orderId = params.orderId as string;
-  const [order, setOrder] = useState<Order | null>(null);
+  const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState({ minutes: 0, seconds: 0 });
@@ -38,14 +36,19 @@ export default function TrackOrder() {
     return () => { if (typeof cleanup === 'function') cleanup(); };
   }, [orderId]);
 
-  useEffect(() => {
-    if (!orderId) {
-      setError(true);
+  // Poll order status via API (no direct Firestore reads — orders collection is staff-only)
+  const fetchOrder = useCallback(async () => {
+    if (!orderId) return;
+    try {
+      const res = await fetch(`/api/orders/${orderId}`);
+      if (!res.ok) {
+        setError(true);
+        setLoading(false);
+        return;
+      }
+      const fetchedOrder = await res.json();
       setLoading(false);
-      return;
-    }
-    const unsubscribe = streamSingleOrder(orderId, (fetchedOrder) => {
-      setLoading(false);
+
       if (fetchedOrder) {
         if (prevStatus.current && prevStatus.current !== fetchedOrder.status) {
           try { 
@@ -71,9 +74,22 @@ export default function TrackOrder() {
       } else {
         setError(true);
       }
-    });
-    return () => unsubscribe();
+    } catch {
+      setError(true);
+      setLoading(false);
+    }
   }, [orderId]);
+
+  useEffect(() => {
+    if (!orderId) {
+      setError(true);
+      setLoading(false);
+      return;
+    }
+    fetchOrder(); // Initial fetch
+    const interval = setInterval(fetchOrder, 5000); // Poll every 5s
+    return () => clearInterval(interval);
+  }, [orderId, fetchOrder]);
 
   useEffect(() => {
     if (!order) return;
