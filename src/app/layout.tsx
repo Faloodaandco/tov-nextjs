@@ -72,10 +72,13 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/assets/tov-monogram.svg", type: "image/svg+xml" },
-      { url: "/assets/tov-monogram-transparent.png", sizes: "192x192", type: "image/png" },
+      { url: "/assets/tov-tree.svg", type: "image/svg+xml" },
+      { url: "/assets/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/assets/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/assets/tov-icon-192.png", sizes: "192x192", type: "image/png" },
     ],
-    apple: "/assets/tov-monogram-transparent.png",
+    apple: "/assets/apple-touch-icon.png",
+    shortcut: "/favicon.ico",
   },
   manifest: "/manifest.json",
 };

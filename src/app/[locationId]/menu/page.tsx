@@ -554,11 +554,12 @@ function MenuPageContent() {
       : HAYES_DELIVERY_TIERS.UB4.fee;
   }, [isDeliveryOrder, activeDeliveryTier, discountedSubtotal, activeLocation.id]);
 
-  // C5: 10% service fee on food subtotal
+  // C5: 10% service fee on food subtotal (Charged on delivery only; collection is free)
   const serviceFee = useMemo(() => {
+    if (!isDeliveryOrder) return 0;
     const rate = activeLocation.delivery?.serviceFeePercent || 10;
     return Math.round(discountedSubtotal * rate) / 100;
-  }, [discountedSubtotal, activeLocation]);
+  }, [isDeliveryOrder, discountedSubtotal, activeLocation]);
 
   const finalCartTotal = discountedSubtotal + deliveryFee + serviceFee;
 
@@ -1135,6 +1136,8 @@ function MenuPageContent() {
         >
           <button
             onClick={() => setIsCartOpen(true)}
+            data-testid="cart-floating-bar"
+            aria-label="Review and Pay"
             className="w-full md:w-auto bg-pine/95 backdrop-blur-md text-[#FDFBF7] px-6 py-3.5 rounded-full shadow-[0_12px_32px_rgba(26,60,52,0.35)] hover:shadow-[0_16px_40px_rgba(26,60,52,0.45)] active:scale-[0.98] border border-amber-200/30 hover:border-amber-200/50 transition-all flex items-center justify-between md:justify-start gap-5 tracking-wider"
           >
             <div className="flex items-center gap-3">

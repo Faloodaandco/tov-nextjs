@@ -101,8 +101,8 @@ export async function POST(req: NextRequest) {
       deliveryFeePence = Math.max(0, Math.round(Number(delivery_fee || 0) * 100));
     }
 
-    // Service fee (10% on food subtotal)
-    const serverServiceFee = calculateServiceFee(subtotalPence / 100, branchId);
+    // Service fee (10% on food subtotal - Delivery orders only; collection is free)
+    const serverServiceFee = isDelivery ? calculateServiceFee(subtotalPence / 100, branchId) : 0;
     const serviceFeePence = Math.round(serverServiceFee * 100);
 
     // ── Server-Side Discount Calculation ──────────────────────────────

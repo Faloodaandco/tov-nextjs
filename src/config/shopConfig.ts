@@ -131,7 +131,7 @@ export function haversineDistanceMiles(
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-/** Calculate the 10% service fee on the food subtotal. */
+/** Calculate the 10% service fee on the food subtotal (applicable to delivery orders only). */
 export function calculateServiceFee(foodSubtotal: number, branchId: LocationId = 'hayes'): number {
   const loc = LOCATIONS[branchId];
   const percent = loc.delivery.serviceFeePercent;
