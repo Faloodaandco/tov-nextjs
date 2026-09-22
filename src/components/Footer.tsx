@@ -120,6 +120,29 @@ export const Footer = () => {
           </p>
         </div>
 
+        {/* #4 FSA Food Hygiene Rating Badge — Official Trust Signal */}
+        <div className="border-t border-bg-sand/10 pt-8 mb-8 flex flex-col items-center gap-4">
+          <a
+            href="https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex flex-col items-center gap-3 transition-opacity hover:opacity-80"
+            aria-label="Food Hygiene Rating 5 — Very Good. Verified by the Food Standards Agency."
+          >
+            <img
+              src="/assets/fhrs-badge-5.svg"
+              alt="Food Hygiene Rating 5 — Very Good"
+              width={146}
+              height={81}
+              className="h-16 md:h-20 w-auto"
+              loading="lazy"
+            />
+            <span className="text-[9px] text-bg-sand/30 font-bold uppercase tracking-[0.2em]">
+              Inspected 21 July 2026 · Food Standards Agency
+            </span>
+          </a>
+        </div>
+
         {/* Bottom Bar */}
         <div className="border-t border-bg-sand/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
           <p className="text-bg-sand/40 text-[10px] md:text-xs font-black uppercase tracking-[0.2em]">

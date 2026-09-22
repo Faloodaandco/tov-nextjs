@@ -85,6 +85,16 @@ export default function SplashSelector() {
                     EXPLORE BRANCH &rarr;
                   </span>
                 </div>
+
+                {/* FSA Food Hygiene Rating 5 Badge */}
+                <div className="mt-5 pt-4 border-t border-pine/5 flex items-center justify-center gap-3 relative z-10">
+                  <img
+                    src="/assets/fhrs-badge-5-horizontal.svg"
+                    alt="Food Hygiene Rating 5 — Very Good"
+                    className="h-7 w-auto opacity-50 group-hover:opacity-80 transition-opacity"
+                    loading="lazy"
+                  />
+                </div>
               </Link>
             );
           })}

@@ -88,7 +88,18 @@ export function getRestaurantSchema(locationId: string) {
     ],
     "menu": `${SHOP_CONFIG.website}/${loc.id}/menu`,
     "acceptsReservations": "True",
-    "hasMenu": `${SHOP_CONFIG.website}/${loc.id}/menu`
+    "hasMenu": `${SHOP_CONFIG.website}/${loc.id}/menu`,
+    "hasCredential": {
+      "@type": "EducationalOccupationalCredential",
+      "name": "Food Hygiene Rating 5 — Very Good",
+      "credentialCategory": "Food Hygiene Rating Scheme (FHRS)",
+      "recognizedBy": {
+        "@type": "GovernmentOrganization",
+        "name": "Food Standards Agency",
+        "url": "https://www.food.gov.uk/"
+      },
+      "url": "https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
+    }
   };
 }
 

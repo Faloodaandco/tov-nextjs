@@ -949,6 +949,19 @@ function MenuPageContent() {
           <span>•</span>
           <span>Live Kitchen Tracking</span>
         </div>
+        <a
+          href="https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 mt-1 hover:opacity-80 transition-opacity"
+        >
+          <img
+            src="/assets/fhrs-badge-5-horizontal.svg"
+            alt="Food Hygiene Rating 5"
+            className="h-6 w-auto"
+            loading="lazy"
+          />
+        </a>
         <p className="text-[9px] text-pine/40">Official Taste of Village Digital Checkout</p>
       </div>
     </div>

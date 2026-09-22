@@ -503,9 +503,24 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
           </button>
         )}
 
-        <div className="flex items-center justify-center gap-1.5 text-[11px] text-pine/50 pt-1 text-center">
-          <Lock size={12} />
-          <span>Processed by Square POS · 256-bit SSL encrypted · PCI-DSS Level 1</span>
+        <div className="flex flex-col items-center gap-2 pt-1">
+          <div className="flex items-center justify-center gap-1.5 text-[11px] text-pine/50 text-center">
+            <Lock size={12} />
+            <span>Processed by Square POS · 256-bit SSL encrypted · PCI-DSS Level 1</span>
+          </div>
+          <a
+            href="https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <img
+              src="/assets/fhrs-badge-5-horizontal.svg"
+              alt="Food Hygiene Rating 5"
+              className="h-5 w-auto opacity-60"
+              loading="lazy"
+            />
+          </a>
         </div>
       </form>
     </div>

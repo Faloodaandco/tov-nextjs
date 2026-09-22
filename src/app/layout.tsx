@@ -129,6 +129,17 @@ export default function RootLayout({
                   "https://www.facebook.com/p/Taste-of-Village-61551672639808/",
                   "https://www.tiktok.com/@tasteofvillage1",
                 ],
+                "hasCredential": {
+                  "@type": "EducationalOccupationalCredential",
+                  "name": "Food Hygiene Rating",
+                  "credentialCategory": "Food Hygiene Rating Scheme (FHRS)",
+                  "recognizedBy": {
+                    "@type": "GovernmentOrganization",
+                    "name": "Food Standards Agency",
+                    "url": "https://www.food.gov.uk/"
+                  },
+                  "url": "https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
+                },
               },
               {
                 "@context": "https://schema.org",
@@ -161,6 +172,17 @@ export default function RootLayout({
                 sameAs: [
                   "https://www.instagram.com/tasteofvillageslough/",
                 ],
+                "hasCredential": {
+                  "@type": "EducationalOccupationalCredential",
+                  "name": "Food Hygiene Rating",
+                  "credentialCategory": "Food Hygiene Rating Scheme (FHRS)",
+                  "recognizedBy": {
+                    "@type": "GovernmentOrganization",
+                    "name": "Food Standards Agency",
+                    "url": "https://www.food.gov.uk/"
+                  },
+                  "url": "https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
+                },
               },
             ]),
           }}
