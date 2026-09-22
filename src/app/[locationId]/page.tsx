@@ -10,11 +10,10 @@ import { LocationSelectorModal } from '@/components/LocationSelectorModal';
 import { useLocationConfig } from '@/hooks/useLocationConfig';
 import { getBranchSeoMeta, getRestaurantSchema, getFaqSchema } from '@/lib/seoData';
 
-const HERO_VIDEOS = [
-  '/assets/heroes/hero_vid_1.mp4',
-  '/assets/heroes/hero_vid_2.mp4',
-  '/assets/heroes/hero_vid_5.mp4',
-  '/assets/heroes/hero_vid_7.mp4'
+const HERO_IMAGES = [
+  '/assets/bg-food.webp',
+  '/assets/interior/interior_main.webp',
+  '/assets/interior/interior_2.webp'
 ];
 
 export default function TOVHome() {
@@ -22,7 +21,7 @@ export default function TOVHome() {
   const params = useParams();
   const routeLocationId = ((params?.locationId as string) || '').toLowerCase() === 'slough' ? 'slough' : 'hayes';
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-  const [currentMedia, setCurrentMedia] = useState(0);
+  const [currentImage, setCurrentImage] = useState(0);
   const { scrollYProgress } = useScroll();
   const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
 
@@ -84,8 +83,8 @@ export default function TOVHome() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentMedia((prev) => (prev + 1) % HERO_VIDEOS.length);
-    }, 8000); // Rotate every 8 seconds for video playback
+      setCurrentImage((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 5000); // Rotate every 5 seconds
     return () => clearInterval(interval);
   }, []);
 
@@ -99,23 +98,14 @@ export default function TOVHome() {
         {/* Full-width Cinematic Image Background */}
         <div className="absolute inset-0 w-full h-full z-10 overflow-hidden">
           <motion.div style={{ y: yBg }} className="absolute inset-0 w-full h-full">
-            {HERO_VIDEOS.map((src, index) => (
-              <video 
+            {HERO_IMAGES.map((src, index) => (
+              <img 
                 key={src}
                 src={src} 
-                autoPlay 
-                loop 
-                muted 
-                playsInline
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000
-                  ${index === currentMedia ? 'opacity-100' : 'opacity-0'}`}
-                style={{ 
-                  transformOrigin: 'center center',
-                  transform: index === currentMedia 
-                    ? (index % 2 === 0 ? 'scale(1.1)' : 'scale(1)') 
-                    : (index % 2 === 0 ? 'scale(1)' : 'scale(1.1)'),
-                  transition: 'opacity 1s ease-in-out, transform 8s linear'
-                }}
+                alt="Taste of Village Signature Dish" 
+                className={`absolute inset-0 w-full h-full object-cover transition-all duration-[2500ms] ease-in-out
+                  ${index === currentImage ? 'opacity-100 scale-105' : 'opacity-0 scale-100'}`}
+                style={{ transformOrigin: 'center center' }}
               />
             ))}
           </motion.div>
