@@ -974,7 +974,7 @@ function MenuPageContent() {
       
       {/* Cinematic Premium Hero Header */}
       <div className="relative w-full h-[45vh] min-h-[360px] overflow-hidden bg-pine">
-        <div className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity scale-105 filter blur-[1px]" style={{ backgroundImage: "url('/assets/mix_grill_hero.webp')" }}></div>
+        <div className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity scale-105 filter blur-[1px]" style={{ backgroundImage: "url('/assets/bg-food.webp')" }}></div>
         <div className="absolute inset-0 bg-gradient-to-t from-pine via-pine/80 to-pine/90"></div>
         <div className="absolute inset-0 bg-[url('/assets/tov-new-pattern.webp')] bg-repeat opacity-10 mix-blend-overlay"></div>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 animate-fade-in-up z-20 pt-28 md:pt-36">

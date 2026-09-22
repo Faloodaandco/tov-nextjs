@@ -11,9 +11,9 @@ import { useLocationConfig } from '@/hooks/useLocationConfig';
 import { getBranchSeoMeta, getRestaurantSchema, getFaqSchema } from '@/lib/seoData';
 
 const HERO_IMAGES = [
-  '/assets/lamb_karahi_hero.webp',
-  '/assets/mix_grill_hero.webp',
-  '/assets/chicken_karahi_hero.webp'
+  '/assets/bg-food.webp',
+  '/assets/interior/interior_main.webp',
+  '/assets/interior/interior_2.webp'
 ];
 
 export default function TOVHome() {
@@ -504,7 +504,7 @@ export default function TOVHome() {
               className="absolute inset-0 w-full h-full"
             >
               <img 
-                src="/assets/chicken_karahi_hero.webp" 
+                src="/assets/fb_hero_1.jpg" 
                 alt="Authentic Karahi" 
                 className="w-full h-full object-cover bibi-hover-image"
               />
