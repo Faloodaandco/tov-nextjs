@@ -663,12 +663,12 @@ export default function TOVHome() {
 
           <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
             {[
-              { text: "Hands down the best Karahi in West London. The meat literally falls off the bone. Fast delivery and piping hot!", author: "Ali Raza", platform: "Google" },
-              { text: "I drive 40 minutes just for their weekend Nashta. The Halwa Puri is exactly like Lahore. Unbelievable quality.", author: "Sarah M.", platform: "Google" },
-              { text: "Ordered the Family Platter for a party. Generous portions, authentic smokey BBQ flavor, and the mint chutney is addictive.", author: "Usman K.", platform: "UberEats" },
-              { text: "The new rewards system is sick! Free dessert on my 3rd order. Taste of Village never misses.", author: "Imran S.", platform: "Website" },
-              { text: "As a vegetarian, I appreciate the separate dietary tags now. Their Chana Masala and fresh Tandoori Roti are a weekly staple for me.", author: "Priya V.", platform: "Google" },
-              { text: "We booked a table for 8 online. The pre-order feature meant our food was ready the moment we sat down. 10/10 service.", author: "David H.", platform: "Website" }
+              { text: "Absolutely fantastic! The Lamb Charsi Karahi is incredibly authentic and the meat is perfectly cooked. Best we've had.", author: "Google Reviewer", platform: "Google" },
+              { text: "One of the best Pakistani restaurants in Slough. The food is always fresh and the staff, especially Simran, go out of their way to make you feel welcome.", author: "Google Reviewer", platform: "Google" },
+              { text: "Amazing service and great food. Special thanks to Arsh and Zia for their extremely attentive and friendly service!", author: "Google Reviewer", platform: "Google" },
+              { text: "The Lamb Biryani and fresh kebabs are highly recommended. A genuinely clean, warm, and welcoming environment for families.", author: "Google Reviewer", platform: "Google" },
+              { text: "Their traditional Charsi Karahi is unmatched. The atmosphere is warm, and you can tell they care about their hygiene and food quality.", author: "Google Reviewer", platform: "Google" },
+              { text: "Consistently good food. The mixed kebabs are perfect, and the customer service is always professional and fast.", author: "Google Reviewer", platform: "Google" }
             ].map((review, i) => (
               <motion.div 
                 key={i}
