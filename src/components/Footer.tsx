@@ -123,22 +123,26 @@ export const Footer = () => {
         {/* #4 FSA Food Hygiene Rating Badge — Official Trust Signal */}
         <div className="border-t border-bg-sand/10 pt-8 mb-8 flex flex-col items-center gap-4">
           <a
-            href="https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
+            href={loc.id === 'slough'
+              ? 'https://ratings.food.gov.uk/business/1963386/taste-of-village-slough'
+              : 'https://ratings.food.gov.uk/business/653844/a-taste-of-village'}
             target="_blank"
             rel="noopener noreferrer"
             className="group flex flex-col items-center gap-3 transition-opacity hover:opacity-80"
-            aria-label="Food Hygiene Rating 5 — Very Good. Verified by the Food Standards Agency."
+            aria-label={`Food Hygiene Rating ${loc.id === 'slough' ? '5 — Very Good' : '4 — Good'}. Verified by the Food Standards Agency.`}
           >
             <img
-              src="/assets/fhrs-badge-5.svg"
-              alt="Food Hygiene Rating 5 — Very Good"
+              src={loc.id === 'slough' ? '/assets/fhrs-badge-5.svg' : '/assets/fhrs-badge-4.svg'}
+              alt={`Food Hygiene Rating ${loc.id === 'slough' ? '5 — Very Good' : '4 — Good'}`}
               width={146}
               height={81}
               className="h-16 md:h-20 w-auto"
               loading="lazy"
             />
             <span className="text-[9px] text-bg-sand/30 font-bold uppercase tracking-[0.2em]">
-              Inspected 21 July 2026 · Food Standards Agency
+              {loc.id === 'slough'
+                ? 'Inspected 21 July 2026 · Food Standards Agency'
+                : 'Inspected 25 June 2026 · Food Standards Agency'}
             </span>
           </a>
         </div>

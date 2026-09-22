@@ -131,14 +131,14 @@ export default function RootLayout({
                 ],
                 "hasCredential": {
                   "@type": "EducationalOccupationalCredential",
-                  "name": "Food Hygiene Rating",
+                  "name": "Food Hygiene Rating 4 — Good",
                   "credentialCategory": "Food Hygiene Rating Scheme (FHRS)",
                   "recognizedBy": {
                     "@type": "GovernmentOrganization",
                     "name": "Food Standards Agency",
                     "url": "https://www.food.gov.uk/"
                   },
-                  "url": "https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
+                  "url": "https://ratings.food.gov.uk/business/653844/a-taste-of-village"
                 },
               },
               {
@@ -174,7 +174,7 @@ export default function RootLayout({
                 ],
                 "hasCredential": {
                   "@type": "EducationalOccupationalCredential",
-                  "name": "Food Hygiene Rating",
+                  "name": "Food Hygiene Rating 5 — Very Good",
                   "credentialCategory": "Food Hygiene Rating Scheme (FHRS)",
                   "recognizedBy": {
                     "@type": "GovernmentOrganization",

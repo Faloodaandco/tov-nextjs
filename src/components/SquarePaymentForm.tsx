@@ -508,19 +508,26 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
             <Lock size={12} />
             <span>Processed by Square POS · 256-bit SSL encrypted · PCI-DSS Level 1</span>
           </div>
-          <a
-            href="https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity"
-          >
-            <img
-              src="/assets/fhrs-badge-5-horizontal.svg"
-              alt="Food Hygiene Rating 5"
-              className="h-5 w-auto opacity-60"
-              loading="lazy"
-            />
-          </a>
+          {(() => {
+            const isSloughBranch = appId === 'sq0idp-ZEv7rUulY8UD5q8eZTPR8A';
+            return (
+              <a
+                href={isSloughBranch
+                  ? 'https://ratings.food.gov.uk/business/1963386/taste-of-village-slough'
+                  : 'https://ratings.food.gov.uk/business/653844/a-taste-of-village'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity"
+              >
+                <img
+                  src={isSloughBranch ? '/assets/fhrs-badge-5-horizontal.svg' : '/assets/fhrs-badge-4-horizontal.svg'}
+                  alt={`Food Hygiene Rating ${isSloughBranch ? '5' : '4'}`}
+                  className="h-5 w-auto opacity-60"
+                  loading="lazy"
+                />
+              </a>
+            );
+          })()}
         </div>
       </form>
     </div>

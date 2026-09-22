@@ -950,14 +950,16 @@ function MenuPageContent() {
           <span>Live Kitchen Tracking</span>
         </div>
         <a
-          href="https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
+          href={activeLocation.id === 'slough'
+            ? 'https://ratings.food.gov.uk/business/1963386/taste-of-village-slough'
+            : 'https://ratings.food.gov.uk/business/653844/a-taste-of-village'}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 mt-1 hover:opacity-80 transition-opacity"
         >
           <img
-            src="/assets/fhrs-badge-5-horizontal.svg"
-            alt="Food Hygiene Rating 5"
+            src={activeLocation.id === 'slough' ? '/assets/fhrs-badge-5-horizontal.svg' : '/assets/fhrs-badge-4-horizontal.svg'}
+            alt={`Food Hygiene Rating ${activeLocation.id === 'slough' ? '5' : '4'}`}
             className="h-6 w-auto"
             loading="lazy"
           />
