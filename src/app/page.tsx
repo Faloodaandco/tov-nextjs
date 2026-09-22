@@ -23,13 +23,14 @@ export default function SplashSelector() {
 
       <div className="relative z-10 w-full max-w-5xl flex flex-col items-center text-center mt-6 md:mt-10">
         
-        {/* Solid Arch Logo */}
-        <div className="bg-terracotta rounded-t-[100px] p-4 md:p-5 mb-8 shadow-lg w-20 h-24 md:w-24 md:h-28 flex flex-col items-center justify-end relative z-10 border-b border-terracotta pb-4 md:pb-6">
-           <img 
-            src="/assets/tov-tree.svg" 
-            alt="Taste of Village Tree" 
-            className="w-12 h-12 md:w-16 md:h-16 object-contain brightness-0 invert"
+        {/* Exact SPA Logo Asset */}
+        <div className="text-center z-10 flex flex-col items-center gap-4 mb-8">
+          <img 
+            src="/assets/tov-logo-tree-terracotta-alpha.png" 
+            alt="Taste of Village Monogram" 
+            className="h-24 md:h-28 w-auto object-contain drop-shadow-[0_4px_12px_rgba(138,61,42,0.15)]"
           />
+          <div className="tov-frieze w-24"></div>
         </div>
 
         <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-[56px] text-pine tracking-[0.2em] uppercase mb-5 relative z-10">
