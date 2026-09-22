@@ -72,6 +72,8 @@ export async function POST(req: NextRequest) {
 
     // ── Server-Side Price Re-Verification ─────────────────────────────
     const activeMenu = getMenuItems(branchId);
+    const otherBranch = branchId === 'slough' ? 'hayes' : 'slough';
+    const fallbackMenu = getMenuItems(otherBranch);
     let subtotalPence = 0;
 
     for (const item of cart) {
@@ -79,7 +81,38 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Each cart item must have an id' }, { status: 400 });
       }
 
-      const found = activeMenu.find((m) => m.id === item.id);
+      const rawId = String(item.id).trim();
+      const isLarge = /_large$/i.test(rawId);
+      const isRegular = /_regular$/i.test(rawId);
+      const baseId = rawId.replace(/_(regular|large)$/i, '');
+
+      // 1. Direct match in active branch menu (or baseId for sized items)
+      let found = activeMenu.find((m) => m.id === rawId || m.id === baseId);
+
+      // 2. Cross-branch fallback (e.g. user had an item in cart from switching branches)
+      if (!found) {
+        const otherBranchItem = fallbackMenu.find((m) => m.id === rawId || m.id === baseId);
+        if (otherBranchItem) {
+          // Attempt name match in active branch
+          const nameMatch = activeMenu.find(
+            (m) => m.name.toLowerCase().trim() === otherBranchItem.name.toLowerCase().trim()
+          );
+          if (nameMatch) {
+            found = nameMatch;
+            item.id = isLarge ? `${nameMatch.id}_large` : isRegular ? `${nameMatch.id}_regular` : nameMatch.id;
+          } else {
+            found = otherBranchItem;
+          }
+        }
+      }
+
+      // 3. Fallback match by item name in active branch or fallback branch
+      if (!found && item.name) {
+        const cleanName = String(item.name).replace(/\s*\((Regular|Large|Meal)\)$/i, '').toLowerCase().trim();
+        found = activeMenu.find((m) => m.name.toLowerCase().trim() === cleanName)
+          || fallbackMenu.find((m) => m.name.toLowerCase().trim() === cleanName);
+      }
+
       if (!found) {
         return NextResponse.json(
           { error: `Unknown menu item: ${String(item.id).slice(0, 50)}. Please refresh and try again.` },
@@ -87,9 +120,24 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const trustedPrice = found.price;
+      // Calculate trusted unit price
+      let trustedPrice = found.price;
+      if (isLarge) {
+        trustedPrice = found.category === 'rolls' ? found.price + 2.50 : found.price + 2.99;
+      } else if (isRegular) {
+        trustedPrice = found.price;
+      } else if (Number(item.price) > found.price) {
+        const clientPrice = Number(item.price);
+        if (clientPrice <= found.price + 20) {
+          trustedPrice = clientPrice;
+        }
+      }
+
       item.price = trustedPrice;
       item.unit_price = trustedPrice;
+      if (!item.name || item.name.trim() === '') {
+        item.name = found.name;
+      }
 
       const qty = Math.max(1, Math.floor(Number(item.quantity || 1)));
       subtotalPence += Math.round(trustedPrice * 100) * qty;

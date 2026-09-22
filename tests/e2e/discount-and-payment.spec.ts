@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE = 'https://tov-nextjs.vercel.app';
+const BASE = process.env.PLAYWRIGHT_TEST_BASE_URL || '';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DISCOUNT & PRICING TESTS
@@ -49,6 +49,39 @@ test.describe('Discount & Pricing', () => {
     expect(res.status()).toBe(400);
     const body = await res.json();
     expect(body.error).toContain('Unknown menu item');
+  });
+
+  test('checkout API resolves cross-branch item ID (Hayes Roti on Slough)', async ({ request }) => {
+    const res = await request.post(`${BASE}/api/checkout/square`, {
+      data: {
+        cart: [{ id: 'tov_item_1777480501499_b5x9x', quantity: 1, price: 0.99 }],
+        customer: { name: 'Test Cross Branch', phone: '07000000000' },
+        sourceId: 'cnon:card-nonce-ok',
+        branch: 'slough',
+        fulfillmentType: 'collection',
+      },
+    });
+    const body = await res.json();
+    // Must NOT throw Unknown menu item
+    if (body.error) {
+      expect(body.error).not.toContain('Unknown menu item');
+    }
+  });
+
+  test('checkout API resolves sized item IDs (_large and _regular)', async ({ request }) => {
+    const res = await request.post(`${BASE}/api/checkout/square`, {
+      data: {
+        cart: [{ id: 'tov_slough_nihari_large', quantity: 1, price: 12.98 }],
+        customer: { name: 'Test Sized', phone: '07000000000' },
+        sourceId: 'cnon:card-nonce-ok',
+        branch: 'slough',
+        fulfillmentType: 'collection',
+      },
+    });
+    const body = await res.json();
+    if (body.error) {
+      expect(body.error).not.toContain('Unknown menu item');
+    }
   });
 
   test('checkout API rejects item without id', async ({ request }) => {
@@ -157,7 +190,7 @@ test.describe('Routing', () => {
   });
 
   test('Homepage loads', async ({ page }) => {
-    await page.goto(BASE, { waitUntil: 'domcontentloaded' });
+    await page.goto(BASE || '/', { waitUntil: 'domcontentloaded' });
     await expect(page).toHaveTitle(/Taste of Village/i);
   });
 

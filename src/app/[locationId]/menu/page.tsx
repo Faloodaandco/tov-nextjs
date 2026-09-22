@@ -298,7 +298,8 @@ function MenuPageContent() {
   useEffect(() => {
     async function loadMenu() {
       try {
-        const items = await getMenuItems();
+        const branchKey = (activeLocation.id === 'slough' ? 'slough' : 'hayes') as 'hayes' | 'slough';
+        const items = getMenuItems(branchKey);
         setMenuItems(items);
       } catch (error) {
         console.error("Failed to load menu items", error);
@@ -307,7 +308,7 @@ function MenuPageContent() {
       }
     }
     loadMenu();
-  }, []);
+  }, [activeLocation.id]);
 
   const predefinedCategories = [
     // 1. STARTERS & CHARCOAL GRILL
