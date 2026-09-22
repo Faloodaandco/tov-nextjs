@@ -101,7 +101,19 @@ export default function RootLayout({
                 "@type": "Restaurant",
                 name: "Taste of Village Hayes",
                 alternateName: "Taste of Village",
-                image: "https://tasteofvillagerestaurants.co.uk/assets/chicken_karahi_hero.webp",
+                image: [
+                  "https://tasteofvillagerestaurants.co.uk/assets/chicken_karahi_hero.webp",
+                  "https://tasteofvillagerestaurants.co.uk/assets/lamb_karahi_hero.webp",
+                  "https://tasteofvillagerestaurants.co.uk/assets/mix_grill_hero.webp",
+                  "https://tasteofvillagerestaurants.co.uk/assets/nihari_hero.webp",
+                  "https://tasteofvillagerestaurants.co.uk/assets/haleem_hero.webp"
+                ],
+                logo: {
+                  "@type": "ImageObject",
+                  "url": "https://tasteofvillagerestaurants.co.uk/assets/tov-icon-512.png",
+                  "width": 512,
+                  "height": 512
+                },
                 url: "https://tasteofvillagerestaurants.co.uk/hayes",
                 telephone: "+442034093786",
                 address: {
@@ -146,7 +158,19 @@ export default function RootLayout({
                 "@type": "Restaurant",
                 name: "Taste of Village Slough",
                 alternateName: "Taste of Village Farnham Road",
-                image: "https://tasteofvillagerestaurants.co.uk/assets/chicken_karahi_hero.webp",
+                image: [
+                  "https://tasteofvillagerestaurants.co.uk/assets/chicken_karahi_hero.webp",
+                  "https://tasteofvillagerestaurants.co.uk/assets/lamb_karahi_hero.webp",
+                  "https://tasteofvillagerestaurants.co.uk/assets/mix_grill_hero.webp",
+                  "https://tasteofvillagerestaurants.co.uk/assets/nihari_hero.webp",
+                  "https://tasteofvillagerestaurants.co.uk/assets/haleem_hero.webp"
+                ],
+                logo: {
+                  "@type": "ImageObject",
+                  "url": "https://tasteofvillagerestaurants.co.uk/assets/tov-icon-512.png",
+                  "width": 512,
+                  "height": 512
+                },
                 url: "https://tasteofvillagerestaurants.co.uk/slough",
                 telephone: "+441234567890",
                 address: {
