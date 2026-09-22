@@ -19,11 +19,15 @@ import type { FullMenuItem } from '@/components/CustomisationModal';
 import { MenuItemCard } from '@/components/MenuItemCard';
 import { MenuCategoryNav } from '@/components/MenuCategoryNav';
 import { SquareCheckout } from '@/components/SquareCheckout';
+import { SquarePaymentForm } from '@/components/SquarePaymentForm';
 import { UpsellDrawer } from '@/components/UpsellDrawer';
 import { LocationSelectorModal } from '@/components/LocationSelectorModal';
 import { trackInitiateCheckout, trackOrderPlaced } from '@/utils/analytics';
 import { useLocationConfig } from '@/hooks/useLocationConfig';
 import { appendItemsToOrder } from '@/services/orderService';
+import { isValidUKMobile, getPhoneError, normaliseUKPhone, captureClientMeta } from '@/lib/validation';
+import { sendOrderNotificationEmail } from '@/services/emailService';
+import { getExistingPushToken, requestPushPermission } from '@/utils/pushService';
 
 /* ─── Size Variations for Website ─── */
 const WEB_SIZE_ITEMS: Record<string, { regular: number; large: number }> = {};

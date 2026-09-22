@@ -111,9 +111,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const setupRecaptcha = (containerId: string) => {
     if (typeof window !== 'undefined' && !(window as any).recaptchaVerifier) {
-      (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
-        size: 'invisible',
-      });
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      try {
+        (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, el, {
+          size: 'invisible',
+        });
+      } catch (err) {
+        console.warn('[AuthContext] Recaptcha setup error:', err);
+      }
     }
   };
 

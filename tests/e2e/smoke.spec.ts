@@ -133,4 +133,65 @@ test.describe('TOV Smoke Tests', () => {
     await collectionBtn.click();
     await expect(page.locator('text=Service Fee (10%)')).not.toBeVisible();
   });
+
+  test('Proceeding to payment opens Square payment form without crashing', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('tov_cart', JSON.stringify([
+        { id: 'chicken_karahi', name: 'Chicken Karahi', price: 15.99, quantity: 1 }
+      ]));
+    });
+
+    const pageErrors: string[] = [];
+    page.on('pageerror', err => pageErrors.push(err.message));
+
+    await page.goto('/slough/menu');
+
+    const cartTrigger = page.locator('[data-testid="cart-floating-bar"], button:has-text("Review & Pay")').first();
+    await cartTrigger.waitFor({ state: 'visible', timeout: 10000 });
+    await cartTrigger.click();
+
+    // Select Collection
+    const collectionBtn = page.locator('button:has-text("Collection")').first();
+    await collectionBtn.waitFor({ state: 'visible', timeout: 5000 });
+    await collectionBtn.click();
+
+    // Click checkout in cart drawer
+    const checkoutBtn = page.locator('button:has-text("CHECKOUT")').last();
+    await checkoutBtn.waitFor({ state: 'visible', timeout: 5000 });
+    await checkoutBtn.click();
+
+    // Dismiss upsell if present
+    const upsellContinueBtn = page.locator('button:has-text("Continue to Details & Payment")').first();
+    if (await upsellContinueBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await upsellContinueBtn.click();
+    }
+
+    // Fill customer info
+    const nameInput = page.locator('input[placeholder*="John Doe"], input[placeholder*="Name" i]').first();
+    await nameInput.waitFor({ state: 'visible', timeout: 5000 });
+    await nameInput.fill('John Doe');
+
+    const phoneInput = page.locator('input[placeholder*="07" i], input[type="tel"]').first();
+    await phoneInput.fill('07123456789');
+
+    const emailInput = page.locator('input[type="email"], input[placeholder*="email" i]').first();
+    await emailInput.fill('john.doe@example.com');
+
+    // Click "Proceed to Payment"
+    const proceedToPaymentBtn = page.locator('button:has-text("Proceed to Payment")').first();
+    await proceedToPaymentBtn.waitFor({ state: 'attached', timeout: 5000 });
+    await proceedToPaymentBtn.evaluate((el: HTMLElement) => el.click());
+
+    // Verify Payment step is reached and page has NOT crashed
+    const paymentHeading = page.locator('h3:has-text("Complete Payment")').first();
+    await expect(paymentHeading).toBeVisible({ timeout: 10000 });
+
+    // Ensure #square-card-container exists
+    const squareContainer = page.locator('#square-card-container');
+    await expect(squareContainer).toBeVisible();
+
+    // Check that no fatal reference errors occurred
+    const fatalErrors = pageErrors.filter(e => e.includes('is not defined'));
+    expect(fatalErrors).toHaveLength(0);
+  });
 });
