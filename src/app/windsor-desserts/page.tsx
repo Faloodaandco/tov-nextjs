@@ -47,10 +47,10 @@ export default function SeoPage() {
           >
             <h2 className="font-serif text-3xl mb-4 text-pine">A Taste of the East</h2>
             <p className="text-pine/70 leading-relaxed mb-6">
-              Looking for something more exotic than standard ice cream? Our renowned Royal Heritage Taste of Village is the perfect blend of sweet basil seeds, Rooh Afza, and rich Kulfi, bridging the gap between traditional South Asian sweets and modern luxury.
+              Looking for something more exotic than standard ice cream? Our renowned Royal Shahi Kulfi Falooda is the perfect blend of sweet basil seeds, Rooh Afza, and rich Kulfi, bridging the gap between traditional South Asian sweets and modern luxury.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
-              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Pistachio Royale Taste of Village</li>
+              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Pistachio Kulfi Falooda</li>
               <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Traditional Kulfi</li>
               <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Late Night Karak Chai</li>
             </ul>

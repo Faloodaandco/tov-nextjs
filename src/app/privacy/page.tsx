@@ -1,15 +1,9 @@
 'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
-import { SEOHead } from '@/components/SEOHead';
-
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-cream pt-32 pb-24 px-6 md:px-12">
-      <SEOHead 
-        title="Privacy Policy - Taste of Village"
-        description="Privacy Policy for Taste of Village."
-      />
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}

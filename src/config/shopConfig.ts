@@ -45,7 +45,7 @@ export const LOCATIONS = {
     phone: '01753 326341',
     w3w: '///slough.words.here',
     coords: { lat: 51.5273, lng: -0.6128 },
-    googleReviewUrl: 'https://g.page/r/slough-placeholder/review',
+    googleReviewUrl: 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+260+Farnham+Road+Slough+SL1+4XL',
     square: {
       enabled: true,
       appId: 'sq0idp-ZEv7rUulY8UD5q8eZTPR8A',
@@ -344,14 +344,6 @@ export const KITCHEN_SLA = {
 };
 
 /**
- * 🚀 FEATURE FLAGS
- * Pure serverless: use static JSON catalogs for 100% reliable uptime.
- */
-export const FEATURES = {
-  USE_API_MENU: false,
-} as const;
-
-/**
  * Active Promotion — change this ONE object to update the promo across the entire site.
  */
 export const ACTIVE_PROMO = {
@@ -455,12 +447,22 @@ export function calculatePromoDiscount(
   return { discount, eligibleSubtotal, eligibleItemsCount, isTimeValid: true };
 }
 
-/**
- * Builds a WhatsApp deeplink URL with a pre-filled message.
- */
-export function buildWhatsAppLink(message: string): string {
+export function buildWhatsAppLink(message: string, customPhone?: string): string {
   const encoded = encodeURIComponent(message);
-  return `https://wa.me/${SHOP_CONFIG.whatsappNumber}?text=${encoded}`;
+  let phone = customPhone ? customPhone.replace(/\D/g, '') : SHOP_CONFIG.whatsappNumber;
+  if (phone.startsWith('0')) {
+    phone = '44' + phone.substring(1);
+  }
+  return `https://wa.me/${phone}?text=${encoded}`;
+}
+
+/**
+ * Builds a 1-tap Google Review invite message for WhatsApp.
+ */
+export function buildReviewWhatsAppMessage(branch: 'hayes' | 'slough', customerName?: string): string {
+  const loc = LOCATIONS[branch];
+  const nameSalutation = customerName ? `Hi ${customerName}, ` : 'Hi! ';
+  return `${nameSalutation}thank you for dining with Taste of Village (${loc.city})! If you enjoyed your authentic Desi meal, please consider leaving us a quick 5-star review on Google: ${loc.googleReviewUrl} — your support helps our kitchen family immensely! ❤️`;
 }
 
 /**

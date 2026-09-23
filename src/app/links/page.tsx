@@ -10,8 +10,6 @@ const Instagram = ({ className, ...props }: { className?: string; [key: string]:
 const Facebook = ({ className, ...props }: { className?: string; [key: string]: any }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
 );
-import { SEOHead } from '@/components/SEOHead';
-import { SHOP_CONFIG } from '@/config/shopConfig';
 
 // A 3D Animated Card Component using Framer Motion
 const TiltCard = ({ children, delay = 0, to, href }: { children: React.ReactNode; delay?: number; to?: string; href?: string }) => {
@@ -143,12 +141,6 @@ export default function Links() {
 
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center justify-center py-20 px-6 overflow-hidden bg-[#FDF9F1] font-sans">
-      <SEOHead 
-        title={`Socials | ${SHOP_CONFIG.name}`}
-        description="Quick links to our menu, ordering, reviews, and social media."
-        canonical="/links"
-      />
-      
       <AnimatedTree />
 
       {/* Floating particles for depth */}

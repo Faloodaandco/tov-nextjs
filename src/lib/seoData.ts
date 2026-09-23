@@ -9,19 +9,19 @@ export function getBranchSeoMeta(locationId: string) {
 
   if (isSlough) {
     return {
-      homeTitle: 'Authentic Pakistani & Halal Restaurant Slough | Farnham Rd',
-      homeDescription: 'Taste of Village Slough serves authentic Lahori & Gujranwala cuisine on Farnham Road (SL1). Enjoy fresh Karahi, Slow-Cooked Nihari, Haleem, Sizzling BBQ & Weekend Desi Nashta.',
-      menuTitle: 'Full Menu & Prices | Taste of Village Slough',
-      menuDescription: 'View the official Taste of Village Slough takeaway menu. Order fresh Chicken & Lamb Karahi, Biryani, Tandoori Naan, and BBQ online for collection on Farnham Rd.',
+      homeTitle: 'Authentic Pakistani & Halal Restaurant Slough | Farnham Rd | Taste of Village',
+      homeDescription: 'Taste of Village Slough serves authentic Lahori & Gujranwala cuisine at 260 Farnham Road (SL1 4XL). 5★ Hygiene Rating. Fresh Karahi, Slow-Cooked Nihari, Haleem, Sizzling BBQ & Weekend Desi Nashta.',
+      menuTitle: 'Full Menu & Takeaway Prices | Taste of Village Slough',
+      menuDescription: 'View the official Taste of Village takeaway menu at 260 Farnham Road, Slough. Order fresh Chicken & Lamb Karahi, Biryani, Tandoori Naan, and BBQ online for collection.',
       canonicalBase: '/slough'
     };
   }
 
   // Default: Hayes (Uxbridge Road)
   return {
-    homeTitle: 'Authentic Lahori Karahi & Halal Restaurant Hayes | Uxbridge Rd',
-    homeDescription: 'Taste of Village Hayes brings traditional Lahori cooking to Uxbridge Road (UB4). 100% Halal certified. Indulge in Iron-Wok Karahi, Nihari, Haleem, BBQ Grill & Fresh Naan.',
-    menuTitle: 'Full Menu & Prices | Taste of Village Hayes',
+    homeTitle: 'Authentic Lahori Karahi & Halal Restaurant Hayes | Uxbridge Rd | Taste of Village',
+    homeDescription: 'Taste of Village Hayes brings traditional Lahori cooking to 766B Uxbridge Road (UB4 0RU). 100% Halal certified. Indulge in Iron-Wok Karahi, Nihari, Haleem, BBQ Grill & Fresh Naan.',
+    menuTitle: 'Full Menu & Takeaway Prices | Taste of Village Hayes',
     menuDescription: 'Browse the full takeaway menu for Taste of Village Hayes. Order signature Lamb Karahi, Chicken Tikka, Biryani, and Karak Chai online for quick collection.',
     canonicalBase: '/hayes'
   };
@@ -232,7 +232,39 @@ export function getFaqSchema(locationId: string) {
           "@type": "Answer",
           "text": `Yes, table reservations can be made instantly online via our website booking tool or by calling our branch directly on ${loc.phone}.`
         }
+      },
+      {
+        "@type": "Question",
+        "name": "Where can I park near Taste of Village on Farnham Road, Slough?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Convenient street parking is available along Farnham Road and adjacent side avenues right outside 260 Farnham Road for quick collection and relaxed dine-in meals."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you deliver food across Slough, Burnham, and Langley?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! We run our own dedicated driver fleet delivering hot meals within a 5-mile radius across postcodes SL1, SL2, SL3, and SL4. Delivery is free on orders over £30."
+        }
       }
     ]
+  };
+}
+
+/**
+ * Generates Schema.org BreadcrumbList structured data.
+ */
+export function getBreadcrumbSchema(items: { name: string; url: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": items.map((item, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": item.name,
+      "item": item.url
+    }))
   };
 }

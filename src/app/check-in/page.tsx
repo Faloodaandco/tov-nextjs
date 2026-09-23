@@ -20,7 +20,6 @@ import {
 import QRCode from 'react-qr-code';
 import { CampaignService } from '@/services/CampaignService';
 import { LOCATIONS } from '@/config/shopConfig';
-import { SEOHead } from '@/components/SEOHead';
 
 interface StoredVoucher {
   code: string;
@@ -231,10 +230,6 @@ function CheckInContent() {
 
   return (
     <div className="min-h-screen bg-[#F7F2E7] text-[#1A3C34] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans selection:bg-[#D14836]/20">
-      <SEOHead 
-        title="Check-In & Claim 50% OFF | Taste of Village"
-        description="Check in at Taste of Village Hayes or Slough to unlock your instant 50% OFF dining voucher."
-      />
 
       {/* ── Soft Fluid Ambient Background Blobs ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">

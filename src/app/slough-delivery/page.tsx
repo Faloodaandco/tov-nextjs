@@ -12,8 +12,81 @@ export const metadata: Metadata = {
 };
 
 export default function SloughDeliveryPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "FoodEstablishment",
+        "name": "Taste of Village Slough Delivery",
+        "image": "https://tasteofvillagerestaurants.co.uk/assets/og-share-preview.jpg",
+        "url": "https://tasteofvillagerestaurants.co.uk/slough-delivery",
+        "telephone": "+441753326341",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "260 Farnham Road",
+          "addressLocality": "Slough",
+          "addressRegion": "Berkshire",
+          "postalCode": "SL1 4XL",
+          "addressCountry": "GB"
+        },
+        "geo": { "@type": "GeoCoordinates", "latitude": 51.5273, "longitude": -0.6128 },
+        "servesCuisine": ["Pakistani", "Halal", "South Asian", "Lahori", "Gujranwala"],
+        "priceRange": "££",
+        "hasMenu": "https://tasteofvillagerestaurants.co.uk/slough/menu",
+        "areaServed": [
+          { "@type": "PostalCode", "postalCode": "SL1" },
+          { "@type": "PostalCode", "postalCode": "SL2" },
+          { "@type": "PostalCode", "postalCode": "SL3" },
+          { "@type": "PostalCode", "postalCode": "SL4" }
+        ],
+        "potentialAction": {
+          "@type": "OrderAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://tasteofvillagerestaurants.co.uk/slough/menu",
+            "actionPlatform": ["http://schema.org/DesktopWebPlatform", "http://schema.org/MobileWebPlatform"]
+          },
+          "deliveryMethod": "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which areas in Slough do you deliver to?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Our dedicated delivery fleet delivers within a 5-mile radius covering postcodes SL1, SL2, SL3, and SL4 (Slough, Burnham, Langley, Datchet, and Windsor)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the minimum order and free delivery threshold for Slough?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The minimum delivery order is £20, and all orders over £30 qualify for 100% free delivery directly to your door."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is the delivered food freshly prepared?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, every dish is cooked fresh to order in our kitchen at 260 Farnham Road and delivered in thermal sealed packaging to arrive piping hot."
+            }
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="bg-sand min-h-screen pt-20 pb-20 font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Now Delivering Across SL1–SL4</span>

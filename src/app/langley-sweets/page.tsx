@@ -36,7 +36,7 @@ export default function SeoPage() {
               Share the authentic tastes of back home with the next generation. We specialize in traditional recipes that refuse to cut corners, offering the finest South Asian sweets and refreshing beverages in the area.
             </p>
             <ul className="space-y-3 font-semibold text-sand">
-              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> The Royal Heritage Taste of Village</li>
+              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Authentic Shahi Kulfi Falooda</li>
               <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Authentic Mango Lassi</li>
               <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Traditional Kulfi Cuts</li>
             </ul>

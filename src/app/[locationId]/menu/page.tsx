@@ -7,14 +7,13 @@ import { generateId } from '@/utils/generateId';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useStore } from '@/context/StoreContext';
-import { Plus, Minus, ShoppingBag, X, CheckCircle2, MessageCircle, Phone, MapPin, Search, ChevronRight, CreditCard, Store, Clock, Bell, Ticket, Printer, Zap, AlertCircle } from 'lucide-react';
+import { Plus, Minus, ShoppingBag, X, CheckCircle2, MessageCircle, Phone, MapPin, Search, ChevronRight, CreditCard, Store, Clock, Bell, Ticket, Printer, Zap, AlertCircle, Star, RotateCcw } from 'lucide-react';
 import { getMenuItems } from '@/services/menuService';
 import { MenuItem } from '@/types';
 import { buildWhatsAppLink, buildOrderWhatsAppMessage, SHOP_CONFIG, LOCATIONS, ACTIVE_PROMO, calculatePromoDiscount, isBreakfastPromoTime, isPostcodeInDeliveryZone, getDeliveryTier, HAYES_DELIVERY_TIERS, SLOUGH_DELIVERY_TIERS } from '@/config/shopConfig';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { CustomisationModal } from '@/components/CustomisationModal';
-import { logTableScan, logSessionDuration } from '@/services/analyticsService';
 import type { FullMenuItem } from '@/components/CustomisationModal';
 import { MenuItemCard } from '@/components/MenuItemCard';
 import { MenuCategoryNav } from '@/components/MenuCategoryNav';
@@ -234,7 +233,7 @@ function MenuPageContent() {
   const activeLocation = contextLocation || LOCATIONS[routeLocationId] || LOCATIONS.hayes;
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? (typeof window !== 'undefined' ? window : {}).location.search : '');
   const tableParam = searchParams.get('table') || searchParams.get('t');
-  const { addToCart, cart, removeFromCart, addOrder, clearCart, activePromo, isCartOpen, setIsCartOpen } = useStore();
+  const { addToCart, cart, removeFromCart, addOrder, clearCart, activePromo, isCartOpen, setIsCartOpen, reorderItems } = useStore();
   const [activeCategory, setActiveCategory] = useState<string>('starters');
   const [activeDietaryFilters, setActiveDietaryFilters] = useState<string[]>([]);
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'details' | 'payment' | 'success'>('cart');
@@ -284,6 +283,42 @@ function MenuPageContent() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isUpsellOpen, setIsUpsellOpen] = useState(false);
   const [pushAlertActive, setPushAlertActive] = useState(false);
+  const [lastOrder, setLastOrder] = useState<any>(null);
+  const [showReorderBanner, setShowReorderBanner] = useState(true);
+
+  // Restore regular customer profile and previous order for 1-tap reordering
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedCustomer = window.localStorage.getItem('tov_customer_info');
+        if (savedCustomer) {
+          const parsed = JSON.parse(savedCustomer);
+          if (parsed && typeof parsed === 'object') {
+            setCustomerInfo(prev => ({
+              name: prev.name || parsed.name || '',
+              phone: prev.phone || parsed.phone || '',
+              email: prev.email || parsed.email || '',
+            }));
+          }
+        }
+        const savedLastOrder = window.localStorage.getItem('tov_last_order');
+        if (savedLastOrder) {
+          const parsedOrder = JSON.parse(savedLastOrder);
+          if (parsedOrder && Array.isArray(parsedOrder.items) && parsedOrder.items.length > 0) {
+            setLastOrder(parsedOrder);
+          }
+        }
+      } catch (e) {
+        console.warn('[LocalStorage] Reading regular customer profile:', e);
+      }
+    }
+  }, []);
+
+  const handleReorderLastMeal = () => {
+    if (!lastOrder || !Array.isArray(lastOrder.items) || lastOrder.items.length === 0) return;
+    reorderItems(lastOrder.items);
+    setToastMessage(`🔁 Reordered: ${lastOrder.items.length} item${lastOrder.items.length > 1 ? 's' : ''} added to your cart!`);
+  };
 
   // Auto-dismiss toast notification
   useEffect(() => {
@@ -789,7 +824,40 @@ function MenuPageContent() {
       clearCart();
       trackOrderPlaced(finalOrderId, finalCartTotal, cart);
       sendOrderNotificationEmail(completedOrderData as any);
-      (typeof window !== 'undefined' ? window.localStorage : {}).setItem('last_order_time', Date.now().toString());
+
+      // Save order snapshot for 1-tap reorder & profile persistence
+      try {
+        if (typeof window !== 'undefined') {
+          const orderSnapshot = {
+            orderId: finalOrderId,
+            branch: activeLocation.id,
+            branchName: activeLocation.name,
+            items: cart.map(i => ({
+              id: i.id,
+              name: i.name,
+              price: i.price,
+              quantity: i.quantity,
+              modifiers: i.modifiers,
+              image: i.image,
+            })),
+            total: finalCartTotal,
+            timestamp: Date.now(),
+            customerName: customerInfo.name.trim(),
+            customerPhone: customerInfo.phone.trim(),
+            customerEmail: customerInfo.email.trim(),
+          };
+          window.localStorage.setItem('tov_last_order', JSON.stringify(orderSnapshot));
+          window.localStorage.setItem('tov_customer_info', JSON.stringify({
+            name: customerInfo.name.trim(),
+            phone: customerInfo.phone.trim(),
+            email: customerInfo.email.trim(),
+          }));
+          window.localStorage.setItem('last_order_time', Date.now().toString());
+          setLastOrder(orderSnapshot);
+        }
+      } catch (storageErr) {
+        console.warn('[LocalStorage] Save last order error:', storageErr);
+      }
     } catch (err: any) {
       const msg = (err.message || '').toUpperCase().includes('PERMISSION')
         ? 'There was a connection issue completing your order confirmation. If money was debited, please contact the restaurant.'
@@ -1059,7 +1127,54 @@ function MenuPageContent() {
       {/* Menu Sections Rendered Sequentially */}
       <div className="max-w-7xl mx-auto px-4 py-12">
         
-
+        {/* 1-Tap Reorder Banner for Returning Diners */}
+        {lastOrder && showReorderBanner && Array.isArray(lastOrder.items) && lastOrder.items.length > 0 && (
+          <div className="mb-10 bg-gradient-to-r from-pine via-[#15342c] to-pine text-white p-5 md:p-6 rounded-2xl shadow-xl border-2 border-terracotta/40 relative overflow-hidden animate-fade-in-up">
+            <div className="absolute right-0 top-0 w-72 h-72 bg-terracotta/10 rounded-full blur-2xl pointer-events-none -translate-y-1/2 translate-x-1/4" />
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-terracotta/20 border border-terracotta/50 flex items-center justify-center shrink-0 text-amber-300">
+                  <RotateCcw size={22} className="animate-spin-slow" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest bg-terracotta text-white px-2.5 py-0.5 rounded-full shadow-sm">
+                      Regular Diner
+                    </span>
+                    <span className="text-xs text-white/70">
+                      Welcome back{lastOrder.customerName ? `, ${lastOrder.customerName}` : ''}!
+                    </span>
+                  </div>
+                  <h3 className="font-display text-lg md:text-xl font-bold mt-1 text-white tracking-wide">
+                    Reorder Your Previous Meal in 1 Tap
+                  </h3>
+                  <p className="text-xs text-white/70 mt-1 max-w-xl line-clamp-1">
+                    {lastOrder.items.map((it: any) => `${it.quantity}x ${it.name}`).join(', ')} • £{Number(lastOrder.total || 0).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleReorderLastMeal}
+                  className="px-6 py-3 bg-terracotta hover:bg-terracotta-dark text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-md hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer"
+                >
+                  <Zap size={15} className="fill-white" />
+                  <span>Reorder Now (£{Number(lastOrder.total || 0).toFixed(2)})</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowReorderBanner(false)}
+                  className="p-2 text-white/40 hover:text-white rounded-xl hover:bg-white/10 transition-colors"
+                  title="Dismiss"
+                  aria-label="Dismiss reorder banner"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Loading state */}
         {isLoading && (
@@ -1252,6 +1367,16 @@ function MenuPageContent() {
                   <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="" className="w-32 h-32 opacity-20 mb-6 grayscale mix-blend-multiply" />
                   <p className="font-display text-2xl font-bold uppercase tracking-widest text-pine/50">Your table is waiting</p>
                   <p className="text-xs font-bold tracking-widest uppercase mt-4">Add items to begin</p>
+                  {lastOrder && Array.isArray(lastOrder.items) && lastOrder.items.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={handleReorderLastMeal}
+                      className="mt-6 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-pine text-white text-xs font-bold uppercase tracking-wider hover:bg-terracotta transition-all shadow-md hover:scale-105 active:scale-95 cursor-pointer"
+                    >
+                      <RotateCcw size={14} className="text-amber-300" />
+                      <span>Reorder Previous Meal ({lastOrder.items.length} items)</span>
+                    </button>
+                  )}
                 </div>
               ) : (
                 cart.map((item, index) => {
@@ -2070,7 +2195,7 @@ function MenuPageContent() {
                   {/* Or call & print */}
                   <div className="grid grid-cols-2 gap-3 w-full">
                     <a
-                      href={`tel:${SHOP_CONFIG.phoneNumberRaw}`}
+                      href={`tel:${activeLocation.phone.replace(/\s+/g, '')}`}
                       className="py-3 bg-white text-pine rounded-full font-bold border border-pine/20 flex items-center justify-center gap-2 hover:bg-pine/5 transition-colors shadow-sm text-xs"
                     >
                       <Phone size={16} />
@@ -2184,6 +2309,30 @@ function MenuPageContent() {
                   >
                     📍 Track Your Order Live
                   </a>
+
+                  {/* Google Review Velocity Booster */}
+                  <div className="w-full bg-gradient-to-br from-white to-[#FAF6EE] border-2 border-terracotta/40 p-5 rounded-2xl text-center shadow-sm">
+                    <div className="flex justify-center gap-1 text-amber-400 mb-1.5">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star key={i} size={18} className="fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                    <h4 className="font-display font-bold text-pine text-base uppercase tracking-wider mb-1">
+                      Support {activeLocation.name} on Google
+                    </h4>
+                    <p className="text-xs text-pine/70 mb-3.5 leading-relaxed font-medium">
+                      Your 5-star review helps our kitchen family thrive in {activeLocation.city}. Takes only 15 seconds!
+                    </p>
+                    <a
+                      href={activeLocation.googleReviewUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-3 bg-pine hover:bg-terracotta text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <Star size={15} className="text-amber-300 fill-amber-300" />
+                      Leave a 5★ Google Review
+                    </a>
+                  </div>
 
                   <div className="bg-white p-4 rounded-2xl shadow-md border border-terracotta-light/30 inline-block">
                     <QRCode 

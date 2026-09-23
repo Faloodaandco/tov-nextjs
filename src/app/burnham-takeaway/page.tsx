@@ -12,8 +12,62 @@ export const metadata: Metadata = {
 };
 
 export default function SeoPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Restaurant",
+        "name": "Taste of Village - Pakistani Takeaway Serving Burnham",
+        "image": "https://tasteofvillagerestaurants.co.uk/assets/og-share-preview.jpg",
+        "url": "https://tasteofvillagerestaurants.co.uk/burnham-takeaway",
+        "telephone": "+441753326341",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "260 Farnham Road",
+          "addressLocality": "Slough",
+          "addressRegion": "Berkshire",
+          "postalCode": "SL1 4XL",
+          "addressCountry": "GB"
+        },
+        "geo": { "@type": "GeoCoordinates", "latitude": 51.5273, "longitude": -0.6128 },
+        "servesCuisine": ["Pakistani", "Halal", "South Asian", "Lahori", "Gujranwala"],
+        "priceRange": "££",
+        "hasMenu": "https://tasteofvillagerestaurants.co.uk/slough/menu",
+        "areaServed": [
+          { "@type": "AdministrativeArea", "name": "Burnham" },
+          { "@type": "AdministrativeArea", "name": "Taplow" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How far is Taste of Village from Burnham?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Taste of Village at 260 Farnham Road is located just 5–10 minutes down the A4 from Burnham, offering fast collection and direct home delivery."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you deliver hot Pakistani food to Burnham?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, our own drivers deliver freshly cooked Karahi, Biryani, and Tandoori BBQ straight to Burnham and Taplow with free delivery on orders over £30."
+            }
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="bg-sand min-h-screen pt-20 pb-20 font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Minutes from Burnham</span>

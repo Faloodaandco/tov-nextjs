@@ -20,7 +20,7 @@ export default function SloughBreakfastPage() {
         "name": "Taste of Village Slough - Authentic Breakfast",
         "image": "https://tasteofvillagerestaurants.co.uk/assets/og-share-preview.jpg",
         "url": "https://tasteofvillagerestaurants.co.uk/slough-breakfast",
-        "telephone": "+441234567890",
+        "telephone": "+441753326341",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "260 Farnham Road",

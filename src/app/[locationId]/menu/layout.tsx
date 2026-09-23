@@ -1,9 +1,7 @@
 import type { Metadata } from 'next';
-import { getBranchSeoMeta, getRestaurantSchema, getFaqSchema, getBreadcrumbSchema } from '@/lib/seoData';
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
+import { getBranchSeoMeta, getMenuSchema, getBreadcrumbSchema } from '@/lib/seoData';
 
-interface BranchLayoutProps {
+interface MenuLayoutProps {
   children: React.ReactNode;
   params: Promise<{ locationId: string }>;
 }
@@ -15,59 +13,51 @@ export async function generateMetadata({ params }: { params: Promise<{ locationI
 
   return {
     title: {
-      absolute: seo.homeTitle,
+      absolute: seo.menuTitle,
     },
-    description: seo.homeDescription,
+    description: seo.menuDescription,
     alternates: {
-      canonical: `/${locId}`,
+      canonical: `/${locId}/menu`,
     },
     openGraph: {
       type: 'website',
-      title: seo.homeTitle,
-      description: seo.homeDescription,
-      url: `https://tasteofvillagerestaurants.co.uk/${locId}`,
+      title: seo.menuTitle,
+      description: seo.menuDescription,
+      url: `https://tasteofvillagerestaurants.co.uk/${locId}/menu`,
       siteName: 'Taste of Village',
       images: [
         {
           url: '/assets/og-share-preview.jpg',
           width: 1200,
           height: 630,
-          alt: `Taste of Village ${locId === 'slough' ? 'Slough' : 'Hayes'}`,
+          alt: `Taste of Village ${locId === 'slough' ? 'Slough' : 'Hayes'} Takeaway Menu`,
         },
       ],
     },
   };
 }
 
-export default async function BranchLayout({ children, params }: BranchLayoutProps) {
+export default async function MenuLayout({ children, params }: MenuLayoutProps) {
   const { locationId } = await params;
   const locId = (locationId || '').toLowerCase() === 'slough' ? 'slough' : 'hayes';
-  const restaurantSchema = getRestaurantSchema(locId);
-  const faqSchema = getFaqSchema(locId);
+  const menuSchema = getMenuSchema(locId);
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: 'Home', url: 'https://tasteofvillagerestaurants.co.uk' },
-    { name: locId === 'slough' ? 'Taste of Village Slough' : 'Taste of Village Hayes', url: `https://tasteofvillagerestaurants.co.uk/${locId}` }
+    { name: locId === 'slough' ? 'Taste of Village Slough' : 'Taste of Village Hayes', url: `https://tasteofvillagerestaurants.co.uk/${locId}` },
+    { name: 'Takeaway Menu', url: `https://tasteofvillagerestaurants.co.uk/${locId}/menu` },
   ]);
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(menuSchema) }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <div className="sticky top-0 z-[60] w-full">
-        <Navbar />
-      </div>
       {children}
-      <Footer />
     </>
   );
 }

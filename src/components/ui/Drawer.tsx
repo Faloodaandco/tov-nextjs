@@ -10,7 +10,6 @@ interface DrawerProps {
   children: React.ReactNode;
   width?: string;
   side?: 'left' | 'right';
-  isDark?: boolean;
 }
 
 export const Drawer: React.FC<DrawerProps> = ({ 
@@ -20,7 +19,6 @@ export const Drawer: React.FC<DrawerProps> = ({
   children, 
   width = 'max-w-md',
   side = 'right',
-  isDark = false
 }) => {
   // Lock body scroll when open
   useEffect(() => {
@@ -60,18 +58,19 @@ export const Drawer: React.FC<DrawerProps> = ({
             className={`fixed top-0 ${side === 'right' ? 'right-0' : 'left-0'} h-full w-full ${width} bg-bg-sand shadow-2xl z-[101] flex flex-col border-${side === 'right' ? 'l' : 'r'} border-pine/10`}
           >
             {/* Header */}
-            <div className={`flex items-center justify-between p-6 border-b shrink-0 ${isDark ? 'bg-[#1A1A2E] border-white/10' : 'bg-white border-pine/5'}`}>
-              <h2 className={`font-display text-2xl font-black uppercase tracking-[0.1em] ${isDark ? 'text-[#F0E6D6]' : 'text-pine'}`}>{title}</h2>
+            <div className="flex items-center justify-between p-6 border-b shrink-0 bg-white border-pine/5">
+              <h2 className="font-display text-2xl font-black uppercase tracking-[0.1em] text-pine">{title}</h2>
               <button
                 onClick={onClose}
                 className="p-2 text-pine/40 hover:text-terracotta hover:bg-terracotta/10 rounded-full transition-colors"
+                aria-label="Close drawer"
               >
                 <X size={24} />
               </button>
             </div>
             
             {/* Content */}
-            <div className={`flex-1 overflow-y-auto min-h-0 ${isDark ? 'bg-[#1A1A2E]' : 'bg-white'}`}>
+            <div className="flex-1 overflow-y-auto min-h-0 bg-white">
               {children}
             </div>
           </motion.div>

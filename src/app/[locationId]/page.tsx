@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ChefHat, UtensilsCrossed, Clock, MapPin, ChevronDown, ChevronUp, Flame, CheckCircle, HelpCircle, ArrowRight, Sparkles } from 'lucide-react';
+import { ChefHat, UtensilsCrossed, Clock, MapPin, ChevronDown, ChevronUp, Flame, CheckCircle, HelpCircle, ArrowRight, Sparkles, Phone } from 'lucide-react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { SHOP_CONFIG, LOCATIONS } from '@/config/shopConfig';
 import { LocationSelectorModal } from '@/components/LocationSelectorModal';
@@ -48,7 +48,7 @@ export default function TOVHome() {
       setNearestBranch({
         id: 'slough',
         name: 'Taste of Village Slough',
-        address: '292 Farnham Road, Slough SL1 4XL',
+        address: '260 Farnham Road, Slough SL1 4XL',
         time: 'Ready for Collection in ~20 mins'
       });
     } else {
@@ -57,7 +57,7 @@ export default function TOVHome() {
       setNearestBranch({
         id: 'hayes',
         name: 'Taste of Village Hayes',
-        address: '124 Coldharbour Lane, Hayes UB3 3HF',
+        address: '766B Uxbridge Rd, Hayes UB4 0RU',
         time: 'Ready for Collection in ~20 mins'
       });
     }
@@ -163,6 +163,60 @@ export default function TOVHome() {
             </button>
           </motion.div>
 
+          {/* Local Trust Badges & Direct Action Row */}
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[11px] sm:text-xs font-bold text-bg-sand/90"
+          >
+            <span className="px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center gap-1.5 text-amber-300">
+              <span>⭐</span>
+              <span>{isSlough ? 'Food Hygiene Rating 5 (Very Good)' : 'Food Hygiene Rating 4 (Good)'}</span>
+            </span>
+            <span className="px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center gap-1.5 text-emerald-300">
+              <span>✓</span>
+              <span>100% Halal Certified</span>
+            </span>
+            <span className="px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center gap-1.5 text-bg-sand">
+              <MapPin size={12} className="text-terracotta" />
+              <span>{branchLoc.address}</span>
+            </span>
+          </motion.div>
+
+          {/* Quick Phone & Directions Dock */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+            className="mt-4 flex flex-wrap items-center justify-center gap-3"
+          >
+            <a
+              href={`tel:${branchLoc.phone.replace(/\s+/g, '')}`}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 text-white text-xs font-bold tracking-wider uppercase border border-white/20 transition-all hover:scale-105"
+            >
+              <Phone size={13} className="text-green-400" />
+              <span>Call: {branchLoc.phone}</span>
+            </a>
+            <a
+              href={isSlough 
+                ? 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+260+Farnham+Road+Slough+SL1+4XL'
+                : 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+766B+Uxbridge+Rd+Hayes+UB4+0RU'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 text-white text-xs font-bold tracking-wider uppercase border border-white/20 transition-all hover:scale-105"
+            >
+              <MapPin size={13} className="text-amber-300" />
+              <span>Get Directions</span>
+            </a>
+            <Link
+              href="/book"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 text-white text-xs font-bold tracking-wider uppercase border border-white/20 transition-all hover:scale-105"
+            >
+              <span>Book Table</span>
+            </Link>
+          </motion.div>
+
         </div>
 
         {/* Global Scroll Indicator */}
@@ -246,7 +300,7 @@ export default function TOVHome() {
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-terracotta/20 border border-terracotta/40 rounded-full text-terracotta-light text-xs font-black tracking-widest uppercase mb-4">
               <Flame size={14} className="text-terracotta" />
-              <span>{isSlough ? 'The Slough Sanctuary • 292 Farnham Road' : 'Authentic Punjabi Craft • Hayes & Slough'}</span>
+              <span>{isSlough ? 'The Slough Sanctuary • 260 Farnham Road' : 'Authentic Punjabi Craft • Hayes & Slough'}</span>
             </div>
             <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white tracking-[0.12em] uppercase leading-tight mb-4">
               {isSlough ? 'The Slough Sanctuary' : 'The Dining Sanctuary'}
@@ -468,6 +522,131 @@ export default function TOVHome() {
               </div>
             </motion.div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* ─── LOCAL FLAGSHIP VISITOR & LOCAL HUB ─── */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-pine text-bg-sand border-b-4 border-terracotta relative overflow-hidden">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <span className="text-amber-300 text-xs font-black uppercase tracking-[0.25em] block mb-2">
+              {isSlough ? 'Farnham Road Flagship • SL1 4XL' : 'Uxbridge Road Flagship • UB4 0RU'}
+            </span>
+            <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl text-white uppercase tracking-wider mb-4">
+              {isSlough ? 'Visit Taste of Village Slough' : 'Visit Taste of Village Hayes'}
+            </h2>
+            <p className="text-bg-sand/75 text-sm sm:text-base font-medium normal-case max-w-xl mx-auto">
+              {isSlough 
+                ? 'Join us at 260 Farnham Road for authentic Lahori & Gujranwala cooking, sizzling mixed grills, and weekend Desi Nashta.'
+                : 'Experience traditional Lahori hospitality and wok-fired iron karahis at 766B Uxbridge Road.'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Card 1: Address & Parking */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col justify-between hover:border-terracotta/60 transition-colors">
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-terracotta/20 flex items-center justify-center text-amber-300 mb-4">
+                  <MapPin size={20} />
+                </div>
+                <h3 className="font-display font-black text-lg text-white uppercase tracking-wide mb-2">
+                  Address &amp; Parking
+                </h3>
+                <p className="text-xs text-bg-sand/80 normal-case leading-relaxed mb-2 font-medium">
+                  <strong>{branchLoc.address}, {branchLoc.city} {branchLoc.postcode}</strong>
+                </p>
+                <p className="text-[11px] text-bg-sand/65 normal-case leading-relaxed font-normal">
+                  {isSlough 
+                    ? 'Convenient street and bay parking available directly outside along Farnham Road and adjacent side avenues.'
+                    : 'Customer street parking available along Uxbridge Road parade.'}
+                </p>
+              </div>
+              <a 
+                href={isSlough 
+                  ? 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+260+Farnham+Road+Slough+SL1+4XL'
+                  : 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+766B+Uxbridge+Rd+Hayes+UB4+0RU'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-terracotta-light hover:text-white transition-colors"
+              >
+                <span>Google Maps Directions &rarr;</span>
+              </a>
+            </div>
+
+            {/* Card 2: Collection & Turnaround */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col justify-between hover:border-terracotta/60 transition-colors">
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-300 mb-4">
+                  <Clock size={20} />
+                </div>
+                <h3 className="font-display font-black text-lg text-white uppercase tracking-wide mb-2">
+                  Fast Collection
+                </h3>
+                <p className="text-xs text-bg-sand/80 normal-case leading-relaxed mb-2 font-medium">
+                  <strong>15–20 Mins Kitchen Turnaround</strong>
+                </p>
+                <p className="text-[11px] text-bg-sand/65 normal-case leading-relaxed font-normal">
+                  All karahis and naan are cooked fresh to order. Skip marketplace commissions by ordering direct on our website with 1-tap Apple/Google Pay.
+                </p>
+              </div>
+              <Link
+                href={`/${branchLoc.id}/menu`}
+                className="mt-6 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-terracotta-light hover:text-white transition-colors"
+              >
+                <span>Order Collection &rarr;</span>
+              </Link>
+            </div>
+
+            {/* Card 3: Delivery Coverage */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col justify-between hover:border-terracotta/60 transition-colors">
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-300 mb-4">
+                  <Sparkles size={20} />
+                </div>
+                <h3 className="font-display font-black text-lg text-white uppercase tracking-wide mb-2">
+                  Own Driver Fleet
+                </h3>
+                <p className="text-xs text-bg-sand/80 normal-case leading-relaxed mb-2 font-medium">
+                  <strong>{isSlough ? 'Free Delivery Over £30 (SL1–SL4)' : 'Free Delivery Over £30 (UB)'}</strong>
+                </p>
+                <p className="text-[11px] text-bg-sand/65 normal-case leading-relaxed font-normal">
+                  {isSlough 
+                    ? 'Delivering across Slough, Burnham, Langley, and Windsor. Sealed containers keep your food piping hot straight from the pass.'
+                    : 'Delivering across Hayes, Harlington, Hillingdon, and Uxbridge.'}
+                </p>
+              </div>
+              <Link
+                href={`/${branchLoc.id}/menu`}
+                className="mt-6 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-terracotta-light hover:text-white transition-colors"
+              >
+                <span>Order Delivery &rarr;</span>
+              </Link>
+            </div>
+
+            {/* Card 4: FSA Rating & Contact */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col justify-between hover:border-terracotta/60 transition-colors">
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-rose-500/20 flex items-center justify-center text-rose-300 mb-4">
+                  <CheckCircle size={20} />
+                </div>
+                <h3 className="font-display font-black text-lg text-white uppercase tracking-wide mb-2">
+                  {isSlough ? '5★ Hygiene Rating' : '4★ Hygiene Rating'}
+                </h3>
+                <p className="text-xs text-bg-sand/80 normal-case leading-relaxed mb-2 font-medium">
+                  <strong>100% Halal Certified</strong>
+                </p>
+                <p className="text-[11px] text-bg-sand/65 normal-case leading-relaxed font-normal">
+                  Open 7 Days (12:00 PM – 11:00 PM). Call our team directly for table bookings, large family feasts, or catering.
+                </p>
+              </div>
+              <a
+                href={`tel:${branchLoc.phone.replace(/\s+/g, '')}`}
+                className="mt-6 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-terracotta-light hover:text-white transition-colors"
+              >
+                <span>Call {branchLoc.phone} &rarr;</span>
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -724,10 +903,14 @@ export default function TOVHome() {
                 q: `Where is Taste of Village located and is there parking?`,
                 a: `${isSlough ? 'Our Slough branch is at 260 Farnham Road (SL1 4XL) with convenient street and local bay parking.' : 'Our Hayes branch is at 766B Uxbridge Road (UB4 0RU) with nearby customer and street parking along the parade.'}`
               },
-                {
-                  q: "Can I book a table for large family parties or catering?",
-                  a: `Yes! Table reservations can be booked instantly online via our table booking page. For large gatherings, birthday celebrations, or catering orders, you can also call us directly on ${isSlough ? '01753 326341' : '020 3409 3786'}.`
-                }
+              {
+                q: "Can I book a table for large family parties or catering?",
+                a: `Yes! Table reservations can be booked instantly online via our table booking page. For large gatherings, birthday celebrations, or catering orders, you can also call us directly on ${isSlough ? '01753 326341' : '020 3409 3786'}.`
+              },
+              {
+                q: `Do you deliver food across ${isSlough ? 'Slough, Burnham, Langley & Windsor' : 'Hayes, Hillingdon & Uxbridge'}?`,
+                a: `Yes! We run our own dedicated driver fleet delivering hot meals within a 5-mile radius (including postcodes ${isSlough ? 'SL1, SL2, SL3, and SL4' : 'UB3, UB4, UB8, and UB10'}). Free delivery is available on orders over £30.`
+              }
             ].map((faq, idx) => (
               <div 
                 key={idx} 

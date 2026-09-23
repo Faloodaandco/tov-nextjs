@@ -4,11 +4,6 @@ import {
   setDoc,
   updateDoc,
   increment,
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  limit,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
@@ -84,44 +79,5 @@ export async function upsertCustomerOnOrder(
     }
   } catch (error) {
     console.error('upsertCustomerOnOrder error:', error);
-  }
-}
-
-/** Returns all customers sorted by loyaltyPoints desc, limited to maxResults. */
-export async function getAllCustomers(maxResults = 100): Promise<CustomerRecord[]> {
-  try {
-    const q = query(
-      collection(db, CUSTOMERS_COLLECTION),
-      orderBy('loyaltyPoints', 'desc'),
-      limit(maxResults)
-    );
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as CustomerRecord);
-  } catch (error) {
-    console.error('getAllCustomers error:', error);
-    return [];
-  }
-}
-
-/** Redeem loyalty points. Returns false if insufficient points. Decrements loyaltyPoints. */
-export async function redeemPoints(phone: string, points: number): Promise<boolean> {
-  try {
-    const docId = phoneToDocId(phone);
-    const ref = doc(db, CUSTOMERS_COLLECTION, docId);
-    const snap = await getDoc(ref);
-
-    if (!snap.exists()) return false;
-
-    const data = snap.data();
-    if ((data.loyaltyPoints ?? 0) < points) return false;
-
-    await updateDoc(ref, {
-      loyaltyPoints: increment(-points),
-    });
-
-    return true;
-  } catch (error) {
-    console.error('redeemPoints error:', error);
-    return false;
   }
 }

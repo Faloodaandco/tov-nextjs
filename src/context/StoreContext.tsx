@@ -23,6 +23,7 @@ interface StoreContextType {
   isHydrated: boolean;
   cartTotal: number;
   cartCount: number;
+  reorderItems: (items: CartItem[]) => void;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -105,6 +106,11 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
     setBookings(prev => [...prev, booking]);
   };
 
+  const reorderItems = (items: CartItem[]) => {
+    setCart(items);
+    setIsCartOpen(true);
+  };
+
   const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
   const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
 
@@ -127,7 +133,8 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
         setActivePromo,
         isHydrated,
         cartTotal,
-        cartCount
+        cartCount,
+        reorderItems,
       }}
     >
       {children}

@@ -9,7 +9,6 @@ import { getMenuItems } from '@/services/menuService';
 import { streamSingleOrder } from '@/services/orderService';
 import { SHOP_CONFIG, getActiveLocation, LOCATIONS } from '@/config/shopConfig';
 import { SquareCheckout } from '@/components/SquareCheckout';
-import { apiClient } from '@/lib/apiClient';
 import { generateId } from '@/utils/generateId';
 import { sendOrderNotificationEmail } from '@/services/emailService';
 

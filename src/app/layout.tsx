@@ -172,7 +172,7 @@ export default function RootLayout({
                   "height": 512
                 },
                 url: "https://tasteofvillagerestaurants.co.uk/slough",
-                telephone: "+441234567890",
+                telephone: "+441753326341",
                 address: {
                   "@type": "PostalAddress",
                   streetAddress: "260 Farnham Road",

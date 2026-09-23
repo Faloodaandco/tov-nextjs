@@ -1,6 +1,12 @@
 User-agent: *
 Allow: /
-Allow: /menu
+
+# Disallow internal utilities, API, and tracking endpoints
+Disallow: /api/
+Disallow: /check-in
+Disallow: /print-qr
+Disallow: /voucher-leads
+Disallow: /track
 
 # Sitemaps
 Sitemap: https://tasteofvillagerestaurants.co.uk/sitemap.xml

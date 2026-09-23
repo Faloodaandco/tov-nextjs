@@ -4,8 +4,8 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Clock, CheckCircle2, ChefHat, Package, MapPin, ChevronLeft, Phone, MessageCircle, Sparkles, Timer, Bell, Coffee, Plus } from 'lucide-react';
-import { SHOP_CONFIG, buildWhatsAppLink } from '@/config/shopConfig';
+import { Clock, CheckCircle2, ChefHat, Package, MapPin, ChevronLeft, Phone, MessageCircle, Sparkles, Timer, Bell, Coffee, Plus, Star } from 'lucide-react';
+import { SHOP_CONFIG, LOCATIONS, buildWhatsAppLink } from '@/config/shopConfig';
 import { requestPushPermission, setupForegroundNotifications } from '@/utils/pushService';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -151,9 +151,14 @@ export default function TrackOrder() {
   const isCompleted = order.status === 'completed';
   const isNoShow = order.status === 'no_show';
   const progressPercent = isCompleted ? 100 : Math.min(100, (currentIndex / (TRACKING_STEPS.length - 1)) * 100);
+  const branchKey = (order.branch || (order.tenant_id === LOCATIONS.slough.tenant_id ? 'slough' : 'hayes')) as 'hayes' | 'slough';
+  const branchConfig = LOCATIONS[branchKey] || LOCATIONS.hayes;
+  const googleReviewUrl = branchConfig.googleReviewUrl;
+  const whatsappReviewMessage = `Hi Taste of Village (${branchConfig.city}), regarding my order ${order.id}: `;
+  const whatsappReviewUrl = buildWhatsAppLink(whatsappReviewMessage, branchConfig.phone);
 
   const whatsappMessage = `Hi, I have a question about my order ${order.id}. My name is ${order.customerName}.`;
-  const whatsappUrl = buildWhatsAppLink(whatsappMessage);
+  const whatsappUrl = buildWhatsAppLink(whatsappMessage, branchConfig.phone);
 
   return (
     <div className="min-h-screen bg-bg-sand pt-20 pb-20 selection:bg-terracotta selection:text-white overflow-hidden relative">
@@ -376,12 +381,47 @@ export default function TrackOrder() {
             </div>
 
             <div className="flex flex-col gap-4">
-              <a href={`tel:${SHOP_CONFIG.phoneNumberRaw}`} className="flex items-center justify-center gap-3 bg-white py-5 font-black text-xs uppercase tracking-widest text-pine border-2 border-pine hover:bg-pine hover:text-white transition-all shadow-[4px_4px_0px_rgba(20,40,29,1)] hover:translate-y-0.5 hover:shadow-none">
-                <Phone size={16} /> Contact Base
+              <a href={`tel:${branchConfig.phone.replace(/\s+/g, '')}`} className="flex items-center justify-center gap-3 bg-white py-5 font-black text-xs uppercase tracking-widest text-pine border-2 border-pine hover:bg-pine hover:text-white transition-all shadow-[4px_4px_0px_rgba(20,40,29,1)] hover:translate-y-0.5 hover:shadow-none">
+                <Phone size={16} /> Call Restaurant
               </a>
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 bg-[#25D366] text-white py-5 font-black text-xs uppercase tracking-widest hover:bg-[#20BD5A] transition-all shadow-[4px_4px_0px_rgba(37,211,102,0.4)] hover:translate-y-0.5 hover:shadow-none border-2 border-[#25D366]">
-                <MessageCircle size={16} /> Comms
+                <MessageCircle size={16} /> WhatsApp Us
               </a>
+            </div>
+
+            {/* Google Review Velocity Booster Card */}
+            <div className="bg-gradient-to-br from-white to-[#FAF6EE] border-2 border-terracotta/40 p-6 rounded-2xl shadow-md text-center">
+              <div className="flex justify-center gap-1 text-amber-400 mb-2">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star key={i} size={18} className="fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <h4 className="font-display font-bold text-pine text-base uppercase tracking-wider mb-1">
+                Rate Your Experience
+              </h4>
+              <p className="text-xs text-pine/70 mb-4 leading-relaxed font-medium">
+                Your 5-star review helps our family-run kitchen thrive in {branchConfig.city}. Takes only 15 seconds!
+              </p>
+              <div className="flex flex-col gap-2">
+                <a
+                  href={googleReviewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 bg-pine hover:bg-terracotta text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+                >
+                  <Star size={14} className="text-amber-300 fill-amber-300" />
+                  Leave 5★ Google Review
+                </a>
+                <a
+                  href={whatsappReviewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 bg-white border border-pine/20 hover:border-pine text-pine font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2"
+                >
+                  <MessageCircle size={14} className="text-[#25D366]" />
+                  Direct WhatsApp Feedback
+                </a>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -392,21 +432,47 @@ export default function TrackOrder() {
       <AnimatePresence>
         {showReviewPrompt && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-pine/90 backdrop-blur-md z-[300] flex items-center justify-center p-4" onClick={() => setShowReviewPrompt(false)}>
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="bg-white rounded-none p-12 max-w-md w-full text-center shadow-2xl border-[4px] border-terracotta" onClick={e => e.stopPropagation()}>
-              <div className="flex justify-center gap-2 mb-8">
-                {[1,2,3,4,5].map(i => (
-                  <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: i * 0.1 }} key={i} className="text-4xl">⭐</motion.span>
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="bg-white rounded-2xl p-8 md:p-10 max-w-md w-full text-center shadow-2xl border-2 border-terracotta relative" onClick={e => e.stopPropagation()}>
+              <div className="flex justify-center gap-1.5 mb-6 text-amber-400">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: i * 0.1 }} key={i}>
+                    <Star size={28} className="fill-amber-400 text-amber-400" />
+                  </motion.div>
                 ))}
               </div>
-              <h2 className="font-display text-4xl font-black text-pine mb-4 tracking-widest uppercase">Target Neutralised</h2>
-              <p className="text-pine/60 text-sm leading-relaxed mb-10 font-medium">
-                Mission accomplished. Drop a 5-star review on our coordinates to help secure the sector. It takes 10 seconds.
+              <h2 className="font-display text-2xl md:text-3xl font-black text-pine mb-3 tracking-wide">
+                How Was Your Food?
+              </h2>
+              <p className="text-pine/70 text-sm leading-relaxed mb-6 font-medium">
+                Your 5-star review helps our family-run kitchen reach more food lovers in {branchConfig.city}. It takes only 15 seconds to support us!
               </p>
-              <a href={SHOP_CONFIG.googleReviewUrl} target="_blank" rel="noopener noreferrer" className="block w-full bg-pine text-white py-6 font-black text-xs uppercase tracking-[0.2em] mb-4 hover:bg-terracotta transition-all shadow-[6px_6px_0px_rgba(20,40,29,0.2)] hover:-translate-y-1" onClick={() => setShowReviewPrompt(false)}>
-                Confirm Strike (Review)
-              </a>
-              <button onClick={() => setShowReviewPrompt(false)} className="w-full py-4 text-pine/40 font-black text-[10px] hover:text-terracotta transition-colors uppercase tracking-[0.3em] underline underline-offset-4">
-                Abort
+              <div className="space-y-3">
+                <a
+                  href={googleReviewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full bg-pine hover:bg-terracotta text-white py-4 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md hover:-translate-y-0.5"
+                  onClick={() => setShowReviewPrompt(false)}
+                >
+                  <Star size={16} className="text-amber-300 fill-amber-300" />
+                  Leave 5★ Review on Google
+                </a>
+                <a
+                  href={whatsappReviewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full bg-[#25D366] hover:bg-[#20BD5A] text-white py-3.5 font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm"
+                  onClick={() => setShowReviewPrompt(false)}
+                >
+                  <MessageCircle size={16} />
+                  Send Feedback on WhatsApp
+                </a>
+              </div>
+              <button
+                onClick={() => setShowReviewPrompt(false)}
+                className="mt-4 w-full py-2 text-pine/40 hover:text-pine text-xs font-semibold transition-colors"
+              >
+                Maybe later
               </button>
             </motion.div>
           </motion.div>

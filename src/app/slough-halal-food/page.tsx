@@ -12,8 +12,69 @@ export const metadata: Metadata = {
 };
 
 export default function SeoPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Restaurant",
+        "name": "Taste of Village Slough - 100% Halal Pakistani Cuisine",
+        "image": "https://tasteofvillagerestaurants.co.uk/assets/og-share-preview.jpg",
+        "url": "https://tasteofvillagerestaurants.co.uk/slough-halal-food",
+        "telephone": "+441753326341",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "260 Farnham Road",
+          "addressLocality": "Slough",
+          "addressRegion": "Berkshire",
+          "postalCode": "SL1 4XL",
+          "addressCountry": "GB"
+        },
+        "geo": { "@type": "GeoCoordinates", "latitude": 51.5273, "longitude": -0.6128 },
+        "servesCuisine": ["Pakistani", "Halal", "South Asian", "Lahori", "Gujranwala"],
+        "priceRange": "££",
+        "hasMenu": "https://tasteofvillagerestaurants.co.uk/slough/menu",
+        "hasCredential": {
+          "@type": "EducationalOccupationalCredential",
+          "name": "Food Hygiene Rating 5 — Very Good",
+          "credentialCategory": "Food Hygiene Rating Scheme (FHRS)",
+          "recognizedBy": {
+            "@type": "GovernmentOrganization",
+            "name": "Food Standards Agency",
+            "url": "https://www.food.gov.uk/"
+          },
+          "url": "https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is all the food at Taste of Village Slough 100% Halal?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, 100%. All meats (chicken, lamb, beef) and ingredients at Taste of Village Slough are strictly Halal certified, sourced from accredited British halal meat suppliers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What authentic Pakistani dishes are served at the Slough restaurant?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "We specialize in Gujranwala and Lahori specialties: freshly wok-tossed Lamb and Chicken Karahi, slow-simmered overnight Beef Nihari, Shahi Haleem, and charcoal-grilled Seekh Kebabs."
+            }
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="bg-sand min-h-screen pt-20 pb-20 font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Certified Halal &bull; Farnham Road</span>
