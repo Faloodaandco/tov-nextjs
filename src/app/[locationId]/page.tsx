@@ -504,8 +504,8 @@ export default function TOVHome() {
               className="absolute inset-0 w-full h-full"
             >
               <img 
-                src="/assets/fb_hero_1.jpg" 
-                alt="Authentic Karahi" 
+                src="/assets/haleem_hero.webp" 
+                alt="Traditional Haleem" 
                 className="w-full h-full object-cover bibi-hover-image"
               />
             </motion.div>
