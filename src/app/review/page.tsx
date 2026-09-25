@@ -31,8 +31,7 @@ export const ReviewGate = () => {
     try {
       await addDoc(collection(db, 'private_feedback'), {
         rating,
-        feedback,
-        source: 'review_gate',
+        comment: feedback,
         createdAt: Timestamp.now(),
       });
     } catch (error) {

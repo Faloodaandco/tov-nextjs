@@ -9,6 +9,6 @@ Taste of Village is an authentic Pakistani restaurant brand operating two flagsh
 - **Framework:** Next.js (App Router), Tailwind CSS.
 - **Hosting:** Vercel (Auto-deploy from `master` on `Faloodaandco/tov-nextjs`).
 - **Database & Auth:** Firebase Firestore & Firebase Auth (`taste-of-village-21052`).
-- **Payments & Checkout:** Square hosted redirect checkout via Cloud Functions (`createSquareCheckoutSession`). Never embed inline payment forms on the client.
+- **Payments & Checkout:** Square Web Payments SDK (client) + Next.js API route `/api/checkout/square` (server-side order creation via Square REST API).
 - **Multi-Branch Context:** Route-driven via `/[locationId]/*` (`/hayes/*` and `/slough/*`).
 - **Decoupled Boundary:** Web platform ONLY. Zero in-store POS, thermal printer drivers, or KDS interfaces belong in this repository.

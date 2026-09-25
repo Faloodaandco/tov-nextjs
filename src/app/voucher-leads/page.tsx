@@ -12,13 +12,24 @@ function VoucherLeadsContent() {
   const [leads, setLeads] = useState<CampaignLead[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleAuth = (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pin === '2244') {
-      setAuthenticated(true);
-      fetchLeads();
-    } else {
-      alert('Invalid PIN');
+    try {
+      const res = await fetch('/api/staff/verify-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin }),
+      });
+      
+      if (res.ok) {
+        setAuthenticated(true);
+        fetchLeads();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || 'Invalid PIN');
+      }
+    } catch (err) {
+      alert('Error connecting to server');
     }
   };
 

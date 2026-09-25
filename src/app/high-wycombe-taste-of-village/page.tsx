@@ -23,7 +23,7 @@ export default function SeoPage() {
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">A Short Drive from High Wycombe</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Finally. An Authentic Taste of Village Experience.</h1>
           <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
-            High Wycombe locals know that finding a truly authentic Taste of Village or traditional Dahi Bhalla nearby is almost impossible. That's why we invite you to make the short trip to Farnham Road. We do it the traditional way.
+            High Wycombe locals know that finding a truly authentic falooda or traditional Dahi Bhalla nearby is almost impossible. That's why we invite you to make the short trip to Farnham Road. We do it the traditional way.
           </p>
         </div>
 

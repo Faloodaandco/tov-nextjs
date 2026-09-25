@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "site": "taste-of-village-21052",
+    "public": "public_redirect",
+    "redirects": [
+      {
+        "source": "**",
+        "destination": "https://www.tasteofvillagerestaurants.co.uk",
+        "type": 301
+      }
+    ]
+  }
+}

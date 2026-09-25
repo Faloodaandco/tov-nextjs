@@ -7,7 +7,7 @@
   --color-pine: #1A3C34;
   --color-pine-light: #254d47;
 
-  /* Legacy brand color aliases */
+  /* Brand color aliases (Tailwind shorthand) */
   --color-brand-pink: #8a3d2a;
   --color-brand-pinkLight: #a3503a;
   --color-brand-cream: #FDF5F2;

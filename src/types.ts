@@ -64,7 +64,6 @@ export interface Order {
   table_number?: number;
   provider?: string;
   isPaid?: boolean;
-  isKitchenFire?: boolean;
   paymentMethod?: 'cash' | 'card' | 'unpaid' | 'split' | string;
   amountPaid?: number;
   splitDetails?: { cash: number; card: number };
@@ -74,22 +73,8 @@ export interface Order {
   appliedReward?: Reward | null;
   createdAt?: Date;
   updatedAt?: Date;
-  driverName?: string;
-  waiterName?: string;
   marketingOptIn?: boolean;
-  stripePaymentIntentId?: string;
   prepDurationSeconds?: number;
-  kitchen_metrics?: {
-    prepDurationSeconds: number;
-    staffId: string;
-    staffName: string;
-    stationBumping: string;
-    itemCount: number;
-  };
-  station_status?: {
-    front?: 'ready' | 'pending';
-    back?: 'ready' | 'pending';
-  };
 }
 
 export interface Booking {
@@ -108,25 +93,6 @@ export interface Booking {
   tenantId?: string;
 }
 
-export interface BuilderOption {
-  id: string;
-  name: string;
-  price: number;
-  description?: string;
-  tag?: string;
-}
-
-export interface BuilderConfig {
-  basePrice: number;
-  bases: BuilderOption[];
-  noodles: BuilderOption[];
-  syrups: BuilderOption[];
-  scoops: BuilderOption[];
-  extras: BuilderOption[];
-  toppings: BuilderOption[];
-}
-
-export type ViewMode = 'customer' | 'admin';
 
 export interface Reward {
   id: string;

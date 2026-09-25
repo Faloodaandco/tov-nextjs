@@ -9,7 +9,7 @@ import { doc, setDoc, Timestamp } from 'firebase/firestore';
  *
  * Server-side Square order creation and payment.
  *
- * Architecture (proven in TOV-real-old/functions/src/index.ts):
+ * Architecture:
  * - Uses PICKUP fulfillment type (DELIVERY is restricted closed Beta)
  * - Delivery fee added as a separate line item
  * - Delivery address embedded in ticket_name and order note
@@ -380,34 +380,165 @@ export async function POST(req: NextRequest) {
     // ── 3. Persist Order to Firestore (server-side, survives client disconnect) ──
     try {
       await setDoc(doc(db, 'orders', cleanOrderId), {
+        // ── Identity ──
+        id: cleanOrderId,
         orderId: cleanOrderId,
+
+        // ── Customer (FLAT fields — POS/KDS reads these at root level) ──
+        customerName: String(customer.name).trim(),
+        customerPhone: String(customer.phone).trim(),
+        customerEmail: customer.email ? String(customer.email).trim() : '',
+
+        // ── Order Type (CRITICAL: POS reads `type`, not `fulfillmentType`) ──
+        type: isDelivery ? 'delivery' : 'collection',
+        fulfillmentType: isDelivery ? 'delivery' : 'collection',
+        fulfillment_type: isDelivery ? 'delivery' : 'collection',
+
+        // ── Delivery ──
+        delivery_address: isDelivery ? delivery_address : null,
+        deliveryAddress: isDelivery ? delivery_address : null,
+        delivery_fee: deliveryFeePence / 100,
+        deliveryFee: deliveryFeePence / 100,
+
+        // ── Payment ──
+        status: 'paid',
+        payment_status: 'paid',
+        payment_method: 'square',
         squareOrderId: squareOrder.id,
         squarePaymentId: squarePayment.id,
-        status: 'paid',
+
+        // ── Branch ──
+        branch: branchId,
+        branchName: loc.name,
+        location_id: locationId,
+        tenant_id: loc.tenant_id,
+
+        // ── Financials ──
+        total: totalPounds,
+        subtotal: subtotalPence / 100,
+        discount: discountPence / 100,
+        serviceFee: serviceFeePence / 100,
+
+        // ── Items (uses `price` — NOT `unit_price` — prevents £0.00 email bug) ──
         items: cart.map((item: any) => ({
           id: item.id,
           name: item.name,
           price: item.price,
           quantity: item.quantity || 1,
+          notes: item.notes || '',
         })),
-        customer: { name: customer.name, phone: customer.phone },
-        branch: branchId,
-        fulfillmentType: isDelivery ? 'delivery' : 'collection',
-        deliveryAddress: isDelivery ? delivery_address : null,
-        total: totalPounds,
-        subtotal: subtotalPence / 100,
-        discount: discountPence / 100,
-        deliveryFee: deliveryFeePence / 100,
-        serviceFee: serviceFeePence / 100,
+
+        // ── Timing ──
         estimatedReadyMinutes: estimatedMinutes,
         estimatedReadyAt: estimatedReadyAt.toISOString(),
         createdAt: new Date().toISOString(),
-        source: 'web',
+        timestamp: new Date().toISOString(),
+
+        // ── Source ──
+        source: 'Web',
       });
       console.log(`[Square] Order ${cleanOrderId} persisted to Firestore`);
     } catch (dbErr) {
       // Log but never fail — customer is already charged
       console.error(`[Square] Firestore write failed for ${cleanOrderId}:`, dbErr);
+    }
+
+    // ── 3b. Queue Confirmation Email (triggers processEmailQueue Cloud Function) ──
+    if (customer.email?.includes('@')) {
+      try {
+        const readyTimeFormatted = estimatedReadyAt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        const branchAddress = `${loc.name}\n${loc.address}, ${loc.city}, ${loc.postcode}\nTel: ${loc.phone}`;
+
+        const itemsSummaryText = cart.map((it: any) =>
+          `• ${it.quantity}x ${it.name}${it.notes ? ` (${it.notes})` : ''} (£${(Number(it.price) * Number(it.quantity)).toFixed(2)})`
+        ).join('\n');
+
+        const itemsHtmlRows = cart.map((it: any) => `
+          <tr>
+            <td style="padding: 8px 0; border-bottom: 1px solid #f0eae1; font-weight: bold; color: #1C2D22;">
+              ${it.quantity}x ${it.name}
+              ${it.notes ? `<div style="font-size: 12px; color: #8C7A6B; font-weight: normal;">Note: ${it.notes}</div>` : ''}
+            </td>
+            <td style="padding: 8px 0; border-bottom: 1px solid #f0eae1; text-align: right; color: #a64036; font-weight: bold;">
+              £${(Number(it.price) * Number(it.quantity)).toFixed(2)}
+            </td>
+          </tr>
+        `).join('');
+
+        const emailHtml = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #FAF6F0; border-radius: 16px; overflow: hidden; border: 1px solid #E6DFD5;">
+            <div style="background-color: #1C2D22; padding: 24px; text-align: center;">
+              <h1 style="color: #FAF6F0; margin: 0; font-size: 24px; letter-spacing: 1px;">TASTE OF VILLAGE</h1>
+              <p style="color: #D3A762; margin: 4px 0 0 0; font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">${isDelivery ? 'Delivery Order Confirmed & Paid' : 'Collection Order Confirmed & Paid'}</p>
+            </div>
+            <div style="padding: 24px; background-color: #ffffff;">
+              <p style="font-size: 16px; color: #1C2D22; margin-top: 0;">Dear <strong>${customer.name}</strong>,</p>
+              <p style="font-size: 14px; color: #5A4A3E; line-height: 1.5;">Thank you for ordering with Taste of Village! Your payment was successful and the kitchen has received your order.</p>
+              <div style="background-color: #FDF9F3; border: 1px solid #EFE4D2; border-radius: 12px; padding: 16px; margin: 20px 0; text-align: center;">
+                <span style="font-size: 12px; font-weight: bold; text-transform: uppercase; color: #8C7A6B; letter-spacing: 1px;">Estimated ${isDelivery ? 'Delivery' : 'Ready'} Time</span>
+                <div style="font-size: 28px; font-weight: 900; color: #a64036; margin: 4px 0;">~${estimatedMinutes} mins</div>
+                <span style="font-size: 13px; color: #1C2D22;">Order ID: <strong>${cleanOrderId}</strong></span>
+              </div>
+              <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #8C7A6B; border-bottom: 2px solid #E6DFD5; padding-bottom: 8px; margin-bottom: 12px;">Order Summary</h3>
+              <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px;">
+                ${itemsHtmlRows}
+                ${isDelivery && deliveryFeePence > 0 ? `
+                  <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f0eae1; color: #5A4A3E;">🚗 Driver Delivery Fee</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f0eae1; text-align: right; color: #5A4A3E; font-weight: bold;">£${(deliveryFeePence / 100).toFixed(2)}</td>
+                  </tr>
+                ` : ''}
+                ${serviceFeePence > 0 ? `
+                  <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f0eae1; color: #5A4A3E;">Service Fee (10%)</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f0eae1; text-align: right; color: #5A4A3E; font-weight: bold;">£${(serviceFeePence / 100).toFixed(2)}</td>
+                  </tr>
+                ` : ''}
+                ${discountPence > 0 ? `
+                  <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f0eae1; color: #2e7d32;">🎟️ Discount</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f0eae1; text-align: right; color: #2e7d32; font-weight: bold;">-£${(discountPence / 100).toFixed(2)}</td>
+                  </tr>
+                ` : ''}
+                <tr>
+                  <td style="padding: 12px 0 0 0; font-size: 16px; font-weight: 900; color: #1C2D22;">Total Paid</td>
+                  <td style="padding: 12px 0 0 0; font-size: 16px; font-weight: 900; color: #1C2D22; text-align: right;">£${totalPounds.toFixed(2)}</td>
+                </tr>
+              </table>
+              <div style="background-color: #F4F8F5; border-radius: 12px; padding: 16px; margin: 20px 0;">
+                <h4 style="margin: 0 0 8px 0; color: #1C2D22; font-size: 14px;">${isDelivery ? '🚗 Delivery Destination:' : '📍 Collection Address:'}</h4>
+                <p style="margin: 0; font-size: 13px; color: #354D3D; white-space: pre-line; line-height: 1.4;">
+                  ${isDelivery
+                    ? `${delivery_address?.line1 || ''}, ${delivery_address?.line2 ? delivery_address.line2 + ', ' : ''}${delivery_address?.city || loc.city} ${delivery_address?.postcode || ''}\nTel: ${formattedPhone}`
+                    : branchAddress}
+                </p>
+              </div>
+              <div style="text-align: center; margin: 28px 0 16px 0;">
+                <a href="https://www.tasteofvillagerestaurants.co.uk/track/${cleanOrderId}" style="background-color: #a64036; color: #ffffff; text-decoration: none; padding: 14px 28px; font-weight: bold; font-size: 15px; border-radius: 9999px; display: inline-block; box-shadow: 0 4px 10px rgba(166, 64, 54, 0.3);">
+                  Track Order Live
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+
+        const { addDoc, collection: firestoreCollection } = await import('firebase/firestore');
+        await addDoc(firestoreCollection(db, 'mail'), {
+          to: [customer.email.trim()],
+          orderId: cleanOrderId,
+          timestamp: new Date().toISOString(),
+          status: 'pending',
+          message: {
+            subject: `Order Confirmed: ${cleanOrderId} (${isDelivery ? 'Delivery' : 'Ready'} ~${estimatedMinutes}m) — Taste of Village`,
+            text: `Dear ${customer.name},\n\nThank you for ordering with Taste of Village! Your order ${cleanOrderId} has been paid and received by the kitchen.\n\nEstimated ${isDelivery ? 'Delivery' : 'Ready'} Time: ~${estimatedMinutes} mins\n\n${isDelivery ? `Delivery Address:\n${delivery_address?.line1 || ''}, ${delivery_address?.city || loc.city} ${delivery_address?.postcode || ''}` : `Collection Location:\n${branchAddress}`}\n\nOrder Summary:\n${itemsSummaryText}\n\nTotal Paid: £${totalPounds.toFixed(2)}\n\nTrack Live: https://www.tasteofvillagerestaurants.co.uk/track/${cleanOrderId}\n\nSee you soon!`,
+            html: emailHtml,
+          },
+        });
+        console.log(`[Square] Queued confirmation email for ${cleanOrderId}`);
+      } catch (emailErr) {
+        // Log but never fail — customer is already charged
+        console.error(`[Square] Email queue failed for ${cleanOrderId}:`, emailErr);
+      }
     }
 
     // ── 4. Return Success ─────────────────────────────────────────────

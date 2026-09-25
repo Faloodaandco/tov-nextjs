@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: "Halal Desserts near Reading | Taste of Village",
-  description: "Craving luxury halal desserts near Reading? Taste of Village in Slough is just 30 minutes away — serving artisan taste-of-villages, cookie dough, and chaats until midnight.",
+  description: "Craving luxury halal desserts near Reading? Taste of Village in Slough is just 30 minutes away — serving artisan faloodas, cookie dough, and chaats until midnight.",
   alternates: {
     canonical: "/reading-desserts"
   }
@@ -33,10 +33,10 @@ export default function SeoPage() {
           >
             <h2 className="font-serif text-3xl mb-4 text-terracotta">Why Reading Locals Love Us</h2>
             <p className="text-white/70 leading-relaxed mb-6">
-              We're not your average dessert parlour. Our Royal Heritage Taste of Village uses premium ingredients — from hand-crushed pistachios to fragrant Rooh Afza — crafted by artisans who live and breathe South Asian dessert culture.
+              We're not your average dessert parlour. Our Royal Heritage Falooda uses premium ingredients — from hand-crushed pistachios to fragrant Rooh Afza — crafted by artisans who live and breathe South Asian dessert culture.
             </p>
             <ul className="space-y-3 font-semibold text-sand">
-              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Artisan Taste of Village Collection</li>
+              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Artisan Falooda Collection</li>
               <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> San Sebastian Cheesecake</li>
               <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Late Night Indian Street Food</li>
             </ul>

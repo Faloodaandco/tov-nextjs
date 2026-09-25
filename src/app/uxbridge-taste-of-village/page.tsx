@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: "Taste of Village & Halal Desserts near Uxbridge | Taste of Village",
-  description: "Looking for authentic taste-of-village near Uxbridge? Taste of Village in Slough is just 25 minutes away — luxury halal desserts, Indian street food, and chaats until midnight.",
+  description: "Looking for authentic falooda and halal desserts near Uxbridge? Taste of Village in Slough is just 25 minutes away — luxury halal desserts, Indian street food, and chaats until midnight.",
   alternates: {
     canonical: "/uxbridge-taste-of-village"
   }
@@ -23,7 +23,7 @@ export default function SeoPage() {
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">25 Minutes from Uxbridge</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Uxbridge's Favourite Taste of Village Destination</h1>
           <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
-            Uxbridge has chains, but nothing like Taste of Village. A short drive along the A4020 and M40 brings you to Slough's most talked-about dessert parlour — where every taste-of-village is hand-crafted and every chaat is made fresh.
+            Uxbridge has chains, but nothing like Taste of Village. A short drive along the A4020 and M40 brings you to Slough's most talked-about dessert parlour — where every falooda is hand-crafted and every chaat is made fresh.
           </p>
         </div>
 
@@ -33,11 +33,11 @@ export default function SeoPage() {
           >
             <h2 className="font-serif text-3xl mb-4 text-terracotta">The Taste of Village Experience</h2>
             <p className="text-white/70 leading-relaxed mb-6">
-              Our taste-of-villages aren't just drinks — they're a layered dessert experience. From the signature Rose Taste of Village to the indulgent Pistachio Royale, each glass is assembled to order with premium kulfi, vermicelli, and aromatic syrups.
+              Our faloodas aren't just drinks — they're a layered dessert experience. From the signature Rose Falooda to the indulgent Pistachio Royale, each glass is assembled to order with premium kulfi, vermicelli, and aromatic syrups.
             </p>
             <ul className="space-y-3 font-semibold text-sand">
-              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Rose Taste of Village</li>
-              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Pistachio Royale Taste of Village</li>
+              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Rose Falooda</li>
+              <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Pistachio Royale Falooda</li>
               <li className="flex items-center gap-3"><Sparkles size={16} className="text-terracotta" /> Fresh Samosa & Dahi Puri Chaat</li>
             </ul>
           </div>
