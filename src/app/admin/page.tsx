@@ -20,6 +20,10 @@ export default function AdminDashboard() {
   const [bingLoading, setBingLoading] = useState(false);
   const [bingError, setBingError] = useState('');
 
+  const [gscData, setGscData] = useState<any>(null);
+  const [gscLoading, setGscLoading] = useState(false);
+  const [gscError, setGscError] = useState('');
+
   const [indexNowLoading, setIndexNowLoading] = useState(false);
   const [indexNowStatus, setIndexNowStatus] = useState({ type: '', message: '' });
 
@@ -56,6 +60,13 @@ export default function AdminDashboard() {
       .then(setBingData)
       .catch(e => setBingError(e.message))
       .finally(() => setBingLoading(false));
+
+    setGscLoading(true); setGscError('');
+    fetch('/api/admin/gsc?days=30', { headers })
+      .then(async (r) => { if (!r.ok) throw new Error(await r.text() || 'GSC fetch error'); return r.json(); })
+      .then(setGscData)
+      .catch(e => setGscError(e.message))
+      .finally(() => setGscLoading(false));
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -326,6 +337,66 @@ export default function AdminDashboard() {
             ) : null}
           </section>
 
+          {/* Section 3b: Google Search Console (30 Days) */}
+          <section className="bg-white rounded-xl shadow-sm border border-[#e5e5e5] p-6 md:col-span-2 lg:col-span-1">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-[#1C2D22]">Google Search (30 Days)</h2>
+              {gscLoading && <LoadingSpinner />}
+            </div>
+            {gscError ? (
+              <div className="text-[#a64036] text-sm mb-2">{gscError}</div>
+            ) : gscData && gscData.rows?.length > 0 ? (
+              <div>
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="bg-[#FAF6F0] p-3 rounded-lg text-center">
+                    <p className="text-xs text-[#354D3D] font-medium">Impressions</p>
+                    <p className="text-xl font-bold text-[#1C2D22]">{gscData.totals.impressions.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-[#FAF6F0] p-3 rounded-lg text-center">
+                    <p className="text-xs text-[#354D3D] font-medium">Clicks</p>
+                    <p className="text-xl font-bold text-[#1C2D22]">{gscData.totals.clicks.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-[#FAF6F0] p-3 rounded-lg text-center">
+                    <p className="text-xs text-[#354D3D] font-medium">CTR</p>
+                    <p className="text-xl font-bold text-[#1C2D22]">{gscData.totals.ctr}%</p>
+                  </div>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-[#FAF6F0] text-[#354D3D]">
+                      <tr>
+                        <th className="p-2 font-semibold">Search Query</th>
+                        <th className="p-2 font-semibold text-right">Clicks</th>
+                        <th className="p-2 font-semibold text-right">Impressions</th>
+                        <th className="p-2 font-semibold text-right">CTR</th>
+                        <th className="p-2 font-semibold text-right">Position</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {gscData.rows.slice(0, 20).map((row: any, idx: number) => (
+                        <tr key={idx} className="border-b border-[#FAF6F0] last:border-0 hover:bg-[#FAF6F0]/50">
+                          <td className="p-2 text-[#1C2D22] font-medium">{row.query}</td>
+                          <td className="p-2 text-right font-semibold text-[#1C2D22]">{row.clicks}</td>
+                          <td className="p-2 text-right text-gray-600">{row.impressions}</td>
+                          <td className="p-2 text-right text-gray-600">{row.ctr}%</td>
+                          <td className="p-2 text-right text-gray-600">{row.position}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {gscData.dateRange && (
+                  <p className="text-xs text-gray-400 mt-2">{gscData.dateRange.start} → {gscData.dateRange.end}</p>
+                )}
+              </div>
+            ) : !gscLoading ? (
+              <div className="text-center py-8 bg-[#FAF6F0] rounded-lg">
+                <p className="text-[#354D3D] font-medium">No Google search data yet.</p>
+                <p className="text-xs text-gray-500 mt-1">Data takes ~3 days to appear after the service account was added.</p>
+              </div>
+            ) : null}
+          </section>
+
           {/* Section 4: Controls */}
           <section className="bg-white rounded-xl shadow-sm border border-[#e5e5e5] p-6 md:col-span-2 lg:col-span-1">
             <h2 className="text-lg font-bold text-[#1C2D22] mb-4">Controls & Quick Links</h2>
@@ -353,6 +424,10 @@ export default function AdminDashboard() {
                 <a href="https://analytics.google.com/analytics/web/#/p551410064" target="_blank" rel="noopener noreferrer" className="flex items-center p-3 border border-[#e5e5e5] rounded hover:border-[#D3A762] hover:bg-[#FAF6F0] transition-all group">
                   <span className="text-xl mr-3 opacity-80 group-hover:opacity-100">📊</span>
                   <span className="text-sm font-semibold text-[#1C2D22]">Google Analytics</span>
+                </a>
+                <a href="https://search.google.com/search-console?resource_id=https%3A%2F%2Ftasteofvillagerestaurants.co.uk%2F" target="_blank" rel="noopener noreferrer" className="flex items-center p-3 border border-[#e5e5e5] rounded hover:border-[#D3A762] hover:bg-[#FAF6F0] transition-all group">
+                  <span className="text-xl mr-3 opacity-80 group-hover:opacity-100">🔎</span>
+                  <span className="text-sm font-semibold text-[#1C2D22]">Google Search Console</span>
                 </a>
                 <a href="https://clarity.microsoft.com/projects/view/ydv01vt483/dashboard" target="_blank" rel="noopener noreferrer" className="flex items-center p-3 border border-[#e5e5e5] rounded hover:border-[#D3A762] hover:bg-[#FAF6F0] transition-all group">
                   <span className="text-xl mr-3 opacity-80 group-hover:opacity-100">🔥</span>
