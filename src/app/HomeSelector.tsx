@@ -22,10 +22,13 @@ export default function HomeSelector() {
   };
 
   return (
-    <div className="min-h-screen bg-bg-sand flex flex-col items-center justify-center relative overflow-hidden py-6 md:py-10">
-      {/* Background Ambience */}
-      <div className="absolute inset-0 bg-[url('/assets/tov-cfd-bg.webp')] bg-cover bg-center opacity-[0.03] pointer-events-none mix-blend-multiply"></div>
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#FDFBF7]/80 via-[#FDFBF7]/40 to-[#FDFBF7] pointer-events-none"></div>
+    <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center relative overflow-hidden py-6 md:py-10">
+      {/* Warm Sandy Gradient & Grain */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#FDFBF7] via-[#F8EFE3] to-[#F1E3D3] pointer-events-none"></div>
+      <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
+      
+      {/* 15% Restaurant Ambience Photo (Warmer Blend) */}
+      <div className="absolute inset-0 bg-[url('/assets/tov-cfd-bg.webp')] bg-cover bg-center opacity-15 pointer-events-none mix-blend-multiply"></div>
       
       <div className="relative z-10 flex flex-col items-center w-full px-4 sm:px-6 max-w-5xl mx-auto">
         
@@ -34,8 +37,11 @@ export default function HomeSelector() {
           <img 
             src="/assets/tov-logo-pine.png" 
             alt="Taste of Village" 
-            className="w-48 md:w-64 lg:w-72 h-auto mb-4"
+            className="w-48 md:w-64 lg:w-72 h-auto mb-3"
           />
+          <p className="text-pine/90 font-serif italic text-[15px] md:text-[17px] tracking-wide mb-6 drop-shadow-sm">
+            Home-style flavours, made fresh daily
+          </p>
           <div className="flex items-center gap-4">
             <div className="h-px w-8 md:w-16 bg-gradient-to-r from-transparent to-terracotta/50"></div>
             <p className="text-pine/70 text-[10px] md:text-xs font-sans tracking-[0.3em] uppercase font-bold drop-shadow-sm">
@@ -53,9 +59,33 @@ export default function HomeSelector() {
             return (
               <div 
                 key={loc.id}
-                className="flex flex-col items-center animate-fade-in-up w-full"
+                className="flex flex-col items-center animate-fade-in-up w-full relative"
                 style={{ animationDelay: `${index * 150}ms` }}
               >
+                {/* Left Leaf Sprig */}
+                <div className="absolute -left-2 md:-left-6 top-1/4 w-10 md:w-12 h-40 md:h-48 pointer-events-none opacity-[0.25] z-0">
+                  <svg viewBox="0 0 40 160" fill="none" stroke="#1A3C34" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M25,160 Q10,120 20,80 T25,0" />
+                    <path d="M22,140 Q32,135 32,125 Q27,125 22,130" />
+                    <path d="M15,110 Q5,105 5,95 Q10,95 15,100" />
+                    <path d="M22,80 Q32,75 32,65 Q27,65 22,70" />
+                    <path d="M18,40 Q8,35 8,25 Q13,25 18,30" />
+                    <path d="M24,15 Q34,10 34,0 Q29,0 24,5" />
+                  </svg>
+                </div>
+                
+                {/* Right Leaf Sprig */}
+                <div className="absolute -right-2 md:-right-6 top-1/3 w-10 md:w-12 h-40 md:h-48 pointer-events-none opacity-[0.25] transform scale-x-[-1] translate-y-8 z-0">
+                  <svg viewBox="0 0 40 160" fill="none" stroke="#1A3C34" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M25,160 Q10,120 20,80 T25,0" />
+                    <path d="M22,140 Q32,135 32,125 Q27,125 22,130" />
+                    <path d="M15,110 Q5,105 5,95 Q10,95 15,100" />
+                    <path d="M22,80 Q32,75 32,65 Q27,65 22,70" />
+                    <path d="M18,40 Q8,35 8,25 Q13,25 18,30" />
+                    <path d="M24,15 Q34,10 34,0 Q29,0 24,5" />
+                  </svg>
+                </div>
+
                 {/* The Arch - Replica of the physical restaurant interior arches */}
                 <div
                   role="button"
