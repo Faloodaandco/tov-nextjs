@@ -249,7 +249,7 @@ function InfoContent() {
                     <li><strong>Booking Policies:</strong> Table bookings will be held for a maximum of 15 minutes past the reserved time before being released to walk-in customers.</li>
                   </ul>
                   
-                  <p className="text-sm text-pine/40 italic pt-8 border-t mt-12 border-pine/10 font-bold uppercase tracking-widest">
+                  <p className="text-sm text-pine/60 italic pt-8 border-t mt-12 border-pine/10 font-bold uppercase tracking-widest">
                     Last updated: {new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })} • Registered Address: {SHOP_CONFIG.address}
                   </p>
                 </div>

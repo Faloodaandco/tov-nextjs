@@ -35,7 +35,7 @@ export default function SloughBreakfastPage() {
           "streetAddress": "260 Farnham Road",
           "addressLocality": "Slough",
           "addressRegion": "Berkshire",
-          "postalCode": "SL1 4XL",
+          "postalCode": "SL1 4XQ",
           "addressCountry": "GB"
         },
         "servesCuisine": ["Pakistani", "Halal", "South Asian", "Gujranwala Breakfast"],
@@ -169,7 +169,7 @@ export default function SloughBreakfastPage() {
           
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-10">
             <div className="flex items-center gap-2 text-pine font-bold">
-              <MapPin className="text-terracotta" /> 260 Farnham Road, SL1 4XL
+              <MapPin className="text-terracotta" /> 260 Farnham Road, SL1 4XQ
             </div>
             <div className="flex items-center gap-2 text-pine font-bold">
               <Clock className="text-terracotta" /> Open Daily from 12:00 PM

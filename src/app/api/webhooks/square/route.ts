@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     
     if (eventId) {
       if (processedEvents.has(eventId)) {
-        console.log(`[Square Webhook] Event ${eventId} already processed, skipping`);
+        console.info(`[Square Webhook] Event ${eventId} already processed, skipping`);
         return NextResponse.json({ received: true });
       }
       processedEvents.add(eventId);
@@ -57,13 +57,13 @@ export async function POST(req: NextRequest) {
 
     const eventType = event?.type;
 
-    console.log(`[Square Webhook] Received: ${eventType} (${event?.data?.id || 'no-id'})`);
+    console.info(`[Square Webhook] Received: ${eventType} (${event?.data?.id || 'no-id'})`);
 
     switch (eventType) {
       case 'payment.created': {
         const payment = event?.data?.object?.payment;
         if (payment) {
-          console.log(`[Square Webhook] Payment ${payment.id}: status=${payment.status}, amount=${payment.amount_money?.amount}p, ref=${payment.reference_id}`);
+          console.info(`[Square Webhook] Payment ${payment.id}: status=${payment.status}, amount=${payment.amount_money?.amount}p, ref=${payment.reference_id}`);
         }
         break;
       }
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
       case 'payment.updated': {
         const payment = event?.data?.object?.payment;
         if (payment && payment.status === 'COMPLETED') {
-          console.log(`[Square Webhook] Payment ${payment.id} COMPLETED: amount=${payment.amount_money?.amount}p, ref=${payment.reference_id}`);
+          console.info(`[Square Webhook] Payment ${payment.id} COMPLETED: amount=${payment.amount_money?.amount}p, ref=${payment.reference_id}`);
           // Future: update Firestore order status, trigger push notification
         }
         break;
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
       case 'order.updated': {
         const order = event?.data?.object?.order_updated;
         if (order) {
-          console.log(`[Square Webhook] Order ${order.order_id}: state=${order.state}`);
+          console.info(`[Square Webhook] Order ${order.order_id}: state=${order.state}`);
           // Future: sync order state to Firestore, update live-tracker
         }
         break;
@@ -89,13 +89,13 @@ export async function POST(req: NextRequest) {
       case 'order.fulfillment.updated': {
         const fulfillmentUpdate = event?.data?.object?.order_fulfillment_updated;
         if (fulfillmentUpdate) {
-          console.log(`[Square Webhook] Fulfillment updated for order ${fulfillmentUpdate.order_id}: state=${fulfillmentUpdate.fulfillment_update?.[0]?.new_state}`);
+          console.info(`[Square Webhook] Fulfillment updated for order ${fulfillmentUpdate.order_id}: state=${fulfillmentUpdate.fulfillment_update?.[0]?.new_state}`);
         }
         break;
       }
 
       default:
-        console.log(`[Square Webhook] Unhandled event type: ${eventType}`);
+        console.info(`[Square Webhook] Unhandled event type: ${eventType}`);
     }
 
     return NextResponse.json({ received: true });

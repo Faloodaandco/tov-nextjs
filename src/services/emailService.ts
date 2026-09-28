@@ -127,7 +127,7 @@ export function formatOrderHtml(order: Order): string {
     : 'Taste of Village Hayes';
 
   const branchAddress = order.tenant_id === LOCATIONS.slough.tenant_id
-    ? '260 Farnham Road, Slough, SL1 4XL'
+    ? '260 Farnham Road, Slough, SL1 4XQ'
     : '766B Uxbridge Rd, Hayes, UB4 0RU';
 
   const isDelivery = (order as any).fulfillment_type === 'delivery' || (order as any).type === 'delivery';

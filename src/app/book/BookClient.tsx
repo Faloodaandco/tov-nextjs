@@ -9,8 +9,6 @@ import { MENU_ITEMS } from '@/config/menuItems';
 import { MenuItem } from '@/types';
 import { isValidUKMobile, getPhoneError, normaliseUKPhone } from '@/lib/validation';
 
-// TODO: metadata export
-
 function buildBookingWhatsAppMessage(booking: { name: string; phone: string; email?: string; date: string; time: string; guests: number; id: string; preOrderItems?: any[]; preOrderTotal?: number; paymentMethod?: string; branchName?: string; notes?: string }) {
   const lines = [
     `📋 *NEW TABLE BOOKING (${booking.branchName?.toUpperCase() || 'HAYES'}) — ${booking.id}*`,
@@ -365,7 +363,7 @@ export default function BookClient() {
                       type="button"
                       disabled={isFullyBooked}
                       onClick={() => setFormData({ ...formData, time })}
-                      className={`py-2.5 rounded-xl border-2 text-sm font-bold transition-all relative overflow-hidden ${
+                      className={`py-3.5 rounded-xl border-2 text-sm font-bold transition-all relative overflow-hidden ${
                         isFullyBooked 
                           ? 'opacity-40 cursor-not-allowed border-pine/5 bg-pine/5 text-pine/40 line-through'
                           : isSelected
@@ -480,7 +478,7 @@ export default function BookClient() {
                       >
                         <div>
                           <p className="font-bold text-pine text-sm">{item.name}</p>
-                          <p className="text-pine/40 text-xs capitalize mt-0.5">{item.category}</p>
+                          <p className="text-pine/60 text-xs capitalize mt-0.5">{item.category}</p>
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="text-terracotta font-bold text-sm">£{item.price.toFixed(2)}</span>

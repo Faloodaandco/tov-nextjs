@@ -218,7 +218,7 @@ export async function POST(req: NextRequest) {
       if (promoResult.discount > 0 && promoResult.isTimeValid) {
         discountPence = Math.round(promoResult.discount * 100);
         discountLabel = `🎟️ ${ACTIVE_PROMO.cartLabel}`;
-        console.log(`[Square] Promo ${voucher_code}: -£${promoResult.discount.toFixed(2)} on ${promoResult.eligibleItemsCount} items`);
+        console.info(`[Square] Promo ${voucher_code}: -£${promoResult.discount.toFixed(2)} on ${promoResult.eligibleItemsCount} items`);
       }
     }
 
@@ -241,7 +241,7 @@ export async function POST(req: NextRequest) {
       ? order_id.slice(0, 30)
       : `ORD-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
 
-    console.log(`[Square] Processing ${cleanOrderId} for ${loc.name}: £${totalPounds.toFixed(2)} (${isDelivery ? 'DELIVERY' : 'COLLECTION'})`);
+    console.info(`[Square] Processing ${cleanOrderId} for ${loc.name}: £${totalPounds.toFixed(2)} (${isDelivery ? 'DELIVERY' : 'COLLECTION'})`);
 
     // ── Build Square Line Items ───────────────────────────────────────
     const squareLineItems: any[] = cart.map((item: any) => ({
@@ -373,7 +373,7 @@ export async function POST(req: NextRequest) {
       throw new Error('Square order was not returned by API');
     }
 
-    console.log(`[Square] Order created: ${squareOrder.id}`);
+    console.info(`[Square] Order created: ${squareOrder.id}`);
 
     // ── 2. Charge Payment ─────────────────────────────────────────────
     const paymentIdempotencyKey = idempotency_key ? idempotency_key + '-pay' : crypto.randomUUID();
@@ -411,7 +411,7 @@ export async function POST(req: NextRequest) {
       throw new Error('Square payment ID was not returned by API');
     }
 
-    console.log(`[Square] Payment succeeded: ${squarePayment.id}`);
+    console.info(`[Square] Payment succeeded: ${squarePayment.id}`);
 
     // ─────────────────────────────────────────────────────────────────
     // CRITICAL: Once payment succeeds, THE CUSTOMER HAS BEEN CHARGED.
@@ -481,7 +481,7 @@ export async function POST(req: NextRequest) {
         // ── Source ──
         source: 'Web',
       });
-      console.log(`[Square] Order ${cleanOrderId} persisted to Firestore`);
+      console.info(`[Square] Order ${cleanOrderId} persisted to Firestore`);
     } catch (dbErr) {
       // Log but never fail — customer is already charged
       console.error(`[Square] Firestore write failed for ${cleanOrderId}:`, dbErr);
@@ -577,7 +577,7 @@ export async function POST(req: NextRequest) {
             html: emailHtml,
           },
         });
-        console.log(`[Square] Queued confirmation email for ${cleanOrderId}`);
+        console.info(`[Square] Queued confirmation email for ${cleanOrderId}`);
       } catch (emailErr) {
         // Log but never fail — customer is already charged
         console.error(`[Square] Email queue failed for ${cleanOrderId}:`, emailErr);

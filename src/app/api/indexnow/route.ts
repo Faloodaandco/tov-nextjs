@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     const status = response.status;
     // 200 = accepted, 202 = accepted (later processing)
     if (status === 200 || status === 202) {
-      console.log(`[IndexNow] Submitted ${urlList.length} URLs — status ${status}`);
+      console.info(`[IndexNow] Submitted ${urlList.length} URLs — status ${status}`);
       return NextResponse.json({
         success: true,
         submitted: urlList.length,

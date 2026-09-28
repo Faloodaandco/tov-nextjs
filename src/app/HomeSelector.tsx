@@ -50,7 +50,7 @@ export default function HomeSelector() {
             return (
               <Link
                 key={loc.id}
-                href={/ + loc.id}
+                href={'/' + loc.id}
                 onClick={() => handleBranchSelect(loc.id, loc.name)}
                 className="group relative rounded-3xl p-8 md:p-10 text-left transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col h-full border border-bg-sand/10 bg-white/5 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:bg-white/10 hover:border-terracotta/50 hover:shadow-[0_20px_60px_rgba(138,61,42,0.4)]"
               >

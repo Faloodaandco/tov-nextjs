@@ -5,14 +5,14 @@ import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from
 import { MapPin, Menu as MenuIcon, Star, Globe } from 'lucide-react';
 
 const Instagram = ({ className, ...props }: { className?: string; [key: string]: any }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
 );
 const Facebook = ({ className, ...props }: { className?: string; [key: string]: any }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
 );
 
 // A 3D Animated Card Component using Framer Motion
-const TiltCard = ({ children, delay = 0, to, href }: { children: React.ReactNode; delay?: number; to?: string; href?: string }) => {
+const TiltCard = ({ children, delay = 0, to, href, ariaLabel }: { children: React.ReactNode; delay?: number; to?: string; href?: string; ariaLabel?: string }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const x = useMotionValue(0);
@@ -72,9 +72,9 @@ const TiltCard = ({ children, delay = 0, to, href }: { children: React.ReactNode
   );
 
   if (to) {
-    return <Link href={to} className="w-full perspective-[1000px] block my-3">{content}</Link>;
+    return <Link href={to} aria-label={ariaLabel} className="w-full perspective-[1000px] block my-3">{content}</Link>;
   }
-  return <a href={href} target="_blank" rel="noopener noreferrer" className="w-full perspective-[1000px] block my-3">{content}</a>;
+  return <a href={href} aria-label={ariaLabel} target="_blank" rel="noopener noreferrer" className="w-full perspective-[1000px] block my-3">{content}</a>;
 };
 
 // Animated Tree Graphic Background
@@ -178,7 +178,7 @@ export default function Links() {
             whileHover={{ scale: 1.1, rotate: 5 }}
             className="w-24 h-24 bg-[#1A3C34] text-[#FDF9F1] rounded-full flex items-center justify-center border-4 border-[#D14836] shadow-2xl mb-4 overflow-hidden"
           >
-            <MenuIcon size={40} />
+            <MenuIcon size={40} aria-hidden="true" />
           </motion.div>
           <h1 className="font-display text-4xl font-black text-[#1A3C34] tracking-tight uppercase text-center drop-shadow-sm">
             Taste of Village
@@ -192,51 +192,51 @@ export default function Links() {
         <div className="w-full flex flex-col perspective-[1000px] gap-1" style={{ paddingBottom: 'env(safe-area-inset-bottom, 24px)' }}>
           
           {/* Slough Ordering */}
-          <TiltCard to="/slough/menu" delay={0.1}>
+          <TiltCard to="/slough/menu" delay={0.1} ariaLabel="Order Slough Menu - 260 Farnham Rd Delivery and Collection">
             <div className="flex flex-col text-left">
               <span className="font-bold tracking-widest uppercase text-sm">Order Slough Menu</span>
               <span className="text-[10px] text-amber-200/80 font-mono tracking-wider">260 Farnham Rd · Delivery &amp; Collection</span>
             </div>
-            <MenuIcon className="w-5 h-5 text-[#D14836] flex-shrink-0" />
+            <MenuIcon className="w-5 h-5 text-[#D14836] flex-shrink-0" aria-hidden="true" />
           </TiltCard>
 
           {/* Hayes Ordering */}
-          <TiltCard to="/hayes/menu" delay={0.2}>
+          <TiltCard to="/hayes/menu" delay={0.2} ariaLabel="Order Hayes Menu - 766B Uxbridge Rd Delivery and Collection">
             <div className="flex flex-col text-left">
               <span className="font-bold tracking-widest uppercase text-sm">Order Hayes Menu</span>
               <span className="text-[10px] text-amber-200/80 font-mono tracking-wider">766B Uxbridge Rd · Delivery &amp; Collection</span>
             </div>
-            <MenuIcon className="w-5 h-5 text-[#D14836] flex-shrink-0" />
+            <MenuIcon className="w-5 h-5 text-[#D14836] flex-shrink-0" aria-hidden="true" />
           </TiltCard>
 
           {/* Voucher */}
-          <TiltCard to="/check-in" delay={0.3}>
+          <TiltCard to="/check-in" delay={0.3} ariaLabel="Claim £5 Welcome Voucher">
             <span className="font-bold tracking-widest uppercase text-sm">Claim £5 Welcome Voucher</span>
-            <Star className="w-5 h-5 text-[#D14836] flex-shrink-0" />
+            <Star className="w-5 h-5 text-[#D14836] flex-shrink-0" aria-hidden="true" />
           </TiltCard>
 
           {/* Google Reviews */}
-          <TiltCard href="https://g.page/r/CU4P6ZjGio6HECE/review" delay={0.4}>
+          <TiltCard href="https://g.page/r/CU4P6ZjGio6HECE/review" delay={0.4} ariaLabel="Leave a Google Review">
             <span className="font-bold tracking-widest uppercase text-sm">Leave a Google Review</span>
-            <Star className="w-5 h-5 text-[#D14836] flex-shrink-0" />
+            <Star className="w-5 h-5 text-[#D14836] flex-shrink-0" aria-hidden="true" />
           </TiltCard>
 
           {/* Instagram */}
-          <TiltCard href="https://www.instagram.com/tasteofvillageuk/" delay={0.5}>
+          <TiltCard href="https://www.instagram.com/tasteofvillageuk/" delay={0.5} ariaLabel="Follow on Instagram">
             <span className="font-bold tracking-widest uppercase text-sm">Follow on Instagram</span>
-            <Instagram className="w-5 h-5 text-[#D14836] flex-shrink-0" />
+            <Instagram className="w-5 h-5 text-[#D14836] flex-shrink-0" aria-hidden="true" />
           </TiltCard>
 
           {/* Facebook */}
-          <TiltCard href="https://www.facebook.com/profile.php?id=61590779182784" delay={0.6}>
+          <TiltCard href="https://www.facebook.com/profile.php?id=61590779182784" delay={0.6} ariaLabel="Follow on Facebook">
             <span className="font-bold tracking-widest uppercase text-sm">Follow on Facebook</span>
-            <Facebook className="w-5 h-5 text-[#D14836] flex-shrink-0" />
+            <Facebook className="w-5 h-5 text-[#D14836] flex-shrink-0" aria-hidden="true" />
           </TiltCard>
 
           {/* Main Website */}
-          <TiltCard to="/" delay={0.7}>
+          <TiltCard to="/" delay={0.7} ariaLabel="Visit Taste of Village Main Website">
             <span className="font-bold tracking-widest uppercase text-sm">Main Website</span>
-            <Globe className="w-5 h-5 text-[#D14836] flex-shrink-0" />
+            <Globe className="w-5 h-5 text-[#D14836] flex-shrink-0" aria-hidden="true" />
           </TiltCard>
 
         </div>

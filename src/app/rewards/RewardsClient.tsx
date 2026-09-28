@@ -8,8 +8,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { getCustomer } from '@/services/customerService';
 import { useAuth } from '@/context/AuthContext';
 
-// TODO: metadata export
-
 interface LoyaltyAccount {
   id: string;
   phone: string;
@@ -171,7 +169,7 @@ export default function RewardsClient() {
               </button>
 
               <div className="mt-14 pt-10 border-t border-pine/10">
-                <h3 className="font-black text-[10px] uppercase tracking-[0.3em] text-pine/40 mb-10 text-center">How It Works</h3>
+                <h3 className="font-black text-[10px] uppercase tracking-[0.3em] text-pine/60 mb-10 text-center">How It Works</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
                   {[
                     { icon: Store, title: 'Visit Us', desc: 'Order at any of our branches' },

@@ -10,7 +10,7 @@ export function getBranchSeoMeta(locationId: string) {
   if (isSlough) {
     return {
       homeTitle: 'Authentic Pakistani & Halal Restaurant Slough | Farnham Rd | Taste of Village',
-      homeDescription: 'Taste of Village Slough serves authentic Lahori & Gujranwala cuisine at 260 Farnham Road (SL1 4XL). 5★ Hygiene Rating. Fresh Karahi, Slow-Cooked Nihari, Haleem, Sizzling BBQ & Weekend Desi Nashta.',
+      homeDescription: 'Taste of Village Slough serves authentic Lahori & Gujranwala cuisine at 260 Farnham Road (SL1 4XQ). 5★ Hygiene Rating. Fresh Karahi, Slow-Cooked Nihari, Haleem, Sizzling BBQ & Weekend Desi Nashta.',
       menuTitle: 'Full Menu & Takeaway Prices | Taste of Village Slough',
       menuDescription: 'View the official Taste of Village takeaway menu at 260 Farnham Road, Slough. Order fresh Chicken & Lamb Karahi, Biryani, Tandoori Naan, and BBQ online for collection.',
       canonicalBase: '/slough'

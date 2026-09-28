@@ -214,7 +214,7 @@ export default async function DishPage({ params }: PageProps) {
             </p>
 
             {/* Branch info */}
-            <p className="text-sm text-pine/40">
+            <p className="text-sm text-pine/60">
               Available at Taste of Village {branchName} · {branchConfig.address}, {branchConfig.postcode}
             </p>
 

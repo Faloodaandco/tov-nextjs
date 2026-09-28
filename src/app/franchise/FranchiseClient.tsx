@@ -5,8 +5,6 @@ import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { TrendingUp, ShieldCheck, ChefHat, ChevronRight, CheckCircle2 } from 'lucide-react';
 
-// TODO: metadata export
-
 export default function FranchiseClient() {
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', location: '', capital: '', message: ''

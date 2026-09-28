@@ -5,14 +5,14 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Pakistani Street Food in Slough | Chaat, Kebabs & Naan | Taste of Village',
-  description: 'Authentic Pakistani street food on Farnham Road, Slough. Fresh Samosa Chaat, Dahi Bhalla, Charcoal Seekh Kebab Rolls, and Karak Chai at 260 Farnham Road (SL1 4XL).',
+  description: 'Authentic Pakistani street food on Farnham Road, Slough. Fresh Samosa Chaat, Dahi Bhalla, Charcoal Seekh Kebab Rolls, and Karak Chai at 260 Farnham Road (SL1 4XQ).',
   alternates: {
     canonical: '/slough-street-food'
   },
   openGraph: {
     type: 'website',
     title: 'Pakistani Street Food in Slough | Chaat, Kebabs & Naan | Taste of Village',
-    description: 'Authentic Pakistani street food on Farnham Road, Slough. Fresh Samosa Chaat, Dahi Bhalla, Charcoal Seekh Kebab Rolls, and Karak Chai at 260 Farnham Road (SL1 4XL).',
+    description: 'Authentic Pakistani street food on Farnham Road, Slough. Fresh Samosa Chaat, Dahi Bhalla, Charcoal Seekh Kebab Rolls, and Karak Chai at 260 Farnham Road (SL1 4XQ).',
     url: 'https://tasteofvillagerestaurants.co.uk/slough-street-food',
     siteName: 'Taste of Village',
     locale: 'en_GB',
@@ -35,7 +35,7 @@ export default function SloughStreetFood() {
           "streetAddress": "260 Farnham Road",
           "addressLocality": "Slough",
           "addressRegion": "Berkshire",
-          "postalCode": "SL1 4XL",
+          "postalCode": "SL1 4XQ",
           "addressCountry": "GB"
         },
         "geo": { "@type": "GeoCoordinates", "latitude": 51.5273, "longitude": -0.6128 },
@@ -129,7 +129,7 @@ export default function SloughStreetFood() {
 
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-10">
             <div className="flex items-center gap-2 text-pine font-bold">
-              <MapPin className="text-terracotta" /> 260 Farnham Road, Slough SL1 4XL
+              <MapPin className="text-terracotta" /> 260 Farnham Road, Slough SL1 4XQ
             </div>
             <div className="flex items-center gap-2 text-pine font-bold">
               <Clock className="text-terracotta" /> 12:00 PM – 11:00 PM Daily

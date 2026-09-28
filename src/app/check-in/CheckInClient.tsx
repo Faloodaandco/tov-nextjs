@@ -17,7 +17,8 @@ import {
   Percent,
   Droplets
 } from 'lucide-react';
-import QRCode from 'react-qr-code';
+import dynamic from 'next/dynamic';
+const QRCode = dynamic(() => import('react-qr-code').then(mod => mod.default || mod), { ssr: false });
 import { CampaignService } from '@/services/CampaignService';
 import { LOCATIONS } from '@/config/shopConfig';
 

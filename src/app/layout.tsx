@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Cinzel, Outfit, Jost } from "next/font/google";
+import { Cinzel, Outfit } from "next/font/google";
 import Providers from "./providers";
 import "./globals.css";
 
@@ -14,13 +14,6 @@ const cinzel = Cinzel({
 const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-const jost = Jost({
-  subsets: ["latin"],
-  variable: "--font-jost",
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
@@ -89,7 +82,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-GB" className={`${cinzel.variable} ${outfit.variable} ${jost.variable}`}>
+    <html lang="en-GB" className={`${cinzel.variable} ${outfit.variable}`}>
       <head>
         {/* Schema.org Restaurant Structured Data — Both Branches */}
         <script
@@ -178,7 +171,7 @@ export default function RootLayout({
                     streetAddress: "260 Farnham Road",
                     addressLocality: "Slough",
                     addressRegion: "Berkshire",
-                    postalCode: "SL1 4XL",
+                    postalCode: "SL1 4XQ",
                     addressCountry: "GB",
                   },
                   geo: { "@type": "GeoCoordinates", latitude: 51.5273, longitude: -0.6128 },
@@ -214,7 +207,8 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <Providers>{children}</Providers>
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-pine focus:text-white focus:rounded-lg focus:text-sm">Skip to main content</a>
+        <Providers><main id="main-content">{children}</main></Providers>
         {/* Microsoft Clarity */}
         <Script
           id="clarity"
