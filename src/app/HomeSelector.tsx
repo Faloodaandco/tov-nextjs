@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useRouter } from 'next/navigation';
 import { LOCATIONS } from '@/config/shopConfig';
@@ -54,7 +54,7 @@ export default function HomeSelector() {
               <div 
                 key={loc.id}
                 className="flex flex-col items-center animate-fade-in-up"
-                style={{ animationDelay: ${index * 150}ms }}
+                style={{ animationDelay: `${index * 150}ms` }}
               >
                 {/* The Arch */}
                 <div
