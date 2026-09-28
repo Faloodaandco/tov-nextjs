@@ -41,6 +41,11 @@ export function middleware(req: NextRequest) {
 
   let maxRequests = 0;
 
+  const host = req.headers.get('host') || '';
+  if (host.includes('localhost') || host.includes('127.0.0.1')) {
+    return NextResponse.next();
+  }
+
   if (pathname.startsWith('/api/checkout')) {
     maxRequests = 5;
   } else if (pathname.startsWith('/api/delivery')) {
@@ -69,3 +74,4 @@ export const config = {
     '/api/webhooks/:path*'
   ],
 };
+
