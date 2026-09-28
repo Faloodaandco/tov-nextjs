@@ -169,6 +169,7 @@ export default function HomeSelector() {
             );
           })}
         </div>
+        </div>
       </main>
 
       {/* Patterned Motif Footer */}
@@ -215,5 +216,6 @@ export default function HomeSelector() {
     </div>
   );
 }
+
 
 
