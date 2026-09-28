@@ -59,7 +59,7 @@ export default function HomeSelector() {
         {/* Right Actions */}
         <div className="flex-1 flex justify-end">
           <div className="hidden md:flex items-center gap-6">
-            <button onClick={() => router.push('/info')} className="px-6 py-2 border-[0.5px] border-pine text-pine text-[10px] tracking-[0.2em] uppercase rounded-full hover:bg-pine hover:text-white transition-colors">
+            <button onClick={() => window.location.href='mailto:info@tasteofvillagerestaurants.co.uk'} className="px-6 py-2 border-[0.5px] border-pine text-pine text-[10px] tracking-[0.2em] uppercase rounded-full hover:bg-pine hover:text-white transition-colors">
               Contact Us
             </button>
           </div>
@@ -123,9 +123,10 @@ export default function HomeSelector() {
                         {loc.city}
                       </h2>
                       
-                      <div className="flex flex-col items-center gap-2 mb-8 md:mb-10">
+                                            <div className="flex flex-col items-center gap-2 mb-8 md:mb-10">
                         <span className="text-pine/60 text-[9px] md:text-[10px] tracking-[0.25em] font-medium uppercase">{loc.address}</span>
                         <span className="text-terracotta/80 text-[8px] md:text-[9px] tracking-[0.3em] font-bold uppercase">{loc.postcode}</span>
+                        <span className="text-pine/50 font-light text-[8px] tracking-[0.2em] mt-1">{loc.phone}</span>
                       </div>
                       
                       <div className="mt-auto mb-6">
@@ -177,7 +178,7 @@ export default function HomeSelector() {
 
           <div className="flex gap-8 text-[#889B8D] text-[9px] tracking-[0.25em] uppercase font-sans">
             <button onClick={() => router.push('/book')} className="hover:text-terracotta cursor-pointer transition-colors uppercase tracking-[0.25em]">Reservations</button>
-            <button onClick={() => router.push('/info')} className="hover:text-terracotta cursor-pointer transition-colors uppercase tracking-[0.25em]">Contact</button>
+            <button onClick={() => window.location.href='mailto:info@tasteofvillagerestaurants.co.uk'} className="hover:text-terracotta cursor-pointer transition-colors uppercase tracking-[0.25em]">Contact</button>
           </div>
 
         </div>
@@ -185,6 +186,9 @@ export default function HomeSelector() {
     </div>
   );
 }
+
+
+
 
 
 
