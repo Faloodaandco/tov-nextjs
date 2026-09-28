@@ -22,15 +22,12 @@ export default function HomeSelector() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center relative overflow-hidden py-6 md:py-10">
+    <div className="min-h-screen bg-[#FDFBF7] flex flex-col relative overflow-hidden">
       {/* Warm Sandy Gradient & Grain */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#FDFBF7] via-[#F8EFE3] to-[#F1E3D3] pointer-events-none"></div>
       <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
       
-      {/* 15% Restaurant Ambience Photo (Warmer Blend) */}
-      <div className="absolute inset-0 bg-[url('/assets/tov-cfd-bg.webp')] bg-cover bg-center opacity-15 pointer-events-none mix-blend-multiply"></div>
-      
-      <div className="relative z-10 flex flex-col items-center w-full px-4 sm:px-6 max-w-5xl mx-auto">
+      <div className="flex-1 flex flex-col items-center justify-center relative z-10 w-full px-4 sm:px-6 max-w-5xl mx-auto py-10">
         
         {/* Brand Lockup */}
         <div className="flex flex-col items-center mb-6 md:mb-10 animate-fade-in-up">
@@ -128,7 +125,7 @@ export default function HomeSelector() {
                       </p>
                     </div>
 
-                    {/* Bottom: Solid Inviting Button and Badge */}
+                    {/* Bottom: Solid Inviting Button */}
                     <div className="flex flex-col items-center gap-6 w-full mt-auto pt-8">
                       <button 
                         onClick={(e) => navigateTo(e, '/' + loc.id + '/menu', loc.id, loc.name)}
@@ -136,17 +133,34 @@ export default function HomeSelector() {
                       >
                         <span className="font-sans font-bold text-[10px] tracking-[0.25em] uppercase">Order Now</span>
                       </button>
-                      
-                      <img
-                        src={isSlough ? '/assets/fhrs-badge-5-horizontal.svg' : '/assets/fhrs-badge-4-horizontal.svg'}
-                        alt="Food Hygiene Rating"
-                        className="h-[16px] w-auto opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 relative z-10 bg-white/50 backdrop-blur-sm rounded-sm px-1 py-0.5"
-                        loading="lazy"
-                      />
                     </div>
 
                   </div>
                 </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Patterned Motif Footer with Ratings */}
+      <div className="w-full relative py-8 mt-auto overflow-hidden z-10 flex-shrink-0">
+        {/* Motif Wallpaper Pattern */}
+        <div className="absolute inset-0 opacity-[0.035] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='70' height='40' viewBox='0 0 70 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20h17.5M52.5 20h17.5M17.5 20L35 5l17.5 15-17.5 15zM24 20l11-9 11 9-11 9z' fill='none' stroke='%231A3C34' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E")`, backgroundRepeat: 'repeat', backgroundPosition: 'center' }}></div>
+        
+        <div className="relative z-10 max-w-4xl mx-auto px-6 flex flex-row items-center justify-center gap-12 md:gap-24">
+          {Object.values(LOCATIONS).map((loc) => {
+            const isSlough = loc.id === 'slough';
+            return (
+              <div key={`${loc.id}-fhrs`} className="flex flex-col items-center gap-2.5">
+                <p className="text-pine/70 font-sans text-[9px] tracking-[0.2em] uppercase font-bold drop-shadow-sm">
+                  {loc.name.replace('Taste Of Village ', '')}
+                </p>
+                <img
+                  src={isSlough ? '/assets/fhrs-badge-5-horizontal.svg' : '/assets/fhrs-badge-4-horizontal.svg'}
+                  alt={`${loc.name} Food Hygiene Rating`}
+                  className="h-[32px] md:h-[40px] w-auto opacity-75 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+                />
               </div>
             );
           })}
