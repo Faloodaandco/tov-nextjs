@@ -35,34 +35,38 @@ export default function HomeSelector() {
     <div className="min-h-screen bg-[#F4F1EA] flex flex-col relative font-sans text-pine selection:bg-terracotta/20">
       
       {/* Editorial Navbar */}
-      <header className={`w-full py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 transition-all duration-500 ${scrolled ? 'bg-[#F4F1EA]/90 backdrop-blur-md border-b-[0.5px] border-pine/20 shadow-sm' : 'bg-transparent border-transparent'}`}>
+      <header className={`w-full py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 transition-all duration-500 relative ${scrolled ? 'bg-[#F4F1EA]/90 backdrop-blur-md border-b-[0.5px] border-pine/20 shadow-sm' : 'bg-transparent border-transparent'}`}>
         
         {/* Left Nav */}
-        <nav className="hidden md:flex items-center gap-8 text-[10px] tracking-[0.25em] font-medium text-pine/80 uppercase">
-          <button onClick={() => router.push('/info')} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Explore</button>
-          <button onClick={() => window.scrollTo({ top: 300, behavior: 'smooth' })} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Menus</button>
-          <button onClick={() => router.push('/info')} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Catering</button>
-        </nav>
+        <div className="flex-1 flex justify-start">
+          <nav className="hidden md:flex items-center gap-8 text-[10px] tracking-[0.25em] font-medium text-pine/80 uppercase">
+            <button onClick={() => router.push('/info')} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Explore</button>
+            <button onClick={() => window.scrollTo({ top: 300, behavior: 'smooth' })} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Menus</button>
+            <button onClick={() => router.push('/info')} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Catering</button>
+          </nav>
+        </div>
 
         {/* Center Logo */}
-        <div className="flex-1 md:flex-none flex justify-center">
+        <div className="absolute left-1/2 -translate-x-1/2 flex justify-center pointer-events-none">
           <img 
             src="/assets/tov-logo-pine.png" 
             alt="Taste of Village" 
-            className="h-10 md:h-12 w-auto"
+            className="h-10 md:h-12 w-auto pointer-events-auto cursor-pointer"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           />
         </div>
 
         {/* Right Actions */}
-        <div className="hidden md:flex items-center justify-end gap-6">
-          <button onClick={() => router.push('/info')} className="px-6 py-2 border-[0.5px] border-pine text-pine text-[10px] tracking-[0.2em] uppercase rounded-full hover:bg-pine hover:text-white transition-colors">
-            Contact Us
-          </button>
-        </div>
-
-        {/* Mobile Menu Toggle */}
-        <div className="md:hidden flex items-center">
-          <button className="text-[10px] tracking-[0.2em] uppercase border-b border-pine/30 pb-0.5">Menu</button>
+        <div className="flex-1 flex justify-end">
+          <div className="hidden md:flex items-center gap-6">
+            <button onClick={() => router.push('/info')} className="px-6 py-2 border-[0.5px] border-pine text-pine text-[10px] tracking-[0.2em] uppercase rounded-full hover:bg-pine hover:text-white transition-colors">
+              Contact Us
+            </button>
+          </div>
+          {/* Mobile Menu Toggle */}
+          <div className="md:hidden flex items-center">
+            <button className="text-[10px] tracking-[0.2em] uppercase border-b border-pine/30 pb-0.5">Menu</button>
+          </div>
         </div>
       </header>
 
