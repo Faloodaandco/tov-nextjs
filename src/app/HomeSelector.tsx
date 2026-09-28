@@ -5,6 +5,7 @@ import { LOCATIONS } from '@/config/shopConfig';
 import { trackBranchSelect } from '@/utils/analytics';
 import { MapPin, Flame, ArrowRight } from 'lucide-react';
 
+
 export default function HomeSelector() {
   const handleBranchSelect = (branchId: string, branchName: string) => {
     if (typeof window !== 'undefined') {
@@ -14,85 +15,84 @@ export default function HomeSelector() {
   };
 
   return (
-    <main className="min-h-screen bg-bg-sand flex flex-col items-center relative overflow-hidden pt-12 md:pt-20 px-4 md:px-8">
-      {/* Top Terracotta Bar */}
-      <div className="absolute top-0 left-0 right-0 h-3 md:h-4 bg-terracotta w-full z-50 shadow-md"></div>
-      
-      {/* Subtle brand glow behind content */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[80%] h-[400px] bg-terracotta/5 blur-[120px] rounded-full pointer-events-none"></div>
+    <main className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-pine">
+      {/* Immersive Background */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="/assets/chicken_karahi_hero.webp" 
+          alt="Authentic Punjabi Cuisine" 
+          className="w-full h-full object-cover opacity-60 scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-pine via-pine/90 to-pine/30 mix-blend-multiply"></div>
+        <div className="absolute inset-0 bg-pine/60 backdrop-blur-[2px]"></div>
+      </div>
 
-      <div className="relative z-10 w-full max-w-5xl flex flex-col items-center text-center mt-6 md:mt-10">
+      <div className="relative z-10 w-full max-w-6xl px-4 md:px-8 py-12 flex flex-col items-center text-center h-full">
         
-        {/* Exact SPA Logo Asset */}
-        <div className="text-center z-10 flex flex-col items-center gap-4 mb-8">
+        {/* Brand Lockup */}
+        <div className="flex flex-col items-center mb-12 md:mb-20">
           <img 
-            src="/assets/tov-logo-tree-terracotta-alpha.png" 
-            alt="Taste of Village Monogram" 
-            className="h-24 md:h-28 w-auto object-contain drop-shadow-[0_4px_12px_rgba(138,61,42,0.15)]"
+            src="/assets/tov-full-logo-transparent-inverted.png" 
+            alt="Taste of Village" 
+            className="w-64 md:w-80 lg:w-96 h-auto drop-shadow-[0_0_30px_rgba(253,245,242,0.15)] mb-8"
           />
-          <div className="tov-frieze w-24"></div>
+          <div className="h-px w-24 bg-bg-sand/30 mb-6"></div>
+          <p className="text-bg-sand/70 text-xs md:text-sm font-sans tracking-[0.3em] uppercase">
+            Select your destination
+          </p>
         </div>
 
-        <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-[56px] text-pine tracking-[0.2em] uppercase mb-5 relative z-10">
-          TASTE OF VILLAGE
-        </h1>
-        
-        <p className="text-pine/70 text-base md:text-lg max-w-2xl mx-auto mb-16 relative z-10 italic font-serif">
-          Select your destination to explore our rich Punjab culinary heritage.
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl relative z-10">
+        {/* Glassmorphism Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 w-full max-w-5xl">
           {Object.values(LOCATIONS).map((loc) => {
             const isSlough = loc.id === 'slough';
             
             return (
               <Link
                 key={loc.id}
-                href={`/${loc.id}`}
+                href={/ + loc.id}
                 onClick={() => handleBranchSelect(loc.id, loc.name)}
-                className="group relative bg-white rounded-3xl p-10 text-left transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(138,61,42,0.15)] hover:-translate-y-1 overflow-hidden flex flex-col h-full border border-bg-sand shadow-sm"
+                className="group relative rounded-3xl p-8 md:p-10 text-left transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col h-full border border-bg-sand/10 bg-white/5 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:bg-white/10 hover:border-terracotta/50 hover:shadow-[0_20px_60px_rgba(138,61,42,0.4)]"
               >
-                <div className="flex justify-between items-center mb-8 relative z-10">
-                  <div className="p-3.5 bg-bg-sand/60 rounded-full text-pine/70 group-hover:bg-terracotta/10 group-hover:text-terracotta transition-colors duration-300">
-                    {isSlough ? <Flame size={24} strokeWidth={1.5} /> : <MapPin size={24} strokeWidth={1.5} />}
+                {/* Subtle Terracotta Glow on Hover */}
+                <div className="absolute inset-0 bg-terracotta/0 group-hover:bg-terracotta/5 transition-colors duration-500 z-0"></div>
+
+                <div className="flex justify-between items-center mb-10 relative z-10">
+                  <div className="p-4 bg-bg-sand/10 backdrop-blur-md rounded-2xl text-bg-sand group-hover:bg-terracotta group-hover:text-white transition-all duration-300 shadow-inner border border-white/5">
+                    {isSlough ? <Flame size={28} strokeWidth={1.5} /> : <MapPin size={28} strokeWidth={1.5} />}
                   </div>
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-transparent border border-pine/10 group-hover:border-terracotta/30 transition-colors">
-                    <ArrowRight className="text-pine/40 group-hover:text-terracotta transition-transform group-hover:translate-x-1" size={20} strokeWidth={1.5} />
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-transparent border border-bg-sand/20 group-hover:border-terracotta transition-colors">
+                    <ArrowRight className="text-bg-sand/50 group-hover:text-terracotta transition-transform group-hover:translate-x-1" size={24} strokeWidth={1.5} />
                   </div>
                 </div>
 
-                <h2 className="font-display font-bold text-2xl md:text-3xl text-pine tracking-[0.05em] mb-4 border-b border-pine/5 pb-5 relative z-10">
-                  {loc.name.replace('Taste Of Village ', '').toUpperCase()} BRANCH
+                <h2 className="font-display font-bold text-3xl md:text-4xl text-bg-sand tracking-wide mb-6 relative z-10 drop-shadow-md">
+                  {loc.name.replace('Taste Of Village ', '').toUpperCase()}
                 </h2>
                 
                 <div className="relative z-10 flex-grow">
-                  <div className="flex items-center gap-2.5 text-pine/70 font-sans text-sm md:text-base">
-                    <span className="w-1 h-1 rounded-full bg-terracotta"></span>
-                    <span>{loc.address}</span>
+                  <div className="flex items-center gap-3 text-bg-sand/80 font-sans text-sm md:text-base">
+                    <span className="w-1.5 h-1.5 rounded-full bg-terracotta group-hover:animate-pulse"></span>
+                    <span className="font-light">{loc.address}</span>
                   </div>
-                  <p className="text-pine/40 font-mono text-xs mt-1.5 tracking-wider uppercase ml-3.5">{loc.postcode}</p>
+                  <p className="text-bg-sand/40 font-mono text-xs mt-2 tracking-[0.2em] uppercase ml-4.5">{loc.postcode}</p>
                   
-                  <p className="text-terracotta font-mono text-xs mt-4 tracking-widest ml-3.5 font-bold flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  <p className="text-terracotta-light font-mono text-sm mt-5 tracking-widest ml-4.5 font-bold flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                     {loc.phone}
                   </p>
                 </div>
 
-                <div className="mt-8 pt-5 border-t border-pine/5 flex items-center justify-between relative z-10">
-                  <div className="bg-terracotta text-white font-bold tracking-[0.1em] text-xs md:text-sm px-6 py-3 rounded-full uppercase shadow-md group-hover:bg-pine transition-colors">
-                    ORDER {loc.name.replace('Taste Of Village ', '').toUpperCase()} MENU
+                <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between relative z-10 gap-4">
+                  <div className="w-full sm:w-auto text-center bg-bg-sand/10 backdrop-blur-md text-bg-sand border border-bg-sand/20 font-bold tracking-[0.15em] text-xs px-8 py-4 rounded-full uppercase transition-all duration-300 group-hover:bg-terracotta group-hover:border-terracotta group-hover:text-white group-hover:shadow-[0_0_20px_rgba(138,61,42,0.4)]">
+                    Order Menu
                   </div>
-                  <span className="text-pine/40 text-[10px] md:text-xs font-bold tracking-[0.15em] uppercase group-hover:text-terracotta/60 transition-colors hidden sm:block">
-                    EXPLORE BRANCH &rarr;
-                  </span>
-                </div>
-
-                {/* FSA Food Hygiene Rating Badge */}
-                <div className="mt-5 pt-4 border-t border-pine/5 flex items-center justify-center gap-3 relative z-10">
+                  
+                  {/* FSA Food Hygiene Rating Badge */}
                   <img
                     src={isSlough ? '/assets/fhrs-badge-5-horizontal.svg' : '/assets/fhrs-badge-4-horizontal.svg'}
-                    alt={`Food Hygiene Rating ${isSlough ? '5 — Very Good' : '4 — Good'}`}
-                    className="h-7 w-auto opacity-50 group-hover:opacity-80 transition-opacity"
+                    alt={Food Hygiene Rating}
+                    className="h-8 w-auto opacity-50 group-hover:opacity-100 transition-opacity drop-shadow-lg filter brightness-0 invert"
                     loading="lazy"
                   />
                 </div>
