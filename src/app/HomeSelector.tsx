@@ -91,7 +91,7 @@ export default function HomeSelector() {
                   {/* FSA Food Hygiene Rating Badge */}
                   <img
                     src={isSlough ? '/assets/fhrs-badge-5-horizontal.svg' : '/assets/fhrs-badge-4-horizontal.svg'}
-                    alt={Food Hygiene Rating}
+                    alt={`Food Hygiene Rating ${isSlough ? '5' : '4'}`}
                     className="h-8 w-auto opacity-50 group-hover:opacity-100 transition-opacity drop-shadow-lg filter brightness-0 invert"
                     loading="lazy"
                   />
