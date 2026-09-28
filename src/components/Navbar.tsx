@@ -90,6 +90,7 @@ export const Navbar = () => {
               {isOpen ? <X size={20} className="sm:w-6 sm:h-6" /> : <MenuIcon size={20} className="sm:w-6 sm:h-6" />}
             </button>
             <button
+              suppressHydrationWarning
               onClick={() => setShowLocationModal(true)}
               className={`hidden sm:flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 rounded-full hover:-translate-y-0.5 px-5 py-2 sm:py-3 ${pillClasses}`}
             >

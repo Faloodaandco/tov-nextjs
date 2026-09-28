@@ -19,10 +19,21 @@ export const Footer = () => {
 
   return (
     <footer className="relative bg-pine text-bg-sand pt-24 pb-12 mt-20 overflow-hidden">
-      {/* Top Motif Border (Geometric Diamond Pattern) */}
-      <div className="absolute top-0 left-0 w-full h-10 bg-[#F6F0E4]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='70' height='40' viewBox='0 0 70 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20h17.5M52.5 20h17.5M17.5 20L35 5l17.5 15-17.5 15zM24 20l11-9 11 9-11 9z' fill='none' stroke='%231A3C34' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E")`, backgroundRepeat: "repeat-x", backgroundPosition: "center" }}></div>
+      {/* Top Motif Frieze — CNC Feature Wall Pattern */}
+      <div
+        className="absolute top-0 left-0 w-full h-16 md:h-20"
+        aria-hidden="true"
+        style={{
+          backgroundImage: `url('/assets/tov-pattern.svg')`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '90px 90px',
+          opacity: 0.15,
+        }}
+      />
+      {/* Gradient fade from page background into footer */}
+      <div className="absolute top-0 left-0 w-full h-16 md:h-20 bg-gradient-to-b from-bg-sand to-transparent pointer-events-none" />
       {/* Absolute Background Pattern */}
-      <div className="absolute inset-0 tov-feature-wall-light opacity-[0.02] pointer-events-none animate-ken-burns origin-center"></div>
+      <div className="absolute inset-0 tov-feature-wall-light opacity-[0.04] pointer-events-none animate-ken-burns origin-center"></div>
       
       {/* Massive Background Monogram */}
       <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="" className="absolute -bottom-40 -right-40 w-[600px] h-[600px] opacity-[0.02] transform -rotate-12 pointer-events-none" />

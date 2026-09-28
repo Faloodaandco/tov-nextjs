@@ -893,12 +893,6 @@ function MenuPageContent() {
           <p className="font-sans text-white/90 text-sm md:text-base max-w-xl font-medium tracking-wide leading-relaxed mb-4">
             Experience authentic Punjabi & Mughal cooking. Prepared over live flames and slow-simmered in hand-seasoned cast iron karahis.
           </p>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-amber-300 animate-pulse"></span>
-            <span className="text-[11px] md:text-xs font-bold text-amber-200 uppercase tracking-wider">
-              {activeLocation.id === 'hayes' ? 'Hayes Kitchen • 766B Uxbridge Rd' : 'Slough Kitchen • 260 Farnham Rd'}
-            </span>
-          </div>
           <div className="mt-4 inline-flex items-center gap-4 px-5 py-2 rounded-full bg-terracotta/90 border border-terracotta backdrop-blur-md shadow-md shadow-terracotta/20">
             <span className="flex items-center gap-1.5 text-xs font-black text-white uppercase tracking-widest">
               <span>🚗</span> Delivery
@@ -918,38 +912,6 @@ function MenuPageContent() {
         activeCategory={activeCategory}
         scrollToCategory={scrollToCategory}
       />
-
-      {/* Dietary Filters Bar */}
-      <div className="bg-white/95 backdrop-blur-md border-b border-pine/10 sticky top-[118px] md:top-[106px] z-30 shadow-sm overflow-x-auto no-scrollbar">
-        <div className="max-w-7xl mx-auto px-4 py-2 sm:py-2.5 flex items-center gap-2.5">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-pine/40 mr-2 flex-shrink-0">Dietary:</span>
-          {['vegan', 'vegetarian', 'halal', 'gluten-free', 'spicy'].map(filter => {
-            const isActive = activeDietaryFilters.includes(filter);
-            return (
-              <button
-                key={filter}
-                onClick={() => {
-                  setActiveDietaryFilters(prev => 
-                    isActive ? prev.filter(f => f !== filter) : [...prev, filter]
-                  );
-                }}
-                className={`flex-shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black tracking-[0.15em] uppercase border transition-all flex items-center gap-1.5 ${
-                  isActive 
-                    ? 'bg-pine text-white border-pine shadow-sm shadow-pine/30' 
-                    : 'bg-bg-sand text-pine/60 border-pine/10 hover:border-pine/30 hover:text-pine'
-                }`}
-              >
-                {filter === 'vegan' && <span className={isActive ? '' : 'text-green-600'}>🌱</span>}
-                {filter === 'vegetarian' && <span className={isActive ? '' : 'text-yellow-600'}>🧀</span>}
-                {filter === 'halal' && <span className={isActive ? '' : 'text-emerald-600'}>🌙</span>}
-                {filter === 'gluten-free' && <span className={isActive ? '' : 'text-amber-700'}>🌾</span>}
-                {filter === 'spicy' && <span className={isActive ? '' : 'text-red-500'}>🌶️</span>}
-                {filter}
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
       {/* Menu Sections Rendered Sequentially */}
       <div className="max-w-7xl mx-auto px-4 py-12">

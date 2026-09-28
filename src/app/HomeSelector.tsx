@@ -1,16 +1,26 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { LOCATIONS } from '@/config/shopConfig';
 import { trackBranchSelect } from '@/utils/analytics';
-import { MapPin, Flame, ArrowRight } from 'lucide-react';
+import { MapPin, Flame } from 'lucide-react';
 
 export default function HomeSelector() {
   const router = useRouter();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   const handleBranchSelect = (branchId: string, branchName: string) => {
     if (typeof window !== 'undefined') {
-      try { localStorage.setItem('tov_selected_location', branchId); } catch (e) { console.warn('localStorage blocked'); }
+      localStorage.setItem('tov_selected_location', branchId);
     }
     trackBranchSelect(branchId, branchName);
   };
@@ -18,106 +28,108 @@ export default function HomeSelector() {
   const navigateTo = (e: React.MouseEvent, path: string, branchId: string, branchName: string) => {
     e.stopPropagation();
     handleBranchSelect(branchId, branchName);
-    window.location.href = path;
+    router.push(path);
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] flex flex-col relative overflow-hidden">
-      {/* Warm Sandy Gradient & Grain */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#FDFBF7] via-[#F8EFE3] to-[#F1E3D3] pointer-events-none"></div>
-      <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
+    <div className="min-h-screen bg-[#F4F1EA] flex flex-col relative font-sans text-pine selection:bg-terracotta/20">
       
-      <div className="flex-1 flex flex-col items-center justify-center relative z-10 w-full px-4 sm:px-6 max-w-5xl mx-auto py-10">
+      {/* Editorial Navbar */}
+      <header className={`w-full py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 transition-all duration-500 ${scrolled ? 'bg-[#F4F1EA]/90 backdrop-blur-md border-b-[0.5px] border-pine/20 shadow-sm' : 'bg-transparent border-transparent'}`}>
         
-        {/* Brand Lockup */}
-        <div className="flex flex-col items-center mb-6 md:mb-10 animate-fade-in-up">
+        {/* Left Nav */}
+        <nav className="hidden md:flex items-center gap-8 text-[10px] tracking-[0.25em] font-medium text-pine/80 uppercase">
+          <button onClick={() => router.push('/info')} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Explore</button>
+          <button onClick={() => window.scrollTo({ top: 300, behavior: 'smooth' })} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Menus</button>
+          <button onClick={() => router.push('/info')} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Catering</button>
+        </nav>
+
+        {/* Center Logo */}
+        <div className="flex-1 md:flex-none flex justify-center">
           <img 
             src="/assets/tov-logo-pine.png" 
             alt="Taste of Village" 
-            className="w-48 md:w-64 lg:w-72 h-auto mb-3"
+            className="h-10 md:h-12 w-auto"
           />
-          <p className="text-pine/90 font-serif italic text-[15px] md:text-[17px] tracking-wide mb-6 drop-shadow-sm">
-            Home-style flavours, made fresh daily
-          </p>
-          <div className="flex items-center gap-4">
-            <div className="h-px w-8 md:w-16 bg-gradient-to-r from-transparent to-terracotta/50"></div>
-            <p className="text-pine/70 text-[10px] md:text-xs font-sans tracking-[0.3em] uppercase font-bold drop-shadow-sm">
-              Select your destination
-            </p>
-            <div className="h-px w-8 md:w-16 bg-gradient-to-l from-transparent to-terracotta/50"></div>
-          </div>
         </div>
 
-        {/* Heritage Archway Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 w-full max-w-4xl mx-auto justify-items-center">
+        {/* Right Actions */}
+        <div className="hidden md:flex items-center justify-end gap-6">
+          <button onClick={() => router.push('/info')} className="px-6 py-2 border-[0.5px] border-pine text-pine text-[10px] tracking-[0.2em] uppercase rounded-full hover:bg-pine hover:text-white transition-colors">
+            Contact Us
+          </button>
+        </div>
+
+        {/* Mobile Menu Toggle */}
+        <div className="md:hidden flex items-center">
+          <button className="text-[10px] tracking-[0.2em] uppercase border-b border-pine/30 pb-0.5">Menu</button>
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col items-center justify-center py-12 px-4 sm:px-6 w-full max-w-5xl mx-auto">
+        
+        {/* Editorial Heading */}
+        <div className="flex flex-col items-center mb-16 animate-fade-in-up text-center">
+          <h1 className="font-display italic text-2xl md:text-3xl text-pine/90 font-light mb-6">
+            Home-style flavours, made fresh daily
+          </h1>
+          
+          {/* Typographic Divider */}
+          <div className="flex items-center gap-5 mb-8">
+            <div className="h-[0.5px] w-16 md:w-32 bg-gradient-to-r from-transparent to-pine/40"></div>
+            <span className="text-xl text-terracotta/90 drop-shadow-sm">✤</span>
+            <div className="h-[0.5px] w-16 md:w-32 bg-gradient-to-l from-transparent to-pine/40"></div>
+          </div>
+          
+          <p className="text-pine/60 text-[10px] md:text-[11px] font-sans tracking-[0.3em] uppercase font-bold">
+            Select your destination
+          </p>
+        </div>
+
+        {/* Flat Editorial Arches */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 w-full max-w-3xl mx-auto justify-items-center">
           {Object.values(LOCATIONS).map((loc, index) => {
             const isSlough = loc.id === 'slough';
             
             return (
               <div 
                 key={loc.id}
-                className="flex flex-col items-center animate-fade-in-up w-full relative"
+                className="flex flex-col items-center animate-fade-in-up w-full"
                 style={{ animationDelay: `${index * 150}ms` }}
               >
-                {/* Left Leaf Sprig */}
-                <div className="absolute -left-2 md:-left-6 top-1/4 w-10 md:w-12 h-40 md:h-48 pointer-events-none opacity-[0.25] z-0">
-                  <svg viewBox="0 0 40 160" fill="none" stroke="#1A3C34" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M25,160 Q10,120 20,80 T25,0" />
-                    <path d="M22,140 Q32,135 32,125 Q27,125 22,130" />
-                    <path d="M15,110 Q5,105 5,95 Q10,95 15,100" />
-                    <path d="M22,80 Q32,75 32,65 Q27,65 22,70" />
-                    <path d="M18,40 Q8,35 8,25 Q13,25 18,30" />
-                    <path d="M24,15 Q34,10 34,0 Q29,0 24,5" />
-                  </svg>
-                </div>
-                
-                {/* Right Leaf Sprig */}
-                <div className="absolute -right-2 md:-right-6 top-1/3 w-10 md:w-12 h-40 md:h-48 pointer-events-none opacity-[0.25] transform scale-x-[-1] translate-y-8 z-0">
-                  <svg viewBox="0 0 40 160" fill="none" stroke="#1A3C34" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M25,160 Q10,120 20,80 T25,0" />
-                    <path d="M22,140 Q32,135 32,125 Q27,125 22,130" />
-                    <path d="M15,110 Q5,105 5,95 Q10,95 15,100" />
-                    <path d="M22,80 Q32,75 32,65 Q27,65 22,70" />
-                    <path d="M18,40 Q8,35 8,25 Q13,25 18,30" />
-                    <path d="M24,15 Q34,10 34,0 Q29,0 24,5" />
-                  </svg>
-                </div>
-
-                {/* The Arch - Replica of the physical restaurant interior arches */}
+                {/* The Arch - Flat, Print Aesthetic */}
                 <div
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => { if(e.key === 'Enter') navigateTo(e as any, '/' + loc.id, loc.id, loc.name); }}
                   onClick={(e) => navigateTo(e, '/' + loc.id, loc.id, loc.name)}
-                  className="group cursor-pointer relative w-full max-w-[280px] h-[440px] rounded-t-full rounded-b-none border border-white/60 transition-all duration-700 flex flex-col items-center justify-between pt-10 pb-6 bg-[#FCFAF5] shadow-[0_4px_20px_rgba(26,60,52,0.02)] hover:-translate-y-2"
+                  className="group cursor-pointer relative w-full max-w-[280px] h-[420px] rounded-t-full rounded-b-none border-[0.5px] border-pine/30 transition-colors duration-500 flex flex-col items-center justify-between pt-10 pb-8 bg-[#FBF9F4] hover:bg-white"
                 >
-                  {/* LED Inner Rim Glow (Replicating the physical lighting) */}
-                  <div className="absolute inset-0 rounded-t-full rounded-b-none shadow-[inset_0_0_30px_rgba(211,167,98,0.15)] group-hover:shadow-[inset_0_0_40px_rgba(211,167,98,0.25)] transition-shadow duration-700 pointer-events-none z-0"></div>
-
-                  {/* CNC Artwork: Central Diamond Motif */}
-                  <div className="absolute top-[120px] left-1/2 -translate-x-1/2 w-[140px] h-[140px] opacity-[0.04] group-hover:opacity-[0.07] transition-opacity duration-700 z-0 flex items-center justify-center pointer-events-none mix-blend-multiply">
+                  {/* Vintage Print Artwork: Central Motif */}
+                  <div className="absolute top-[100px] left-1/2 -translate-x-1/2 w-[120px] h-[120px] opacity-[0.03] group-hover:opacity-[0.05] transition-opacity duration-500 z-0 flex items-center justify-center pointer-events-none">
                     <div className="w-[90px] h-[90px] rotate-45 bg-[url('/assets/tov-pattern.svg')] bg-[length:90px] bg-center"></div>
                   </div>
 
-                  {/* CNC Artwork: Bottom Border Motif */}
-                  <div className="absolute bottom-0 left-0 w-full h-[36px] opacity-[0.05] group-hover:opacity-[0.08] transition-opacity duration-700 z-0 bg-[url('/assets/tov-pattern.svg')] bg-[length:54px] bg-repeat-x bg-bottom pointer-events-none mix-blend-multiply"></div>
+                  {/* Vintage Print Artwork: Bottom Border */}
+                  <div className="absolute bottom-0 left-0 w-full h-[30px] opacity-[0.04] group-hover:opacity-[0.06] transition-opacity duration-500 z-0 bg-[url('/assets/tov-pattern.svg')] bg-[length:45px] bg-repeat-x bg-bottom pointer-events-none"></div>
 
                   <div className="flex flex-col items-center h-full justify-between w-full relative z-10">
                     
                     {/* Top: Icon and Title */}
-                    <div className="flex flex-col items-center gap-4 transition-transform duration-700 group-hover:-translate-y-1">
-                      <div className="text-pine/50 group-hover:text-terracotta transition-colors duration-500 bg-white/80 w-12 h-12 rounded-full flex items-center justify-center shadow-sm border border-pine/5">
-                        {isSlough ? <Flame size={20} strokeWidth={1.5} /> : <MapPin size={20} strokeWidth={1.5} />}
+                    <div className="flex flex-col items-center gap-4 mt-2">
+                      <div className="text-pine/40 group-hover:text-terracotta transition-colors duration-500">
+                        {isSlough ? <Flame size={18} strokeWidth={1.2} /> : <MapPin size={18} strokeWidth={1.2} />}
                       </div>
-                      <h2 className="font-display font-semibold text-3xl text-pine tracking-[0.15em] text-center px-4 group-hover:text-terracotta transition-colors">
+                      <h2 className="font-display font-medium text-3xl text-pine tracking-[0.15em] text-center px-4 group-hover:text-terracotta transition-colors">
                         {loc.name.replace('Taste Of Village ', '').toUpperCase()}
                       </h2>
                     </div>
 
                     {/* Middle: Address Info */}
-                    <div className="flex flex-col items-center gap-1.5 transition-transform duration-700 group-hover:-translate-y-1 mt-4">
-                      <div className="w-8 h-[1px] bg-terracotta/30 mb-3 group-hover:bg-terracotta/50 transition-colors duration-500"></div>
-                      <p className="text-pine/70 font-sans text-[11px] tracking-[0.2em] uppercase text-center px-6 leading-relaxed">
+                    <div className="flex flex-col items-center gap-1.5 mt-2">
+                      <div className="w-6 h-[0.5px] bg-pine/20 mb-3 group-hover:bg-terracotta/40 transition-colors duration-500"></div>
+                      <p className="text-pine/70 font-sans text-[10px] tracking-[0.2em] uppercase text-center px-6 leading-relaxed">
                         {loc.address}
                       </p>
                       <p className="text-terracotta font-mono text-[9px] tracking-[0.3em] uppercase mt-1">
@@ -125,47 +137,71 @@ export default function HomeSelector() {
                       </p>
                     </div>
 
-                    {/* Bottom: Solid Inviting Button */}
-                    <div className="flex flex-col items-center gap-6 w-full mt-auto pt-8">
+                    {/* Bottom: Outline Editorial Button */}
+                    <div className="flex flex-col items-center w-full mt-auto pt-6">
                       <button 
                         onClick={(e) => navigateTo(e, '/' + loc.id + '/menu', loc.id, loc.name)}
-                        className="inline-flex items-center justify-center px-7 py-2.5 rounded-full bg-terracotta border border-terracotta text-white shadow-md shadow-terracotta/20 hover:bg-pine hover:border-pine transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                        className="inline-flex items-center justify-center px-6 py-2 rounded-full border-[0.5px] border-terracotta text-terracotta hover:bg-terracotta hover:text-white transition-colors duration-300"
                       >
-                        <span className="font-sans font-bold text-[10px] tracking-[0.25em] uppercase">Order Now</span>
+                        <span className="font-sans font-bold text-[9px] tracking-[0.25em] uppercase">Order Now</span>
                       </button>
                     </div>
-
                   </div>
                 </div>
               </div>
             );
           })}
         </div>
-      </div>
+      </main>
 
-      {/* Patterned Motif Footer with Ratings */}
-      <div className="w-full relative py-8 mt-auto overflow-hidden z-10 flex-shrink-0">
+      {/* Patterned Motif Footer */}
+      <footer className="w-full relative py-12 mt-auto overflow-hidden bg-[#F4F1EA] border-t-[0.5px] border-pine/10">
         {/* Motif Wallpaper Pattern */}
-        <div className="absolute inset-0 opacity-[0.035] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='70' height='40' viewBox='0 0 70 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20h17.5M52.5 20h17.5M17.5 20L35 5l17.5 15-17.5 15zM24 20l11-9 11 9-11 9z' fill='none' stroke='%231A3C34' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E")`, backgroundRepeat: 'repeat', backgroundPosition: 'center' }}></div>
+        <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: `url('/assets/tov-motif-green.svg')`, backgroundSize: '90px 90px', backgroundRepeat: 'repeat', backgroundPosition: 'center top' }}></div>
         
-        <div className="relative z-10 max-w-4xl mx-auto px-6 flex flex-row items-center justify-center gap-12 md:gap-24">
-          {Object.values(LOCATIONS).map((loc) => {
-            const isSlough = loc.id === 'slough';
-            return (
-              <div key={`${loc.id}-fhrs`} className="flex flex-col items-center gap-2.5">
-                <p className="text-pine/70 font-sans text-[9px] tracking-[0.2em] uppercase font-bold drop-shadow-sm">
-                  {loc.name.replace('Taste Of Village ', '')}
-                </p>
-                <img
-                  src={isSlough ? '/assets/fhrs-badge-5-horizontal.svg' : '/assets/fhrs-badge-4-horizontal.svg'}
-                  alt={`${loc.name} Food Hygiene Rating`}
-                  className="h-[32px] md:h-[40px] w-auto opacity-75 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500"
-                />
-              </div>
-            );
-          })}
+        <div className="relative z-10 max-w-4xl mx-auto px-6 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-24">
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-pine/60 text-[8px] uppercase tracking-[0.3em] font-bold">Hayes Branch</span>
+            <img src="/assets/fhrs-badge-4-horizontal.svg" alt="Hayes Food Hygiene Rating 4" className="h-6 w-auto opacity-70 hover:opacity-100 transition-opacity duration-300" loading="lazy" />
+          </div>
+          
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-pine/60 text-[8px] uppercase tracking-[0.3em] font-bold">Slough Branch</span>
+            <img src="/assets/fhrs-badge-5-horizontal.svg" alt="Slough Food Hygiene Rating 5" className="h-6 w-auto opacity-70 hover:opacity-100 transition-opacity duration-300" loading="lazy" />
+          </div>
         </div>
-      </div>
+      </footer>
+
+      {/* Luxury Dark Footer */}
+      <footer className="w-full bg-[#0B140F] py-10 px-8 md:px-16 border-t border-[#0B140F]">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 md:gap-0">
+          
+          {/* Brand & Copyright */}
+          <div className="flex flex-col gap-2 items-center md:items-start text-center md:text-left">
+            <span className="font-display text-terracotta text-[11px] md:text-xs tracking-[0.3em] uppercase font-semibold">Taste of Village</span>
+            <span className="text-[#889B8D] text-[8px] md:text-[9px] tracking-[0.2em] uppercase font-sans">
+              &copy; {new Date().getFullYear()} Taste of Village · Hayes & Slough
+            </span>
+          </div>
+
+          {/* Contact */}
+          <div className="text-[#889B8D] text-[9px] tracking-[0.25em] uppercase font-sans hover:text-terracotta transition-colors cursor-pointer">
+            020 7946 0018
+          </div>
+
+          {/* Hours */}
+          <div className="text-[#889B8D] text-[9px] tracking-[0.25em] uppercase font-sans">
+            Mon–Sun · 12:00 – 23:00
+          </div>
+
+          {/* Links */}
+          <div className="flex gap-8 text-[#889B8D] text-[9px] tracking-[0.25em] uppercase font-sans">
+            <span className="hover:text-terracotta cursor-pointer transition-colors">Reservations</span>
+            <span className="hover:text-terracotta cursor-pointer transition-colors">Instagram</span>
+          </div>
+
+        </div>
+      </footer>
     </div>
   );
 }
