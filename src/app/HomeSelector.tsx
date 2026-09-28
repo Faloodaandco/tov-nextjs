@@ -107,7 +107,7 @@ export default function HomeSelector() {
 
                   <img
                     src={isSlough ? '/assets/fhrs-badge-5-horizontal.svg' : '/assets/fhrs-badge-4-horizontal.svg'}
-                    alt={Food Hygiene Rating }
+                    alt="Food Hygiene Rating"
                     className="h-5 w-auto opacity-70 mt-1"
                     loading="lazy"
                   />
