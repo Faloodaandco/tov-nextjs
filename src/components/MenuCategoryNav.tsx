@@ -18,7 +18,7 @@ export const MenuCategoryNav: React.FC<MenuCategoryNavProps> = ({
   scrollToCategory
 }) => {
   return (
-    <div className="bg-bg-sand/95 backdrop-blur-xl shadow-sm sticky top-[48px] sm:top-[60px] z-40 border-b border-pine/10 transition-all duration-300">
+    <div className="bg-[#FDFBF7]/95 backdrop-blur-xl shadow-md sticky top-[48px] sm:top-[60px] z-40 border-b border-pine/5 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row md:items-center gap-1 md:gap-6 py-1.5 md:py-0">
         
         {/* Quick Search */}
@@ -28,7 +28,7 @@ export const MenuCategoryNav: React.FC<MenuCategoryNavProps> = ({
             placeholder="SEARCH MENU..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/40 border border-pine/10 px-9 py-3 md:py-3 text-[10px] font-bold tracking-[0.2em] text-pine placeholder:text-pine/40 focus:outline-none focus:border-terracotta focus:bg-white transition-colors rounded-full min-h-[48px]"
+            className="w-full bg-white border border-pine/10 px-9 py-3 md:py-3 text-[10px] font-bold tracking-[0.2em] text-pine placeholder:text-pine/40 focus:outline-none focus:border-terracotta focus:shadow-[0_0_15px_rgba(138,61,42,0.1)] transition-all rounded-full min-h-[48px]"
           />
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-pine/40 w-3.5 h-3.5 pointer-events-none" />
           {searchQuery && (
@@ -46,10 +46,10 @@ export const MenuCategoryNav: React.FC<MenuCategoryNavProps> = ({
                 key={cat.id}
                 id={`nav-btn-${cat.id}`}
                 onClick={() => scrollToCategory(cat.id)}
-                className={`min-h-[48px] px-4 py-2.5 font-sans uppercase text-[10px] font-black tracking-[0.18em] whitespace-nowrap transition-all duration-300 rounded-full ${
+                className={`min-h-[48px] px-4 py-2.5 font-sans uppercase text-[10px] font-black tracking-[0.18em] whitespace-nowrap transition-all duration-300 rounded-full border ${
                   activeCategory === cat.id
-                  ? 'bg-pine text-white shadow-sm'
-                  : 'bg-white/60 text-pine/50 hover:text-pine hover:bg-white/80'
+                  ? 'bg-terracotta border-terracotta text-white shadow-[0_4px_15px_rgba(138,61,42,0.3)] scale-105'
+                  : 'bg-white border-pine/10 text-pine/60 hover:text-terracotta hover:border-terracotta/30 hover:bg-terracotta/5'
                 }`}
               >
                 {cat.label}

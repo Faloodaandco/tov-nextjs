@@ -1,12 +1,13 @@
-'use client';
+﻿'use client';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { LOCATIONS } from '@/config/shopConfig';
 import { trackBranchSelect } from '@/utils/analytics';
 import { MapPin, Flame, ArrowRight } from 'lucide-react';
 
-
 export default function HomeSelector() {
+  const router = useRouter();
+  
   const handleBranchSelect = (branchId: string, branchName: string) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('tov_selected_location', branchId);
@@ -14,93 +15,108 @@ export default function HomeSelector() {
     trackBranchSelect(branchId, branchName);
   };
 
-  return (
-    <main className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-pine">
-      {/* Immersive Background */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src="/assets/chicken_karahi_hero.webp" 
-          alt="Authentic Punjabi Cuisine" 
-          className="w-full h-full object-cover opacity-60 scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-pine via-pine/90 to-pine/30 mix-blend-multiply"></div>
-        <div className="absolute inset-0 bg-pine/60 backdrop-blur-[2px]"></div>
-      </div>
+  const navigateTo = (e: React.MouseEvent, path: string, branchId: string, branchName: string) => {
+    e.stopPropagation();
+    handleBranchSelect(branchId, branchName);
+    router.push(path);
+  };
 
-      <div className="relative z-10 w-full max-w-6xl px-4 md:px-8 py-12 flex flex-col items-center text-center h-full">
+  return (
+    <div className="min-h-screen bg-bg-sand flex flex-col items-center justify-center relative overflow-hidden py-6 md:py-10">
+      {/* Background Ambience */}
+      <div className="absolute inset-0 bg-[url('/assets/tov-cfd-bg.webp')] bg-cover bg-center opacity-[0.03] pointer-events-none mix-blend-multiply"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#FDFBF7]/80 via-[#FDFBF7]/40 to-[#FDFBF7] pointer-events-none"></div>
+      
+      <div className="relative z-10 flex flex-col items-center w-full px-4 sm:px-6 max-w-5xl mx-auto">
         
         {/* Brand Lockup */}
-        <div className="flex flex-col items-center mb-12 md:mb-20">
+        <div className="flex flex-col items-center mb-6 md:mb-10 animate-fade-in-up">
           <img 
-            src="/assets/tov-full-logo-transparent-inverted.png" 
+            src="/assets/tov-logo-pine.png" 
             alt="Taste of Village" 
-            className="w-64 md:w-80 lg:w-96 h-auto drop-shadow-[0_0_30px_rgba(253,245,242,0.15)] mb-8"
+            className="w-48 md:w-64 lg:w-72 h-auto mb-4"
           />
-          <div className="h-px w-24 bg-bg-sand/30 mb-6"></div>
-          <p className="text-bg-sand/70 text-xs md:text-sm font-sans tracking-[0.3em] uppercase">
-            Select your destination
-          </p>
+          <div className="flex items-center gap-4">
+            <div className="h-px w-8 md:w-16 bg-gradient-to-r from-transparent to-terracotta/50"></div>
+            <p className="text-pine/70 text-[10px] md:text-xs font-sans tracking-[0.3em] uppercase font-bold drop-shadow-sm">
+              Select your destination
+            </p>
+            <div className="h-px w-8 md:w-16 bg-gradient-to-l from-transparent to-terracotta/50"></div>
+          </div>
         </div>
 
-        {/* Glassmorphism Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 w-full max-w-5xl">
-          {Object.values(LOCATIONS).map((loc) => {
+        {/* Heritage Archway Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 w-full">
+          {Object.values(LOCATIONS).map((loc, index) => {
             const isSlough = loc.id === 'slough';
             
             return (
-              <Link
+              <div 
                 key={loc.id}
-                href={'/' + loc.id}
-                onClick={() => handleBranchSelect(loc.id, loc.name)}
-                className="group relative rounded-3xl p-8 md:p-10 text-left transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col h-full border border-bg-sand/10 bg-white/5 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:bg-white/10 hover:border-terracotta/50 hover:shadow-[0_20px_60px_rgba(138,61,42,0.4)]"
+                className="flex flex-col items-center animate-fade-in-up"
+                style={{ animationDelay: ${index * 150}ms }}
               >
-                {/* Subtle Terracotta Glow on Hover */}
-                <div className="absolute inset-0 bg-terracotta/0 group-hover:bg-terracotta/5 transition-colors duration-500 z-0"></div>
+                {/* The Arch */}
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if(e.key === 'Enter') navigateTo(e as any, '/' + loc.id, loc.id, loc.name); }}
+                  onClick={(e) => navigateTo(e, '/' + loc.id, loc.id, loc.name)}
+                  className="group cursor-pointer relative w-full max-w-[320px] h-[240px] md:h-[280px] rounded-t-[140px] rounded-b-xl border border-pine/15 hover:border-terracotta/40 transition-all duration-700 overflow-hidden flex flex-col items-center justify-end pb-8 bg-white/20 hover:bg-white/40 shadow-[0_4px_30px_rgba(26,60,52,0.02)] hover:shadow-[0_20px_60px_rgba(138,61,42,0.08)] backdrop-blur-sm hover:-translate-y-2"
+                >
+                  {/* Special Arch Art Background (CNC Carved Pattern) */}
+                  <div className="absolute inset-0 bg-[url('/assets/tov-pattern.svg')] bg-[length:160px] bg-repeat opacity-[0.03] group-hover:opacity-[0.05] mix-blend-multiply transition-opacity duration-700 pointer-events-none z-0"></div>
 
-                <div className="flex justify-between items-center mb-10 relative z-10">
-                  <div className="p-4 bg-bg-sand/10 backdrop-blur-md rounded-2xl text-bg-sand group-hover:bg-terracotta group-hover:text-white transition-all duration-300 shadow-inner border border-white/5">
-                    {isSlough ? <Flame size={28} strokeWidth={1.5} /> : <MapPin size={28} strokeWidth={1.5} />}
+                  {/* Golden Hour Stage Glow inside Arch */}
+                  <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-terracotta/15 via-terracotta/5 to-transparent pointer-events-none z-0 group-hover:from-terracotta/25 transition-colors duration-700"></div>
+
+                  {/* Icon */}
+                  <div className="absolute top-8 w-12 h-12 rounded-full border border-pine/10 flex items-center justify-center text-pine/40 group-hover:text-terracotta transition-colors duration-500 z-10">
+                    {isSlough ? <Flame size={20} strokeWidth={1.5} /> : <MapPin size={20} strokeWidth={1.5} />}
                   </div>
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-transparent border border-bg-sand/20 group-hover:border-terracotta transition-colors">
-                    <ArrowRight className="text-bg-sand/50 group-hover:text-terracotta transition-transform group-hover:translate-x-1" size={24} strokeWidth={1.5} />
+
+                  {/* Title */}
+                  <h2 className="font-display font-bold text-3xl md:text-4xl text-pine tracking-[0.1em] mb-2 relative z-10 group-hover:text-terracotta transition-colors drop-shadow-sm">
+                    {loc.name.replace('Taste Of Village ', '').toUpperCase()}
+                  </h2>
+
+                  {/* Enter Link */}
+                  <div className="relative z-10 flex items-center gap-2 text-pine/40 group-hover:text-terracotta transition-colors text-[9px] font-black tracking-[0.2em] uppercase">
+                    <span>Enter</span>
+                    <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
 
-                <h2 className="font-display font-bold text-3xl md:text-4xl text-bg-sand tracking-wide mb-6 relative z-10 drop-shadow-md">
-                  {loc.name.replace('Taste Of Village ', '').toUpperCase()}
-                </h2>
-                
-                <div className="relative z-10 flex-grow">
-                  <div className="flex items-center gap-3 text-bg-sand/80 font-sans text-sm md:text-base">
-                    <span className="w-1.5 h-1.5 rounded-full bg-terracotta group-hover:animate-pulse"></span>
-                    <span className="font-light">{loc.address}</span>
+                {/* Info Below Arch */}
+                <div className="mt-5 flex flex-col items-center gap-3 w-full text-center">
+                  <div className="flex flex-col items-center">
+                    <p className="text-pine/70 font-sans text-xs tracking-wide leading-relaxed">
+                      {loc.address}
+                    </p>
+                    <p className="text-terracotta font-mono text-[9px] tracking-[0.2em] uppercase font-bold mt-1">
+                      {loc.postcode}
+                    </p>
                   </div>
-                  <p className="text-bg-sand/40 font-mono text-xs mt-2 tracking-[0.2em] uppercase ml-4.5">{loc.postcode}</p>
                   
-                  <p className="text-terracotta-light font-mono text-sm mt-5 tracking-widest ml-4.5 font-bold flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    {loc.phone}
-                  </p>
-                </div>
+                  <button 
+                    onClick={(e) => navigateTo(e, '/' + loc.id + '/menu', loc.id, loc.name)}
+                    className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-terracotta border border-terracotta shadow-sm transition-all text-white hover:bg-pine hover:border-pine hover:scale-105 duration-300"
+                  >
+                    <span className="font-black text-[9px] tracking-[0.2em] uppercase">Order Now</span>
+                  </button>
 
-                <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between relative z-10 gap-4">
-                  <div className="w-full sm:w-auto text-center bg-bg-sand/10 backdrop-blur-md text-bg-sand border border-bg-sand/20 font-bold tracking-[0.15em] text-xs px-8 py-4 rounded-full uppercase transition-all duration-300 group-hover:bg-terracotta group-hover:border-terracotta group-hover:text-white group-hover:shadow-[0_0_20px_rgba(138,61,42,0.4)]">
-                    Order Menu
-                  </div>
-                  
-                  {/* FSA Food Hygiene Rating Badge */}
                   <img
                     src={isSlough ? '/assets/fhrs-badge-5-horizontal.svg' : '/assets/fhrs-badge-4-horizontal.svg'}
-                    alt={`Food Hygiene Rating ${isSlough ? '5' : '4'}`}
-                    className="h-8 w-auto opacity-50 group-hover:opacity-100 transition-opacity drop-shadow-lg filter brightness-0 invert"
+                    alt={Food Hygiene Rating }
+                    className="h-5 w-auto opacity-70 mt-1"
                     loading="lazy"
                   />
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>
       </div>
-    </main>
+    </div>
   );
 }

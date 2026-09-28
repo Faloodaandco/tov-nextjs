@@ -9,7 +9,6 @@ import { AuthModal } from '@/components/AuthModal';
 import { SHOP_CONFIG, LOCATIONS, buildWhatsAppLink } from '@/config/shopConfig';
 import { useLocationConfig } from '@/hooks/useLocationConfig';
 import { LocationSelectorModal } from '@/components/LocationSelectorModal';
-import { PromoBanner } from '@/components/PromoBanner';
 
 export const Navbar = () => {
   const { cart, setIsCartOpen } = useStore();
@@ -78,9 +77,6 @@ export const Navbar = () => {
   return (
     <>
       <nav className={`fixed top-0 left-0 w-full z-[60] transition-all duration-500 pointer-events-none flex flex-col`}>
-        {/* Top Promo Banner */}
-        <PromoBanner />
-
         <div className={`w-full transition-all duration-500 ${scrolled ? 'py-2 sm:py-3 bg-bg-sand/95 backdrop-blur-md border-b border-pine/10 shadow-sm pointer-events-auto' : 'py-3 sm:py-6 pointer-events-none'}`}>
           <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
         <div className="flex justify-between items-start relative">
