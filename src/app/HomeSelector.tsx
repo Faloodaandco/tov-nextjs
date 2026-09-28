@@ -18,7 +18,7 @@ export default function HomeSelector() {
   const navigateTo = (e: React.MouseEvent, path: string, branchId: string, branchName: string) => {
     e.stopPropagation();
     handleBranchSelect(branchId, branchName);
-    router.push(path);
+    window.location.href = path;
   };
 
   return (
