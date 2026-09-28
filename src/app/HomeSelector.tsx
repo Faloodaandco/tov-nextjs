@@ -10,7 +10,7 @@ export default function HomeSelector() {
   
   const handleBranchSelect = (branchId: string, branchName: string) => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('tov_selected_location', branchId);
+      try { localStorage.setItem('tov_selected_location', branchId); } catch (e) { console.warn('localStorage blocked'); }
     }
     trackBranchSelect(branchId, branchName);
   };
