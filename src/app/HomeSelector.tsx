@@ -92,20 +92,26 @@ export default function HomeSelector() {
         </div>
 
         {/* Flat Editorial Arches */}
-        <div className="relative w-full max-w-4xl mx-auto">
+        <div className="relative w-full max-w-5xl mx-auto flex justify-center">
           
-          {/* Decorative Leaf Sprigs */}
-          <div className="absolute top-[20%] md:top-1/2 md:-translate-y-1/2 left-[-5%] md:left-0 opacity-[0.08] pointer-events-none w-48 md:w-64 h-auto rotate-[-10deg]">
-            <img src="/assets/tov-tree.svg" alt="" className="w-full h-auto object-contain [mask-image:linear-gradient(to_bottom,black_40%,transparent_100%)]" />
+          {/* Decorative Leaf Sprigs (As requested: minimalist single-line botanical style) */}
+          <div className="absolute top-[30%] md:top-[20%] left-[5%] md:left-[15%] opacity-40 pointer-events-none w-10 md:w-12 h-auto rotate-[-5deg]">
+            <img src="/assets/tov-sprig.svg" alt="" className="w-full h-auto object-contain" />
           </div>
-          <div className="hidden md:block absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 opacity-[0.08] pointer-events-none w-64 h-auto">
-            <img src="/assets/tov-tree.svg" alt="" className="w-full h-auto object-contain [mask-image:linear-gradient(to_bottom,black_40%,transparent_100%)]" />
+          
+          {/* Middle Sprigs (Two of them) */}
+          <div className="hidden md:block absolute top-[15%] left-[48%] -translate-x-1/2 opacity-40 pointer-events-none w-12 h-auto rotate-[2deg]">
+            <img src="/assets/tov-sprig.svg" alt="" className="w-full h-auto object-contain" />
           </div>
-          <div className="absolute bottom-[20%] md:top-1/2 md:-translate-y-1/2 right-[-5%] md:right-0 opacity-[0.08] pointer-events-none w-48 md:w-64 h-auto rotate-[10deg] scale-x-[-1]">
-            <img src="/assets/tov-tree.svg" alt="" className="w-full h-auto object-contain [mask-image:linear-gradient(to_bottom,black_40%,transparent_100%)]" />
+          <div className="hidden md:block absolute top-[30%] left-[52%] -translate-x-1/2 opacity-30 pointer-events-none w-10 h-auto rotate-[-8deg] scale-x-[-1]">
+            <img src="/assets/tov-sprig.svg" alt="" className="w-full h-auto object-contain" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 w-full max-w-3xl mx-auto justify-items-center relative z-10">
+          <div className="absolute bottom-[30%] md:top-[25%] right-[5%] md:right-[15%] opacity-40 pointer-events-none w-10 md:w-12 h-auto rotate-[8deg]">
+            <img src="/assets/tov-sprig.svg" alt="" className="w-full h-auto object-contain scale-x-[-1]" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-24 w-full max-w-3xl mx-auto justify-items-center relative z-10">
           {Object.values(LOCATIONS).map((loc, index) => {
             const isSlough = loc.id === 'slough';
             
@@ -216,6 +222,7 @@ export default function HomeSelector() {
     </div>
   );
 }
+
 
 
 

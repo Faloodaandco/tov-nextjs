@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 400" fill="none" stroke="#889B8D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M50 380 C40 300, 60 200, 50 100 C45 50, 50 20, 50 20" />
+  <path d="M49 310 C30 305, 20 290, 25 275 C35 280, 45 295, 48 310 Z" />
+  <path d="M51 250 C70 245, 80 230, 75 215 C65 220, 55 235, 52 250 Z" />
+  <path d="M51 190 C30 185, 20 170, 25 155 C35 160, 45 175, 50 190 Z" />
+  <path d="M50 130 C70 125, 80 110, 75 95 C65 100, 55 115, 50 130 Z" />
+  <path d="M50 70 C30 65, 20 50, 25 35 C35 40, 45 55, 49 70 Z" />
+</svg>
