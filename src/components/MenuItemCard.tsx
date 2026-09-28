@@ -1,7 +1,10 @@
 'use client';
 import React from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { MenuItem } from '@/types';
 import type { FullMenuItem } from '@/components/CustomisationModal';
+import { slugify } from '@/utils/slugify';
 
 interface MenuItemCardProps {
   item: FullMenuItem | any;
@@ -12,6 +15,10 @@ interface MenuItemCardProps {
 }
 
 export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, index, isPlaceholder, quantityInCart = 0, onClick }) => {
+  const params = useParams();
+  const locationId = ((params?.locationId as string) || 'hayes').toLowerCase();
+  const dishUrl = `/${locationId}/menu/${slugify(item.name)}`;
+
   return (
     <div
       key={item.id}
@@ -132,7 +139,16 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, index, isPlace
         )}
         
         <div className="mt-auto relative z-10 pt-6 flex justify-between items-center">
-          <span className="text-[9px] text-pine/30 font-black uppercase tracking-[0.2em]">{item.category.replace(/_/g, ' ')}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-[9px] text-pine/30 font-black uppercase tracking-[0.2em]">{item.category.replace(/_/g, ' ')}</span>
+            <Link
+              href={dishUrl}
+              onClick={(e) => e.stopPropagation()}
+              className="text-[9px] text-terracotta/50 hover:text-terracotta font-bold uppercase tracking-[0.15em] transition-colors"
+            >
+              View &amp; Share →
+            </Link>
+          </div>
           <div className={`px-4 py-2 rounded-full flex justify-center items-center gap-1.5 text-[10px] font-black tracking-[0.15em] uppercase transition-all duration-300 border ${
             item.is86d 
               ? 'bg-black/5 text-pine/30 border-transparent' 

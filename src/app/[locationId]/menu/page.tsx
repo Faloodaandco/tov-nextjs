@@ -327,6 +327,20 @@ function MenuPageContent() {
     return () => clearTimeout(timer);
   }, [toastMessage]);
 
+  // Handle ?added= redirect from dish detail pages
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const addedDish = params.get('added');
+    if (addedDish) {
+      setToastMessage(`✓ ${decodeURIComponent(addedDish)} added to your order`);
+      // Clean the URL without reload
+      const url = new URL(window.location.href);
+      url.searchParams.delete('added');
+      window.history.replaceState({}, '', url.pathname + url.search);
+    }
+  }, []);
+
   const observer = useRef<IntersectionObserver | null>(null);
 
 
