@@ -21,7 +21,7 @@ export const PromoBanner = () => {
     return () => clearInterval(timer);
   }, []);
 
-  if (!isVisible || !ACTIVE_PROMO.enabled) return null;
+  if (!isVisible || !ACTIVE_PROMO.enabled || !isPromoHours) return null;
 
   const handleApplyPromo = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -47,10 +47,10 @@ export const PromoBanner = () => {
           exit={{ height: 0, opacity: 0 }}
           className="w-full bg-terracotta text-white pointer-events-auto border-b border-white/10 shadow-sm"
         >
-          <div className="max-w-7xl mx-auto px-3 py-2 sm:py-2.5 flex items-center justify-between gap-2">
+          <div className="max-w-7xl mx-auto px-3 py-3 sm:py-2.5 flex items-center justify-between gap-2">
             <button 
               onClick={handleApplyPromo}
-              className="flex-1 flex items-center justify-center gap-2 hover:opacity-90 transition-opacity text-[11px] sm:text-xs font-bold tracking-wider text-center"
+              className="flex-1 flex items-center justify-center gap-2 hover:opacity-90 transition-opacity text-[11px] sm:text-xs font-bold tracking-wider text-center py-3"
             >
               {isPromoHours ? (
                 <Ticket size={14} className="animate-pulse flex-shrink-0" />
@@ -76,7 +76,7 @@ export const PromoBanner = () => {
                 e.stopPropagation();
                 setIsVisible(false);
               }}
-              className="p-1 hover:bg-white/20 rounded-full transition-colors flex-shrink-0"
+              className="hover:bg-white/20 rounded-full transition-colors flex-shrink-0 min-w-[48px] min-h-[48px] flex items-center justify-center"
               aria-label="Dismiss banner"
             >
               <X size={14} />

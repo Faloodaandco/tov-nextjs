@@ -17,7 +17,7 @@ import { CustomisationModal } from '@/components/CustomisationModal';
 import type { FullMenuItem } from '@/components/CustomisationModal';
 import { MenuItemCard } from '@/components/MenuItemCard';
 import { MenuCategoryNav } from '@/components/MenuCategoryNav';
-import { SquareCheckout } from '@/components/SquareCheckout';
+
 import { SquarePaymentForm } from '@/components/SquarePaymentForm';
 import { UpsellDrawer } from '@/components/UpsellDrawer';
 import { LocationSelectorModal } from '@/components/LocationSelectorModal';
@@ -27,6 +27,7 @@ import { appendItemsToOrder } from '@/services/orderService';
 import { isValidUKMobile, getPhoneError, normaliseUKPhone, captureClientMeta } from '@/lib/validation';
 import { sendOrderNotificationEmail } from '@/services/emailService';
 import { getExistingPushToken, requestPushPermission } from '@/utils/pushService';
+import { upsertCustomerOnOrder } from '@/services/customerService';
 
 /* ─── Size Variations for Website ─── */
 const WEB_SIZE_ITEMS: Record<string, { regular: number; large: number }> = {};
@@ -839,6 +840,13 @@ function MenuPageContent() {
       trackOrderPlaced(finalOrderId, finalCartTotal, cart);
       sendOrderNotificationEmail(completedOrderData as any);
 
+      // Upsert customer loyalty record — non-blocking, fire-and-forget
+      upsertCustomerOnOrder(
+        normaliseUKPhone(customerInfo.phone),
+        customerInfo.name.trim(),
+        finalCartTotal
+      ).catch((e) => console.warn('[Loyalty] upsertCustomerOnOrder:', e));
+
       // Save order snapshot for 1-tap reorder & profile persistence
       try {
         if (typeof window !== 'undefined') {
@@ -1065,7 +1073,7 @@ function MenuPageContent() {
           <button 
             onClick={() => {
               if ((typeof window !== 'undefined' ? window : {}).history.length > 1) {
-                router.push(-1);
+                router.back();
               } else {
                 router.push(`/${activeLocation.id}`);
               }
@@ -2107,37 +2115,7 @@ function MenuPageContent() {
                           onCancel={() => setCheckoutStep('details')}
                           isSubmittingOrder={isSubmitting}
                         />
-                      ) : (
-                        <SquareCheckout 
-                          amount={finalCartTotal} 
-                          onCreateOrder={async () => {
-                            return `ORD-${generateId().split('-')[0].toUpperCase()}`;
-                          }}
-                          onPaymentSuccess={(orderId, method = 'online') => {
-                            trackOrderPlaced(orderId, finalCartTotal, cart);
-                            setCompletedOrder({ 
-                              id: orderId, 
-                              customerName: customerInfo.name, 
-                              customerPhone: customerInfo.phone, 
-                              customerEmail: customerInfo.email,
-                              type: isDeliveryOrder ? 'delivery' : 'collection',
-                              isPaid: true,
-                              paymentMethod: 'card',
-                              payment_status: 'paid',
-                              items: [...cart],
-                              subtotal: cartTotal,
-                              discount: promoDiscount,
-                              total: finalCartTotal,
-                              status: 'pending',
-                              timestamp: new Date()
-                            } as any);
-                            setCheckoutStep('success');
-                            clearCart();
-                            (typeof window !== 'undefined' ? window.localStorage : {}).setItem('last_order_time', Date.now().toString());
-                          }} 
-                          onCancel={() => setCheckoutStep('details')} 
-                        />
-                      )}
+                      ) : null}
                     </div>
                   </div>
 

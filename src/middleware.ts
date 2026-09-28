@@ -8,9 +8,18 @@ import { NextRequest, NextResponse } from 'next/server';
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
-const RATE_LIMIT_MAX = 10; // 10 requests per minute per IP
 
-function isRateLimited(ip: string): boolean {
+// Cleanup interval to prevent memory leaks
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, entry] of rateLimitMap.entries()) {
+    if (now > entry.resetAt) {
+      rateLimitMap.delete(ip);
+    }
+  }
+}, 60_000);
+
+function isRateLimited(ip: string, maxRequests: number): boolean {
   const now = Date.now();
   const entry = rateLimitMap.get(ip);
 
@@ -20,19 +29,28 @@ function isRateLimited(ip: string): boolean {
   }
 
   entry.count++;
-  return entry.count > RATE_LIMIT_MAX;
+  return entry.count > maxRequests;
 }
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Rate-limit sensitive API routes
-  if (pathname.startsWith('/api/loyalty')) {
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-      || req.headers.get('x-real-ip')
-      || 'unknown';
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    || req.headers.get('x-real-ip')
+    || 'unknown';
 
-    if (isRateLimited(ip)) {
+  let maxRequests = 0;
+
+  if (pathname.startsWith('/api/checkout')) {
+    maxRequests = 5;
+  } else if (pathname.startsWith('/api/delivery')) {
+    maxRequests = 20;
+  } else if (pathname.startsWith('/api/loyalty')) {
+    maxRequests = 10;
+  }
+
+  if (maxRequests > 0) {
+    if (isRateLimited(ip, maxRequests)) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
         { status: 429 }
@@ -44,5 +62,10 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/api/loyalty/:path*'],
+  matcher: [
+    '/api/loyalty/:path*',
+    '/api/checkout/:path*',
+    '/api/delivery/:path*',
+    '/api/webhooks/:path*'
+  ],
 };

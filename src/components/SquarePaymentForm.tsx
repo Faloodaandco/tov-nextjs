@@ -258,7 +258,10 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
                       );
                       verificationToken = verificationResults?.token;
                     } catch (verifyErr: any) {
-                      console.warn('[SquarePaymentForm] Google Pay verifyBuyer:', verifyErr);
+                      console.error('[SquarePaymentForm] Google Pay SCA verification failed:', verifyErr);
+                      setError('Card verification failed. Your bank requires additional authentication.');
+                      setIsProcessing(false);
+                      return;
                     }
                     await onSuccess(tokenResult.token, verificationToken);
                   } else {
@@ -318,7 +321,7 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
       const result = await cardRef.current.tokenize();
 
       if (result.status === 'OK') {
-        // UK SCA / PSD2: verify buyer identity
+        // UK SCA / PSD2: verify buyer identity — MANDATORY for UK/EEA cards
         let verificationToken: string | undefined;
         try {
           const verificationResults = await paymentsRef.current.verifyBuyer(
@@ -332,7 +335,10 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
           );
           verificationToken = verificationResults?.token;
         } catch (verifyErr: any) {
-          console.warn('[SquarePaymentForm] verifyBuyer fallback:', verifyErr);
+          console.error('[SquarePaymentForm] SCA verification failed:', verifyErr);
+          setError('Card verification failed. Your bank requires additional authentication. Please try again or use Apple Pay / Google Pay.');
+          setIsProcessing(false);
+          return;
         }
         await onSuccess(result.token, verificationToken);
       } else {
@@ -374,7 +380,10 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
           );
           verificationToken = verificationResults?.token;
         } catch (verifyErr: any) {
-          console.warn('[SquarePaymentForm] Apple Pay verifyBuyer:', verifyErr);
+          console.error('[SquarePaymentForm] Apple Pay SCA verification failed:', verifyErr);
+          setError('Card verification failed. Your bank requires additional authentication.');
+          setIsProcessing(false);
+          return;
         }
         await onSuccess(tokenResult.token, verificationToken);
       } else {

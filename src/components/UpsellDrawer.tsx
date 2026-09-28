@@ -212,7 +212,7 @@ export const UpsellDrawer: React.FC<UpsellDrawerProps> = ({ isOpen, onClose, onP
                 </p>
               </div>
             </div>
-            <button onClick={onClose} aria-label="Close" className="p-2 rounded-full hover:bg-pine/5 text-pine/60 transition-colors">
+            <button onClick={onClose} aria-label="Close" className="min-w-[48px] min-h-[48px] flex items-center justify-center rounded-full hover:bg-pine/5 text-pine/60 transition-colors">
               <X size={20} />
             </button>
           </div>
@@ -244,7 +244,7 @@ export const UpsellDrawer: React.FC<UpsellDrawerProps> = ({ isOpen, onClose, onP
                     <button 
                       onClick={() => handleAddItem(item)}
                       disabled={isAdded}
-                      className={`px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm shrink-0 ${
+                      className={`px-4 py-3 sm:px-4 sm:py-3 min-h-[48px] rounded-full font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm shrink-0 ${
                         isAdded 
                           ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
                           : 'bg-terracotta text-white hover:bg-[#a64036] hover:shadow-md active:scale-95'

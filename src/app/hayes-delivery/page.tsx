@@ -8,12 +8,106 @@ export const metadata: Metadata = {
   description: 'Order authentic Pakistani food for delivery in Hayes, Southall & Uxbridge. Karahi, Nihari, BBQ platters delivered by our own drivers. Free delivery over £30.',
   alternates: {
     canonical: '/hayes-delivery'
-  }
+  },
+  openGraph: {
+    type: 'website',
+    title: 'Halal Food Delivery in Hayes | Taste of Village',
+    description: 'Order authentic Pakistani food for delivery in Hayes, Southall & Uxbridge. Karahi, Nihari, BBQ platters delivered by our own drivers. Free delivery over £30.',
+    url: 'https://tasteofvillagerestaurants.co.uk/hayes-delivery',
+    siteName: 'Taste of Village',
+    locale: 'en_GB',
+    images: [{ url: '/assets/og-share-preview.jpg', width: 1200, height: 630, alt: 'Taste of Village' }],
+  },
 };
 
 export default function HayesDeliveryPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "FoodEstablishment",
+        "name": "Taste of Village Hayes Delivery",
+        "image": "https://tasteofvillagerestaurants.co.uk/assets/og-share-preview.jpg",
+        "url": "https://tasteofvillagerestaurants.co.uk/hayes-delivery",
+        "telephone": "+442034093786",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "766B Uxbridge Road",
+          "addressLocality": "Hayes",
+          "addressRegion": "London",
+          "postalCode": "UB4 0RU",
+          "addressCountry": "GB"
+        },
+        "geo": { "@type": "GeoCoordinates", "latitude": 51.5127, "longitude": -0.4211 },
+        "servesCuisine": ["Pakistani", "Halal", "South Asian", "Lahori"],
+        "priceRange": "££",
+        "hasMenu": "https://tasteofvillagerestaurants.co.uk/hayes/menu",
+        "areaServed": [
+          { "@type": "PostalCode", "postalCode": "UB1" },
+          { "@type": "PostalCode", "postalCode": "UB2" },
+          { "@type": "PostalCode", "postalCode": "UB3" },
+          { "@type": "PostalCode", "postalCode": "UB4" },
+          { "@type": "PostalCode", "postalCode": "UB5" }
+        ],
+        "potentialAction": {
+          "@type": "OrderAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://tasteofvillagerestaurants.co.uk/hayes/menu",
+            "actionPlatform": ["http://schema.org/DesktopWebPlatform", "http://schema.org/MobileWebPlatform"]
+          },
+          "deliveryMethod": "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which areas in Hayes do you deliver to?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Our dedicated delivery fleet covers a 5-mile radius from 766B Uxbridge Road, including Hayes, Southall, Uxbridge, West Drayton, Yeading, and Hillingdon (postcodes UB1 through UB5)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the minimum order and free delivery threshold?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The minimum delivery order is £20. All orders over £30 qualify for free delivery directly to your door."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is the food freshly cooked for delivery?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Every dish is cooked fresh to order in our kitchen at 766B Uxbridge Road and delivered in thermal sealed packaging to arrive piping hot."
+            }
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="bg-sand min-h-screen pt-20 pb-20 font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tasteofvillagerestaurants.co.uk" },
+            { "@type": "ListItem", "position": 2, "name": "Halal Food Delivery in Hayes", "item": "https://tasteofvillagerestaurants.co.uk/hayes-delivery" }
+          ]
+        }) }}
+      />
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Now Delivering Across UB1–UB5</span>
@@ -63,6 +157,25 @@ export default function HayesDeliveryPage() {
             <div>
               <h3 className="font-serif text-xl text-sand mb-2">Mixed BBQ Platter</h3>
               <p className="text-white/60 text-sm">Seekh kebab, lamb chops, and chicken tikka straight from the charcoal grill.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* AEO: Visible FAQ for answer engines */}
+        <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-pine/5 mb-16">
+          <h2 className="font-serif text-3xl mb-8 text-pine text-center">Delivery FAQs</h2>
+          <div className="space-y-6 max-w-2xl mx-auto">
+            <div>
+              <h3 className="font-bold text-pine mb-2">Which areas in Hayes do you deliver to?</h3>
+              <p className="text-pine/70 leading-relaxed">Our dedicated delivery fleet covers a 5-mile radius from 766B Uxbridge Road, including Hayes, Southall, Uxbridge, West Drayton, Yeading, and Hillingdon (postcodes UB1 through UB5).</p>
+            </div>
+            <div>
+              <h3 className="font-bold text-pine mb-2">What is the minimum order and free delivery threshold?</h3>
+              <p className="text-pine/70 leading-relaxed">The minimum delivery order is £20. All orders over £30 qualify for free delivery directly to your door.</p>
+            </div>
+            <div>
+              <h3 className="font-bold text-pine mb-2">Is the food freshly cooked for delivery?</h3>
+              <p className="text-pine/70 leading-relaxed">Yes. Every dish is cooked fresh to order in our kitchen at 766B Uxbridge Road and delivered in thermal sealed packaging to arrive piping hot.</p>
             </div>
           </div>
         </div>

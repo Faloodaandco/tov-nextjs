@@ -14,8 +14,17 @@ export const metadata: Metadata = {
 export default function SeoPage() {
   return (
     <div className="bg-sand min-h-screen pt-20 pb-20 font-sans">
-      
-      
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tasteofvillagerestaurants.co.uk" },
+            { "@type": "ListItem", "position": 2, "name": "Windsor's Premier Choice for Late-Night Halal Desserts", "item": "https://tasteofvillagerestaurants.co.uk/windsor-desserts" }
+          ]
+        }) }}
+      />
       <div className="max-w-4xl mx-auto px-6">
         <div 
           className="text-center mb-16"
@@ -75,7 +84,7 @@ export default function SeoPage() {
           </div>
 
           <div className="flex justify-center gap-4">
-            <Link href="/slough/menu" className="px-8 py-4 bg-terracotta text-white text-pine rounded-full font-bold hover:shadow-lg transition-all">
+            <Link href="/slough/menu" className="px-8 py-4 bg-terracotta text-white rounded-full font-bold hover:shadow-lg transition-all">
               View Full Menu
             </Link>
             <Link href="/book" className="px-8 py-4 bg-transparent border-2 border-brand-text/10 text-pine rounded-full font-bold hover:bg-brand-text/5 transition-all">

@@ -89,126 +89,127 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${cinzel.variable} ${outfit.variable} ${jost.variable}`}>
+    <html lang="en-GB" className={`${cinzel.variable} ${outfit.variable} ${jost.variable}`}>
       <head>
         {/* Schema.org Restaurant Structured Data — Both Branches */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify([
-              {
-                "@context": "https://schema.org",
-                "@type": "Restaurant",
-                name: "Taste of Village Hayes",
-                alternateName: "Taste of Village",
-                image: [
-                  "https://tasteofvillagerestaurants.co.uk/assets/chicken_karahi_hero.webp",
-                  "https://tasteofvillagerestaurants.co.uk/assets/lamb_karahi_hero.webp",
-                  "https://tasteofvillagerestaurants.co.uk/assets/mix_grill_hero.webp",
-                  "https://tasteofvillagerestaurants.co.uk/assets/nihari_hero.webp",
-                  "https://tasteofvillagerestaurants.co.uk/assets/haleem_hero.webp"
-                ],
-                logo: {
-                  "@type": "ImageObject",
-                  "url": "https://tasteofvillagerestaurants.co.uk/assets/tov-icon-512.png",
-                  "width": 512,
-                  "height": 512
-                },
-                url: "https://tasteofvillagerestaurants.co.uk/hayes",
-                telephone: "+442034093786",
-                address: {
-                  "@type": "PostalAddress",
-                  streetAddress: "766B Uxbridge Road",
-                  addressLocality: "Hayes",
-                  addressRegion: "London",
-                  postalCode: "UB4 0RU",
-                  addressCountry: "GB",
-                },
-                geo: { "@type": "GeoCoordinates", latitude: 51.5127, longitude: -0.4211 },
-                openingHoursSpecification: {
-                  "@type": "OpeningHoursSpecification",
-                  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-                  opens: "12:00",
-                  closes: "23:00",
-                },
-                servesCuisine: ["Pakistani", "Halal", "South Asian", "Lahori"],
-                priceRange: "££",
-                menu: "https://tasteofvillagerestaurants.co.uk/hayes/menu",
-                acceptsReservations: "True",
-                hasMenu: { "@type": "Menu", name: "Hayes Menu", url: "https://tasteofvillagerestaurants.co.uk/hayes/menu" },
-                sameAs: [
-                  "https://www.instagram.com/tasteofvillagehayes/",
-                  "https://www.facebook.com/p/Taste-of-Village-61551672639808/",
-                  "https://www.tiktok.com/@tasteofvillage1",
-                ],
-                "hasCredential": {
-                  "@type": "EducationalOccupationalCredential",
-                  "name": "Food Hygiene Rating 4 — Good",
-                  "credentialCategory": "Food Hygiene Rating Scheme (FHRS)",
-                  "recognizedBy": {
-                    "@type": "GovernmentOrganization",
-                    "name": "Food Standards Agency",
-                    "url": "https://www.food.gov.uk/"
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "Restaurant",
+                  name: "Taste of Village Hayes",
+                  alternateName: "Taste of Village",
+                  image: [
+                    "https://tasteofvillagerestaurants.co.uk/assets/chicken_karahi_hero.webp",
+                    "https://tasteofvillagerestaurants.co.uk/assets/lamb_karahi_hero.webp",
+                    "https://tasteofvillagerestaurants.co.uk/assets/mix_grill_hero.webp",
+                    "https://tasteofvillagerestaurants.co.uk/assets/nihari_hero.webp",
+                    "https://tasteofvillagerestaurants.co.uk/assets/haleem_hero.webp"
+                  ],
+                  logo: {
+                    "@type": "ImageObject",
+                    "url": "https://tasteofvillagerestaurants.co.uk/assets/tov-icon-512.png",
+                    "width": 512,
+                    "height": 512
                   },
-                  "url": "https://ratings.food.gov.uk/business/653844/a-taste-of-village"
-                },
-              },
-              {
-                "@context": "https://schema.org",
-                "@type": "Restaurant",
-                name: "Taste of Village Slough",
-                alternateName: "Taste of Village Farnham Road",
-                image: [
-                  "https://tasteofvillagerestaurants.co.uk/assets/chicken_karahi_hero.webp",
-                  "https://tasteofvillagerestaurants.co.uk/assets/lamb_karahi_hero.webp",
-                  "https://tasteofvillagerestaurants.co.uk/assets/mix_grill_hero.webp",
-                  "https://tasteofvillagerestaurants.co.uk/assets/nihari_hero.webp",
-                  "https://tasteofvillagerestaurants.co.uk/assets/haleem_hero.webp"
-                ],
-                logo: {
-                  "@type": "ImageObject",
-                  "url": "https://tasteofvillagerestaurants.co.uk/assets/tov-icon-512.png",
-                  "width": 512,
-                  "height": 512
-                },
-                url: "https://tasteofvillagerestaurants.co.uk/slough",
-                telephone: "+441753326341",
-                address: {
-                  "@type": "PostalAddress",
-                  streetAddress: "260 Farnham Road",
-                  addressLocality: "Slough",
-                  addressRegion: "Berkshire",
-                  postalCode: "SL1 4XL",
-                  addressCountry: "GB",
-                },
-                geo: { "@type": "GeoCoordinates", latitude: 51.5273, longitude: -0.6128 },
-                openingHoursSpecification: {
-                  "@type": "OpeningHoursSpecification",
-                  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-                  opens: "12:00",
-                  closes: "23:00",
-                },
-                servesCuisine: ["Pakistani", "Halal", "South Asian", "Gujranwala"],
-                priceRange: "££",
-                menu: "https://tasteofvillagerestaurants.co.uk/slough/menu",
-                acceptsReservations: "True",
-                hasMenu: { "@type": "Menu", name: "Slough Menu", url: "https://tasteofvillagerestaurants.co.uk/slough/menu" },
-                sameAs: [
-                  "https://www.instagram.com/tasteofvillageslough/",
-                ],
-                "hasCredential": {
-                  "@type": "EducationalOccupationalCredential",
-                  "name": "Food Hygiene Rating 5 — Very Good",
-                  "credentialCategory": "Food Hygiene Rating Scheme (FHRS)",
-                  "recognizedBy": {
-                    "@type": "GovernmentOrganization",
-                    "name": "Food Standards Agency",
-                    "url": "https://www.food.gov.uk/"
+                  url: "https://tasteofvillagerestaurants.co.uk/hayes",
+                  telephone: "+442034093786",
+                  address: {
+                    "@type": "PostalAddress",
+                    streetAddress: "766B Uxbridge Road",
+                    addressLocality: "Hayes",
+                    addressRegion: "London",
+                    postalCode: "UB4 0RU",
+                    addressCountry: "GB",
                   },
-                  "url": "https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
+                  geo: { "@type": "GeoCoordinates", latitude: 51.5127, longitude: -0.4211 },
+                  openingHoursSpecification: {
+                    "@type": "OpeningHoursSpecification",
+                    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                    opens: "12:00",
+                    closes: "23:00",
+                  },
+                  servesCuisine: ["Pakistani", "Halal", "South Asian", "Lahori"],
+                  priceRange: "££",
+                  menu: "https://tasteofvillagerestaurants.co.uk/hayes/menu",
+                  acceptsReservations: true,
+                  hasMenu: { "@type": "Menu", name: "Hayes Menu", url: "https://tasteofvillagerestaurants.co.uk/hayes/menu" },
+                  sameAs: [
+                    "https://www.instagram.com/tasteofvillagehayes/",
+                    "https://www.facebook.com/p/Taste-of-Village-61551672639808/",
+                    "https://www.tiktok.com/@tasteofvillage1",
+                  ],
+                  "hasCredential": {
+                    "@type": "EducationalOccupationalCredential",
+                    "name": "Food Hygiene Rating 4 — Good",
+                    "credentialCategory": "Food Hygiene Rating Scheme (FHRS)",
+                    "recognizedBy": {
+                      "@type": "GovernmentOrganization",
+                      "name": "Food Standards Agency",
+                      "url": "https://www.food.gov.uk/"
+                    },
+                    "url": "https://ratings.food.gov.uk/business/653844/a-taste-of-village"
+                  },
                 },
-              },
-            ]),
+                {
+                  "@type": "Restaurant",
+                  name: "Taste of Village Slough",
+                  alternateName: "Taste of Village Farnham Road",
+                  image: [
+                    "https://tasteofvillagerestaurants.co.uk/assets/chicken_karahi_hero.webp",
+                    "https://tasteofvillagerestaurants.co.uk/assets/lamb_karahi_hero.webp",
+                    "https://tasteofvillagerestaurants.co.uk/assets/mix_grill_hero.webp",
+                    "https://tasteofvillagerestaurants.co.uk/assets/nihari_hero.webp",
+                    "https://tasteofvillagerestaurants.co.uk/assets/haleem_hero.webp"
+                  ],
+                  logo: {
+                    "@type": "ImageObject",
+                    "url": "https://tasteofvillagerestaurants.co.uk/assets/tov-icon-512.png",
+                    "width": 512,
+                    "height": 512
+                  },
+                  url: "https://tasteofvillagerestaurants.co.uk/slough",
+                  telephone: "+441753326341",
+                  address: {
+                    "@type": "PostalAddress",
+                    streetAddress: "260 Farnham Road",
+                    addressLocality: "Slough",
+                    addressRegion: "Berkshire",
+                    postalCode: "SL1 4XL",
+                    addressCountry: "GB",
+                  },
+                  geo: { "@type": "GeoCoordinates", latitude: 51.5273, longitude: -0.6128 },
+                  openingHoursSpecification: {
+                    "@type": "OpeningHoursSpecification",
+                    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                    opens: "12:00",
+                    closes: "23:00",
+                  },
+                  servesCuisine: ["Pakistani", "Halal", "South Asian", "Gujranwala"],
+                  priceRange: "££",
+                  menu: "https://tasteofvillagerestaurants.co.uk/slough/menu",
+                  acceptsReservations: true,
+                  hasMenu: { "@type": "Menu", name: "Slough Menu", url: "https://tasteofvillagerestaurants.co.uk/slough/menu" },
+                  sameAs: [
+                    "https://www.instagram.com/tasteofvillageslough/",
+                  ],
+                  "hasCredential": {
+                    "@type": "EducationalOccupationalCredential",
+                    "name": "Food Hygiene Rating 5 — Very Good",
+                    "credentialCategory": "Food Hygiene Rating Scheme (FHRS)",
+                    "recognizedBy": {
+                      "@type": "GovernmentOrganization",
+                      "name": "Food Standards Agency",
+                      "url": "https://www.food.gov.uk/"
+                    },
+                    "url": "https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
+                  },
+                },
+              ]
+            }),
           }}
         />
       </head>

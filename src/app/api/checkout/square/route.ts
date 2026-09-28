@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { LOCATIONS, LocationId, calculateServiceFee, calculatePromoDiscount, isEligibleForBreakfastPromo, ACTIVE_PROMO } from '@/config/shopConfig';
+import { LOCATIONS, LocationId, calculateServiceFee, calculatePromoDiscount, isEligibleForBreakfastPromo, ACTIVE_PROMO, haversineDistanceMiles, getDeliveryFeeByDistance } from '@/config/shopConfig';
 import { getMenuItems } from '@/services/menuService';
-import { db } from '@/lib/firebase';
-import { doc, setDoc, Timestamp } from 'firebase/firestore';
+import { adminDb } from '@/lib/firebaseAdmin';
 
 /**
  * POST /api/checkout/square
@@ -128,8 +127,30 @@ export async function POST(req: NextRequest) {
         trustedPrice = found.price;
       } else if (Number(item.price) > found.price) {
         const clientPrice = Number(item.price);
-        if (clientPrice <= found.price + 20) {
+        const priceDelta = Math.round((clientPrice - found.price) * 100);
+        let isValidSurcharge = false;
+
+        if ((found as any).modifiers && Array.isArray((found as any).modifiers)) {
+          const modPrices = (found as any).modifiers.map((m: any) => Math.round((m.price || 0) * 100));
+          const possibleSums = new Set<number>([0]);
+          for (const price of modPrices) {
+            const currentSums = Array.from(possibleSums);
+            for (const sum of currentSums) {
+              possibleSums.add(sum + price);
+            }
+          }
+          if (possibleSums.has(priceDelta)) {
+            isValidSurcharge = true;
+          }
+        }
+
+        if (isValidSurcharge) {
           trustedPrice = clientPrice;
+        } else {
+          return NextResponse.json(
+            { error: `Price validation failed for ${found.name}. Invalid modifier surcharge.` },
+            { status: 400 }
+          );
         }
       }
 
@@ -146,7 +167,29 @@ export async function POST(req: NextRequest) {
     // Delivery fee (server-verified amount from /api/delivery/quote)
     let deliveryFeePence = 0;
     if (isDelivery) {
-      deliveryFeePence = Math.max(0, Math.round(Number(delivery_fee || 0) * 100));
+      if (!delivery_address?.postcode) {
+        return NextResponse.json({ error: 'Delivery postcode is required.' }, { status: 400 });
+      }
+      try {
+        const outcode = String(delivery_address.postcode).toUpperCase().trim();
+        const pCodeRes = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(outcode)}`);
+        const pCodeData = await pCodeRes.json();
+        
+        if (pCodeData.status === 200 && pCodeData.result) {
+          const { latitude, longitude } = pCodeData.result;
+          const distance = haversineDistanceMiles(loc.coords.lat, loc.coords.lng, latitude, longitude);
+          const serverTier = getDeliveryFeeByDistance(distance, branchId);
+          
+          if (!serverTier.eligible) {
+            return NextResponse.json({ error: serverTier.reason || 'Delivery address is outside of our delivery zone.' }, { status: 400 });
+          }
+          deliveryFeePence = Math.round(serverTier.fee * 100);
+        } else {
+          return NextResponse.json({ error: 'Invalid delivery postcode.' }, { status: 400 });
+        }
+      } catch (err) {
+        return NextResponse.json({ error: 'Could not verify delivery postcode.' }, { status: 400 });
+      }
     }
 
     // Service fee (10% on food subtotal - Delivery orders only; collection is free)
@@ -345,6 +388,7 @@ export async function POST(req: NextRequest) {
         idempotency_key: paymentIdempotencyKey,
         source_id: sourceId,
         verification_token: verification_token || undefined,
+        autocomplete: true,
         order_id: squareOrder.id,
         location_id: locationId,
         amount_money: { amount: finalAmountPence, currency: 'GBP' },
@@ -379,7 +423,7 @@ export async function POST(req: NextRequest) {
 
     // ── 3. Persist Order to Firestore (server-side, survives client disconnect) ──
     try {
-      await setDoc(doc(db, 'orders', cleanOrderId), {
+      await adminDb.collection('orders').doc(cleanOrderId).set({
         // ── Identity ──
         id: cleanOrderId,
         orderId: cleanOrderId,
@@ -522,8 +566,7 @@ export async function POST(req: NextRequest) {
           </div>
         `;
 
-        const { addDoc, collection: firestoreCollection } = await import('firebase/firestore');
-        await addDoc(firestoreCollection(db, 'mail'), {
+        await adminDb.collection('mail').add({
           to: [customer.email.trim()],
           orderId: cleanOrderId,
           timestamp: new Date().toISOString(),

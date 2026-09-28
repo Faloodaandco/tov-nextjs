@@ -8,7 +8,16 @@ export const metadata: Metadata = {
   description: "Halal certified Gujranwala-style Pakistani cuisine on Farnham Road, Slough. Karahi, Haleem, Nihari, BBQ Platters. Order online or visit us.",
   alternates: {
     canonical: "/slough-halal-food"
-  }
+  },
+  openGraph: {
+    type: 'website',
+    title: "Halal Pakistani Restaurant in Slough | Taste of Village",
+    description: "Halal certified Gujranwala-style Pakistani cuisine on Farnham Road, Slough. Karahi, Haleem, Nihari, BBQ Platters. Order online or visit us.",
+    url: 'https://tasteofvillagerestaurants.co.uk/slough-halal-food',
+    siteName: 'Taste of Village',
+    locale: 'en_GB',
+    images: [{ url: '/assets/og-share-preview.jpg', width: 1200, height: 630, alt: 'Taste of Village' }],
+  },
 };
 
 export default function SeoPage() {
@@ -74,6 +83,17 @@ export default function SeoPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tasteofvillagerestaurants.co.uk" },
+            { "@type": "ListItem", "position": 2, "name": "Halal Pakistani Restaurant in Slough", "item": "https://tasteofvillagerestaurants.co.uk/slough-halal-food" }
+          ]
+        }) }}
       />
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">

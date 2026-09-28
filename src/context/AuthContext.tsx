@@ -142,8 +142,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const linkPhone = async (phoneNumber: string) => {
-    // Implement phone linking logic if needed
-    console.warn("linkPhone not fully implemented");
+    if (!user) throw new Error('Must be signed in to link a phone number');
+    if (typeof window === 'undefined' || !(window as any).recaptchaVerifier) {
+      throw new Error('Recaptcha not initialized — call setupRecaptcha first');
+    }
+    const appVerifier = (window as any).recaptchaVerifier;
+    const { linkWithPhoneNumber } = await import('firebase/auth');
+    const result = await linkWithPhoneNumber(user, phoneNumber, appVerifier);
+    setConfirmationResult(result);
   };
 
   return (

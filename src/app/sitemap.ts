@@ -51,6 +51,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   /* ── Core service pages ── */
   entries.push(
     { url: `${BASE_URL}/book`, lastModified: TODAY, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${BASE_URL}/review`, lastModified: TODAY, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${BASE_URL}/rewards`, lastModified: TODAY, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${BASE_URL}/info`, lastModified: TODAY, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${BASE_URL}/franchise`, lastModified: TODAY, changeFrequency: 'monthly', priority: 0.5 },

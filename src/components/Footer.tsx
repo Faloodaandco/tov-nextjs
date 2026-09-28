@@ -43,7 +43,10 @@ export const Footer = () => {
               <a href={SHOP_CONFIG.facebook} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg">
                 <Facebook size={20} />
               </a>
-              <a href={buildWhatsAppLink('Hello! I have a question.')} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg">
+              <a href="https://wa.me/442034093786" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Hayes">
+                <MessageCircle size={20} />
+              </a>
+              <a href="https://wa.me/441753326341" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Slough">
                 <MessageCircle size={20} />
               </a>
             </div>
@@ -53,7 +56,7 @@ export const Footer = () => {
           <div>
             <h4 className="font-sans font-bold text-xs mb-8 tracking-[0.2em] uppercase text-bg-sand/40">Explore</h4>
             <ul className="space-y-5">
-              <li><Link href={`/${loc.id}/home`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Home</Link></li>
+              <li><Link href={`/${loc.id}`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Home</Link></li>
               <li><Link href={`/${loc.id}/menu`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Our Menu</Link></li>
               <li><Link href={`/${loc.id}/menu`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Order Takeaway</Link></li>
               <li><Link href="/book" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Book A Table</Link></li>
@@ -75,33 +78,35 @@ export const Footer = () => {
           <div>
             <h4 className="font-sans font-bold text-xs mb-8 tracking-[0.2em] uppercase text-bg-sand/40">Find Us</h4>
             <ul className="space-y-6">
-              <li className="flex items-start gap-4">
-                <MapPin size={20} className="text-terracotta flex-shrink-0 mt-0.5" />
-                <span className="text-bg-sand/70 leading-relaxed font-medium text-sm normal-case tracking-wide">
-                  {SHOP_CONFIG.address}<br/>
-                  <span className="text-xs font-black uppercase tracking-[0.2em] text-bg-sand">{SHOP_CONFIG.postcode}</span>
-                </span>
-              </li>
-              <li className="flex items-center gap-4">
-                <Phone size={20} className="text-terracotta flex-shrink-0" />
-                <span className="text-bg-sand/70 font-medium text-sm tracking-widest">{SHOP_CONFIG.phoneNumber}</span>
-              </li>
-              
-              <li className="mt-8">
-                <a 
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(SHOP_CONFIG.address + ', ' + SHOP_CONFIG.postcode)}`}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="group relative overflow-hidden flex items-center justify-center w-full h-32 bg-bg-sand/5 border border-terracotta/20 transition-all duration-500 hover:border-terracotta"
-                >
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10"></div>
-                  <div className="absolute inset-0 opacity-10 group-hover:opacity-30 transition-opacity" style={{ backgroundImage: 'radial-gradient(circle at center, #8a3d2a 1px, transparent 1px)', backgroundSize: '10px 10px' }}></div>
-                  <div className="relative z-20 flex flex-col items-center gap-3">
-                    <MapPin size={24} className="text-terracotta group-hover:-translate-y-2 transition-transform duration-500" />
-                    <span className="font-sans font-black tracking-[0.2em] text-xs uppercase text-white">Get Directions</span>
-                  </div>
-                </a>
-              </li>
+              {Object.values(LOCATIONS).map((branch) => (
+                <div key={branch.id} className="mb-6">
+                  <h5 className="text-terracotta font-bold text-xs uppercase tracking-widest mb-3">{branch.name}</h5>
+                  <li className="flex items-start gap-4 mb-3">
+                    <MapPin size={20} className="text-terracotta flex-shrink-0 mt-0.5" />
+                    <span className="text-bg-sand/70 leading-relaxed font-medium text-sm normal-case tracking-wide">
+                      {branch.address}<br/>
+                      <span className="text-xs font-black uppercase tracking-[0.2em] text-bg-sand">{branch.postcode}</span>
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-4 mb-4">
+                    <Phone size={20} className="text-terracotta flex-shrink-0" />
+                    <span className="text-bg-sand/70 font-medium text-sm tracking-widest">{branch.phone}</span>
+                  </li>
+                  <li>
+                    <a 
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(branch.address + ', ' + branch.postcode)}`}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="group relative overflow-hidden flex items-center justify-center w-full h-12 bg-bg-sand/5 border border-terracotta/20 transition-all duration-500 hover:border-terracotta"
+                    >
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10"></div>
+                      <div className="relative z-20 flex flex-col items-center gap-2">
+                        <span className="font-sans font-black tracking-[0.2em] text-[10px] uppercase text-white">Get Directions</span>
+                      </div>
+                    </a>
+                  </li>
+                </div>
+              ))}
             </ul>
           </div>
 

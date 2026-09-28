@@ -20,10 +20,13 @@ export interface CustomerRecord {
   createdAt: string;
 }
 
-/** Strips non-digit/+ chars, replaces leading + with 'p' */
+/** Strips non-digit chars and forces 44 format */
 export function phoneToDocId(phone: string): string {
-  const stripped = phone.replace(/[^\d+]/g, '');
-  return stripped.replace(/^\+/, 'p');
+  let digits = phone.replace(/\D/g, '');
+  if (digits.startsWith('07')) {
+    digits = '44' + digits.substring(1);
+  }
+  return digits;
 }
 
 /** Lookup customer by phone. Returns null if not found or phone too short. */

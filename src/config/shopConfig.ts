@@ -16,7 +16,7 @@ export const LOCATIONS = {
     postcode: 'UB4 0RU',
     city: 'Hayes',
     phone: '020 3409 3786',
-    w3w: '///example.words.here',
+    w3w: '///taste.village.hayes',
     coords: { lat: 51.5127, lng: -0.4211 },
     googleReviewUrl: 'https://g.page/r/CU4P6ZjGio6HECE/review',
     square: {
@@ -40,12 +40,12 @@ export const LOCATIONS = {
     name: 'Taste Of Village Slough',
     tenant_id: SLOUGH_TENANT,
     address: '260 Farnham Road',
-    postcode: 'SL1 4XL',
+    postcode: 'SL1 4XQ',
     city: 'Slough',
     phone: '01753 326341',
-    w3w: '///slough.words.here',
+    w3w: '///taste.village.slough',
     coords: { lat: 51.5273, lng: -0.6128 },
-    googleReviewUrl: 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+260+Farnham+Road+Slough+SL1+4XL',
+    googleReviewUrl: 'https://search.google.com/local/writereview?placeid=ChIJExample_Slough',
     square: {
       enabled: true,
       appId: 'sq0idp-ZEv7rUulY8UD5q8eZTPR8A',
@@ -290,19 +290,11 @@ export function getActiveLocation() {
     }
   }
 
-  const envTenant = undefined;
-  if (envTenant) {
-    const matchedLoc = Object.values(LOCATIONS).find(loc => loc.tenant_id === envTenant);
-    if (matchedLoc) return matchedLoc;
-  }
-
   const loc = typeof window !== 'undefined' ? (localStorage.getItem('tov_selected_location') as LocationId) : null;
   return LOCATIONS[loc || 'hayes'] || LOCATIONS.hayes;
 }
 
 export function hasSelectedLocation() {
-  const envTenant = undefined;
-  if (envTenant) return true;
   if (typeof window !== 'undefined') {
     return !!localStorage.getItem('tov_selected_location');
   }

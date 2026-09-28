@@ -8,7 +8,16 @@ export const metadata: Metadata = {
   description: "Authentic Gujranwala-style Pakistani breakfast on Farnham Road. Fresh Halwa Puri, Nihari, Paya, and Karak Chai. The best Desi Nashta in Slough.",
   alternates: {
     canonical: "/slough-breakfast"
-  }
+  },
+  openGraph: {
+    type: 'website',
+    title: "Desi Breakfast & Halwa Puri in Slough | Taste of Village",
+    description: "Authentic Gujranwala-style Pakistani breakfast on Farnham Road. Fresh Halwa Puri, Nihari, Paya, and Karak Chai. The best Desi Nashta in Slough.",
+    url: 'https://tasteofvillagerestaurants.co.uk/slough-breakfast',
+    siteName: 'Taste of Village',
+    locale: 'en_GB',
+    images: [{ url: '/assets/og-share-preview.jpg', width: 1200, height: 630, alt: 'Taste of Village' }],
+  },
 };
 
 export default function SloughBreakfastPage() {
@@ -85,6 +94,17 @@ export default function SloughBreakfastPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tasteofvillagerestaurants.co.uk" },
+            { "@type": "ListItem", "position": 2, "name": "Desi Breakfast in Slough", "item": "https://tasteofvillagerestaurants.co.uk/slough-breakfast" }
+          ]
+        }) }}
       />
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">

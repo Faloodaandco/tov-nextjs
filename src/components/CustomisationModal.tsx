@@ -199,7 +199,7 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
   const isSimple = !hasVariants && !hasGroups && !hasAllergens;
 
   return (
-    <Drawer isOpen={true} onClose={onClose} title={item.name} width="md:max-w-2xl">
+    <Drawer isOpen={true} onClose={onClose} title={item.name} width="md:max-w-2xl" side="bottom">
       <div className="flex flex-col relative w-full h-full bg-bg-sand">
         {/* ─── Hero Image (optional, since Drawer is narrower) ─── */}
         {item.image && (
@@ -419,12 +419,12 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
             <div className="flex items-center gap-6">
               <button
                 onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                className="w-10 h-10 bg-bg-sand rounded-full border border-pine/10 flex items-center justify-center font-black text-pine hover:border-terracotta hover:text-terracotta transition-colors text-xl shadow-sm hover:shadow-md"
+                className="w-12 h-12 bg-bg-sand rounded-full border border-pine/10 flex items-center justify-center font-black text-pine hover:border-terracotta hover:text-terracotta transition-colors text-xl shadow-sm hover:shadow-md"
               >−</button>
               <span className="font-display font-bold text-pine text-2xl w-6 text-center">{quantity}</span>
               <button
                 onClick={() => setQuantity(q => q + 1)}
-                className="w-10 h-10 bg-bg-sand rounded-full border border-pine/10 flex items-center justify-center font-black text-pine hover:border-terracotta hover:text-terracotta transition-colors text-xl shadow-sm hover:shadow-md"
+                className="w-12 h-12 bg-bg-sand rounded-full border border-pine/10 flex items-center justify-center font-black text-pine hover:border-terracotta hover:text-terracotta transition-colors text-xl shadow-sm hover:shadow-md"
               >+</button>
             </div>
           </div>

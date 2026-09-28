@@ -8,7 +8,16 @@ export const metadata: Metadata = {
   description: 'Order authentic Gujranwala-style Pakistani food for delivery in Slough, Langley & Windsor. Karahi, Haleem, BBQ delivered to your door. Free delivery over £30.',
   alternates: {
     canonical: '/slough-delivery'
-  }
+  },
+  openGraph: {
+    type: 'website',
+    title: 'Halal Food Delivery in Slough | Taste of Village',
+    description: 'Order authentic Gujranwala-style Pakistani food for delivery in Slough, Langley & Windsor. Karahi, Haleem, BBQ delivered to your door. Free delivery over £30.',
+    url: 'https://tasteofvillagerestaurants.co.uk/slough-delivery',
+    siteName: 'Taste of Village',
+    locale: 'en_GB',
+    images: [{ url: '/assets/og-share-preview.jpg', width: 1200, height: 630, alt: 'Taste of Village' }],
+  },
 };
 
 export default function SloughDeliveryPage() {
@@ -86,6 +95,17 @@ export default function SloughDeliveryPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tasteofvillagerestaurants.co.uk" },
+            { "@type": "ListItem", "position": 2, "name": "Halal Food Delivery in Slough", "item": "https://tasteofvillagerestaurants.co.uk/slough-delivery" }
+          ]
+        }) }}
       />
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">

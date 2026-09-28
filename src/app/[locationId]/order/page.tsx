@@ -8,7 +8,7 @@ import { MenuItem } from '@/types';
 import { getMenuItems } from '@/services/menuService';
 import { streamSingleOrder } from '@/services/orderService';
 import { SHOP_CONFIG, getActiveLocation, LOCATIONS } from '@/config/shopConfig';
-import { SquareCheckout } from '@/components/SquareCheckout';
+import { SquarePaymentForm } from '@/components/SquarePaymentForm';
 import { generateId } from '@/utils/generateId';
 import { sendOrderNotificationEmail } from '@/services/emailService';
 
@@ -87,20 +87,34 @@ const SquareCheckoutForm = ({ cart, cartTotal, onCreateOrder, onPaymentSuccess, 
          </div>
          
          <div className="mt-8 mb-4 border-t pt-6">
-            <SquareCheckout 
-              amount={cartTotal}
-              onCreateOrder={async () => {
-                if (!customerInfo.name && isCollection) {
-                   throw new Error("Name is required");
-                }
-                setIsProcessing(true);
-                return await onCreateOrder(true);
+            <SquarePaymentForm 
+              total={cartTotal}
+              branchName={activeLocation.name}
+              appId={squareConfig.appId || ''}
+              locationId={squareConfig.locationId || ''}
+              customerDetails={{
+                name: customerInfo.name,
+                phone: customerInfo.phone,
+                email: customerInfo.email,
               }}
-              onPaymentSuccess={(orderId) => {
-                setIsProcessing(false);
-                onPaymentSuccess(orderId);
+              onBeforeSubmit={() => {
+                if (!customerInfo.name && isCollection) {
+                  alert('Name is required');
+                  return false;
+                }
+                return true;
+              }}
+              onSuccess={async (token, verificationToken) => {
+                setIsProcessing(true);
+                try {
+                  const orderId = await onCreateOrder(true);
+                  onPaymentSuccess(orderId);
+                } catch (err) {
+                  setIsProcessing(false);
+                }
               }}
               onCancel={onBack}
+              isSubmittingOrder={isProcessing}
             />
             {isCollection && (
               <div className="mt-4 pt-4 border-t border-gray-200">

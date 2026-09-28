@@ -7,6 +7,8 @@ Disallow: /check-in
 Disallow: /print-qr
 Disallow: /voucher-leads
 Disallow: /track
+Disallow: /admin/
+Disallow: /links
 
 # Sitemaps
 Sitemap: https://tasteofvillagerestaurants.co.uk/sitemap.xml

@@ -8,7 +8,16 @@ export const metadata: Metadata = {
   description: "Closest authentic Pakistani takeaway to Burnham. Sizzling Karahi, Tandoori BBQ, fresh Naan. Collection from Slough or delivery to your door.",
   alternates: {
     canonical: "/burnham-takeaway"
-  }
+  },
+  openGraph: {
+    type: 'website',
+    title: "Pakistani Takeaway Near Burnham | Taste of Village Slough",
+    description: "Closest authentic Pakistani takeaway to Burnham. Sizzling Karahi, Tandoori BBQ, fresh Naan. Collection from Slough or delivery to your door.",
+    url: 'https://tasteofvillagerestaurants.co.uk/burnham-takeaway',
+    siteName: 'Taste of Village',
+    locale: 'en_GB',
+    images: [{ url: '/assets/og-share-preview.jpg', width: 1200, height: 630, alt: 'Taste of Village' }],
+  },
 };
 
 export default function SeoPage() {
@@ -67,6 +76,17 @@ export default function SeoPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tasteofvillagerestaurants.co.uk" },
+            { "@type": "ListItem", "position": 2, "name": "Pakistani Takeaway Near Burnham", "item": "https://tasteofvillagerestaurants.co.uk/burnham-takeaway" }
+          ]
+        }) }}
       />
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">

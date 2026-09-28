@@ -26,7 +26,7 @@ export default function TOVHome() {
   const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
 
   const { activeLocation } = useLocationConfig();
-  const branchLoc = activeLocation || LOCATIONS[routeLocationId] || LOCATIONS.hayes;
+  const branchLoc = LOCATIONS[routeLocationId] || activeLocation || LOCATIONS.hayes;
   const isSlough = branchLoc.id === 'slough';
   const seoMeta = getBranchSeoMeta(branchLoc.id);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -90,7 +90,8 @@ export default function TOVHome() {
 
   return (
     <div className="min-h-screen bg-bg-sand text-brand-text font-sans uppercase">
-      
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getRestaurantSchema(branchLoc.id)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getFaqSchema(branchLoc.id)) }} />
 
       {/* Progressive Hero Section */}
       <section className="relative min-h-[85vh] md:min-h-[92vh] w-full flex items-center justify-center overflow-hidden bg-pine">
@@ -970,14 +971,14 @@ export default function TOVHome() {
           <motion.div 
             whileHover={{ scale: 1.05 }} 
             className="flex items-center gap-6 group cursor-pointer" 
-            onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(SHOP_CONFIG.address + ' ' + SHOP_CONFIG.postcode)}`, '_blank')}
+            onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(branchLoc.address + ' ' + branchLoc.postcode)}`, '_blank')}
           >
             <div className="p-4 bg-bg-sand/10 rounded-none border-2 border-bg-sand/30 group-hover:bg-bg-sand/20 transition-colors bg-pine">
               <MapPin className="w-8 h-8 text-white" />
             </div>
             <div>
               <div className="font-display font-bold text-2xl tracking-[0.1em] text-white">FIND US / GET DIRECTIONS</div>
-              <div className="text-white/90 normal-case font-medium text-lg mt-1">{SHOP_CONFIG.address}, {SHOP_CONFIG.postcode}</div>
+              <div className="text-white/90 normal-case font-medium text-lg mt-1">{branchLoc.address}, {branchLoc.postcode}</div>
             </div>
           </motion.div>
         </div>

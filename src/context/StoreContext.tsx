@@ -4,6 +4,7 @@ import { CartItem, MenuItem, Order, Booking } from '@/types';
 import { createOrder } from '@/services/orderService';
 import { createBooking } from '@/services/bookingService';
 import { trackAddToCart, trackRemoveFromCart, trackClearCart } from '@/utils/analytics';
+import { calculatePromoDiscount } from '@/config/shopConfig';
 
 interface StoreContextType {
   cart: CartItem[];
@@ -47,6 +48,10 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
           console.error('Failed to parse cart from local storage', e);
         }
       }
+      const savedPromo = localStorage.getItem('tov_active_promo');
+      if (savedPromo) {
+        setActivePromo(savedPromo);
+      }
       setIsHydrated(true);
 
       const updateOnlineStatus = () => setIsOffline(!navigator.onLine);
@@ -64,31 +69,42 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (isHydrated && typeof window !== 'undefined') {
       localStorage.setItem('tov_cart', JSON.stringify(cart));
+      if (activePromo) {
+        localStorage.setItem('tov_active_promo', activePromo);
+      } else {
+        localStorage.removeItem('tov_active_promo');
+      }
     }
-  }, [cart, isHydrated]);
+  }, [cart, activePromo, isHydrated]);
+
+  const getCartKey = (item: any) => {
+    if (item._cartKey) return item._cartKey;
+    return item.id + JSON.stringify(item.selectedModifiers || []);
+  };
 
   const addToCart = (item: MenuItem) => {
     setCart(prev => {
-      const existing = prev.find(i => i.id === item.id);
+      const itemKey = getCartKey(item);
+      const existing = prev.find(i => getCartKey(i) === itemKey);
       if (existing) {
-        return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
+        return prev.map(i => getCartKey(i) === itemKey ? { ...i, quantity: i.quantity + 1 } : i);
       }
-      return [...prev, { ...item, quantity: 1 }];
+      return [...prev, { ...item, quantity: 1, _cartKey: itemKey }];
     });
     trackAddToCart?.(item as any);
   };
 
-  const removeFromCart = (id: string) => {
-    setCart(prev => prev.filter(i => i.id !== id));
-    trackRemoveFromCart?.({ id, name: id, price: 0 } as any);
+  const removeFromCart = (idOrKey: string) => {
+    setCart(prev => prev.filter(i => getCartKey(i) !== idOrKey && i.id !== idOrKey));
+    trackRemoveFromCart?.({ id: idOrKey, name: idOrKey, price: 0 } as any);
   };
 
-  const updateQuantity = (id: string, quantity: number) => {
+  const updateQuantity = (idOrKey: string, quantity: number) => {
     if (quantity <= 0) {
-      removeFromCart(id);
+      removeFromCart(idOrKey);
       return;
     }
-    setCart(prev => prev.map(i => i.id === id ? { ...i, quantity } : i));
+    setCart(prev => prev.map(i => (getCartKey(i) === idOrKey || i.id === idOrKey) ? { ...i, quantity } : i));
   };
 
   const clearCart = () => {
@@ -111,7 +127,9 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
     setIsCartOpen(true);
   };
 
-  const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  const rawTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  const promoInfo = calculatePromoDiscount(cart, activePromo);
+  const cartTotal = rawTotal - promoInfo.discount;
   const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
 
   return (

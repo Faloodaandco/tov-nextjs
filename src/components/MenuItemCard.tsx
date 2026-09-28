@@ -22,9 +22,13 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, index, isPlace
   return (
     <div
       key={item.id}
+      role="button"
+      tabIndex={0}
+      aria-label={`${item.name} — £${item.price?.toFixed(2) || '0.00'}${item.is86d ? ' (Sold out)' : ''}`}
       className={`bg-[#FDFBF7] group shadow-sm hover:shadow-xl p-0 flex flex-col cursor-pointer transition-all duration-500 transform hover:-translate-y-1 relative overflow-hidden animate-fade-in-up rounded-[20px] ${item.is86d ? 'opacity-60 grayscale' : ''}`}
       style={{ animationDelay: `${(index % 12) * 40}ms`, animationFillMode: 'both' }}
       onClick={onClick}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } }}
     >
       {/* Hover Glow Effect */}
       <div className="absolute top-0 left-0 w-full h-1 bg-terracotta transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-700 z-20"></div>

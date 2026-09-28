@@ -8,12 +8,32 @@ export const metadata: Metadata = {
   description: 'Halal certified Pakistani restaurant in Hayes. Hand-ground spice curries, clay-oven tandoori, sizzling Karahi. Dine in or order online for collection & delivery.',
   alternates: {
     canonical: '/hayes-halal-food'
-  }
+  },
+  openGraph: {
+    type: 'website',
+    title: 'Best Halal Restaurant in Hayes | Taste of Village',
+    description: 'Halal certified Pakistani restaurant in Hayes. Hand-ground spice curries, clay-oven tandoori, sizzling Karahi. Dine in or order online for collection & delivery.',
+    url: 'https://tasteofvillagerestaurants.co.uk/hayes-halal-food',
+    siteName: 'Taste of Village',
+    locale: 'en_GB',
+    images: [{ url: '/assets/og-share-preview.jpg', width: 1200, height: 630, alt: 'Taste of Village' }],
+  },
 };
 
 export default function HayesHalalFoodPage() {
   return (
     <div className="bg-sand min-h-screen pt-20 pb-20 font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tasteofvillagerestaurants.co.uk" },
+            { "@type": "ListItem", "position": 2, "name": "Authentic Halal Pakistani Food in Hayes", "item": "https://tasteofvillagerestaurants.co.uk/hayes-halal-food" }
+          ]
+        }) }}
+      />
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Halal Certified · Hayes</span>

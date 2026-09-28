@@ -126,14 +126,14 @@ export async function POST(req: NextRequest) {
       }
 
       // 2. Get loyalty program to find program_id
-      const programRes = await fetch(`${squareBaseUrl}/v2/loyalty/programs`, {
+      const programRes = await fetch(`${squareBaseUrl}/v2/loyalty/programs/main`, {
         headers: squareHeaders
       });
       if (!programRes.ok) {
         return NextResponse.json({ error: 'Loyalty program not found or active' }, { status: 500 });
       }
       const programData = await programRes.json();
-      const programId = programData.programs && programData.programs[0]?.id;
+      const programId = programData.program?.id;
 
       if (!programId) {
         return NextResponse.json({ error: 'No active loyalty program' }, { status: 500 });
@@ -149,7 +149,8 @@ export async function POST(req: NextRequest) {
             program_id: programId,
             customer_id: customerId,
             mapping: {
-              phone_number: formattedPhone
+              type: 'PHONE',
+              value: formattedPhone
             }
           }
         }),

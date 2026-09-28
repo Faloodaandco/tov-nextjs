@@ -26,7 +26,8 @@ interface QuoteRequest {
 export async function POST(req: NextRequest) {
   try {
     const body: QuoteRequest = await req.json();
-    const { postcode, branchId, subtotal } = body;
+    let { postcode, branchId, subtotal } = body;
+    branchId = branchId?.toLowerCase() as LocationId;
 
     if (!postcode || !branchId) {
       return NextResponse.json(
@@ -45,37 +46,59 @@ export async function POST(req: NextRequest) {
 
     // Geocode via Postcodes.io (free, no API key, no rate limit for reasonable use)
     const clean = postcode.replace(/\s+/g, '').toUpperCase();
-    const geocodeRes = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(clean)}`, {
-      signal: AbortSignal.timeout(5000),
-    });
+    let geo;
+    try {
+      const geocodeRes = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(clean)}`, {
+        signal: AbortSignal.timeout(5000),
+      });
 
-    if (geocodeRes.ok) {
-      const geo = await geocodeRes.json();
-      if (geo.status === 200 && geo.result) {
-        const { latitude, longitude } = geo.result;
-        const miles = haversineDistanceMiles(
-          loc.coords.lat, loc.coords.lng,
-          latitude, longitude
-        );
+      if (geocodeRes.ok) {
+        geo = await geocodeRes.json();
+      }
+    } catch (fetchErr) {
+      console.warn('[delivery/quote] postcodes.io fetch failed, falling back to outcode', fetchErr);
+    }
 
-        const tier = getDeliveryFeeByDistance(miles, branchId);
-        const serviceFee = subtotal ? calculateServiceFee(subtotal, branchId) : 0;
-        const isFree = subtotal ? subtotal >= tier.freeThreshold : false;
+    if (geo && geo.status === 200 && geo.result) {
+      const { latitude, longitude } = geo.result;
+      const miles = haversineDistanceMiles(
+        loc.coords.lat, loc.coords.lng,
+        latitude, longitude
+      );
 
+      const tier = getDeliveryFeeByDistance(miles, branchId);
+
+      if (!tier.eligible) {
         return NextResponse.json({
           method: 'distance',
           postcode: geo.result.postcode,
           outcode: geo.result.outcode,
           miles: Math.round(miles * 100) / 100,
-          eligible: tier.eligible,
-          deliveryFee: isFree ? 0 : tier.fee,
-          freeThreshold: tier.freeThreshold,
-          minOrder: tier.minOrder,
-          serviceFee,
-          estimatedMinutes: loc.delivery.estimatedMinutes.delivery,
+          eligible: false,
+          deliveryFee: 0,
+          freeThreshold: 0,
+          minOrder: loc.delivery.minOrder,
+          serviceFee: 0,
           reason: tier.reason,
         });
       }
+
+      const serviceFee = subtotal ? calculateServiceFee(subtotal, branchId) : 0;
+      const isFree = subtotal ? subtotal >= tier.freeThreshold : false;
+
+      return NextResponse.json({
+        method: 'distance',
+        postcode: geo.result.postcode,
+        outcode: geo.result.outcode,
+        miles: Math.round(miles * 100) / 100,
+        eligible: true,
+        deliveryFee: isFree ? 0 : tier.fee,
+        freeThreshold: tier.freeThreshold,
+        minOrder: tier.minOrder,
+        serviceFee,
+        estimatedMinutes: loc.delivery.estimatedMinutes.delivery,
+        reason: tier.reason,
+      });
     }
 
     // Fallback: outcode-based lookup

@@ -14,8 +14,17 @@ export const metadata: Metadata = {
 export default function SeoPage() {
   return (
     <div className="bg-sand min-h-screen pt-20 pb-20 font-sans">
-      
-      
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tasteofvillagerestaurants.co.uk" },
+            { "@type": "ListItem", "position": 2, "name": "Uxbridge's Favourite Taste of Village Destination", "item": "https://tasteofvillagerestaurants.co.uk/uxbridge-taste-of-village" }
+          ]
+        }) }}
+      />
       <div className="max-w-4xl mx-auto px-6">
         <div 
           className="text-center mb-16"

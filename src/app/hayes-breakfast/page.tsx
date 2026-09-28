@@ -8,7 +8,16 @@ export const metadata: Metadata = {
   description: "Authentic Lahori Nashta in Hayes. Fresh Halwa Puri, slow-cooked Nihari, Paya, and Karak Chai. The best Desi breakfast and weekend brunch in UB4.",
   alternates: {
     canonical: "/hayes-breakfast"
-  }
+  },
+  openGraph: {
+    type: 'website',
+    title: "Traditional Pakistani Breakfast in Hayes | Halwa Puri & Nihari",
+    description: "Authentic Lahori Nashta in Hayes. Fresh Halwa Puri, slow-cooked Nihari, Paya, and Karak Chai. The best Desi breakfast and weekend brunch in UB4.",
+    url: 'https://tasteofvillagerestaurants.co.uk/hayes-breakfast',
+    siteName: 'Taste of Village',
+    locale: 'en_GB',
+    images: [{ url: '/assets/og-share-preview.jpg', width: 1200, height: 630, alt: 'Taste of Village' }],
+  },
 };
 
 export default function HayesBreakfastPage() {
@@ -85,6 +94,17 @@ export default function HayesBreakfastPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tasteofvillagerestaurants.co.uk" },
+            { "@type": "ListItem", "position": 2, "name": "Traditional Breakfast in Hayes", "item": "https://tasteofvillagerestaurants.co.uk/hayes-breakfast" }
+          ]
+        }) }}
       />
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">

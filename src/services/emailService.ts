@@ -3,7 +3,77 @@ import { db } from '@/lib/firebase';
 import { Order } from '@/types';
 import { LOCATIONS } from '@/config/shopConfig';
 
-const STORE_NOTIFICATION_EMAILS = ['sales@faloodaandco.co.uk'];
+const STORE_EMAILS_BY_BRANCH: Record<string, string[]> = {
+  hayes: ['info@tasteofvillagerestaurants.co.uk'],
+  slough: ['info@tasteofvillagerestaurants.co.uk'],
+};
+
+function getStoreNotificationEmails(branchId?: string): string[] {
+  if (branchId && STORE_EMAILS_BY_BRANCH[branchId]) {
+    return STORE_EMAILS_BY_BRANCH[branchId];
+  }
+  return STORE_EMAILS_BY_BRANCH.hayes;
+}
+
+export async function sendBookingNotificationEmail(booking: any): Promise<void> {
+  try {
+    const branchName = booking.branch === 'slough' || booking.location === 'slough'
+      ? 'Taste of Village Slough'
+      : 'Taste of Village Hayes';
+      
+    const subject = `📅 New Table Booking: ${booking.date} at ${booking.time} (${branchName})`;
+    
+    const text = `
+🚨 NEW TABLE BOOKING
+==================================
+Booking ID: ${booking.id}
+Branch:     ${branchName}
+Date:       ${booking.date}
+Time:       ${booking.time}
+Guests:     ${booking.guests}
+
+CUSTOMER DETAILS:
+Name:       ${booking.customerName}
+Phone:      ${booking.customerPhone}
+Email:      ${booking.email || 'Not provided'}
+Notes:      ${booking.notes || 'None'}
+==================================
+`;
+    
+    const html = `<div style="font-family: Arial, sans-serif;">
+      <h2 style="color: #1E3A34;">New Table Booking - ${branchName}</h2>
+      <p><strong>Date:</strong> ${booking.date}</p>
+      <p><strong>Time:</strong> ${booking.time}</p>
+      <p><strong>Guests:</strong> ${booking.guests}</p>
+      <br/>
+      <p><strong>Name:</strong> ${booking.customerName}</p>
+      <p><strong>Phone:</strong> ${booking.customerPhone}</p>
+      <p><strong>Email:</strong> ${booking.email || 'Not provided'}</p>
+      <p><strong>Notes:</strong> ${booking.notes || 'None'}</p>
+    </div>`;
+
+    const branchId = booking.branch || booking.location || 'hayes';
+    const storeEmails = getStoreNotificationEmails(branchId);
+    const recipients = [...storeEmails];
+    
+    if (booking.email && !recipients.includes(booking.email.trim())) {
+      recipients.push(booking.email.trim());
+    }
+
+    await addDoc(collection(db, 'mail'), {
+      to: recipients,
+      ...(booking.email ? { replyTo: booking.email.trim() } : {}),
+      message: { subject, text, html },
+      bookingId: booking.id,
+      timestamp: new Date().toISOString(),
+      status: 'queued',
+    });
+
+    console.log(`[EmailService] Booking notification queued for ${recipients.join(', ')} (Booking: ${booking.id})`);
+  } catch (err) {
+    console.warn('[EmailService] Failed to queue booking email notification:', err);
+  }
+}
 
 /**
  * Generates clean plain text for email tickets (kitchen receipt printers & mobile).
@@ -135,7 +205,9 @@ export async function sendOrderNotificationEmail(order: any): Promise<void> {
     const text = formatOrderPlainText(order);
     const html = formatOrderHtml(order);
 
-    const recipients = [...STORE_NOTIFICATION_EMAILS];
+    const branchId = order.tenant_id === LOCATIONS.slough.tenant_id ? 'slough' : 'hayes';
+    const storeEmails = getStoreNotificationEmails(branchId);
+    const recipients = [...storeEmails];
     if (order.customerEmail && !recipients.includes(order.customerEmail.trim())) {
       recipients.push(order.customerEmail.trim());
     }

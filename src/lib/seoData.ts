@@ -56,8 +56,8 @@ export function getRestaurantSchema(locationId: string) {
     },
     "geo": {
       "@type": "GeoCoordinates",
-      "latitude": isSlough ? 51.5230 : 51.5127,
-      "longitude": isSlough ? -0.6136 : -0.4211
+      "latitude": isSlough ? 51.5273 : 51.5127,
+      "longitude": isSlough ? -0.6128 : -0.4211
     },
     "servesCuisine": [
       "Pakistani",
@@ -165,11 +165,11 @@ export function getMenuSchema(locationId: string, menuItems?: MenuItem[]) {
     "url": `${SHOP_CONFIG.website}/${loc.id}/menu`,
     "mainEntityOfPage": `${SHOP_CONFIG.website}/${loc.id}/menu`,
     "inLanguage": "en-GB",
-    "hasMenuItem": signatureDishes.map(dish => ({
+    "hasMenuItem": (menuItems && menuItems.length > 0 ? menuItems : signatureDishes).map(dish => ({
       "@type": "MenuItem",
       "name": dish.name,
       "description": dish.description,
-      "image": dish.image,
+      "image": dish.image || `${SHOP_CONFIG.website}/assets/placeholder.webp`,
       "suitableForDiet": "https://schema.org/HalalDiet",
       "offers": {
         "@type": "Offer",
@@ -189,50 +189,51 @@ export function getFaqSchema(locationId: string) {
   const loc = (LOCATIONS as Record<string, any>)[locationId] || LOCATIONS.hayes;
   const isSlough = locationId === 'slough';
 
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Is all meat at Taste of Village 100% Halal certified?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, all meat, poultry, and ingredients served across both our Hayes and Slough branches are 100% Halal certified, prepared in accordance with strict Islamic dietary standards."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": `Can I order online for collection at ${loc.name}?`,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": `Yes! You can order directly through our official website for fast collection at ${loc.address}. We support 1-tap Apple Pay, Google Pay, and major cards with zero marketplace surcharges.`
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Do you serve traditional weekend Pakistani breakfast (Nashta)?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes, we serve traditional weekend breakfast featuring freshly fried Halwa Puri with spiced Chana, slow-simmered Special Nihari, Paye, and piping hot Roghani Naan alongside Karak Chai."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": `What are the opening hours for Taste of Village in ${isSlough ? 'Slough' : 'Hayes'}?`,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "We are open 7 days a week, Monday through Sunday from 12:00 PM to 11:00 PM."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can I book a table for large family gatherings or parties?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": `Yes, table reservations can be made instantly online via our website booking tool or by calling our branch directly on ${loc.phone}.`
-        }
-      },
+    const baseFaqs: any[] = [
+    {
+      "@type": "Question",
+      "name": "Is all meat at Taste of Village 100% Halal certified?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, all meat, poultry, and ingredients served across both our Hayes and Slough branches are 100% Halal certified, prepared in accordance with strict Islamic dietary standards."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": `Can I order online for collection at ${loc.name}?`,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": `Yes! You can order directly through our official website for fast collection at ${loc.address}. We support 1-tap Apple Pay, Google Pay, and major cards with zero marketplace surcharges.`
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you serve traditional weekend Pakistani breakfast (Nashta)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, we serve traditional weekend breakfast featuring freshly fried Halwa Puri with spiced Chana, slow-simmered Special Nihari, Paye, and piping hot Roghani Naan alongside Karak Chai."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": `What are the opening hours for Taste of Village in ${isSlough ? 'Slough' : 'Hayes'}?`,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We are open 7 days a week, Monday through Sunday from 12:00 PM to 11:00 PM."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I book a table for large family gatherings or parties?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": `Yes, table reservations can be made instantly online via our website booking tool or by calling our branch directly on ${loc.phone}.`
+      }
+    }
+  ];
+
+  if (isSlough) {
+    baseFaqs.push(
       {
         "@type": "Question",
         "name": "Where can I park near Taste of Village on Farnham Road, Slough?",
@@ -249,7 +250,13 @@ export function getFaqSchema(locationId: string) {
           "text": "Yes! We run our own dedicated driver fleet delivering hot meals within a 5-mile radius across postcodes SL1, SL2, SL3, and SL4. Delivery is free on orders over £30."
         }
       }
-    ]
+    );
+  }
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": baseFaqs
   };
 }
 

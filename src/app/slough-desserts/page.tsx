@@ -8,7 +8,16 @@ export const metadata: Metadata = {
   description: 'Enjoy authentic Pakistani desserts on Farnham Road, Slough. Shahi Kulfi Falooda, Hot Gajar Ka Halwa, Rasmalai, and Karak Chai at Taste of Village (SL1 4XL).',
   alternates: {
     canonical: '/slough-desserts'
-  }
+  },
+  openGraph: {
+    type: 'website',
+    title: 'Authentic Halal Desserts & Kulfi in Slough | Taste of Village',
+    description: 'Enjoy authentic Pakistani desserts on Farnham Road, Slough. Shahi Kulfi Falooda, Hot Gajar Ka Halwa, Rasmalai, and Karak Chai at Taste of Village (SL1 4XL).',
+    url: 'https://tasteofvillagerestaurants.co.uk/slough-desserts',
+    siteName: 'Taste of Village',
+    locale: 'en_GB',
+    images: [{ url: '/assets/og-share-preview.jpg', width: 1200, height: 630, alt: 'Taste of Village' }],
+  },
 };
 
 export default function SloughDessertsPage() {
@@ -63,6 +72,17 @@ export default function SloughDessertsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tasteofvillagerestaurants.co.uk" },
+            { "@type": "ListItem", "position": 2, "name": "Authentic Pakistani Halal Desserts in Slough", "item": "https://tasteofvillagerestaurants.co.uk/slough-desserts" }
+          ]
+        }) }}
       />
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
