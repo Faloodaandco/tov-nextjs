@@ -92,7 +92,20 @@ export default function HomeSelector() {
         </div>
 
         {/* Flat Editorial Arches */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 w-full max-w-3xl mx-auto justify-items-center">
+        <div className="relative w-full max-w-4xl mx-auto">
+          
+          {/* Decorative Leaf Sprigs */}
+          <div className="absolute top-[20%] md:top-1/2 md:-translate-y-1/2 left-[-5%] md:left-0 opacity-[0.08] pointer-events-none w-48 md:w-64 h-auto rotate-[-10deg]">
+            <img src="/assets/tov-tree.svg" alt="" className="w-full h-auto object-contain [mask-image:linear-gradient(to_bottom,black_40%,transparent_100%)]" />
+          </div>
+          <div className="hidden md:block absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 opacity-[0.08] pointer-events-none w-64 h-auto">
+            <img src="/assets/tov-tree.svg" alt="" className="w-full h-auto object-contain [mask-image:linear-gradient(to_bottom,black_40%,transparent_100%)]" />
+          </div>
+          <div className="absolute bottom-[20%] md:top-1/2 md:-translate-y-1/2 right-[-5%] md:right-0 opacity-[0.08] pointer-events-none w-48 md:w-64 h-auto rotate-[10deg] scale-x-[-1]">
+            <img src="/assets/tov-tree.svg" alt="" className="w-full h-auto object-contain [mask-image:linear-gradient(to_bottom,black_40%,transparent_100%)]" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 w-full max-w-3xl mx-auto justify-items-center relative z-10">
           {Object.values(LOCATIONS).map((loc, index) => {
             const isSlough = loc.id === 'slough';
             
@@ -116,7 +129,7 @@ export default function HomeSelector() {
                   </div>
 
                   {/* Vintage Print Artwork: Bottom Border */}
-                  <div className="absolute bottom-0 left-0 w-full h-[30px] opacity-[0.04] group-hover:opacity-[0.06] transition-opacity duration-500 z-0 bg-[url('/assets/tov-pattern.svg')] bg-[length:45px] bg-repeat-x bg-bottom pointer-events-none"></div>
+                  <div className="absolute bottom-0 left-0 w-full h-[30px] opacity-[0.08] group-hover:opacity-[0.06] transition-opacity duration-500 z-0 bg-[url('/assets/tov-pattern.svg')] bg-[length:45px] bg-repeat-x bg-bottom pointer-events-none"></div>
 
                   <div className="flex flex-col items-center h-full justify-between w-full relative z-10">
                     
@@ -177,31 +190,24 @@ export default function HomeSelector() {
       </footer>
 
       {/* Luxury Dark Footer */}
-      <footer className="w-full bg-[#0B140F] py-10 px-8 md:px-16 border-t border-[#0B140F]">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 md:gap-0">
+      <footer className="w-full bg-[#0B140F] py-10 px-8 md:px-16 border-t border-[#0B140F] relative overflow-hidden">
+        {/* Patterned Background for Dark Footer */}
+        <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "url('/assets/tov-pattern.svg')", backgroundSize: '80px 80px', backgroundRepeat: 'repeat' }}></div>
+        
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 md:gap-0 relative z-10">
           
           {/* Brand & Copyright */}
           <div className="flex flex-col gap-2 items-center md:items-start text-center md:text-left">
             <span className="font-display text-terracotta text-[11px] md:text-xs tracking-[0.3em] uppercase font-semibold">Taste of Village</span>
             <span className="text-[#889B8D] text-[8px] md:text-[9px] tracking-[0.2em] uppercase font-sans">
-              &copy; {new Date().getFullYear()} Taste of Village · Hayes & Slough
+              &copy; {new Date().getFullYear()} Taste of Village | Hayes & Slough
             </span>
-          </div>
-
-          {/* Contact */}
-          <div className="text-[#889B8D] text-[9px] tracking-[0.25em] uppercase font-sans hover:text-terracotta transition-colors cursor-pointer">
-            020 7946 0018
-          </div>
-
-          {/* Hours */}
-          <div className="text-[#889B8D] text-[9px] tracking-[0.25em] uppercase font-sans">
-            Mon–Sun · 12:00 – 23:00
           </div>
 
           {/* Links */}
           <div className="flex gap-8 text-[#889B8D] text-[9px] tracking-[0.25em] uppercase font-sans">
-            <span className="hover:text-terracotta cursor-pointer transition-colors">Reservations</span>
-            <span className="hover:text-terracotta cursor-pointer transition-colors">Instagram</span>
+            <button onClick={() => router.push('/book')} className="hover:text-terracotta cursor-pointer transition-colors uppercase tracking-[0.25em]">Reservations</button>
+            <button onClick={() => router.push('/info')} className="hover:text-terracotta cursor-pointer transition-colors uppercase tracking-[0.25em]">Contact</button>
           </div>
 
         </div>
@@ -209,3 +215,5 @@ export default function HomeSelector() {
     </div>
   );
 }
+
+

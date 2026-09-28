@@ -3,6 +3,90 @@ import { LOCATIONS, LocationId, calculateServiceFee, calculatePromoDiscount, isE
 import { getMenuItems } from '@/services/menuService';
 import { adminDb } from '@/lib/firebaseAdmin';
 
+const DEVELOPER_ALERT_EMAIL = 'sales@tekrenewed.co.uk';
+
+/**
+ * Sends a payment failure alert email to the developer via Firestore mail collection.
+ * Non-blocking — errors are logged but never crash the checkout response.
+ */
+async function sendPaymentFailureAlertServer(details: {
+  orderId?: string;
+  branchName: string;
+  branchId: string;
+  errorMessage: string;
+  errorSource: 'order_creation' | 'payment_charge' | 'unexpected';
+  customerName?: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  cartTotal?: number;
+  squareHttpStatus?: number;
+  squareErrorCode?: string;
+}) {
+  try {
+    const timestamp = new Date().toISOString();
+    const subject = `🚨 PAYMENT FAILURE: ${details.orderId || 'Unknown'} — Taste of Village ${details.branchName}`;
+    const text = [
+      `PAYMENT FAILURE ALERT`,
+      `==================================`,
+      `Time:         ${timestamp}`,
+      `Order ID:     ${details.orderId || 'N/A'}`,
+      `Branch:       ${details.branchName} (${details.branchId})`,
+      `Error Source:  ${details.errorSource}`,
+      `Error:        ${details.errorMessage}`,
+      details.squareHttpStatus ? `HTTP Status:  ${details.squareHttpStatus}` : null,
+      details.squareErrorCode ? `Error Code:   ${details.squareErrorCode}` : null,
+      ``,
+      `CUSTOMER:`,
+      `Name:         ${details.customerName || 'N/A'}`,
+      `Phone:        ${details.customerPhone || 'N/A'}`,
+      `Email:        ${details.customerEmail || 'N/A'}`,
+      `Cart Total:   £${(details.cartTotal || 0).toFixed(2)}`,
+      `==================================`,
+      `This is an automated alert from the TOV checkout system.`,
+    ].filter(Boolean).join('\n');
+
+    const html = `
+      <div style="font-family: -apple-system, sans-serif; max-width: 600px; margin: 0 auto; background: #FFF5F5; border: 2px solid #E53E3E; border-radius: 12px; overflow: hidden;">
+        <div style="background: #C53030; padding: 16px 24px; color: white;">
+          <h2 style="margin: 0; font-size: 18px;">🚨 Payment Failure Alert</h2>
+          <p style="margin: 4px 0 0; font-size: 13px; opacity: 0.9;">Taste of Village ${details.branchName}</p>
+        </div>
+        <div style="padding: 20px 24px;">
+          <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+            <tr><td style="padding: 6px 0; color: #718096;">Time</td><td style="padding: 6px 0; font-weight: bold;">${timestamp}</td></tr>
+            <tr><td style="padding: 6px 0; color: #718096;">Order ID</td><td style="padding: 6px 0; font-weight: bold;">${details.orderId || 'N/A'}</td></tr>
+            <tr><td style="padding: 6px 0; color: #718096;">Error Source</td><td style="padding: 6px 0; font-weight: bold; color: #C53030;">${details.errorSource}</td></tr>
+            <tr><td style="padding: 6px 0; color: #718096;">Error Message</td><td style="padding: 6px 0; font-weight: bold; color: #C53030;">${details.errorMessage}</td></tr>
+            ${details.squareHttpStatus ? `<tr><td style="padding: 6px 0; color: #718096;">HTTP Status</td><td style="padding: 6px 0;">${details.squareHttpStatus}</td></tr>` : ''}
+            ${details.squareErrorCode ? `<tr><td style="padding: 6px 0; color: #718096;">Square Error Code</td><td style="padding: 6px 0;">${details.squareErrorCode}</td></tr>` : ''}
+            <tr><td colspan="2" style="padding: 12px 0 6px; border-top: 1px solid #FED7D7; font-weight: bold; color: #2D3748;">Customer</td></tr>
+            <tr><td style="padding: 6px 0; color: #718096;">Name</td><td style="padding: 6px 0;">${details.customerName || 'N/A'}</td></tr>
+            <tr><td style="padding: 6px 0; color: #718096;">Phone</td><td style="padding: 6px 0;">${details.customerPhone || 'N/A'}</td></tr>
+            <tr><td style="padding: 6px 0; color: #718096;">Email</td><td style="padding: 6px 0;">${details.customerEmail || 'N/A'}</td></tr>
+            <tr><td style="padding: 6px 0; color: #718096;">Cart Total</td><td style="padding: 6px 0; font-weight: bold;">£${(details.cartTotal || 0).toFixed(2)}</td></tr>
+          </table>
+        </div>
+        <div style="padding: 12px 24px; background: #FFF5F5; border-top: 1px solid #FED7D7; font-size: 11px; color: #A0AEC0; text-align: center;">
+          Automated alert from TOV Checkout System · ${timestamp}
+        </div>
+      </div>
+    `;
+
+    await adminDb.collection('mail').add({
+      to: [DEVELOPER_ALERT_EMAIL],
+      message: { subject, text, html },
+      alertType: 'payment_failure',
+      orderId: details.orderId,
+      branchId: details.branchId,
+      timestamp,
+      status: 'pending',
+    });
+    console.warn(`[Square] Payment failure alert queued for ${DEVELOPER_ALERT_EMAIL} (${details.orderId})`);
+  } catch (alertErr) {
+    console.error('[Square] Failed to send payment failure alert:', alertErr);
+  }
+}
+
 /**
  * POST /api/checkout/square
  *
@@ -363,7 +447,21 @@ export async function POST(req: NextRequest) {
     if (!orderRes.ok) {
       const errJson: any = await orderRes.json().catch(() => ({}));
       const errMsg = errJson.errors?.[0]?.detail || `Square Order API error (HTTP ${orderRes.status})`;
+      const errCode = errJson.errors?.[0]?.code;
       console.error('[Square] Order creation error:', errJson);
+      sendPaymentFailureAlertServer({
+        orderId: cleanOrderId,
+        branchName: loc.name,
+        branchId,
+        errorMessage: errMsg,
+        errorSource: 'order_creation',
+        customerName: customer?.name,
+        customerPhone: customer?.phone,
+        customerEmail: customer?.email,
+        cartTotal: totalPounds,
+        squareHttpStatus: orderRes.status,
+        squareErrorCode: errCode,
+      });
       return NextResponse.json({ error: errMsg }, { status: 400 });
     }
 
@@ -401,7 +499,21 @@ export async function POST(req: NextRequest) {
     if (!paymentRes.ok) {
       const payErr: any = await paymentRes.json().catch(() => ({}));
       const payErrMsg = payErr.errors?.[0]?.detail || `Square Payment error (HTTP ${paymentRes.status})`;
+      const payErrCode = payErr.errors?.[0]?.code;
       console.error('[Square] Payment error:', payErr);
+      sendPaymentFailureAlertServer({
+        orderId: cleanOrderId,
+        branchName: loc.name,
+        branchId,
+        errorMessage: payErrMsg,
+        errorSource: 'payment_charge',
+        customerName: customer?.name,
+        customerPhone: customer?.phone,
+        customerEmail: customer?.email,
+        cartTotal: totalPounds,
+        squareHttpStatus: paymentRes.status,
+        squareErrorCode: payErrCode,
+      });
       return NextResponse.json({ error: payErrMsg }, { status: 400 });
     }
 
@@ -604,6 +716,13 @@ export async function POST(req: NextRequest) {
 
   } catch (err: any) {
     console.error('[Square] Unexpected checkout error:', err);
+    sendPaymentFailureAlertServer({
+      orderId: undefined,
+      branchName: 'Unknown',
+      branchId: 'unknown',
+      errorMessage: err.message || 'Unexpected checkout error',
+      errorSource: 'unexpected',
+    });
     return NextResponse.json(
       { error: err.message || 'Failed to process order. Please try again or call us.' },
       { status: 500 }

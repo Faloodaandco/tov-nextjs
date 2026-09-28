@@ -19,15 +19,15 @@ export const Footer = () => {
 
   return (
     <footer className="relative bg-pine text-bg-sand pt-24 pb-12 mt-20 overflow-hidden">
-      {/* Top Motif Frieze — CNC Feature Wall Pattern */}
+      {/* Full-bleed Motif Pattern Background */}
       <div
-        className="absolute top-0 left-0 w-full h-16 md:h-20"
+        className="absolute inset-0 w-full h-full pointer-events-none"
         aria-hidden="true"
         style={{
-          backgroundImage: `url('/assets/tov-pattern.svg')`,
+          backgroundImage: "url('/assets/tov-pattern.svg')",
           backgroundRepeat: 'repeat',
           backgroundSize: '90px 90px',
-          opacity: 0.15,
+          opacity: 0.05,
         }}
       />
       {/* Gradient fade from page background into footer */}
@@ -185,3 +185,4 @@ export const Footer = () => {
     </footer>
   );
 };
+

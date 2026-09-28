@@ -23,7 +23,15 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://web.squarecdn.com https://sandbox.web.squarecdn.com https://www.googletagmanager.com https://www.clarity.ms https://pay.google.com; connect-src 'self' https://connect.squareup.com https://pci-connect.squareup.com https://api.postcodes.io https://*.firebaseio.com https://*.googleapis.com https://firestore.googleapis.com wss://*.firebaseio.com https://www.google-analytics.com https://api.squareup.com; frame-src https://web.squarecdn.com https://sandbox.web.squarecdn.com https://pay.google.com https://www.google.com; img-src 'self' data: blob: https://*.googleapis.com https://*.gstatic.com https://firebasestorage.googleapis.com https://tasteofvillagerestaurants.co.uk; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://web.squarecdn.com https://sandbox.web.squarecdn.com https://*.squarecdn.com https://*.squareup.com https://*.squareupsandbox.com https://www.googletagmanager.com https://www.clarity.ms https://pay.google.com",
+              "connect-src 'self' https://connect.squareup.com https://pci-connect.squareup.com https://api.squareup.com https://*.squareup.com https://*.squarecdn.com https://*.squareupsandbox.com https://*.on.aws https://*.apple.com https://apple-pay-gateway.apple.com https://pay.google.com https://*.google.com https://api.postcodes.io https://*.firebaseio.com https://*.googleapis.com https://firestore.googleapis.com wss://*.firebaseio.com https://www.google-analytics.com",
+              "frame-src 'self' https://web.squarecdn.com https://sandbox.web.squarecdn.com https://*.squareup.com https://*.squareupsandbox.com https://*.squarecdn.com https://pay.google.com https://*.apple.com https://www.google.com",
+              "img-src 'self' data: blob: https://*.googleapis.com https://*.gstatic.com https://firebasestorage.googleapis.com https://tasteofvillagerestaurants.co.uk",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.squarecdn.com https://*.squareup.com",
+              "font-src 'self' https://fonts.gstatic.com https://*.squarecdn.com",
+            ].join('; ')
           },
           {
             key: 'X-Frame-Options',

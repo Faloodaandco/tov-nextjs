@@ -29,6 +29,7 @@ import { isValidUKMobile, getPhoneError, normaliseUKPhone, captureClientMeta } f
 import { sendOrderNotificationEmail } from '@/services/emailService';
 import { getExistingPushToken, requestPushPermission } from '@/utils/pushService';
 import { upsertCustomerOnOrder } from '@/services/customerService';
+import { sendPaymentFailureAlert } from '@/services/paymentAlertService';
 
 
 function MenuPageContent() {
@@ -579,7 +580,6 @@ function MenuPageContent() {
         delivery_address: isDeliveryOrder ? deliveryAddress : null,
         delivery_fee: deliveryFee,
         service_fee: serviceFee,
-        branch: activeLocation.id,
       };
 
       // Hit Next.js Route Handler (single payment path — no Cloud Function fallback)
@@ -689,6 +689,16 @@ function MenuPageContent() {
       const msg = (err.message || '').toUpperCase().includes('PERMISSION')
         ? 'There was a connection issue completing your order confirmation. If money was debited, please contact the restaurant.'
         : (err.message || 'Payment processing failed. Please try again or pay on collection.');
+      sendPaymentFailureAlert({
+        branchName: activeLocation.name,
+        branchId: activeLocation.id,
+        errorMessage: err.message || 'Unknown payment error',
+        cartTotal: finalCartTotal,
+        paymentMethod: 'card',
+        customerName: customerInfo.name,
+        customerPhone: customerInfo.phone,
+        customerEmail: customerInfo.email,
+      });
       alert(msg);
       throw err;
     } finally {
