@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 import React, { useState, useEffect, useRef, useMemo, Suspense } from 'react';
 import Link from 'next/link';
@@ -39,7 +38,7 @@ function MenuPageContent() {
   const routeLocationId = ((params?.locationId as string) || '').toLowerCase() === 'slough' ? 'slough' : 'hayes';
   const { activeLocation: contextLocation } = useLocationConfig();
   const activeLocation = contextLocation || LOCATIONS[routeLocationId] || LOCATIONS.hayes;
-  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? (typeof window !== 'undefined' ? window : {}).location.search : '');
+  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   const tableParam = searchParams.get('table') || searchParams.get('t');
   const { addToCart, cart, removeFromCart, addOrder, clearCart, activePromo, isCartOpen, setIsCartOpen, reorderItems } = useStore();
   const [activeCategory, setActiveCategory] = useState<string>('starters');
@@ -99,6 +98,11 @@ function MenuPageContent() {
   const [pushAlertActive, setPushAlertActive] = useState(false);
   const [lastOrder, setLastOrder] = useState<any>(null);
   const [showReorderBanner, setShowReorderBanner] = useState(true);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
+  // Table session (NFC tap-to-order) — null when ordering via web
+  const tableSession = useRef<{ id: string; status: string } | null>(null).current;
 
   // Restore regular customer profile and previous order for 1-tap reordering
   useEffect(() => {
@@ -333,24 +337,27 @@ function MenuPageContent() {
       }
     );
 
-    (typeof document !== 'undefined' ? document : {}).querySelectorAll('section[id^="category-"]').forEach(el => observer.current?.observe(el));
+    if (typeof document !== 'undefined') {
+      document.querySelectorAll('section[id^="category-"]').forEach((el: Element) => observer.current?.observe(el));
+    }
 
     return () => observer.current?.disconnect();
   }, [isLoading, menuItems]);
 
   const scrollToCategory = (id: string) => {
     setActiveCategory(id);
-    const element = (typeof document !== 'undefined' ? document : {}).getElementById(`category-${id}`);
+    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+    const element = document.getElementById(`category-${id}`);
     if (element) {
-      const navOffset = (typeof window !== 'undefined' ? window : {}).innerWidth < 768 ? 140 : 160;
-      const y = element.getBoundingClientRect().top + (typeof window !== 'undefined' ? window : {}).pageYOffset - navOffset;
-      (typeof window !== 'undefined' ? window : {}).scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+      const navOffset = window.innerWidth < 768 ? 140 : 160;
+      const y = element.getBoundingClientRect().top + window.pageYOffset - navOffset;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
     }
   };
 
   // Auto-scroll to specific category if requested via URL query params or hash
   useEffect(() => {
-    const targetCat = searchParams.get('category') || searchParams.get('cat') || (typeof window !== 'undefined' ? (typeof window !== 'undefined' ? window : {}).location.hash.replace('#', '') : '');
+    const targetCat = searchParams.get('category') || searchParams.get('cat') || (typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '');
     if (targetCat && !isLoading && groupedMenu.length > 0) {
       const timer = setTimeout(() => {
         scrollToCategory(targetCat);
@@ -362,27 +369,26 @@ function MenuPageContent() {
 
   // ─── Analytics Engine: Dwell Time Tracking ───
   useEffect(() => {
-    if (!tableParam) return;
+    if (!tableParam || typeof document === 'undefined') return;
     
-    // Log the initial NFC tap
-    logTableScan(tableParam, (typeof navigator !== 'undefined' ? navigator : {}).userAgent);
+    // Log the initial NFC tap (TODO: implement analytics endpoint)
+    console.debug('[NFC] Table scan:', tableParam, typeof navigator !== 'undefined' ? navigator.userAgent : '');
     
     const startTime = Date.now();
     
     const handleVisibilityChange = () => {
-      // If they put phone to sleep or switch tabs, log duration so far
-      if ((typeof document !== 'undefined' ? document : {}).visibilityState === 'hidden') {
+      if (document.visibilityState === 'hidden') {
         const durationSeconds = Math.floor((Date.now() - startTime) / 1000);
-        logSessionDuration(tableParam, durationSeconds);
+        console.debug('[NFC] Session duration:', tableParam, durationSeconds, 's');
       }
     };
     
-    (typeof document !== 'undefined' ? document : {}).addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     
     return () => {
       const durationSeconds = Math.floor((Date.now() - startTime) / 1000);
-      logSessionDuration(tableParam, durationSeconds);
-      (typeof document !== 'undefined' ? document : {}).removeEventListener('visibilitychange', handleVisibilityChange);
+      console.debug('[NFC] Session end:', tableParam, durationSeconds, 's');
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [tableParam]);
 
@@ -509,7 +515,7 @@ function MenuPageContent() {
         setCompletedOrder(mockOrder);
         setCheckoutStep('success');
         clearCart();
-        (typeof window !== 'undefined' ? window.localStorage : {}).setItem('last_order_time', Date.now().toString());
+        if (typeof window !== 'undefined') window.localStorage.setItem('last_order_time', Date.now().toString());
         (window as any)._checkoutLock = false;
         return;
       }
@@ -545,7 +551,7 @@ function MenuPageContent() {
       setCompletedOrder(newOrder);
       setCheckoutStep('success');
       clearCart();
-      (typeof window !== 'undefined' ? window.localStorage : {}).setItem('last_order_time', Date.now().toString());
+      if (typeof window !== 'undefined') window.localStorage.setItem('last_order_time', Date.now().toString());
     } catch (e) {
       setCheckoutError('Could not place the order. Please check your connection or contact the shop.');
     } finally {
@@ -561,7 +567,7 @@ function MenuPageContent() {
 
     try {
       const orderId = `ORD-${generateId().split('-')[0].toUpperCase()}`;
-      const existingFcmToken = await getExistingPushToken().catch(() => null) || (typeof window !== 'undefined' ? window.localStorage : {}).getItem('tov_fcm_token') || undefined;
+      const existingFcmToken = await getExistingPushToken().catch(() => null) || (typeof window !== 'undefined' ? window.localStorage.getItem('tov_fcm_token') : null) || undefined;
 
       const idempotencyKey = crypto.randomUUID();
       const payload = {
@@ -714,9 +720,9 @@ function MenuPageContent() {
   };
 
   useEffect(() => {
-    if (activeCategory) {
-      const btn = (typeof document !== 'undefined' ? document : {}).getElementById(`nav-btn-${activeCategory}`);
-      const container = (typeof document !== 'undefined' ? document : {}).getElementById('category-nav-container');
+    if (activeCategory && typeof document !== 'undefined') {
+      const btn = document.getElementById(`nav-btn-${activeCategory}`);
+      const container = document.getElementById('category-nav-container');
       if (btn && container) {
         const containerRect = container.getBoundingClientRect();
         const btnRect = btn.getBoundingClientRect();
@@ -732,11 +738,11 @@ function MenuPageContent() {
 
   // Prevent background scroll when cart drawer is open
   useEffect(() => {
-    if (isCartOpen) {
-      const originalOverflow = (typeof document !== 'undefined' ? document : {}).body.style.overflow;
-      (typeof document !== 'undefined' ? document : {}).body.style.overflow = 'hidden';
+    if (isCartOpen && typeof document !== 'undefined') {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
       return () => {
-        (typeof document !== 'undefined' ? document : {}).body.style.overflow = originalOverflow;
+        document.body.style.overflow = originalOverflow;
       };
     }
   }, [isCartOpen]);
@@ -887,7 +893,7 @@ function MenuPageContent() {
           {/* Back to Branch Home Button with Scroll Memory */}
           <button 
             onClick={() => {
-              if ((typeof window !== 'undefined' ? window : {}).history.length > 1) {
+              if (typeof window !== 'undefined' && window.history.length > 1) {
                 router.back();
               } else {
                 router.push(`/${activeLocation.id}`);
@@ -1019,7 +1025,6 @@ function MenuPageContent() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {group.items.map((item, i) => {
-                const isPlaceholder = !item.image || item.image.includes('tov-logo-tree') || item.image.includes('placeholder');
                 const itemQuantity = cart.filter(ci => ci.id === item.id).reduce((sum, ci) => sum + ci.quantity, 0);
                 
                 return (
@@ -1027,7 +1032,6 @@ function MenuPageContent() {
                     key={item.id}
                     item={item}
                     index={i}
-                    isPlaceholder={isPlaceholder}
                     quantityInCart={itemQuantity}
                     onClick={() => {
                       if (item.is86d) return;
@@ -1179,7 +1183,7 @@ function MenuPageContent() {
       SHOP_CONFIG={SHOP_CONFIG}
       activePromo={activePromo}
       desktopOrderSummary={desktopOrderSummary}
-      tableSession={typeof tableSession !== 'undefined' ? tableSession : undefined}
+      tableSession={tableSession ?? undefined}
     />
 
       {/* ─── Size Picker Modal ─── */}

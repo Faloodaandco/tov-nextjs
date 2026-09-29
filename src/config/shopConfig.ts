@@ -45,7 +45,7 @@ export const LOCATIONS = {
     phone: '01753 326341',
     w3w: '///taste.village.slough',
     coords: { lat: 51.5273, lng: -0.6128 },
-    googleReviewUrl: 'https://search.google.com/local/writereview?placeid=ChIJExample_Slough',
+    googleReviewUrl: 'https://g.page/r/CRSxgU6jqOPyEAE/review',
     square: {
       enabled: true,
       appId: 'sq0idp-ZEv7rUulY8UD5q8eZTPR8A',

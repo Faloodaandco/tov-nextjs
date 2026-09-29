@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { generateId } from '@/utils/generateId';
 import { useStore } from '@/context/StoreContext';
 import { CheckCircle2, MessageCircle, Phone, ShoppingBag, Plus, Minus, X, ChevronDown, CreditCard, Store } from 'lucide-react';
@@ -8,6 +8,52 @@ import { buildWhatsAppLink, SHOP_CONFIG, LOCATIONS, getActiveLocation } from '@/
 import { MENU_ITEMS } from '@/config/menuItems';
 import { MenuItem } from '@/types';
 import { isValidUKMobile, getPhoneError, normaliseUKPhone } from '@/lib/validation';
+
+function getBookingTimeSlots(branch: string, dateStr: string): string[] {
+  const isSlough = branch?.toLowerCase() === 'slough';
+  let isWeekend = false;
+  if (dateStr) {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    if (year && month && day) {
+      const date = new Date(year, month - 1, day);
+      const dayOfWeek = date.getDay();
+      isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    }
+  } else {
+    const today = new Date().getDay();
+    isWeekend = today === 0 || today === 6;
+  }
+
+  if (isSlough) {
+    if (isWeekend) {
+      return [
+        '09:30', '10:00', '10:30', '11:00', '11:30',
+        '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+        '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+        '18:00', '18:30', '19:00', '19:30', '20:00', '20:30',
+        '21:00', '21:30', '22:00', '22:30', '23:00', '23:30',
+        '00:00', '00:30',
+      ];
+    }
+    return [
+      '10:00', '10:30', '11:00', '11:30',
+      '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+      '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+      '18:00', '18:30', '19:00', '19:30', '20:00', '20:30',
+      '21:00', '21:30', '22:00', '22:30', '23:00', '23:30',
+      '00:00', '00:30',
+    ];
+  }
+
+  return [
+    '10:00', '10:30', '11:00', '11:30',
+    '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+    '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+    '18:00', '18:30', '19:00', '19:30', '20:00', '20:30',
+    '21:00', '21:30', '22:00', '22:30', '23:00', '23:30',
+    '00:00', '00:30', '01:00', '01:30',
+  ];
+}
 
 function buildBookingWhatsAppMessage(booking: { name: string; phone: string; email?: string; date: string; time: string; guests: number; id: string; preOrderItems?: any[]; preOrderTotal?: number; paymentMethod?: string; branchName?: string; notes?: string }) {
   const lines = [
@@ -66,6 +112,14 @@ export default function BookClient() {
   const [paymentMethod, setPaymentMethod] = useState<'store' | 'online'>('store');
   const [showMenuPicker, setShowMenuPicker] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
+
+  const timeSlots = useMemo(() => getBookingTimeSlots(formData.branch, formData.date), [formData.branch, formData.date]);
+
+  useEffect(() => {
+    if (formData.time && !timeSlots.includes(formData.time)) {
+      setFormData(prev => ({ ...prev, time: '' }));
+    }
+  }, [timeSlots, formData.time]);
 
   useEffect(() => {
     try {
@@ -343,7 +397,7 @@ export default function BookClient() {
             <div>
               <label className="block text-xs font-bold text-pine uppercase tracking-widest mb-3">Select Time</label>
               <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-                {['12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30'].map(time => {
+                {timeSlots.map(time => {
                   const isSelected = formData.time === time;
                   
                   // Availability Sync

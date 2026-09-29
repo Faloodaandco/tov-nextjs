@@ -177,12 +177,20 @@ export default function RootLayout({
                     addressCountry: "GB",
                   },
                   geo: { "@type": "GeoCoordinates", latitude: 51.5273, longitude: -0.6128 },
-                  openingHoursSpecification: {
-                    "@type": "OpeningHoursSpecification",
-                    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-                    opens: "10:00",
-                    closes: "02:00",
-                  },
+                  openingHoursSpecification: [
+                    {
+                      "@type": "OpeningHoursSpecification",
+                      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                      opens: "10:00",
+                      closes: "01:00",
+                    },
+                    {
+                      "@type": "OpeningHoursSpecification",
+                      dayOfWeek: ["Saturday", "Sunday"],
+                      opens: "09:30",
+                      closes: "01:00",
+                    },
+                  ],
                   servesCuisine: ["Pakistani", "Indian", "Halal", "South Asian", "Gujranwala"],
                   priceRange: "££",
                   menu: "https://tasteofvillagerestaurants.co.uk/slough/menu",
