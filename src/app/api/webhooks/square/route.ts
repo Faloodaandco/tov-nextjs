@@ -1,20 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import crypto from 'crypto';
-
-const processedEvents = new Set<string>();
+import { adminDb } from '@/lib/firebaseAdmin';
 
 /**
  * POST /api/webhooks/square
  *
  * Receives Square webhook events (payment.updated, order.updated, etc).
  * Verifies the webhook signature using the Square webhook signature key.
+ * Uses Firestore-backed deduplication to survive Vercel cold starts.
  *
  * Env: SQUARE_HAYES_WEBHOOK_SIGNATURE_KEY, SQUARE_SLOUGH_WEBHOOK_SIGNATURE_KEY
  */
+
+/** Maps Square location_id to the correct webhook signature env var */
+const LOCATION_KEY_MAP: Record<string, string | undefined> = {
+  'LW0Z07P1KP8HB': process.env.SQUARE_HAYES_WEBHOOK_SIGNATURE_KEY,
+  'LD40KJ3QHAPGK': process.env.SQUARE_SLOUGH_WEBHOOK_SIGNATURE_KEY,
+};
+
 export async function POST(req: NextRequest) {
   try {
-    const signatureKeys = [
+    const allKeys = [
       process.env.SQUARE_HAYES_WEBHOOK_SIGNATURE_KEY,
       process.env.SQUARE_SLOUGH_WEBHOOK_SIGNATURE_KEY,
     ].filter(Boolean) as string[];
@@ -22,7 +29,7 @@ export async function POST(req: NextRequest) {
     const body = await req.text();
 
     // Signature verification — fail-closed: no keys = reject
-    if (signatureKeys.length === 0) {
+    if (allKeys.length === 0) {
       console.error('[Square Webhook] No signature keys configured — rejecting all webhooks');
       return NextResponse.json({ error: 'Webhook signature verification not configured' }, { status: 500 });
     }
@@ -31,33 +38,69 @@ export async function POST(req: NextRequest) {
     const headersList = await headers();
     const notificationUrl = process.env.SQUARE_WEBHOOK_URL || `https://${headersList.get('host')}/api/webhooks/square`;
 
-    const isValid = signatureKeys.some((key) => {
+    // Parse body early to extract location_id for targeted key selection
+    let event: any;
+    try {
+      event = JSON.parse(body);
+    } catch {
+      console.warn('[Square Webhook] Invalid JSON body');
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
+
+    // Try branch-specific key first (preferred), fall back to trying all keys
+    const locationId = event?.data?.object?.payment?.location_id
+      || event?.data?.object?.order?.location_id
+      || event?.data?.object?.order_updated?.location_id;
+
+    let isValid = false;
+
+    if (locationId && LOCATION_KEY_MAP[locationId]) {
+      // Branch-specific validation — correct and secure
+      const key = LOCATION_KEY_MAP[locationId]!;
       const hmac = crypto
         .createHmac('sha256', key)
         .update(notificationUrl + body)
         .digest('base64');
-      return signature === hmac;
-    });
+      isValid = signature === hmac;
+    } else {
+      // Fallback: try all keys (for events without clear location_id)
+      isValid = allKeys.some((key) => {
+        const hmac = crypto
+          .createHmac('sha256', key)
+          .update(notificationUrl + body)
+          .digest('base64');
+        return signature === hmac;
+      });
+    }
 
     if (!isValid) {
       console.warn('[Square Webhook] Invalid signature');
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
 
-    const event = JSON.parse(body);
     const eventId = event?.id || event?.event_id;
     
+    // Firestore-backed idempotency check (survives Vercel cold starts)
     if (eventId) {
-      if (processedEvents.has(eventId)) {
+      const dedupRef = adminDb.collection('webhook_events').doc(eventId);
+      const dedupSnap = await dedupRef.get();
+      
+      if (dedupSnap.exists) {
         console.info(`[Square Webhook] Event ${eventId} already processed, skipping`);
         return NextResponse.json({ received: true });
       }
-      processedEvents.add(eventId);
+
+      // Mark as processed with TTL metadata (clean up events older than 48h externally)
+      await dedupRef.set({
+        processedAt: new Date().toISOString(),
+        eventType: event?.type,
+        locationId: locationId || null,
+      });
     }
 
     const eventType = event?.type;
 
-    console.info(`[Square Webhook] Received: ${eventType} (${event?.data?.id || 'no-id'})`);
+    console.info(`[Square Webhook] Received: ${eventType} (${event?.data?.id || 'no-id'}) location=${locationId || 'unknown'}`);
 
     switch (eventType) {
       case 'payment.created': {

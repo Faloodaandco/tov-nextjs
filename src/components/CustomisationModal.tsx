@@ -41,7 +41,8 @@ export interface Allergen {
 export interface FullMenuItem extends MenuItem {
   variants?: ProductVariant[];
   modifier_groups?: ModifierGroup[];
-  allergens?: Allergen[];
+  /** Rich allergen data with severity from catalog DB */
+  allergenDetails?: Allergen[];
   nutrition?: {
     calories?: number;
     protein_g?: number;
@@ -189,8 +190,8 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
 
   // ─── Allergen display ───────────────────────────────────────────────────────
 
-  const contains = item.allergens?.filter(a => a.severity === 'contains') ?? [];
-  const mayContain = item.allergens?.filter(a => a.severity === 'may_contain') ?? [];
+  const contains = item.allergenDetails?.filter(a => a.severity === 'contains') ?? [];
+  const mayContain = item.allergenDetails?.filter(a => a.severity === 'may_contain') ?? [];
   const hasAllergens = contains.length > 0 || mayContain.length > 0;
 
   const hasVariants = (item.variants?.length ?? 0) > 1;

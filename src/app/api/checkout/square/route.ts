@@ -3,7 +3,7 @@ import { LOCATIONS, LocationId, calculateServiceFee, calculatePromoDiscount, isE
 import { getMenuItems } from '@/services/menuService';
 import { adminDb } from '@/lib/firebaseAdmin';
 
-const DEVELOPER_ALERT_EMAIL = 'sales@tekrenewed.co.uk';
+const DEVELOPER_ALERT_EMAIL = 'sales@faloodaandco.co.uk';
 
 /**
  * Sends a payment failure alert email to the developer via Firestore mail collection.

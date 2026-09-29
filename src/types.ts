@@ -31,6 +31,8 @@ export interface MenuItem {
   sizes?: MenuSize[];
   modifierGroups?: MenuModifierGroup[];
   dietary?: ('vegan' | 'vegetarian' | 'halal' | 'gluten-free' | 'spicy')[];
+  /** UK FSA 14 allergens (Natasha's Law 2021). Must be declared even if empty. */
+  allergens?: ('celery' | 'cereals' | 'crustaceans' | 'eggs' | 'fish' | 'lupin' | 'milk' | 'molluscs' | 'mustard' | 'nuts' | 'peanuts' | 'sesame' | 'soybeans' | 'sulphites')[];
 }
 
 export interface MenuCategory {
@@ -91,8 +93,11 @@ export interface Booking {
   phone?: string;
   customerEmail?: string;
   tenantId?: string;
+  branch?: string;
+  location?: string;
+  tenant_id?: string;
+  notes?: string;
 }
-
 
 export interface Reward {
   id: string;
