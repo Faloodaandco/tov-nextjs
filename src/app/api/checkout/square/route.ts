@@ -290,6 +290,7 @@ export async function POST(req: NextRequest) {
       const cartForPromo = cart.map((item: any) => {
         const found = activeMenu.find((m) => m.id === item.id);
         return {
+          id: item.id || found?.id,
           price: found?.price || item.price,
           quantity: Math.max(1, Math.floor(Number(item.quantity || 1))),
           category: found?.category || '',

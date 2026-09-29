@@ -256,6 +256,47 @@ export default function RootLayout({
                     },
                   ],
                 },
+                {
+                  "@type": "BreadcrumbList",
+                  "itemListElement": [
+                    {
+                      "@type": "ListItem",
+                      "position": 1,
+                      "name": "Home",
+                      "item": "https://tasteofvillagerestaurants.co.uk"
+                    },
+                    {
+                      "@type": "ListItem",
+                      "position": 2,
+                      "name": "Hayes",
+                      "item": "https://tasteofvillagerestaurants.co.uk/hayes"
+                    },
+                    {
+                      "@type": "ListItem",
+                      "position": 3,
+                      "name": "Hayes Menu",
+                      "item": "https://tasteofvillagerestaurants.co.uk/hayes/menu"
+                    },
+                    {
+                      "@type": "ListItem",
+                      "position": 4,
+                      "name": "Slough",
+                      "item": "https://tasteofvillagerestaurants.co.uk/slough"
+                    },
+                    {
+                      "@type": "ListItem",
+                      "position": 5,
+                      "name": "Slough Menu",
+                      "item": "https://tasteofvillagerestaurants.co.uk/slough/menu"
+                    },
+                    {
+                      "@type": "ListItem",
+                      "position": 6,
+                      "name": "Book a Table",
+                      "item": "https://tasteofvillagerestaurants.co.uk/book"
+                    }
+                  ]
+                },
               ]
             }),
           }}

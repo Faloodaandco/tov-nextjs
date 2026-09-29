@@ -336,6 +336,36 @@ export const KITCHEN_SLA = {
 };
 
 /**
+ * Strict allowlist of eligible breakfast items for BREAKFAST40.
+ * Covers: Halwa Puri, Desi Breakfast, Paya, Bhaturay across both branches.
+ */
+export const BREAKFAST_PROMO_ELIGIBLE_IDS = new Set<string>([
+  // Hayes
+  'tov_item_1777480501499_cv83y',      // Halwa Puri
+  'tov_item_1777480501499_xs1ra',      // Cholay Bhaturay
+  'tov_item_1777480501499_0olfp',      // Lamb Paya
+  // Slough
+  'tov_slough_halwapuri',              // Halwa Puri
+  'tov_slough_pathorachanna',          // Pathora Channa (Bhaturay)
+  'tov_slough_lambpaya',               // Lamb Paya
+]);
+
+export const BREAKFAST_PROMO_ELIGIBLE_NAMES = [
+  'halwa puri',
+  'desi breakfast',
+  'paya',
+  'lamb paya',
+  'mutton paya',
+  'bhaturay',
+  'bhatura',
+  'cholay bhaturay',
+  'chana bhatura',
+  'chola bhatura',
+  'pathora channa',
+  'pathora chana',
+] as const;
+
+/**
  * Active Promotion — change this ONE object to update the promo across the entire site.
  */
 export const ACTIVE_PROMO = {
@@ -350,57 +380,85 @@ export const ACTIVE_PROMO = {
   bannerFinePrint: 'Valid 9:00 AM – 2:00 PM on breakfast items only.',
   startHour: 9, // 09:00 AM
   endHour: 14,  // 02:00 PM (14:00)
-  eligibleCategories: [
-    'breakfast___desi_nashta',
-    'village_brunch_special',
-    'weekend_special',
-    'brunch_offers',
-    'breakfast',
-    'desi_breakfast',
-    'english_breakfast',
-    'sweet_breakfast',
-    'breakfast_drinks',
-    'halwa_puri',
+  eligibleItemNames: [
+    'Halwa Puri',
+    'Desi Breakfast',
+    'Paya',
+    'Bhaturay',
   ] as const,
 } as const;
 
 /**
  * Checks if the breakfast promotion is currently within valid operating hours (09:00 - 14:00 UK time).
+ * Strictly enforced in Europe/London timezone.
  */
 export function isBreakfastPromoTime(date: Date = new Date()): boolean {
   try {
-    const ukHour = parseInt(
-      new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Europe/London',
-        hour: 'numeric',
-        hourCycle: 'h23',
-      }).format(date),
-      10
-    );
-    return ukHour >= ACTIVE_PROMO.startHour && ukHour < ACTIVE_PROMO.endHour;
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/London',
+      hour: 'numeric',
+      minute: 'numeric',
+      hourCycle: 'h23',
+    }).formatToParts(date);
+
+    const hourStr = parts.find(p => p.type === 'hour')?.value ?? '0';
+    const minStr = parts.find(p => p.type === 'minute')?.value ?? '0';
+    const ukHour = parseInt(hourStr, 10);
+    const ukMinute = parseInt(minStr, 10);
+    const ukTotalMinutes = ukHour * 60 + ukMinute;
+
+    const startMinutes = ACTIVE_PROMO.startHour * 60; // 09:00 AM (540 mins)
+    const endMinutes = ACTIVE_PROMO.endHour * 60;     // 02:00 PM (840 mins)
+
+    return ukTotalMinutes >= startMinutes && ukTotalMinutes < endMinutes;
   } catch {
     const localHour = date.getHours();
-    return localHour >= ACTIVE_PROMO.startHour && localHour < ACTIVE_PROMO.endHour;
+    const localMinute = date.getMinutes();
+    const localTotalMinutes = localHour * 60 + localMinute;
+    return localTotalMinutes >= (ACTIVE_PROMO.startHour * 60) && localTotalMinutes < (ACTIVE_PROMO.endHour * 60);
   }
 }
 
 /**
  * Checks if a menu item is eligible for the breakfast promo discount.
+ * Strict allowlist matching by item ID or specific item name.
+ * Category substring matching is not used to prevent non-breakfast items from receiving discounts.
  */
-export function isEligibleForBreakfastPromo(item: { category?: string; name?: string }): boolean {
+export function isEligibleForBreakfastPromo(item: { id?: string; category?: string; name?: string }): boolean {
   if (!item) return false;
-  const cat = (item.category || '').toLowerCase();
-  const name = (item.name || '').toLowerCase();
 
-  // Category match
-  const isBreakfastCategory = ACTIVE_PROMO.eligibleCategories.some(
-    c => cat === c || cat.includes('breakfast') || cat.includes('nashta')
-  );
-  if (isBreakfastCategory) return true;
+  // 1. Explicit ID check (matches base ID or sized variant)
+  if (item.id) {
+    const rawId = String(item.id).trim();
+    const baseId = rawId.replace(/_(regular|large)$/i, '');
+    if (BREAKFAST_PROMO_ELIGIBLE_IDS.has(rawId) || BREAKFAST_PROMO_ELIGIBLE_IDS.has(baseId)) {
+      return true;
+    }
+  }
 
-  // Specific signature breakfast dish name heuristics
-  if (name.includes('halwa puri') || name.includes('nashta') || name.includes('bhaturay') || name.includes('paya')) {
-    return true;
+  // 2. Explicit item name check against allowlisted breakfast dishes
+  if (item.name) {
+    const cleanName = item.name
+      .toLowerCase()
+      .replace(/\s*\((regular|large|meal)\)$/i, '')
+      .replace(/[^a-z0-9\s]/g, '')
+      .trim();
+
+    for (const allowed of BREAKFAST_PROMO_ELIGIBLE_NAMES) {
+      if (cleanName === allowed) {
+        return true;
+      }
+    }
+
+    // Pattern matching restricted strictly to the 4 permitted breakfast dish types:
+    // - Halwa Puri
+    if (cleanName.includes('halwa puri')) return true;
+    // - Desi Breakfast
+    if (cleanName.includes('desi breakfast')) return true;
+    // - Paya (word boundary check to exclude "papaya")
+    if (/\bpaya\b/.test(cleanName)) return true;
+    // - Bhaturay / Pathora
+    if (/\b(bhaturay?|bhature|pathora)\b/.test(cleanName)) return true;
   }
 
   return false;
@@ -411,13 +469,15 @@ export function isEligibleForBreakfastPromo(item: { category?: string; name?: st
  * ONLY discounts eligible breakfast items, and ONLY if promo is active and in the valid time window.
  */
 export function calculatePromoDiscount(
-  items: Array<{ price: number; quantity: number; category?: string; name?: string }>,
+  items: Array<{ id?: string; price: number; quantity: number; category?: string; name?: string }>,
   promoCode: string | null,
   date: Date = new Date()
 ): { discount: number; eligibleSubtotal: number; eligibleItemsCount: number; isTimeValid: boolean } {
   const isTimeValid = isBreakfastPromoTime(date);
 
-  if (!ACTIVE_PROMO.enabled || promoCode !== ACTIVE_PROMO.code) {
+  const cleanPromoCode = (promoCode || '').trim().toUpperCase();
+
+  if (!ACTIVE_PROMO.enabled || cleanPromoCode !== ACTIVE_PROMO.code) {
     return { discount: 0, eligibleSubtotal: 0, eligibleItemsCount: 0, isTimeValid };
   }
 

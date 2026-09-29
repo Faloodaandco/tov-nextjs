@@ -945,6 +945,50 @@ function MenuPageContent() {
         </div>
       </div>
 
+      {/* ─── Dietary Filter Bar ─── */}
+      <div className="max-w-7xl mx-auto px-4 pt-3 pb-1">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <span className="text-[10px] font-bold text-pine/40 uppercase tracking-widest shrink-0 mr-1">Filter:</span>
+          {([
+            { key: 'halal', label: 'Halal', emoji: '🟢' },
+            { key: 'vegetarian', label: 'Vegetarian', emoji: '🥬' },
+            { key: 'vegan', label: 'Vegan', emoji: '🌱' },
+            { key: 'spicy', label: 'Spicy', emoji: '🌶️' },
+          ] as const).map(({ key, label, emoji }) => {
+            const isActive = activeDietaryFilters.includes(key);
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => {
+                  setActiveDietaryFilters(prev =>
+                    prev.includes(key) ? prev.filter(f => f !== key) : [...prev, key]
+                  );
+                }}
+                className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border ${
+                  isActive
+                    ? 'bg-pine text-white border-pine shadow-sm'
+                    : 'bg-white text-pine/60 border-pine/10 hover:border-pine/30 hover:text-pine'
+                }`}
+              >
+                <span className="text-sm">{emoji}</span>
+                {label}
+                {isActive && <span className="ml-0.5 text-[10px] opacity-70">✕</span>}
+              </button>
+            );
+          })}
+          {activeDietaryFilters.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setActiveDietaryFilters([])}
+              className="shrink-0 text-[10px] font-bold text-terracotta hover:text-pine underline underline-offset-2 transition-colors ml-1"
+            >
+              Clear All
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Menu Sections Rendered Sequentially */}
       <div className="max-w-7xl mx-auto px-4 py-12">
         
