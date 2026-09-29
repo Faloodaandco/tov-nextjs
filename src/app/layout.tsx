@@ -93,6 +93,7 @@ export default function RootLayout({
               "@graph": [
                 {
                   "@type": "Restaurant",
+                  "@id": "https://tasteofvillagerestaurants.co.uk/hayes#restaurant",
                   name: "Taste of Village Hayes",
                   alternateName: "Taste of Village",
                   image: [
@@ -125,7 +126,7 @@ export default function RootLayout({
                     opens: "10:00",
                     closes: "02:00",
                   },
-                  servesCuisine: ["Pakistani", "Halal", "South Asian", "Lahori"],
+                  servesCuisine: ["Pakistani", "Indian", "Halal", "South Asian", "Lahori"],
                   priceRange: "££",
                   menu: "https://tasteofvillagerestaurants.co.uk/hayes/menu",
                   acceptsReservations: true,
@@ -149,6 +150,7 @@ export default function RootLayout({
                 },
                 {
                   "@type": "Restaurant",
+                  "@id": "https://tasteofvillagerestaurants.co.uk/slough#restaurant",
                   name: "Taste of Village Slough",
                   alternateName: "Taste of Village Farnham Road",
                   image: [
@@ -181,7 +183,7 @@ export default function RootLayout({
                     opens: "10:00",
                     closes: "02:00",
                   },
-                  servesCuisine: ["Pakistani", "Halal", "South Asian", "Gujranwala"],
+                  servesCuisine: ["Pakistani", "Indian", "Halal", "South Asian", "Gujranwala"],
                   priceRange: "££",
                   menu: "https://tasteofvillagerestaurants.co.uk/slough/menu",
                   acceptsReservations: true,
@@ -200,6 +202,51 @@ export default function RootLayout({
                     },
                     "url": "https://ratings.food.gov.uk/business/1963386/taste-of-village-slough"
                   },
+                },
+                {
+                  "@type": "FAQPage",
+                  mainEntity: [
+                    {
+                      "@type": "Question",
+                      name: "Is the food at Taste of Village Halal?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Yes, all meat served at both our Hayes and Slough branches is 100% Halal certified.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "What is the delivery radius?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "We deliver within a 5-mile radius of each branch. Hayes serves UB, W7, W13 and surrounding areas. Slough serves SL, TW and nearby postcodes.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "Do you accept table bookings?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Yes, you can book a table online at tasteofvillagerestaurants.co.uk/book for either our Hayes or Slough branch. Walk-ins are also welcome subject to availability.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "Is there parking available?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "Hayes: Limited street parking on Uxbridge Road with pay-and-display bays nearby. Slough: Free parking available on Farnham Road and surrounding residential streets.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      name: "What allergen information do you provide?",
+                      acceptedAnswer: {
+                        "@type": "Answer",
+                        text: "We comply with UK Natasha's Law. Allergen information for all 14 FSA-listed allergens is available for every dish. For specific queries, please call Hayes on 020 3409 3786 or Slough on 01753 326341.",
+                      },
+                    },
+                  ],
                 },
               ]
             }),

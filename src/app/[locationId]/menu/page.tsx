@@ -7,7 +7,7 @@ import { generateId } from '@/utils/generateId';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useStore } from '@/context/StoreContext';
-import { Plus, Minus, ShoppingBag, X, CheckCircle2, MessageCircle, Phone, MapPin, Search, ChevronRight, CreditCard, Store, Clock, Bell, Ticket, Printer, Zap, AlertCircle, Star, RotateCcw } from 'lucide-react';
+import { Plus, Minus, ShoppingBag, X, CheckCircle2, MessageCircle, Phone, MapPin, Search, ChevronRight, CreditCard, Store, Clock, Bell, Ticket, Printer, Zap, AlertCircle, Star, RotateCcw, Truck } from 'lucide-react';
 import { getMenuItems } from '@/services/menuService';
 import { MenuItem } from '@/types';
 import { buildWhatsAppLink, buildOrderWhatsAppMessage, SHOP_CONFIG, LOCATIONS, ACTIVE_PROMO, calculatePromoDiscount, isBreakfastPromoTime, isPostcodeInDeliveryZone, getDeliveryTier, HAYES_DELIVERY_TIERS, SLOUGH_DELIVERY_TIERS } from '@/config/shopConfig';
@@ -423,11 +423,12 @@ function MenuPageContent() {
   }, [isDeliveryOrder, activeDeliveryTier, discountedSubtotal, activeLocation.id]);
 
   // C5: 10% service fee on food subtotal (Charged on delivery only; collection is free)
+  // IMPORTANT: Uses pre-discount cartTotal to match server-side calculateServiceFee()
   const serviceFee = useMemo(() => {
     if (!isDeliveryOrder) return 0;
     const rate = activeLocation.delivery?.serviceFeePercent || 10;
-    return Math.round(discountedSubtotal * rate) / 100;
-  }, [isDeliveryOrder, discountedSubtotal, activeLocation]);
+    return Math.round(cartTotal * rate) / 100;
+  }, [isDeliveryOrder, cartTotal, activeLocation]);
 
   const finalCartTotal = discountedSubtotal + deliveryFee + serviceFee;
 
@@ -465,7 +466,7 @@ function MenuPageContent() {
     try {
       // Validate customer info
       if (!customerInfo.name.trim()) {
-        alert('Please enter your name');
+        setNameError('Please enter your name');
         setIsSubmitting(false);
         (window as any)._checkoutLock = false;
         return;
@@ -475,7 +476,7 @@ function MenuPageContent() {
       if (!phoneClean || !isValidUKMobile(phoneClean)) {
         const errorMsg = getPhoneError(phoneClean);
         setPhoneError(errorMsg);
-        alert(errorMsg || 'Please enter a valid UK phone number (e.g. 07123 456789)');
+        // Phone error already set via setPhoneError above — no browser alert needed
         setIsSubmitting(false);
         (window as any)._checkoutLock = false;
         return;
@@ -546,7 +547,7 @@ function MenuPageContent() {
       clearCart();
       (typeof window !== 'undefined' ? window.localStorage : {}).setItem('last_order_time', Date.now().toString());
     } catch (e) {
-      alert('Order Placement Error: Could not place the order. Please check your connection or contact the shop.');
+      setCheckoutError('Could not place the order. Please check your connection or contact the shop.');
     } finally {
       setIsSubmitting(false);
       (window as any)._checkoutLock = false;
@@ -635,16 +636,8 @@ function MenuPageContent() {
         fcmToken: existingFcmToken,
       };
 
-      // Client-side Firestore backup write (governed by allow create: if true)
-      try {
-        await setDoc(doc(db, 'orders', finalOrderId), {
-          ...completedOrderData,
-          createdAt: new Date().toISOString(),
-          timestamp: new Date().toISOString(),
-        });
-      } catch (fErr) {
-        console.warn('[Firestore] Client order backup:', fErr);
-      }
+      // Server-side checkout route already persists the order to Firestore.
+      // Client-side write removed to prevent race condition overwriting server data.
 
       setCompletedOrder(completedOrderData);
       setCheckoutStep('success');
@@ -761,7 +754,7 @@ function MenuPageContent() {
       {/* Fulfillment status badge */}
       <div className="mb-4 p-3.5 bg-white rounded-xl border border-pine/10 shadow-sm flex items-center justify-between text-xs">
         <div className="flex items-center gap-2.5 min-w-0">
-          <span className="text-xl">{isDeliveryOrder ? '🚗' : '🛍️'}</span>
+          {isDeliveryOrder ? <Truck size={18} className="text-terracotta" /> : <Store size={18} className="text-pine/60" />}
           <div className="truncate">
             <p className="font-bold text-pine leading-tight truncate">
               {isDeliveryOrder
@@ -929,6 +922,21 @@ function MenuPageContent() {
         activeCategory={activeCategory}
         scrollToCategory={scrollToCategory}
       />
+
+      {/* UK FSA Food Allergy Notice — Natasha's Law (2021) Compliance */}
+      <div className="max-w-7xl mx-auto px-4 pt-4">
+        <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-amber-50 border border-amber-200/60 text-amber-900 text-xs leading-relaxed">
+          <span className="shrink-0 mt-0.5 text-base" aria-hidden="true">⚠️</span>
+          <p>
+            <strong>Food Allergy Notice:</strong> If you or someone you are ordering for has a food allergy or intolerance,
+            please call the restaurant directly at{' '}
+            <a href={`tel:${activeLocation.phone}`} className="font-bold underline decoration-amber-400 underline-offset-2 hover:text-amber-700 transition-colors">
+              {activeLocation.phone}
+            </a>{' '}
+            before placing your order. All our meat is 100% Halal certified.
+          </p>
+        </div>
+      </div>
 
       {/* Menu Sections Rendered Sequentially */}
       <div className="max-w-7xl mx-auto px-4 py-12">

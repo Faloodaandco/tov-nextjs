@@ -3,7 +3,7 @@ import { LOCATIONS, LocationId, calculateServiceFee, calculatePromoDiscount, isE
 import { getMenuItems } from '@/services/menuService';
 import { adminDb } from '@/lib/firebaseAdmin';
 
-const DEVELOPER_ALERT_EMAIL = 'sales@faloodaandco.co.uk';
+const DEVELOPER_ALERT_EMAILS = ['sales@tekrenewed.co.uk', 'sales@faloodaandco.co.uk'];
 
 /**
  * Sends a payment failure alert email to the developer via Firestore mail collection.
@@ -73,7 +73,7 @@ async function sendPaymentFailureAlertServer(details: {
     `;
 
     await adminDb.collection('mail').add({
-      to: [DEVELOPER_ALERT_EMAIL],
+      to: DEVELOPER_ALERT_EMAILS,
       message: { subject, text, html },
       alertType: 'payment_failure',
       orderId: details.orderId,
@@ -81,7 +81,7 @@ async function sendPaymentFailureAlertServer(details: {
       timestamp,
       status: 'pending',
     });
-    console.warn(`[Square] Payment failure alert queued for ${DEVELOPER_ALERT_EMAIL} (${details.orderId})`);
+    console.warn(`[Square] Payment failure alert queued for ${DEVELOPER_ALERT_EMAILS.join(', ')} (${details.orderId})`);
   } catch (alertErr) {
     console.error('[Square] Failed to send payment failure alert:', alertErr);
   }
