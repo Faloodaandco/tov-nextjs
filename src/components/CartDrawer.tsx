@@ -258,6 +258,59 @@ export function CartDrawer(p: any) {
                             </>
                         }
                       </div>
+                      {/* ─── Early Delivery Zone Check ─── */}
+                      <div className="mt-2.5">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="Enter your postcode (e.g. UB4 8HY)"
+                            value={deliveryAddress.postcode}
+                            onChange={(e) => {
+                              const val = e.target.value.toUpperCase();
+                              setDeliveryAddress((prev: any) => ({ ...prev, postcode: val }));
+                              setPostcodeError(null);
+                            }}
+                            className="flex-1 px-3 py-2 text-sm font-bold text-pine bg-white rounded-lg border border-emerald-200 focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 placeholder:text-pine/30 placeholder:font-normal uppercase"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const pc = deliveryAddress.postcode.trim();
+                              if (!pc) { setPostcodeError('Please enter a postcode'); return; }
+                              const check = isPostcodeInDeliveryZone(pc, activeLocation.id);
+                              if (!check.isValid) {
+                                setPostcodeError(check.reason || 'Sorry, we don\'t deliver to your area.');
+                              } else {
+                                setPostcodeError(null);
+                              }
+                            }}
+                            className="px-3 py-2 bg-emerald-600 text-white font-bold text-xs rounded-lg hover:bg-emerald-700 active:scale-95 transition-all uppercase tracking-wider shrink-0"
+                          >
+                            Check
+                          </button>
+                        </div>
+                        {postcodeError && (
+                          <div className="mt-2 p-2.5 bg-red-50 border border-red-200 rounded-lg text-xs text-red-800 font-medium">
+                            <p>{postcodeError}</p>
+                            <button
+                              type="button"
+                              onClick={() => { setFulfillmentType('collection'); setPostcodeError(null); }}
+                              className="mt-1.5 text-[10px] font-bold text-pine underline underline-offset-2 hover:text-terracotta transition-colors"
+                            >
+                              Switch to Collection instead →
+                            </button>
+                          </div>
+                        )}
+                        {deliveryAddress.postcode.trim() && !postcodeError && activeDeliveryTier?.isValid && activeDeliveryTier.tier && (
+                          <p className="mt-1.5 text-[10px] text-emerald-700 font-bold">
+                            ✓ We deliver to {deliveryAddress.postcode}
+                            {discountedSubtotal >= activeDeliveryTier.tier.freeDeliveryThreshold
+                              ? ' — FREE delivery!'
+                              : ` — £${activeDeliveryTier.tier.fee.toFixed(2)} delivery fee (free over £${activeDeliveryTier.tier.freeDeliveryThreshold})`
+                            }
+                          </p>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
