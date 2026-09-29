@@ -157,8 +157,6 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
           throw new Error('Square SDK could not be loaded');
         }
 
-        console.log('[SquarePaymentForm] Initializing Square payments for:', { appId, locationId, isProduction });
-
         let payments = paymentsRef.current;
         if (!payments) {
           payments = (window as any).Square.payments(appId, locationId);
@@ -204,23 +202,19 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
         // 3. Concurrently Initialize Apple Pay
         (async () => {
           try {
-            console.log('[SquarePaymentForm] Checking Apple Pay support...');
             const applePay = await payments.applePay(req);
             if (applePay && isMounted) {
               applePayRef.current = applePay;
               setIsApplePayReady(true);
               setHasDigitalWallets(true);
-              console.log('[SquarePaymentForm] Apple Pay is supported and ready.');
             }
           } catch (applePayErr: any) {
-            console.log('[SquarePaymentForm] Apple Pay unavailable on this device/browser:', applePayErr?.message || applePayErr);
           }
         })();
 
         // 4. Concurrently Initialize Google Pay
         (async () => {
           try {
-            console.log('[SquarePaymentForm] Checking Google Pay support...');
             const googlePay = await payments.googlePay(req);
             const gpayContainer = document.getElementById('square-google-pay-container');
             if (gpayContainer && isMounted) {
@@ -232,7 +226,6 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
               });
               googlePayRef.current = googlePay;
               setHasDigitalWallets(true);
-              console.log('[SquarePaymentForm] Google Pay attached.');
 
               gpayContainer.onclick = async (e) => {
                 e.preventDefault();
@@ -278,7 +271,6 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
               };
             }
           } catch (gPayErr: any) {
-            console.log('[SquarePaymentForm] Google Pay unavailable:', gPayErr?.message || gPayErr);
           }
         })();
 
@@ -387,7 +379,6 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
         }
         await onSuccess(tokenResult.token, verificationToken);
       } else {
-        console.warn('[SquarePaymentForm] Apple Pay tokenization not OK:', tokenResult);
         if (tokenResult.errors && tokenResult.errors.length > 0) {
           setError(translatePaymentError(tokenResult.errors[0].message));
         }
@@ -542,3 +533,4 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
     </div>
   );
 };
+

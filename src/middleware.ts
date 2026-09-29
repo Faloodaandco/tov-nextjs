@@ -32,7 +32,7 @@ function isRateLimited(ip: string, maxRequests: number): boolean {
   return entry.count > maxRequests;
 }
 
-export function proxy(req: NextRequest) {
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()

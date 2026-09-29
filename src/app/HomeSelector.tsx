@@ -36,9 +36,9 @@ export default function HomeSelector() {
         {/* Left Nav */}
         <div className="flex-1 flex justify-start">
           <nav className="hidden md:flex items-center gap-8 text-[10px] tracking-[0.25em] font-medium text-pine/80 uppercase">
-            <button onClick={() => router.push('/info')} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Explore</button>
+            <button onClick={() => window.scrollTo({ top: 400, behavior: 'smooth' })} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Explore</button>
             <button onClick={() => window.scrollTo({ top: 300, behavior: 'smooth' })} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Menus</button>
-            <button onClick={() => router.push('/info')} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Catering</button>
+            <button onClick={() => { window.location.href = 'mailto:info@tasteofvillagerestaurants.co.uk?subject=Catering%20Inquiry'; }} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Catering</button>
           </nav>
         </div>
 
@@ -86,20 +86,20 @@ export default function HomeSelector() {
           
           {/* Left Vines */}
           <div className="absolute top-[30%] md:top-[20%] left-[5%] md:left-[10%] opacity-40 pointer-events-none w-10 md:w-12 h-auto rotate-[-5deg] z-0">
-            <img src="/assets/tov-sprig.svg" alt="" className="w-full h-auto object-contain" />
+            <img src="/assets/tov-sprig.svg" alt="" className="w-full h-auto object-contain animate-tov-float-left" />
           </div>
 
           {/* Middle Vines */}
           <div className="hidden md:block absolute top-[15%] left-[48%] -translate-x-1/2 opacity-40 pointer-events-none w-12 h-auto rotate-[2deg] z-0">
-            <img src="/assets/tov-sprig.svg" alt="" className="w-full h-auto object-contain" />
+            <img src="/assets/tov-sprig.svg" alt="" className="w-full h-auto object-contain animate-tov-float-left" />
           </div>
           <div className="hidden md:block absolute top-[30%] left-[52%] -translate-x-1/2 opacity-30 pointer-events-none w-10 h-auto rotate-[-8deg] scale-x-[-1] z-0">
-            <img src="/assets/tov-sprig.svg" alt="" className="w-full h-auto object-contain" />
+            <img src="/assets/tov-sprig.svg" alt="" className="w-full h-auto object-contain animate-tov-float-left" />
           </div>
 
           {/* Right Vines */}
           <div className="absolute bottom-[30%] md:top-[25%] right-[5%] md:right-[10%] opacity-40 pointer-events-none w-10 md:w-12 h-auto rotate-[8deg] z-0">
-            <img src="/assets/tov-sprig.svg" alt="" className="w-full h-auto object-contain scale-x-[-1]" />
+            <img src="/assets/tov-sprig.svg" alt="" className="w-full h-auto object-contain scale-x-[-1] animate-tov-float-right" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-24 w-full max-w-3xl mx-auto justify-items-center relative z-10">
@@ -111,8 +111,9 @@ export default function HomeSelector() {
                   className="flex flex-col items-center animate-fade-in-up w-full"
                 >
                   <div className="relative w-full max-w-[280px] md:max-w-[320px] aspect-[4/5] group cursor-pointer" onClick={(e) => navigateTo(e, '/' + loc.id + '/menu', loc.id, loc.name)}>
-                    {/* Transparent Arch with Border Only */}
-                    <div className="absolute inset-0 bg-transparent rounded-t-[140px] md:rounded-t-[160px] border-[0.5px] border-pine/30 group-hover:border-terracotta/60 transition-colors duration-500 z-10 pointer-events-none"></div>
+                    {/* Liquid Glass Arch */}
+                    <div className="absolute inset-0 bg-white/20 backdrop-blur-md rounded-t-[140px] md:rounded-t-[160px] border-[0.5px] border-white/60 shadow-[0_25px_50px_-12px_rgba(26,60,52,0.12)] shadow-inner-[0_1.5px_1px_0_rgba(255,255,255,0.9)] group-hover:-translate-y-2 group-hover:scale-[1.015] transition-all duration-500 z-10 pointer-events-none"></div>
+                    <div className="absolute inset-2 rounded-t-[137px] md:rounded-t-[155px] border-[0.5px] border-pine/15 group-hover:border-terracotta/30 transition-colors duration-500 z-10 pointer-events-none"></div>
                     
                     <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 md:p-8 text-center pt-16">
                       <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center mb-6 transition-all duration-500">
@@ -124,9 +125,9 @@ export default function HomeSelector() {
                       </h2>
                       
                                             <div className="flex flex-col items-center gap-2 mb-8 md:mb-10">
-                        <span className="text-pine/60 text-[9px] md:text-[10px] tracking-[0.25em] font-medium uppercase">{loc.address}</span>
-                        <span className="text-terracotta/80 text-[8px] md:text-[9px] tracking-[0.3em] font-bold uppercase">{loc.postcode}</span>
-                        <span className="text-pine/50 font-light text-[8px] tracking-[0.2em] mt-1">{loc.phone}</span>
+                        <span className="text-pine/80 text-[10px] md:text-[11px] tracking-[0.15em] font-medium uppercase">{loc.address}</span>
+                        <span className="text-terracotta font-bold text-[10px] md:text-[11px] tracking-[0.3em] uppercase">{loc.postcode}</span>
+                        <span className="text-pine/80 font-medium text-[11px] tracking-[0.1em] mt-1">{loc.phone}</span>
                       </div>
                       
                       <div className="mt-auto mb-6">
@@ -186,6 +187,7 @@ export default function HomeSelector() {
     </div>
   );
 }
+
 
 
 

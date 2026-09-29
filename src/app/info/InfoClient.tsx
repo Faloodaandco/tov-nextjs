@@ -65,13 +65,18 @@ function InfoContent() {
   });
 
   return (
-    <div className="min-h-screen bg-bg-sand pt-32 pb-24 px-4 sm:px-6 lg:px-8 selection:bg-terracotta selection:text-white">
+    <div className="min-h-screen bg-[#F4F1EA] pt-32 pb-24 px-4 sm:px-6 lg:px-8 selection:bg-terracotta/20 font-sans text-pine">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h1 className="font-display text-3xl md:text-4xl font-bold text-pine mb-4 tracking-wider">
+        <div className="text-center mb-16 flex flex-col items-center">
+          <h1 className="font-display italic text-2xl md:text-3xl text-pine/90 font-light mb-6">
             Help & Legal Hub
           </h1>
-          <p className="text-pine/60 max-w-xl mx-auto text-sm md:text-base leading-relaxed">
+          <div className="flex items-center gap-5 mb-8">
+            <div className="h-[0.5px] w-16 md:w-32 bg-gradient-to-r from-transparent to-pine/40"></div>
+            <span className="text-xl text-terracotta/90 drop-shadow-sm">✤</span>
+            <div className="h-[0.5px] w-16 md:w-32 bg-gradient-to-l from-transparent to-pine/40"></div>
+          </div>
+          <p className="text-pine/60 text-[10px] md:text-[11px] font-sans tracking-[0.3em] uppercase font-bold max-w-xl mx-auto">
             Everything you need to know about navigating the Taste of Village experience, transparently and safely.
           </p>
         </div>
@@ -80,48 +85,48 @@ function InfoContent() {
           
           {/* Side Navigation */}
           <div className="md:w-1/4 flex-shrink-0">
-            <div className="sticky top-32 bg-white rounded-[2rem] p-4 shadow-xl shadow-pine/5 border border-pine/10 space-y-2">
+            <div className="sticky top-32 bg-[#FBF9F4] p-6 border-[0.5px] border-pine/20 space-y-2">
               {TABS.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
-                  className={`w-full flex items-center justify-between px-4 py-4 rounded-2xl font-bold transition-all ${
+                  className={`w-full flex items-center justify-between px-2 py-4 font-sans text-[10px] tracking-[0.25em] uppercase font-medium transition-all ${
                     activeTab === tab.id
-                    ? 'bg-pine text-white shadow-md'
-                    : 'text-pine/70 hover:bg-pine/5 hover:text-pine'
+                    ? 'text-terracotta border-b-[0.5px] border-terracotta/30'
+                    : 'text-pine/70 hover:text-pine border-b-[0.5px] border-transparent'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <span className={activeTab === tab.id ? 'text-terracotta' : 'text-pine/50'}>{tab.icon}</span>
                     <span>{tab.label}</span>
                   </div>
-                  <ChevronRight size={16} className={activeTab === tab.id ? 'opacity-100 text-terracotta' : 'opacity-0'} />
+                  {activeTab === tab.id && <span className="text-terracotta">✤</span>}
                 </button>
               ))}
             </div>
           </div>
 
           {/* Content Area */}
-          <div className="md:w-3/4 bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl shadow-pine/5 border border-pine/10 animate-fade-in min-h-[60vh]">
+          <div className="md:w-3/4 bg-[#FBF9F4] p-8 md:p-12 border-[0.5px] border-pine/20 animate-fade-in min-h-[60vh]">
             
             {activeTab === 'faq' && (
               <div className="space-y-8">
-                <h2 className="font-display text-3xl font-black text-pine flex items-center gap-3 border-b border-pine/10 pb-4">
+                <h2 className="font-display italic text-2xl md:text-3xl text-pine/90 font-light flex items-center gap-3 border-b-[0.5px] border-pine/20 pb-4 tracking-wide">
                   <HelpCircle className="text-terracotta"/> General FAQs
                 </h2>
                 
                 <div className="space-y-8">
                   <div>
-                    <h4 className="font-bold text-xl mb-3 text-pine">Is all meat HMC Halal?</h4>
-                    <p className="text-pine/70 leading-relaxed text-lg">Yes, we buy exclusively from HMC certified halal suppliers.</p>
+                    <h4 className="font-sans font-bold text-[10px] md:text-[11px] tracking-[0.2em] uppercase text-pine/80 mb-3">Is all meat HMC Halal?</h4>
+                    <p className="text-pine/70 leading-relaxed text-sm">Yes, we buy exclusively from HMC certified halal suppliers.</p>
                   </div>
                   <div>
-                    <h4 className="font-bold text-xl mb-3 text-pine">Do you offer catering for large events or weddings?</h4>
-                    <p className="text-pine/70 leading-relaxed text-lg">Yes, catering and large event orders can be made. Please book 2 weeks before the event to ensure availability and proper preparation.</p>
+                    <h4 className="font-sans font-bold text-[10px] md:text-[11px] tracking-[0.2em] uppercase text-pine/80 mb-3">Do you offer catering for large events or weddings?</h4>
+                    <p className="text-pine/70 leading-relaxed text-sm">Yes, catering and large event orders can be made. Please book 2 weeks before the event to ensure availability and proper preparation.</p>
                   </div>
                   <div>
-                    <h4 className="font-bold text-xl mb-3 text-pine">Are your curries made fresh?</h4>
-                    <p className="text-pine/70 leading-relaxed text-lg">Yes, all our curries are made fresh. We pride ourselves on preparing our dishes daily using authentic, fresh ingredients.</p>
+                    <h4 className="font-sans font-bold text-[10px] md:text-[11px] tracking-[0.2em] uppercase text-pine/80 mb-3">Are your curries made fresh?</h4>
+                    <p className="text-pine/70 leading-relaxed text-sm">Yes, all our curries are made fresh. We pride ourselves on preparing our dishes daily using authentic, fresh ingredients.</p>
                   </div>
                 </div>
               </div>
@@ -129,7 +134,7 @@ function InfoContent() {
 
             {activeTab === 'allergies' && (
               <div className="space-y-8">
-                <h2 className="font-display text-3xl font-black text-pine border-b border-pine/10 pb-4 flex items-center gap-3">
+                <h2 className="font-display italic text-2xl md:text-3xl text-pine/90 font-light flex items-center gap-3 border-b-[0.5px] border-pine/20 pb-4 tracking-wide">
                   <AlertTriangle className="text-terracotta"/> Allergen Guide
                 </h2>
                 <div className="bg-terracotta/10 border-l-4 border-terracotta p-6 rounded-r-2xl">
@@ -139,7 +144,7 @@ function InfoContent() {
                   </p>
                 </div>
                 
-                <div className="space-y-6 text-pine/80 leading-relaxed text-lg">
+                <div className="space-y-6 text-pine/70 leading-relaxed text-sm">
                   <p><strong>NUTS & SEEDS:</strong> Pistachios, almonds, and various seeds are standard ingredients scattered freely across our kitchen and used in many traditional curries and desserts. <strong>If you have a severe nut allergy, we strongly advise against dining with us to guarantee your safety.</strong></p>
                   
                   <p><strong>DAIRY:</strong> Ghee, butter, milk, and yogurt form the bedrock of authentic Indian and Pakistani cuisine. Very few items are truly dairy-free, and cross-contamination is highly likely across grills and curries.</p>
@@ -155,11 +160,11 @@ function InfoContent() {
 
             {activeTab === 'food' && (
               <div className="space-y-8">
-                <h2 className="font-display text-3xl font-black text-pine flex items-center gap-3 border-b border-pine/10 pb-4">
+                <h2 className="font-display italic text-2xl md:text-3xl text-pine/90 font-light flex items-center gap-3 border-b-[0.5px] border-pine/20 pb-4 tracking-wide">
                   <Leaf className="text-terracotta"/> Food & Hygiene Standards
                 </h2>
                 
-                <div className="space-y-8 text-pine/80 leading-relaxed text-lg">
+                <div className="space-y-8 text-pine/70 leading-relaxed text-sm">
                   <div>
                     <h3 className="text-xl font-bold text-pine mb-3">100% Halal Guarantee</h3>
                     <p>Every single ingredient and meat product entering our premises is meticulously checked to ensure it is HMC certified Halal. We do not prepare, serve, or allow any non-halal items or alcohol into our premises.</p>
@@ -178,11 +183,11 @@ function InfoContent() {
 
             {activeTab === 'returns' && (
               <div className="space-y-8">
-                <h2 className="font-display text-3xl font-black text-pine flex items-center gap-3 border-b border-pine/10 pb-4">
+                <h2 className="font-display italic text-2xl md:text-3xl text-pine/90 font-light flex items-center gap-3 border-b-[0.5px] border-pine/20 pb-4 tracking-wide">
                   <RefreshCw className="text-terracotta"/> Return & Refund Policy
                 </h2>
                 
-                <div className="space-y-6 text-pine/80 leading-relaxed text-lg">
+                <div className="space-y-6 text-pine/70 leading-relaxed text-sm">
                   <p>Due to the perishable nature of hot food, our return policy operates on strict parameters inline with standard food delivery consumer rights.</p>
 
                   <div>
@@ -205,11 +210,11 @@ function InfoContent() {
 
             {activeTab === 'privacy' && (
               <div className="space-y-8">
-                <h2 className="font-display text-3xl font-black text-pine flex items-center gap-3 border-b border-pine/10 pb-4">
+                <h2 className="font-display italic text-2xl md:text-3xl text-pine/90 font-light flex items-center gap-3 border-b-[0.5px] border-pine/20 pb-4 tracking-wide">
                   <Shield className="text-terracotta"/> Privacy Policy
                 </h2>
                 
-                <div className="space-y-6 text-pine/80 leading-relaxed text-lg">
+                <div className="space-y-6 text-pine/70 leading-relaxed text-sm">
                   <p>Taste of Village ("we", "our", "us") respects your privacy. This policy outlines how we collect, process, and protect your data.</p>
 
                   <div>
@@ -235,11 +240,11 @@ function InfoContent() {
 
             {activeTab === 'terms' && (
               <div className="space-y-8">
-                <h2 className="font-display text-3xl font-black text-pine flex items-center gap-3 border-b border-pine/10 pb-4">
+                <h2 className="font-display italic text-2xl md:text-3xl text-pine/90 font-light flex items-center gap-3 border-b-[0.5px] border-pine/20 pb-4 tracking-wide">
                   <MapPin className="text-terracotta"/> Terms & Conditions
                 </h2>
                 
-                <div className="space-y-6 text-pine/80 leading-relaxed text-lg">
+                <div className="space-y-6 text-pine/70 leading-relaxed text-sm">
                   <p>Welcome to Taste of Village. By using this website to place orders or book tables, you agree to the following terms:</p>
                   
                   <ul className="list-disc pl-5 space-y-4">

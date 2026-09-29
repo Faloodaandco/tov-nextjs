@@ -39,7 +39,7 @@ service cloud.firestore {
     // Customer order tracking via server-side API route, NOT direct Firestore reads
     match /orders/{document=**} {
       allow read: if isStaff();
-      allow create: if true;
+      allow create: if false;
       allow update: if isStaff() || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['needsPrinting', 'printed', 'printStatus']));
       allow delete: if isStaff();
     }
@@ -112,3 +112,4 @@ service cloud.firestore {
     }
   }
 }
+

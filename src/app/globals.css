@@ -204,3 +204,15 @@
     border-radius: 12px;
   }
 }
+
+@keyframes float-up {
+  0%, 100% { transform: translateY(0) rotate(var(--tw-rotate, 0deg)); }
+  50% { transform: translateY(-8px) rotate(calc(var(--tw-rotate, 0deg) + 2deg)); }
+}
+.animate-tov-float-left {
+  animation: float-up 6s ease-in-out infinite;
+}
+.animate-tov-float-right {
+  animation: float-up 6.5s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
