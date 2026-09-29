@@ -82,8 +82,8 @@ export function getRestaurantSchema(locationId: string) {
           "Saturday",
           "Sunday"
         ],
-        "opens": "12:00",
-        "closes": "23:00"
+        "opens": "10:00",
+        "closes": "02:00"
       }
     ],
     "menu": `${SHOP_CONFIG.website}/${loc.id}/menu`,
@@ -219,7 +219,7 @@ export function getFaqSchema(locationId: string) {
       "name": `What are the opening hours for Taste of Village in ${isSlough ? 'Slough' : 'Hayes'}?`,
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "We are open 7 days a week, Monday through Sunday from 12:00 PM to 11:00 PM."
+        "text": "We are open 7 days a week, Monday through Sunday from 10:00 AM to 2:00 AM."
       }
     },
     {

@@ -638,7 +638,7 @@ export default function TOVHome() {
                   <strong>100% Halal Certified</strong>
                 </p>
                 <p className="text-[11px] text-bg-sand/65 normal-case leading-relaxed font-normal">
-                  Open 7 Days (12:00 PM – 11:00 PM). Call our team directly for table bookings, large family feasts, or catering.
+                  Open 7 Days (10:00 AM – 2:00 AM). Call our team directly for table bookings, large family feasts, or catering.
                 </p>
               </div>
               <a
@@ -964,7 +964,7 @@ export default function TOVHome() {
             </div>
             <div>
               <div className="font-display font-bold text-2xl tracking-[0.1em]">OPEN 7 DAYS</div>
-              <div className="text-bg-sand/90 normal-case font-medium text-lg mt-1">12:00 PM – 11:00 PM</div>
+              <div className="text-bg-sand/90 normal-case font-medium text-lg mt-1">10:00 AM – 2:00 AM</div>
             </div>
           </motion.div>
           <div className="hidden md:block w-px h-16 bg-bg-sand/30"></div>

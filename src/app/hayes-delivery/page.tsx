@@ -183,7 +183,7 @@ export default function HayesDeliveryPage() {
         <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-pine/5 text-center">
           <h2 className="font-serif text-4xl mb-6 text-pine">Order Delivery Now</h2>
           <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
-            Browse the full Hayes menu, add to basket, and check out. Our kitchen fires your order fresh and our driver brings it to you — every day, 12 PM to 11 PM.
+            Browse the full Hayes menu, add to basket, and check out. Our kitchen fires your order fresh and our driver brings it to you — every day, 10 AM to 2 AM.
           </p>
 
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-10">
@@ -191,7 +191,7 @@ export default function HayesDeliveryPage() {
               <MapPin className="text-terracotta" /> 766B Uxbridge Road, Hayes UB4 0RU
             </div>
             <div className="flex items-center gap-2 text-pine font-bold">
-              <Clock className="text-terracotta" /> 12 PM – 11 PM Daily
+              <Clock className="text-terracotta" /> 10 AM – 2 AM Daily
             </div>
           </div>
 

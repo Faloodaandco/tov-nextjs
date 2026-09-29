@@ -132,7 +132,7 @@ export default function SloughDessertsPage() {
               <MapPin className="text-terracotta" /> 260 Farnham Road, Slough SL1 4XQ
             </div>
             <div className="flex items-center gap-2 text-pine font-bold">
-              <Clock className="text-terracotta" /> Open 7 Days: 12:00 PM – 11:00 PM
+              <Clock className="text-terracotta" /> Open 7 Days: 10:00 AM – 2:00 AM
             </div>
           </div>
 

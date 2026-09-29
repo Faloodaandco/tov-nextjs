@@ -326,7 +326,7 @@ export const SHOP_CONFIG = {
   facebook: 'https://www.facebook.com/profile.php?id=61590779182784',
   tiktok: 'https://www.tiktok.com/@tasteofvillage1',
   website: 'https://tasteofvillagerestaurants.co.uk',
-  openingHours: '12:00 PM – 11:00 PM',
+  openingHours: '10:00 AM – 2:00 AM',
   openingDays: 'Monday – Sunday',
 };
 

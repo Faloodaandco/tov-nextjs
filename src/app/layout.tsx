@@ -122,8 +122,8 @@ export default function RootLayout({
                   openingHoursSpecification: {
                     "@type": "OpeningHoursSpecification",
                     dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-                    opens: "12:00",
-                    closes: "23:00",
+                    opens: "10:00",
+                    closes: "02:00",
                   },
                   servesCuisine: ["Pakistani", "Halal", "South Asian", "Lahori"],
                   priceRange: "££",
@@ -178,8 +178,8 @@ export default function RootLayout({
                   openingHoursSpecification: {
                     "@type": "OpeningHoursSpecification",
                     dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-                    opens: "12:00",
-                    closes: "23:00",
+                    opens: "10:00",
+                    closes: "02:00",
                   },
                   servesCuisine: ["Pakistani", "Halal", "South Asian", "Gujranwala"],
                   priceRange: "££",

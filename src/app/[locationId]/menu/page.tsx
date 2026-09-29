@@ -82,9 +82,15 @@ function MenuPageContent() {
   const [customisationItem, setCustomisationItem] = useState<FullMenuItem | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isKitchenClosed = useMemo(() => {
-    const now = new Date();
-    const hour = now.getHours();
-    return hour >= 23 || hour < 12; // 11PM to 12PM
+    try {
+      const nowInUK = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/London' }));
+      const hour = nowInUK.getHours();
+      // Kitchen operates 09:00 - 23:00 UK time. Pre-orders are accepted outside these hours.
+      return hour >= 23 || hour < 9;
+    } catch {
+      const hour = new Date().getHours();
+      return hour >= 23 || hour < 9;
+    }
   }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [marketingOptIn, setMarketingOptIn] = useState(false);

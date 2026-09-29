@@ -172,7 +172,7 @@ export default function SloughBreakfastPage() {
               <MapPin className="text-terracotta" /> 260 Farnham Road, SL1 4XQ
             </div>
             <div className="flex items-center gap-2 text-pine font-bold">
-              <Clock className="text-terracotta" /> Open Daily from 12:00 PM
+              <Clock className="text-terracotta" /> Open Daily from 10:00 AM
             </div>
           </div>
 

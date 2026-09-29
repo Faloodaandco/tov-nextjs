@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, RotateCcw, Minus, Plus, Ticket, MapPin, CreditCard, Clock, CheckCircle2, MessageCircle, AlertCircle, Printer, Bell } from 'lucide-react';
+import { X, RotateCcw, Minus, Plus, Ticket, MapPin, CreditCard, Clock, CheckCircle2, MessageCircle, AlertCircle, Printer, Bell, Truck, Store } from 'lucide-react';
 import { SquarePaymentForm } from '@/components/SquarePaymentForm';
 
 import { getDeliveryTier, ACTIVE_PROMO } from '@/config/shopConfig';
@@ -30,30 +30,54 @@ export function CartDrawer(p: any) {
                 <h2 className="font-display text-xl md:text-2xl font-bold text-pine uppercase tracking-widest leading-tight">
                   {checkoutStep === 'cart' ? 'Your Order' : checkoutStep === 'details' ? 'Delivery & Details' : checkoutStep === 'payment' ? 'Secure Payment' : 'Order Confirmed!'}
                 </h2>
-                {!tableParam && checkoutStep !== 'success' && (
-                  <div className="hidden sm:flex items-center gap-2 mt-1 text-[10px] font-black uppercase tracking-wider">
-                    <button 
-                      type="button"
-                      onClick={() => setCheckoutStep('cart')}
-                      className={`transition-colors ${checkoutStep === 'cart' ? 'text-terracotta underline' : 'text-pine/50 hover:text-pine'}`}
-                    >
-                      1. Cart {cart.length > 0 && `(${cart.reduce((s: any, i: any) => s + i.quantity, 0)})`}
-                    </button>
-                    <span className="text-pine/30">→</span>
-                    <button 
-                      type="button"
-                      disabled={cart.length === 0}
-                      onClick={() => setCheckoutStep('details')}
-                      className={`transition-colors ${checkoutStep === 'details' ? 'text-terracotta underline' : checkoutStep === 'payment' ? 'text-pine/50 hover:text-pine' : 'text-pine/30'}`}
-                    >
-                      2. Details
-                    </button>
-                    <span className="text-pine/30">→</span>
-                    <span className={checkoutStep === 'payment' ? 'text-terracotta underline' : 'text-pine/30'}>
-                      3. Payment
-                    </span>
+                {!tableParam && checkoutStep !== 'success' && (() => {
+                  const steps = ['cart', 'details', 'payment'] as const;
+                  const stepLabels = ['Cart', 'Details', 'Payment'];
+                  const currentIdx = steps.indexOf(checkoutStep as any);
+                  return (
+                  <div className="hidden sm:flex items-center gap-0 mt-2.5">
+                    {steps.map((step, i) => {
+                      const isActive = step === checkoutStep;
+                      const isCompleted = i < currentIdx;
+                      const isPending = i > currentIdx;
+                      return (
+                        <React.Fragment key={step}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (step === 'cart') setCheckoutStep('cart');
+                              else if (step === 'details' && cart.length > 0) setCheckoutStep('details');
+                            }}
+                            disabled={isPending}
+                            className={`flex items-center gap-1.5 transition-all duration-300 ${isPending ? 'cursor-default' : 'cursor-pointer'}`}
+                          >
+                            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black transition-all duration-300 ${
+                              isActive ? 'bg-terracotta text-white shadow-sm ring-2 ring-terracotta/20' :
+                              isCompleted ? 'bg-pine text-white' :
+                              'bg-pine/10 text-pine/40'
+                            }`}>
+                              {isCompleted ? '✓' : i + 1}
+                            </span>
+                            <span className={`text-[10px] font-black uppercase tracking-wider transition-colors duration-300 ${
+                              isActive ? 'text-terracotta' :
+                              isCompleted ? 'text-pine/70' :
+                              'text-pine/30'
+                            }`}>
+                              {stepLabels[i]}
+                              {step === 'cart' && cart.length > 0 ? ` (${cart.reduce((s: any, i: any) => s + i.quantity, 0)})` : ''}
+                            </span>
+                          </button>
+                          {i < steps.length - 1 && (
+                            <div className={`w-8 h-px mx-1.5 transition-colors duration-300 ${
+                              i < currentIdx ? 'bg-pine/30' : 'bg-pine/10'
+                            }`} />
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
                   </div>
-                )}
+                  );
+                })()}
               </div>
               <div className="flex items-center gap-4">
                 {checkoutStep === 'cart' && cart.length > 0 && (
@@ -78,7 +102,7 @@ export function CartDrawer(p: any) {
             {checkoutStep === 'cart' && (
               <>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin">
               {cart.length === 0 ? (
                 <div className="text-center text-pine/30 mt-20 flex flex-col items-center animate-fade-in-up">
                   <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="" className="w-32 h-32 opacity-20 mb-6 grayscale mix-blend-multiply" />
@@ -153,20 +177,20 @@ export function CartDrawer(p: any) {
                   <label className="block text-xs font-bold text-pine mb-2 uppercase tracking-wider">
                     Order Type
                   </label>
-                  <div className="grid grid-cols-2 gap-2 p-1.5 bg-pine/5 border border-pine/15 rounded-2xl">
+                  <div className="grid grid-cols-2 gap-0 p-1 bg-pine/5 border border-pine/10 rounded-2xl">
                     <button
                       type="button"
                       onClick={() => {
                         setFulfillmentType('delivery');
                       }}
-                      className={`py-3.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex flex-col items-center gap-1 transition-all relative ${
+                      className={`py-3.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex flex-col items-center gap-1.5 transition-all duration-200 relative ${
                         fulfillmentType === 'delivery'
                           ? 'bg-terracotta text-white shadow-md'
-                          : 'text-pine/70 hover:text-pine hover:bg-white/60'
+                          : 'text-pine/60 hover:text-pine hover:bg-white/50'
                       }`}
                     >
-                      <span className="flex items-center gap-1.5 text-sm">
-                        <span>🚗</span>
+                      <span className="flex items-center gap-2 text-sm">
+                        <Truck size={16} strokeWidth={2.5} className={fulfillmentType === 'delivery' ? 'text-white' : 'text-pine/50'} />
                         <span>Delivery</span>
                       </span>
                       <span className="text-[10px] opacity-90 normal-case font-medium">
@@ -182,14 +206,14 @@ export function CartDrawer(p: any) {
                         setFulfillmentType('collection');
                         setPostcodeError(null);
                       }}
-                      className={`py-3.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex flex-col items-center gap-1 transition-all ${
+                      className={`py-3.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex flex-col items-center gap-1.5 transition-all duration-200 ${
                         fulfillmentType === 'collection'
                           ? 'bg-pine text-white shadow-md'
-                          : 'text-pine/70 hover:text-pine hover:bg-white/60'
+                          : 'text-pine/60 hover:text-pine hover:bg-white/50'
                       }`}
                     >
-                      <span className="flex items-center gap-1.5 text-sm">
-                        <span>🛍️</span>
+                      <span className="flex items-center gap-2 text-sm">
+                        <Store size={16} strokeWidth={2.5} className={fulfillmentType === 'collection' ? 'text-white' : 'text-pine/50'} />
                         <span>Collection</span>
                       </span>
                       <span className="text-[10px] opacity-80 normal-case font-medium">Free · Ready ~20-25m</span>
@@ -197,11 +221,12 @@ export function CartDrawer(p: any) {
                   </div>
 
                   {fulfillmentType === 'delivery' && (
-                    <div className="mt-2.5 px-3.5 py-2.5 bg-emerald-50 border border-emerald-200 rounded-xl space-y-1 text-[11px] text-emerald-900 font-medium">
+                    <div className="mt-2.5 px-3.5 py-3 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2 text-[11px] text-emerald-900 font-medium">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
-                          <span className="font-bold">🚗 {activeLocation.id === 'hayes' ? 'Hayes In-House Fleet:' : 'Slough Delivery:'}</span>
-                          <span>{activeLocation.id === 'hayes' ? 'UB3, UB4, UB7, UB8, UB10' : 'SL1, SL2, SL3, SL4'}</span>
+                          <Truck size={13} className="text-emerald-700" />
+                          <span className="font-bold">{activeLocation.id === 'hayes' ? 'Hayes Fleet' : 'Slough Delivery'}</span>
+                          <span className="text-emerald-700">{activeLocation.id === 'hayes' ? 'UB3, UB4, UB7, UB8, UB10' : 'SL1, SL2, SL3, SL4'}</span>
                         </div>
                         <span className="font-bold bg-emerald-200/80 text-emerald-900 px-2 py-0.5 rounded text-[10px]">
                           {activeDeliveryTier?.isValid && activeDeliveryTier.tier
@@ -209,11 +234,30 @@ export function CartDrawer(p: any) {
                             : (activeLocation.id === 'slough' ? 'From £3.50' : 'From £2.99')}
                         </span>
                       </div>
-                      <p className="text-[10px] text-emerald-700 leading-tight">
+                      <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-emerald-700 leading-relaxed">
                         {activeLocation.id === 'hayes'
-                          ? 'Tiered by distance: UB4 (£2.99) · UB3 (£3.99) · UB10 (£4.99) · UB8 (£5.99) · UB7 (£6.99)'
-                          : 'Tiered by distance: SL1 (£3.50) · SL2 (£3.99) · SL3 (£4.99) · SL4 (£5.99)'}
-                      </p>
+                          ? <>
+                              <span>UB4 <strong>£2.99</strong></span>
+                              <span className="text-emerald-400">·</span>
+                              <span>UB3 <strong>£3.99</strong></span>
+                              <span className="text-emerald-400">·</span>
+                              <span>UB10 <strong>£4.99</strong></span>
+                              <span className="text-emerald-400">·</span>
+                              <span>UB8 <strong>£5.99</strong></span>
+                              <span className="text-emerald-400">·</span>
+                              <span>UB7 <strong>£6.99</strong></span>
+                            </>
+                          : <>
+                              <span>SL1 <strong>£3.50</strong></span>
+                              <span className="text-emerald-400">·</span>
+                              <span>SL2 <strong>£3.99</strong></span>
+                              <span className="text-emerald-400">·</span>
+                              <span>SL3 <strong>£4.99</strong></span>
+                              <span className="text-emerald-400">·</span>
+                              <span>SL4 <strong>£5.99</strong></span>
+                            </>
+                        }
+                      </div>
                     </div>
                   )}
                 </div>
@@ -222,16 +266,19 @@ export function CartDrawer(p: any) {
               {/* Voucher Code Input */}
               <div className="mb-4 bg-white p-3 rounded-xl border border-pine/10 shadow-sm">
                 <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Enter discount code"
-                    value={customVoucher}
-                    onChange={(e) => {
-                      setCustomVoucher(e.target.value.toUpperCase());
-                      setVoucherError('');
-                    }}
-                    className="flex-1 bg-[#F7F2E7] px-3 py-2 text-sm font-bold text-pine uppercase rounded-lg focus:outline-none focus:ring-2 focus:ring-pine/20 placeholder:text-pine/30 placeholder:normal-case border border-transparent"
-                  />
+                  <div className="flex-1 flex items-center bg-[#F7F2E7] rounded-lg border border-transparent focus-within:ring-2 focus-within:ring-terracotta/20 focus-within:border-terracotta/30 transition-all">
+                    <Ticket size={14} className="text-pine/30 ml-3 shrink-0" />
+                    <input
+                      type="text"
+                      placeholder="Enter discount code"
+                      value={customVoucher}
+                      onChange={(e) => {
+                        setCustomVoucher(e.target.value.toUpperCase());
+                        setVoucherError('');
+                      }}
+                      className="flex-1 bg-transparent px-2.5 py-2 text-sm font-bold text-pine uppercase focus:outline-none placeholder:text-pine/30 placeholder:normal-case"
+                    />
+                  </div>
                   <button
                     onClick={() => {
                       const code = customVoucher.trim();
@@ -251,25 +298,27 @@ export function CartDrawer(p: any) {
                 </div>
                 {voucherError && <p className="text-red-500 text-[10px] mt-1.5 font-bold uppercase tracking-wider px-1">{voucherError}</p>}
                 {appliedVoucher && (
-                  <div className="flex items-center justify-between text-emerald-700 bg-emerald-50 px-2 py-1.5 rounded border border-emerald-100 mt-2">
-                    <span className="text-[10px] font-bold uppercase tracking-widest">{appliedVoucher} Applied</span>
+                  <div className="flex items-center justify-between text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100 mt-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5">
+                      <CheckCircle2 size={12} /> {appliedVoucher} Applied
+                    </span>
                     <button onClick={() => { setAppliedVoucher(null); setCustomVoucher(''); }} className="text-emerald-700/50 hover:text-emerald-700">
                       <X size={14} />
                     </button>
                   </div>
                 )}
               </div>
-              <div className="space-y-2 mb-6 text-pine">
-                <div className="flex justify-between items-center text-xs text-pine/70 font-semibold uppercase tracking-wider">
+              <div className="space-y-2.5 mb-6 text-pine pt-2 border-t border-pine/10">
+                <div className="flex justify-between items-center text-xs text-pine/60 font-semibold uppercase tracking-wider">
                   <span>Subtotal</span>
-                  <span>£{cartTotal.toFixed(2)}</span>
+                  <span className="tabular-nums">£{cartTotal.toFixed(2)}</span>
                 </div>
                 {promoDiscount > 0 && (
                   <div className="flex justify-between items-center text-xs text-terracotta font-bold uppercase tracking-wider">
                     <span className="flex items-center gap-1.5">
                       <Ticket size={14} /> {appliedVoucher ? `${appliedVoucher} VOUCHER` : ACTIVE_PROMO.cartLabel}
                     </span>
-                    <span>-£{promoDiscount.toFixed(2)}</span>
+                    <span className="tabular-nums">-£{promoDiscount.toFixed(2)}</span>
                   </div>
                 )}
                 {activePromo === 'BREAKFAST40' && promoDiscount === 0 && (
@@ -280,33 +329,34 @@ export function CartDrawer(p: any) {
                   </div>
                 )}
                 {isDeliveryOrder && deliveryFee > 0 && (
-                  <div className="flex justify-between items-center text-xs text-pine/70 font-semibold uppercase tracking-wider">
+                  <div className="flex justify-between items-center text-xs text-pine/60 font-semibold uppercase tracking-wider">
                     <span>Delivery Fee</span>
-                    <span>{deliveryFee === 0 ? 'FREE' : `£${deliveryFee.toFixed(2)}`}</span>
+                    <span className="tabular-nums">{deliveryFee === 0 ? 'FREE' : `£${deliveryFee.toFixed(2)}`}</span>
                   </div>
                 )}
                 {serviceFee > 0 && (
-                  <div className="flex justify-between items-center text-xs text-pine/70 font-semibold uppercase tracking-wider">
+                  <div className="flex justify-between items-center text-xs text-pine/60 font-semibold uppercase tracking-wider">
                     <span>Service Fee (10%)</span>
-                    <span>£{serviceFee.toFixed(2)}</span>
+                    <span className="tabular-nums">£{serviceFee.toFixed(2)}</span>
                   </div>
                 )}
-                <div className="flex justify-between items-baseline pt-2 border-t border-pine/10 text-xl font-bold">
-                  <span className="font-display text-sm uppercase tracking-[0.2em] font-bold">Total</span>
-                  <span className="font-display text-2xl font-bold">£{finalCartTotal.toFixed(2)}</span>
+                <div className="flex justify-between items-baseline pt-3 mt-1 border-t-2 border-pine/15">
+                  <span className="font-display text-xs uppercase tracking-[0.2em] font-bold text-pine/70">Total</span>
+                  <span className="font-display text-2xl font-bold tabular-nums text-pine">£{finalCartTotal.toFixed(2)}</span>
                 </div>
               </div>
               
               {isKitchenClosed && (
-                <div className="bg-pine/10 text-pine rounded-xl p-3 mb-4 text-center text-sm font-bold">
-                  🕐 Kitchen opens at 12:00 PM — Browse our menu and order when we open!
+                <div className="bg-amber-500/10 border border-amber-500/20 text-pine rounded-xl p-3 mb-4 text-center text-xs font-semibold flex items-center justify-center gap-2">
+                  <Clock size={14} className="text-amber-600 shrink-0" />
+                  <span><strong>Pre-Order:</strong> Kitchen opens at 10:00 AM. Place your order now to secure your slot!</span>
                 </div>
               )}
               {isBelowMinOrder && (
                 <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
                   <div className="flex justify-between text-xs font-bold text-amber-800 mb-2">
                     <span>Minimum order for delivery: £{minOrder.toFixed(2)}</span>
-                    <span>£{minOrderRemaining.toFixed(2)} more</span>
+                    <span className="tabular-nums">£{minOrderRemaining.toFixed(2)} more</span>
                   </div>
                   <div className="w-full bg-amber-200 rounded-full h-2 overflow-hidden">
                     <div className="bg-amber-600 h-full rounded-full transition-all duration-500" style={{ width: `${minOrderProgress}%` }} />
@@ -316,8 +366,8 @@ export function CartDrawer(p: any) {
               {isDeliveryOrder && !isBelowMinOrder && activeDeliveryTier?.tier?.freeDeliveryThreshold && discountedSubtotal < activeDeliveryTier.tier.freeDeliveryThreshold && (
                 <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
                   <div className="flex justify-between text-xs font-bold text-emerald-800 mb-2">
-                    <span>🚗 Free delivery at £{activeDeliveryTier.tier.freeDeliveryThreshold.toFixed(2)}</span>
-                    <span>£{(activeDeliveryTier.tier.freeDeliveryThreshold - discountedSubtotal).toFixed(2)} more</span>
+                    <span className="flex items-center gap-1"><Truck size={12} /> Free delivery at £{activeDeliveryTier.tier.freeDeliveryThreshold.toFixed(2)}</span>
+                    <span className="tabular-nums">£{(activeDeliveryTier.tier.freeDeliveryThreshold - discountedSubtotal).toFixed(2)} more</span>
                   </div>
                   <div className="w-full bg-emerald-200 rounded-full h-2 overflow-hidden">
                     <div className="bg-emerald-600 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, (discountedSubtotal / activeDeliveryTier.tier.freeDeliveryThreshold) * 100)}%` }} />
@@ -326,25 +376,26 @@ export function CartDrawer(p: any) {
               )}
               <button
                 onClick={handleProceedToDetails}
-                disabled={cart.length === 0 || isKitchenClosed || isBelowMinOrder}
-                className="w-full py-5 bg-pine text-white font-black hover:bg-terracotta active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed uppercase tracking-[0.2em] shadow-xl hover:shadow-2xl relative overflow-hidden group mb-4 rounded-full"
+                disabled={cart.length === 0 || isBelowMinOrder}
+                className="w-full py-4.5 md:py-5 bg-pine text-white font-black hover:bg-terracotta active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed uppercase tracking-[0.2em] shadow-xl hover:shadow-2xl relative overflow-hidden group mb-4 rounded-xl"
               >
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
-                <span className="relative z-10 flex justify-between px-8 items-center w-full">
+                <span className="relative z-10 flex justify-between px-6 items-center w-full">
                   <span>{isBelowMinOrder ? `Add £${minOrderRemaining.toFixed(2)} more` : 'Checkout'}</span>
-                  <span className="text-lg">£{finalCartTotal.toFixed(2)}</span>
+                  <span className="text-lg tabular-nums">£{finalCartTotal.toFixed(2)}</span>
                 </span>
               </button>
 
-              <div className="flex flex-col items-center gap-2 pt-2 border-t border-pine/10">
-                <div className="flex items-center gap-4 opacity-50 grayscale flex-wrap justify-center hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" className="h-3 object-contain" alt="Apple Pay" />
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" className="h-3 object-contain" alt="Google Pay" />
-                  <span className="font-bold text-[11px] tracking-wider text-pine/80">klarna.</span>
-                  <span className="font-black text-[12px] tracking-widest text-pine/80 italic font-serif">VISA</span>
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg" className="h-4 object-contain" alt="Mastercard" />
+              <div className="flex flex-col items-center gap-1.5 pt-3">
+                <div className="flex items-center gap-3 text-pine/40 flex-wrap justify-center">
+                  <CreditCard size={14} className="text-pine/30" />
+                  <span className="text-[10px] font-bold tracking-widest uppercase">Apple Pay</span>
+                  <span className="text-pine/20">·</span>
+                  <span className="text-[10px] font-bold tracking-widest uppercase">Google Pay</span>
+                  <span className="text-pine/20">·</span>
+                  <span className="text-[10px] font-bold tracking-widest uppercase">Card</span>
                 </div>
-                <p className="text-[7px] text-pine/40 font-black uppercase tracking-[0.2em]">Secure Checkout Supported</p>
+                <p className="text-[8px] text-pine/30 font-bold uppercase tracking-[0.2em]">256-bit SSL · Square Verified</p>
               </div>
             </div>
             </>
@@ -579,93 +630,67 @@ export function CartDrawer(p: any) {
                       </div>
                     )}
 
-                    {/* Online Payment Requirement & Order Type Overview */}
-                    {!tableParam && (
-                      <div className="pt-2 space-y-2">
-                        <div className="p-4 border-2 border-terracotta/40 bg-gradient-to-br from-terracotta/5 to-amber-500/5 rounded-xl">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              <CreditCard size={18} className="text-terracotta" />
-                              <span className="font-bold text-xs uppercase tracking-wider text-pine">
-                                {isDeliveryOrder ? 'Driver Delivery • Pay Online' : 'Collection Order • Pay Online'}
-                              </span>
-                            </div>
-                            <span className="text-[10px] font-black uppercase tracking-wider bg-terracotta text-white px-2.5 py-0.5 rounded-full">
-                              Apple Pay / Google Pay / Card
+                    {/* Order & Delivery Summary (Only shown if delivery or promo active) */}
+                    {!tableParam && (isDeliveryOrder || promoDiscount > 0) && (
+                      <div className="p-3.5 bg-white border border-pine/10 rounded-xl space-y-2 text-xs">
+                        {promoDiscount > 0 && (
+                          <div className="flex items-center justify-between text-emerald-800 font-bold bg-emerald-50 px-2.5 py-1.5 rounded-lg">
+                            <span>🎁 Online Promotion Applied</span>
+                            <span>-£{promoDiscount.toFixed(2)}</span>
+                          </div>
+                        )}
+                        {isDeliveryOrder && (
+                          <div className="flex items-center justify-between font-bold text-pine">
+                            <span>
+                              {activeDeliveryTier?.isValid && activeDeliveryTier.tier
+                                ? `Delivery (${activeDeliveryTier.outcode})`
+                                : 'Delivery Fee'}
+                            </span>
+                            <span className={deliveryFee === 0 ? 'text-emerald-700 font-black' : 'text-pine font-black'}>
+                              {deliveryFee === 0
+                                ? `FREE (Over £${activeDeliveryTier?.tier?.freeDeliveryThreshold || 35})`
+                                : `£${deliveryFee.toFixed(2)}`}
                             </span>
                           </div>
-                          <p className="text-xs font-medium text-pine/80 leading-relaxed">
-                            {isDeliveryOrder
-                              ? `Food is freshly prepared and delivered hot by our in-house drivers (~${activeDeliveryTier?.tier?.estimatedMinutes || 40} mins).`
-                              : 'Food is freshly cooked upon payment. 1-touch checkout with Apple Pay, Google Pay, or Card.'}
-                          </p>
-                          {promoDiscount > 0 && (
-                            <p className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-md mt-2 flex items-center gap-1.5">
-                              <span>🎁</span>
-                              <span>Online promotion applied: -£{promoDiscount.toFixed(2)} (Online Exclusive)</span>
-                            </p>
-                          )}
-                          {isDeliveryOrder && (
-                            <div className="mt-2 pt-2 border-t border-pine/10 flex items-center justify-between text-xs font-bold text-pine">
-                              <span>
-                                {activeDeliveryTier?.isValid && activeDeliveryTier.tier
-                                  ? `Delivery to ${activeDeliveryTier.outcode}:`
-                                  : 'Delivery Fee:'}
-                              </span>
-                              <span className={deliveryFee === 0 ? 'text-emerald-700 font-black' : 'text-pine font-black'}>
-                                {deliveryFee === 0
-                                  ? `FREE (Qualified over £${activeDeliveryTier?.tier?.freeDeliveryThreshold || 35})`
-                                  : `£${deliveryFee.toFixed(2)}`}
-                              </span>
-                            </div>
-                          )}
-                        </div>
+                        )}
                       </div>
                     )}
                     
-                    {/* Kitchen Prep SLA Notice */}
+                    {/* Compact Prep / Delivery Time Badge */}
                     {!tableParam && (
-                      <div className="bg-amber-50 border-2 border-amber-300 p-4 mt-4 rounded-xl">
-                        <div className="flex items-center gap-2 text-amber-900 font-black text-xs uppercase tracking-wider mb-1">
-                          <Clock size={16} className="text-amber-700 shrink-0" />
-                          <span>Estimated {isDeliveryOrder ? 'Delivery' : 'Prep'} Time: {isDeliveryOrder ? '35 – 45 Minutes' : '20 – 25 Minutes'}</span>
-                        </div>
-                        <p className="text-[11px] text-amber-900/80 leading-relaxed font-medium">
-                          {isDeliveryOrder
-                            ? 'Every dish is made fresh to order. Our drivers will dispatch as soon as the tandoor and karahis are completed.'
-                            : 'Every karahi, handi, and grill is prepared fresh to order. To ensure food is piping hot and prevent counter queues, please do not arrive before your tracker confirms Ready for Pickup.'}
-                        </p>
+                      <div className="flex items-center gap-2.5 bg-amber-50 border border-amber-200/80 px-4 py-2.5 rounded-xl text-xs text-amber-950 font-medium">
+                        <Clock size={15} className="text-amber-700 shrink-0" />
+                        <span>Estimated {isDeliveryOrder ? 'delivery' : 'prep'} time: <strong className="font-bold">{isDeliveryOrder ? '35–45 mins' : '20–25 mins'}</strong></span>
                       </div>
                     )}
                     
-                    {/* GDPR Marketing Opt-in */}
-                    <div className="flex items-start gap-4 mt-4 bg-white p-5 border border-pine/10 shadow-sm cursor-pointer group rounded-xl" onClick={() => setMarketingOptIn(!marketingOptIn)}>
-                      <div className="pt-0.5 shrink-0">
-                        <div className={`w-10 h-5 rounded-full transition-colors duration-300 ease-in-out relative ${marketingOptIn ? 'bg-terracotta' : 'bg-pine/20'}`}>
-                          <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-300 ease-in-out ${marketingOptIn ? 'translate-x-5' : 'translate-x-0'}`}></div>
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <label className="text-xs font-bold text-pine leading-relaxed cursor-pointer block select-none">
-                          I would like to receive exclusive offers, secret menu drops, and birthday rewards via email or SMS. 
-                        </label>
-                        <span className="block text-[9px] text-pine/50 mt-1.5 uppercase tracking-widest font-bold">We respect your privacy. Unsubscribe at any time.</span>
-                      </div>
-                    </div>
+                    {/* Clean GDPR Marketing Opt-in */}
+                    <label className="flex items-center gap-3 p-3.5 bg-white border border-pine/10 rounded-xl cursor-pointer hover:border-pine/20 transition-all select-none group">
+                      <input 
+                        type="checkbox" 
+                        checked={marketingOptIn} 
+                        onChange={() => setMarketingOptIn(!marketingOptIn)} 
+                        className="w-4 h-4 accent-terracotta rounded cursor-pointer shrink-0" 
+                      />
+                      <span className="text-xs text-pine/80 font-medium group-hover:text-pine transition-colors">
+                        Keep me updated with exclusive VIP offers and rewards
+                      </span>
+                    </label>
                   </div>
                 </div>
 
                 {/* Pinned Bottom in Left Column */}
                 <div className="shrink-0 p-5 md:px-8 border-t border-pine/10 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.04)] z-20 space-y-3">
                       {isKitchenClosed && (
-                        <div className="bg-pine/10 text-pine rounded-xl p-3 mb-4 text-center text-sm font-bold">
-                          🕐 Kitchen opens at 12:00 PM — Browse our menu and order when we open!
+                        <div className="bg-amber-500/10 border border-amber-500/20 text-pine rounded-xl p-2.5 mb-2 text-center text-xs font-semibold flex items-center justify-center gap-1.5">
+                          <Clock size={13} className="text-amber-600 shrink-0" />
+                          <span><strong>Pre-Order:</strong> Scheduled for kitchen opening (10:00 AM)</span>
                         </div>
                       )}
                       <button
                         type="button"
                         onClick={(e) => {
-                          if (isKitchenClosed || isSubmitting || customerInfo.name.trim() === '' || customerInfo.phone.trim() === '' || customerInfo.email.trim() === '' || !!phoneError) return;
+                          if (isSubmitting || customerInfo.name.trim() === '' || customerInfo.phone.trim() === '' || customerInfo.email.trim() === '' || !!phoneError) return;
                           
                           // Delivery validation
                           if (isDeliveryOrder) {
@@ -695,7 +720,7 @@ export function CartDrawer(p: any) {
                             submitOrder(e as any, 'collection');
                           }
                         }}
-                        disabled={isKitchenClosed || isSubmitting || customerInfo.name.trim() === '' || customerInfo.phone.trim() === '' || customerInfo.email.trim() === '' || !!phoneError}
+                        disabled={isSubmitting || customerInfo.name.trim() === '' || customerInfo.phone.trim() === '' || customerInfo.email.trim() === '' || !!phoneError}
                         className="w-full py-4 md:py-5 px-6 bg-pine text-white font-black hover:bg-terracotta active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed uppercase tracking-[0.2em] shadow-xl hover:shadow-2xl relative overflow-hidden group rounded-xl"
                       >
                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
@@ -703,6 +728,8 @@ export function CartDrawer(p: any) {
                           <span>
                             {tableParam 
                               ? 'Complete Order' 
+                              : isKitchenClosed
+                              ? 'Pre-Order for Opening (Apple Pay / Google Pay / Card)'
                               : 'Proceed to Payment (Apple Pay / Google Pay / Card)'
                             }
                           </span>
