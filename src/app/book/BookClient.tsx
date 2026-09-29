@@ -91,7 +91,7 @@ interface PreOrderItem extends MenuItem {
 }
 
 export default function BookClient() {
-  const { addBooking, bookings } = useStore();
+  const { bookings } = useStore();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -161,6 +161,16 @@ export default function BookClient() {
       return;
     }
 
+    // Date and time validation
+    if (!formData.date) {
+      alert('Please select a date for your reservation.');
+      return;
+    }
+    if (!formData.time) {
+      alert('Please select a time slot for your reservation.');
+      return;
+    }
+
     // UK phone validation
     if (!isValidUKMobile(formData.phone)) {
       setPhoneError(getPhoneError(formData.phone) || 'Please enter a valid UK mobile number (07XXX XXXXXX)');
@@ -175,8 +185,11 @@ export default function BookClient() {
       const booking: any = {
         id: bookingId,
         customerName: formData.name,
+        name: formData.name,
         customerPhone: normaliseUKPhone(formData.phone),
+        phone: normaliseUKPhone(formData.phone),
         email: formData.email || '',
+        customerEmail: formData.email || '',
         date: formData.date,
         time: formData.time,
         guests: formData.guests,
@@ -200,14 +213,29 @@ export default function BookClient() {
         booking.paymentMethod = paymentMethod;
       }
 
-      await addBooking(booking as any);
-      setConfirmedBooking({ ...booking, ...formData, preOrderItems, preOrderTotal, paymentMethod });
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(booking),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to submit booking');
+      }
+
+      const data = await response.json();
+      const confirmedId = data.bookingId || data.id || bookingId;
+
+      setConfirmedBooking({ ...booking, id: confirmedId, ...formData, preOrderItems, preOrderTotal, paymentMethod });
       if (typeof window !== 'undefined') localStorage.setItem('last_booking_time', Date.now().toString());
 
       // WhatsApp notification
       const message = buildBookingWhatsAppMessage({
         ...formData,
-        id: bookingId,
+        id: confirmedId,
         branchName: LOCATIONS[formData.branch as keyof typeof LOCATIONS]?.name || 'HAYES',
         preOrderItems: preOrderItems.length > 0 ? preOrderItems : undefined,
         preOrderTotal: preOrderTotal > 0 ? preOrderTotal : undefined,
@@ -218,8 +246,8 @@ export default function BookClient() {
 
       setFormData(prev => ({ ...prev, name: '', phone: '', email: '', date: '', time: '', guests: 2, notes: '' }));
       setPreOrderItems([]);
-    } catch (e) {
-      alert('Error booking table.');
+    } catch (e: any) {
+      alert(e.message || 'Error booking table.');
     } finally {
       setIsSubmitting(false);
     }
@@ -349,9 +377,9 @@ export default function BookClient() {
               )}
             </div>
             <div>
-              <label className="block text-xs font-bold text-pine uppercase tracking-widest mb-2">Email (Optional)</label>
+              <label className="block text-xs font-bold text-pine uppercase tracking-widest mb-2">Email (Required)</label>
               <input
-                type="email"
+                type="email" required
                 className="w-full p-4 bg-bg-sand rounded-xl border border-pine/10 focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 outline-none transition-all text-pine font-medium"
                 value={formData.email}
                 onChange={e => setFormData({ ...formData, email: e.target.value })}

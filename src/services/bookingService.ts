@@ -1,16 +1,32 @@
-import { collection, addDoc, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { Booking } from '@/types';
-import { sendBookingNotificationEmail } from '@/services/emailService';
 
-export const createBooking = async (booking: Booking): Promise<void> => {
+export interface BookingResponse {
+  success: boolean;
+  bookingId: string;
+  id: string;
+  message?: string;
+}
+
+/**
+ * Creates a table booking by calling the server-side /api/bookings route.
+ * Replaces direct client-side Firestore writes with validated server execution.
+ */
+export const createBooking = async (booking: Partial<Booking> | Booking): Promise<BookingResponse> => {
   try {
-    await addDoc(collection(db, 'bookings'), {
-      ...booking,
-      createdAt: Timestamp.now()
+    const response = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(booking),
     });
-    
-    await sendBookingNotificationEmail(booking);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Booking request failed with status ${response.status}`);
+    }
+
+    return await response.json();
   } catch (error) {
     console.error('Error creating booking:', error);
     throw error;

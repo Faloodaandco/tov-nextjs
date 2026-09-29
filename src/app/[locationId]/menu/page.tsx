@@ -100,6 +100,7 @@ function MenuPageContent() {
   const [showReorderBanner, setShowReorderBanner] = useState(true);
   const [nameError, setNameError] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [allergenAcknowledged, setAllergenAcknowledged] = useState(false);
 
   // Table session (NFC tap-to-order) — null when ordering via web
   const tableSession = useRef<{ id: string; status: string } | null>(null).current;
@@ -1184,6 +1185,8 @@ function MenuPageContent() {
       activePromo={activePromo}
       desktopOrderSummary={desktopOrderSummary}
       tableSession={tableSession ?? undefined}
+      allergenAcknowledged={allergenAcknowledged}
+      setAllergenAcknowledged={setAllergenAcknowledged}
     />
 
       {/* ─── Size Picker Modal ─── */}

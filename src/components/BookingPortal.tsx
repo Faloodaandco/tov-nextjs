@@ -26,14 +26,18 @@ export const BookingPortal: React.FC = () => {
             await createBooking({
                 id: `BK-${Date.now()}`,
                 name: formData.customerName,
+                customerName: formData.customerName,
                 email: formData.customerEmail,
+                customerEmail: formData.customerEmail,
                 phone: formData.customerPhone,
+                customerPhone: formData.customerPhone,
                 date: formData.date,
                 time: formData.time,
                 guests: formData.guests,
                 notes: formData.notes,
                 status: 'pending',
-                location: SHOP_CONFIG.tenant_id
+                branch: 'hayes',
+                location: 'hayes',
             } as any);
 
             setStep(3); // Success step

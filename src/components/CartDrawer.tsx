@@ -418,7 +418,7 @@ export function CartDrawer(p: any) {
                             {activeLocation.id === 'hayes' ? (
                               <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl mb-6 shadow-sm">
                                 <p className="text-sm font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-2">
-                                  <span>🚗</span> Doorstep Delivery Available (Hayes Fleet)
+                                  <Truck size={15} className="text-emerald-700" /> Doorstep Delivery Available (Hayes Fleet)
                                 </p>
                                 <p className="text-xs text-emerald-800 font-bold mt-1">
                                   Hot &amp; fresh direct to your doorstep via our own in-house drivers! Serving UB4 (£2.99), UB3 (£3.99), UB10 (£4.99), UB8 (£5.99), UB7 (£6.99).
@@ -427,7 +427,7 @@ export function CartDrawer(p: any) {
                             ) : (
                               <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl mb-6 shadow-sm">
                                 <p className="text-sm font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-2">
-                                  <span>🚗</span> Doorstep Delivery Available (Slough Branch)
+                                  <Truck size={15} className="text-emerald-700" /> Doorstep Delivery Available (Slough Branch)
                                 </p>
                                 <p className="text-xs text-emerald-800 font-bold mt-1">
                                   Hot &amp; fresh direct to your doorstep via Square fulfillment! Serving SL1 (£3.50), SL2 (£3.99), SL3 (£4.99), SL4 (£5.99).
@@ -524,7 +524,7 @@ export function CartDrawer(p: any) {
                       <div className="space-y-4 p-5 bg-terracotta/5 border-2 border-terracotta/20 rounded-2xl mt-4">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-black uppercase tracking-wider text-terracotta flex items-center gap-1.5">
-                            <span>🚗</span> Delivery Address ({activeLocation.id === 'hayes' ? 'Hayes Fleet' : 'Slough Branch'})
+                            <Truck size={14} className="text-terracotta" /> Delivery Address ({activeLocation.id === 'hayes' ? 'Hayes Fleet' : 'Slough Branch'})
                           </span>
                           <span className="text-[10px] font-bold bg-terracotta/10 text-terracotta px-2 py-0.5 rounded-full">
                             {activeDeliveryTier?.tier ? `Min Order £${activeDeliveryTier.tier.minOrder.toFixed(2)}` : 'Min Order £15'}
@@ -766,7 +766,7 @@ export function CartDrawer(p: any) {
                         isDeliveryOrder ? (
                           <div className="bg-emerald-50 border border-emerald-200 p-4 mb-6 rounded-xl">
                             <p className="text-xs font-bold text-emerald-900 uppercase tracking-widest flex items-center gap-1.5">
-                              <span>🚗</span>
+                              <Truck size={14} className="text-emerald-700" />
                               Driver Delivery ({activeLocation.id === 'hayes' ? 'Hayes Fleet' : 'Slough Branch'})
                             </p>
                             <p className="text-[11px] text-emerald-800 mt-1 font-medium leading-relaxed">
@@ -787,11 +787,28 @@ export function CartDrawer(p: any) {
                       )}
                       
                       <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-xs text-amber-800">
-                        <p className="font-bold mb-1">⚠️ Allergen Notice</p>
-                        <p>Our dishes may contain nuts, gluten, dairy, and other allergens. If you have a food allergy, please call us before ordering: <a href={`tel:${activeLocation.phone}`} className="font-bold underline">{activeLocation.phone}</a></p>
+                        <p className="font-bold mb-1">⚠️ Food Allergy &amp; Intolerance Notice</p>
+                        <p>Our dishes may contain one or more of the 14 major allergens (celery, cereals containing gluten, crustaceans, eggs, fish, lupin, milk, molluscs, mustard, nuts, peanuts, sesame, soybeans, and sulphites). If you have a food allergy or intolerance, please call us before ordering: <a href={`tel:${activeLocation.phone}`} className="font-bold underline">{activeLocation.phone}</a></p>
+                        <label className="flex items-start gap-2.5 mt-3 cursor-pointer select-none group">
+                          <input
+                            type="checkbox"
+                            checked={p.allergenAcknowledged ?? false}
+                            onChange={(e) => p.setAllergenAcknowledged?.(e.target.checked)}
+                            className="mt-0.5 w-4 h-4 rounded border-amber-400 text-terracotta focus:ring-terracotta/30 accent-terracotta shrink-0"
+                          />
+                          <span className="text-[11px] leading-snug font-semibold text-amber-900 group-hover:text-amber-700 transition-colors">
+                            I acknowledge the allergen information above and confirm I have made the restaurant aware of any food allergies or intolerances.
+                          </span>
+                        </label>
                       </div>
 
                       {(activeLocation as any).square?.enabled && (activeLocation as any).square?.appId && (activeLocation as any).square?.locationId ? (
+                        <div className="relative">
+                          {!(p.allergenAcknowledged) && (
+                            <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-[2px] rounded-xl flex items-center justify-center">
+                              <p className="text-xs font-bold text-amber-800 text-center px-4">☝️ Please tick the allergen acknowledgement above to unlock payment</p>
+                            </div>
+                          )}
                         <SquarePaymentForm
                           total={finalCartTotal}
                           branchName={activeLocation.name}
@@ -837,6 +854,7 @@ export function CartDrawer(p: any) {
                           onCancel={() => setCheckoutStep('details')}
                           isSubmittingOrder={isSubmitting}
                         />
+                        </div>
                       ) : null}
                     </div>
                   </div>
