@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { LOCATIONS, LocationId, calculateServiceFee, calculatePromoDiscount, isEligibleForBreakfastPromo, ACTIVE_PROMO, haversineDistanceMiles, getDeliveryFeeByDistance } from '@/config/shopConfig';
 import { getMenuItems } from '@/services/menuService';
 import { adminDb } from '@/lib/firebaseAdmin';
+import { validateVoucher, redeemVoucher, issueFirstTimeBuyerPack, isFirstTimeBuyer, hasActiveVouchers } from '@/services/VoucherService';
 
 const DEVELOPER_ALERT_EMAILS = ['sales@tekrenewed.co.uk', 'sales@faloodaandco.co.uk'];
 
@@ -280,30 +281,72 @@ export async function POST(req: NextRequest) {
     const serverServiceFee = isDelivery ? calculateServiceFee(subtotalPence / 100, branchId) : 0;
     const serviceFeePence = Math.round(serverServiceFee * 100);
 
+    // ── Format Phone (early — needed for voucher validation) ─────────
+    let formattedPhone = String(customer.phone || '').trim().replace(/\s+/g, '');
+    if (formattedPhone.startsWith('0')) {
+      formattedPhone = '+44' + formattedPhone.slice(1);
+    } else if (formattedPhone.startsWith('44') && !formattedPhone.startsWith('+')) {
+      formattedPhone = '+' + formattedPhone;
+    }
+
     // ── Server-Side Discount Calculation ──────────────────────────────
     // Recalculate on the server — NEVER trust client-supplied discount amounts.
     // The cart items already have server-verified prices from the loop above.
+    //
+    // ANTI-STACKING RULE: Only ONE discount per order.
+    //  - If a voucher code (TOV30-/TOV50-) is provided, it takes priority.
+    //  - If BREAKFAST40 is provided (and no voucher), standard breakfast promo applies.
+    //  - Both cannot stack.
     let discountPence = 0;
     let discountLabel = '';
+    let voucherIdToRedeem: string | null = null;
 
     if (voucher_code) {
-      const cartForPromo = cart.map((item: any) => {
-        const found = activeMenu.find((m) => m.id === item.id);
-        return {
-          id: item.id || found?.id,
-          price: found?.price || item.price,
-          quantity: Math.max(1, Math.floor(Number(item.quantity || 1))),
-          category: found?.category || '',
-          name: found?.name || item.name || '',
-        };
-      });
+      const cleanVoucherCode = String(voucher_code).trim().toUpperCase();
 
-      const promoResult = calculatePromoDiscount(cartForPromo, voucher_code);
+      if (cleanVoucherCode === ACTIVE_PROMO.code) {
+        // ── Standard BREAKFAST40 Promo ──────────────────────────────────
+        const cartForPromo = cart.map((item: any) => {
+          const found = activeMenu.find((m) => m.id === item.id);
+          return {
+            id: item.id || found?.id,
+            price: found?.price || item.price,
+            quantity: Math.max(1, Math.floor(Number(item.quantity || 1))),
+            category: found?.category || '',
+            name: found?.name || item.name || '',
+          };
+        });
 
-      if (promoResult.discount > 0 && promoResult.isTimeValid) {
-        discountPence = Math.round(promoResult.discount * 100);
-        discountLabel = `🎟️ ${ACTIVE_PROMO.cartLabel}`;
-        console.info(`[Square] Promo ${voucher_code}: -£${promoResult.discount.toFixed(2)} on ${promoResult.eligibleItemsCount} items`);
+        const promoResult = calculatePromoDiscount(cartForPromo, cleanVoucherCode);
+
+        if (promoResult.discount > 0 && promoResult.isTimeValid) {
+          discountPence = Math.round(promoResult.discount * 100);
+          discountLabel = `ONLINE: ${ACTIVE_PROMO.cartLabel}`;
+          console.info(`[Square] Promo ${cleanVoucherCode}: -£${promoResult.discount.toFixed(2)} on ${promoResult.eligibleItemsCount} items`);
+        }
+      } else if (cleanVoucherCode.startsWith('TOV30-') || cleanVoucherCode.startsWith('TOV50-')) {
+        // ── Firestore-Validated Voucher (TOV30/TOV50) ──────────────────
+        try {
+          const voucherResult = await validateVoucher(
+            cleanVoucherCode,
+            formattedPhone,
+            branchId,
+            subtotalPence,
+          );
+
+          if (voucherResult.valid && voucherResult.discountPercent > 0) {
+            discountPence = Math.round(subtotalPence * (voucherResult.discountPercent / 100));
+            discountLabel = `ONLINE: VOUCHER ${cleanVoucherCode} (${voucherResult.discountPercent}% Off)`;
+            voucherIdToRedeem = voucherResult.voucherId;
+            console.info(`[Square] Voucher ${cleanVoucherCode}: -£${(discountPence / 100).toFixed(2)} (${voucherResult.discountPercent}%)`);
+          } else {
+            console.warn(`[Square] Voucher ${cleanVoucherCode} rejected: ${voucherResult.reason}`);
+            return NextResponse.json({ error: voucherResult.reason }, { status: 400 });
+          }
+        } catch (voucherErr) {
+          console.error('[Square] Voucher validation error:', voucherErr);
+          // Don't block checkout on voucher service failure — proceed without discount
+        }
       }
     }
 
@@ -361,14 +404,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // ── Format Phone ──────────────────────────────────────────────────
-    let formattedPhone = String(customer.phone || '').trim().replace(/\s+/g, '');
-    if (formattedPhone.startsWith('0')) {
-      formattedPhone = '+44' + formattedPhone.slice(1);
-    } else if (formattedPhone.startsWith('44') && !formattedPhone.startsWith('+')) {
-      formattedPhone = '+' + formattedPhone;
-    }
-
     // ── Build Fulfillment (PICKUP workaround — DELIVERY is restricted Beta) ──
     const ticketName = isDelivery
       ? `DELIVERY: ${String(customer.name).trim()} (${delivery_address?.postcode || ''})`
@@ -415,6 +450,11 @@ export async function POST(req: NextRequest) {
             currency: 'GBP',
           },
           scope: 'ORDER',
+          metadata: {
+            voucher_code: voucher_code || '',
+            channel: 'online',
+            branch: branchId,
+          },
         },
       ];
     }
@@ -526,6 +566,34 @@ export async function POST(req: NextRequest) {
 
     console.info(`[Square] Payment succeeded: ${squarePayment.id}`);
 
+    // ── Post-Payment: Redeem Voucher ────────────────────────────────
+    // Mark the voucher as used AFTER payment — never before.
+    if (voucherIdToRedeem) {
+      try {
+        await redeemVoucher(voucherIdToRedeem, squareOrder.id);
+      } catch (redeemErr) {
+        // Log but never fail — customer is already charged
+        console.error(`[Square] Voucher redemption failed for ${voucherIdToRedeem}:`, redeemErr);
+      }
+    }
+
+    // ── Post-Payment: First-Time Buyer Voucher Pack ─────────────────
+    // If this is the customer's first completed order AND they don't already
+    // have active vouchers, issue the welcome pack (3×50% + 2×30%).
+    let issuedVoucherCodes: string[] = [];
+    try {
+      const firstTime = await isFirstTimeBuyer(formattedPhone);
+      if (firstTime) {
+        const alreadyHasVouchers = await hasActiveVouchers(formattedPhone);
+        if (!alreadyHasVouchers) {
+          issuedVoucherCodes = await issueFirstTimeBuyerPack(formattedPhone, 'auto_first_order');
+        }
+      }
+    } catch (ftbErr) {
+      // Log but never fail — customer is already charged
+      console.error('[Square] First-time buyer check failed:', ftbErr);
+    }
+
     // ─────────────────────────────────────────────────────────────────
     // CRITICAL: Once payment succeeds, THE CUSTOMER HAS BEEN CHARGED.
     // Subsequent DB/email/push failures must NOT return an error.
@@ -593,6 +661,11 @@ export async function POST(req: NextRequest) {
 
         // ── Source ──
         source: 'Web',
+
+        // ── Voucher / Discount Tracking ──
+        voucherCode: voucher_code || null,
+        discountLabel: discountLabel || null,
+        issuedVoucherCodes: issuedVoucherCodes.length > 0 ? issuedVoucherCodes : null,
       });
       console.info(`[Square] Order ${cleanOrderId} persisted to Firestore`);
     } catch (dbErr) {

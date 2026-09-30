@@ -333,14 +333,41 @@ export function CartDrawer(p: any) {
                     />
                   </div>
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       const code = customVoucher.trim();
                       if (!code) return;
-                      if (code.startsWith('TOV30-') || code.startsWith('TOV50-')) {
-                        setAppliedVoucher(code);
+
+                      // BREAKFAST40 is handled locally (standard promo)
+                      if (code.toUpperCase() === 'BREAKFAST40') {
+                        setAppliedVoucher(null);
                         setVoucherError('');
-                      } else {
-                        setVoucherError('Invalid voucher code');
+                        // Breakfast promo is applied via activePromo in StoreContext
+                        return;
+                      }
+
+                      // All other codes (TOV30-/TOV50-) must be server-validated
+                      try {
+                        setVoucherError('');
+                        const res = await fetch('/api/vouchers/validate', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            code,
+                            phone: customerInfo?.phone || '',
+                            branchId: activeLocation.id,
+                            subtotalPence: Math.round(cartTotal * 100),
+                          }),
+                        });
+                        const result = await res.json();
+                        if (result.valid) {
+                          setAppliedVoucher(code);
+                          setVoucherError('');
+                        } else {
+                          setVoucherError(result.reason || 'Invalid voucher code');
+                          setAppliedVoucher(null);
+                        }
+                      } catch {
+                        setVoucherError('Could not validate voucher. Please try again.');
                         setAppliedVoucher(null);
                       }
                     }}

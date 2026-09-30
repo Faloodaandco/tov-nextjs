@@ -400,15 +400,16 @@ function MenuPageContent() {
     [cart, activePromo]
   );
   
-  const customPromoDiscount = useMemo(() => {
-    if (!appliedVoucher) return 0;
-    const code = appliedVoucher.toUpperCase();
-    if (code.startsWith('TOV30-')) return cartTotal * 0.30;
-    if (code.startsWith('TOV50-')) return cartTotal * 0.50;
-    return 0;
-  }, [appliedVoucher, cartTotal]);
+  // Server-validated voucher discount — set by CartDrawer after calling /api/vouchers/validate.
+  // NEVER calculated client-side from prefix matching.
+  const [voucherDiscountPercent, setVoucherDiscountPercent] = useState<number>(0);
+  const voucherDiscountAmount = useMemo(() => {
+    if (!appliedVoucher || voucherDiscountPercent <= 0) return 0;
+    return Math.round(cartTotal * (voucherDiscountPercent / 100) * 100) / 100;
+  }, [appliedVoucher, voucherDiscountPercent, cartTotal]);
 
-  const promoDiscount = customPromoDiscount > 0 ? customPromoDiscount : autoPromoDiscount;
+  // Anti-stacking: voucher wins over breakfast promo
+  const promoDiscount = voucherDiscountAmount > 0 ? voucherDiscountAmount : autoPromoDiscount;
   const isDeliveryOrder = !tableParam && fulfillmentType === 'delivery';
   const discountedSubtotal = Math.max(0, cartTotal - promoDiscount);
   const activeDeliveryTier = useMemo(() => {
