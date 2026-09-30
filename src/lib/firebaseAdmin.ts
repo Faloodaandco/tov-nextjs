@@ -19,13 +19,19 @@ if (!getApps().length) {
   if (base64Key) {
     // Vercel: decode base64-encoded service account JSON
     try {
-      const serviceAccount = JSON.parse(
-        Buffer.from(base64Key, 'base64').toString('utf-8')
-      );
+      const decoded = Buffer.from(base64Key, 'base64').toString('utf-8');
+      const serviceAccount = JSON.parse(decoded);
       adminApp = initializeApp({
-        credential: cert(serviceAccount),
+        credential: cert({
+          projectId: serviceAccount.project_id,
+          clientEmail: serviceAccount.client_email,
+          // cert() expects the PEM key with real newlines, not escaped \\n
+          privateKey: serviceAccount.private_key?.replace(/\\n/g, '\n'),
+        }),
         projectId: serviceAccount.project_id || 'taste-of-village-21052',
       });
+      // eslint-disable-next-line no-console
+      console.info('[FirebaseAdmin] Initialized with FIREBASE_SERVICE_ACCOUNT_BASE64');
     } catch (parseErr) {
       console.error('[FirebaseAdmin] Failed to parse FIREBASE_SERVICE_ACCOUNT_BASE64:', parseErr);
       // Fall through to ADC
@@ -38,6 +44,8 @@ if (!getApps().length) {
     adminApp = initializeApp({
       projectId: 'taste-of-village-21052',
     });
+    // eslint-disable-next-line no-console
+    console.info('[FirebaseAdmin] Initialized with ADC (no FIREBASE_SERVICE_ACCOUNT_BASE64)');
   }
 } else {
   adminApp = getApps()[0];
