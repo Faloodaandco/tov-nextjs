@@ -1,6 +1,5 @@
 import { initializeApp, getApps, cert, App } from 'firebase-admin/app';
 import { getFirestore, Firestore } from 'firebase-admin/firestore';
-import { getAuth, Auth } from 'firebase-admin/auth';
 
 if (typeof window !== 'undefined') {
   throw new Error('Firebase Admin SDK cannot be used on the client side.');
@@ -25,8 +24,7 @@ if (!getApps().length) {
         credential: cert({
           projectId: serviceAccount.project_id,
           clientEmail: serviceAccount.client_email,
-          // cert() expects the PEM key with real newlines, not escaped \\n
-          privateKey: serviceAccount.private_key?.replace(/\\n/g, '\n'),
+          privateKey: serviceAccount.private_key,
         }),
         projectId: serviceAccount.project_id || 'taste-of-village-21052',
       });
@@ -52,5 +50,4 @@ if (!getApps().length) {
 }
 
 export const adminDb: Firestore = getFirestore(adminApp);
-export const adminAuth: Auth = getAuth(adminApp);
 export { adminApp };
