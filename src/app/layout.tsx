@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Cinzel, Outfit } from "next/font/google";
 import Providers from "./providers";
@@ -17,6 +17,15 @@ const outfit = Outfit({
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: "cover",
+  themeColor: "#14281D",
+};
 
 export const metadata: Metadata = {
   title: {

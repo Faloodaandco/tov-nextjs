@@ -82,6 +82,14 @@ export default function SloughBreakfastPage() {
               "@type": "Answer",
               "text": "Yes, our entire menu, including our traditional Pakistani breakfast, is 100% Halal certified."
             }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you offer discounts on weekend breakfast in Slough?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! Taste of Village offers 40% OFF all breakfast items every Saturday and Sunday until 2:00 PM with code BREAKFAST40 when ordering online or for collection."
+            }
           }
         ]
       }
@@ -150,6 +158,10 @@ export default function SloughBreakfastPage() {
               <strong className="text-pine block">Is your breakfast Halal?</strong>
               Yes, our entire menu, including our traditional Pakistani breakfast, is 100% Halal certified.
             </div>
+            <div>
+              <strong className="text-pine block">Do you offer discounts on weekend breakfast?</strong>
+              Yes! We run <strong>40% OFF all breakfast menu items every Saturday &amp; Sunday from 10:00 AM till 2:00 PM</strong>. Use promo code <strong className="text-terracotta">BREAKFAST40</strong> at checkout or claim it directly through our website.
+            </div>
           </div>
         </div>
 
@@ -196,8 +208,8 @@ export default function SloughBreakfastPage() {
           </div>
 
           <div className="flex justify-center gap-4">
-            <Link href="/slough/menu" className="px-8 py-4 bg-terracotta text-white rounded-full font-bold hover:shadow-lg transition-all">
-              View Menu & Order
+            <Link href="/slough/menu?promo=BREAKFAST40" className="px-8 py-4 bg-terracotta text-white rounded-full font-bold hover:shadow-lg transition-all">
+              Order Breakfast (40% Off Weekends)
             </Link>
           </div>
         </div>
