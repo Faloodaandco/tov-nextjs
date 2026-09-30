@@ -207,8 +207,10 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
               applePayRef.current = applePay;
               setIsApplePayReady(true);
               setHasDigitalWallets(true);
+              console.info('[SquarePaymentForm] Apple Pay ready');
             }
           } catch (applePayErr: any) {
+            console.warn('[SquarePaymentForm] Apple Pay unavailable:', applePayErr?.message || applePayErr);
           }
         })();
 
@@ -226,6 +228,7 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
               });
               googlePayRef.current = googlePay;
               setHasDigitalWallets(true);
+              console.info('[SquarePaymentForm] Google Pay attached successfully');
 
               gpayContainer.onclick = async (e) => {
                 e.preventDefault();
@@ -271,6 +274,7 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
               };
             }
           } catch (gPayErr: any) {
+            console.warn('[SquarePaymentForm] Google Pay unavailable:', gPayErr?.message || gPayErr);
           }
         })();
 

@@ -28,12 +28,19 @@ export default function TrackOrder() {
   const prevStatus = useRef<string>('');
 
   useEffect(() => {
-    if (orderId) requestPushPermission(orderId);
-    let cleanup: any = null;
-    setupForegroundNotifications((payload) => {
+    if (orderId) {
+      try {
+        requestPushPermission(orderId).catch(() => {});
+      } catch (e) {}
+    }
+    const unsubscribe = setupForegroundNotifications((payload) => {
       console.log('[TrackOrder] Foreground push alert received:', payload);
-    }).then((fn) => { cleanup = fn; });
-    return () => { if (typeof cleanup === 'function') cleanup(); };
+    });
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        try { unsubscribe(); } catch (e) {}
+      }
+    };
   }, [orderId]);
 
   // Poll order status via API (no direct Firestore reads — orders collection is staff-only)
