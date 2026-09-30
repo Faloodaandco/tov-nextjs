@@ -222,6 +222,41 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      // ── Ownership check: verify the loyaltyAccountId belongs to this phone ──
+      // Prevents draining another customer's points with a forged accountId.
+      const customerSearch = await fetch(`${squareBaseUrl}/v2/customers/search`, {
+        method: 'POST',
+        headers: squareHeaders,
+        body: JSON.stringify({ query: { filter: { phone_number: { exact: formattedPhone } } } }),
+      });
+
+      let verifiedCustomerId: string | null = null;
+      if (customerSearch.ok) {
+        const customerData = await customerSearch.json();
+        verifiedCustomerId = customerData.customers?.[0]?.id || null;
+      }
+
+      if (!verifiedCustomerId) {
+        return NextResponse.json({ error: 'Customer not found for this phone number' }, { status: 403 });
+      }
+
+      // Look up their loyalty account
+      const loyaltySearch = await fetch(`${squareBaseUrl}/v2/loyalty/accounts/search`, {
+        method: 'POST',
+        headers: squareHeaders,
+        body: JSON.stringify({ query: { customer_ids: [verifiedCustomerId] } }),
+      });
+
+      if (loyaltySearch.ok) {
+        const loyaltyData = await loyaltySearch.json();
+        const matchedAccount = loyaltyData.loyalty_accounts?.find((a: any) => a.id === loyaltyAccountId);
+        if (!matchedAccount) {
+          return NextResponse.json({ error: 'Loyalty account does not belong to this phone number' }, { status: 403 });
+        }
+      } else {
+        return NextResponse.json({ error: 'Failed to verify loyalty account ownership' }, { status: 500 });
+      }
+
       const createRewardRes = await fetch(`${squareBaseUrl}/v2/loyalty/rewards`, {
         method: 'POST',
         headers: squareHeaders,

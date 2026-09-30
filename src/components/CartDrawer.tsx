@@ -346,7 +346,7 @@ export function CartDrawer(p: any) {
                         return;
                       }
 
-                      // All other codes (TOV30-/TOV50-) must be server-validated
+                      // All other codes: try vouchers first, then promos as fallback
                       try {
                         setVoucherError('');
                         const res = await fetch('/api/vouchers/validate', {
@@ -364,11 +364,27 @@ export function CartDrawer(p: any) {
                           setAppliedVoucher(code);
                           setVoucherError('');
                         } else {
-                          setVoucherError(result.reason || 'Invalid voucher code');
-                          setAppliedVoucher(null);
+                          // Voucher not found — try promos collection as fallback
+                          const promoRes = await fetch('/api/promos/validate', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              code,
+                              branchId: activeLocation.id,
+                              subtotalPence: Math.round(cartTotal * 100),
+                            }),
+                          });
+                          const promoResult = await promoRes.json();
+                          if (promoResult.valid) {
+                            setAppliedVoucher(code);
+                            setVoucherError('');
+                          } else {
+                            setVoucherError(promoResult.reason || result.reason || 'Invalid code');
+                            setAppliedVoucher(null);
+                          }
                         }
                       } catch {
-                        setVoucherError('Could not validate voucher. Please try again.');
+                        setVoucherError('Could not validate code. Please try again.');
                         setAppliedVoucher(null);
                       }
                     }}

@@ -347,8 +347,42 @@ export async function POST(req: NextRequest) {
           console.error('[Square] Voucher validation error:', voucherErr);
           // Don't block checkout on voucher service failure — proceed without discount
         }
+      } else {
+        // ── Custom Promo from Firestore promos collection ─────────────
+        try {
+          const promoDocRef = adminDb.collection('promos').doc(cleanVoucherCode);
+          const promoSnap = await promoDocRef.get();
+
+          if (promoSnap.exists) {
+            const promo = promoSnap.data();
+            const now = new Date();
+            const isValid = promo
+              && promo.active
+              && new Date(promo.startDate) <= now
+              && new Date(promo.endDate) >= now
+              && (promo.maxRedemptions <= 0 || promo.currentRedemptions < promo.maxRedemptions)
+              && (promo.branches || []).includes(branchId)
+              && subtotalPence >= (promo.minOrderPence || 0);
+
+            if (isValid) {
+              if (promo.discountType === 'FIXED_AMOUNT' && promo.fixedAmountPence) {
+                discountPence = Math.min(promo.fixedAmountPence, subtotalPence);
+                discountLabel = `ONLINE: PROMO ${cleanVoucherCode} (-£${(discountPence / 100).toFixed(2)})`;
+              } else {
+                discountPence = Math.round(subtotalPence * ((promo.discountPercent || 0) / 100));
+                discountLabel = `ONLINE: PROMO ${cleanVoucherCode} (${promo.discountPercent}% Off)`;
+              }
+              console.info(`[Square] Custom promo ${cleanVoucherCode}: -£${(discountPence / 100).toFixed(2)}`);
+            } else {
+              console.warn(`[Square] Custom promo ${cleanVoucherCode} invalid at checkout`);
+            }
+          }
+        } catch (promoErr) {
+          console.error('[Square] Custom promo validation error:', promoErr);
+        }
       }
     }
+
 
     if (subtotalPence < 50) {
       return NextResponse.json({ error: 'Minimum order is £0.50' }, { status: 400 });

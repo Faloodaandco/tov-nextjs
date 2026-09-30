@@ -106,23 +106,34 @@ export async function validateVoucher(
 
 /**
  * Marks a voucher as used after successful payment.
+ * Uses a Firestore transaction to prevent race conditions on concurrent requests.
  * Called ONLY after Square payment confirmation — never before.
  */
 export async function redeemVoucher(voucherId: string, orderId: string): Promise<void> {
   const voucherRef = adminDb.collection(COLLECTION).doc(voucherId);
-  const voucherSnap = await voucherRef.get();
-  if (!voucherSnap.exists) return;
+  const { FieldValue } = await import('firebase-admin/firestore');
 
-  const voucher = voucherSnap.data() as Voucher;
-  const newCount = voucher.usedCount + 1;
+  await adminDb.runTransaction(async (tx) => {
+    const voucherSnap = await tx.get(voucherRef);
+    if (!voucherSnap.exists) return;
 
-  await voucherRef.update({
-    usedCount: newCount,
-    usedOrderIds: [...voucher.usedOrderIds, orderId],
-    status: newCount >= voucher.maxUses ? 'exhausted' : 'active',
+    const voucher = voucherSnap.data() as Voucher;
+
+    // Already exhausted — abort
+    if (voucher.usedCount >= voucher.maxUses) {
+      console.warn(`[Voucher] ${voucher.code} already exhausted (${voucher.usedCount}/${voucher.maxUses})`);
+      return;
+    }
+
+    const newCount = voucher.usedCount + 1;
+    tx.update(voucherRef, {
+      usedCount: FieldValue.increment(1),
+      usedOrderIds: FieldValue.arrayUnion(orderId),
+      status: newCount >= voucher.maxUses ? 'exhausted' : 'active',
+    });
+
+    console.info(`[Voucher] Redeemed ${voucher.code} for order ${orderId} (${newCount}/${voucher.maxUses} uses)`);
   });
-
-  console.info(`[Voucher] Redeemed ${voucher.code} for order ${orderId} (${newCount}/${voucher.maxUses} uses)`);
 }
 
 /**
@@ -143,7 +154,7 @@ export async function issueFirstTimeBuyerPack(
 
   // 3× 50% vouchers (Hayes only, min £50)
   for (let i = 0; i < 3; i++) {
-    const code = `TOV50-${Math.floor(1000 + Math.random() * 9000)}`;
+    const code = `TOV50-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
     const ref = adminDb.collection(COLLECTION).doc();
     batch.set(ref, {
       code,
@@ -165,7 +176,7 @@ export async function issueFirstTimeBuyerPack(
 
   // 2× 30% vouchers (all branches, no minimum)
   for (let i = 0; i < 2; i++) {
-    const code = `TOV30-${Math.floor(1000 + Math.random() * 9000)}`;
+    const code = `TOV30-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
     const ref = adminDb.collection(COLLECTION).doc();
     batch.set(ref, {
       code,
