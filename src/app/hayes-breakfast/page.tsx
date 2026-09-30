@@ -115,6 +115,25 @@ export default function HayesBreakfastPage() {
           </p>
         </div>
 
+        {/* Weekend 40% Off Promotional Banner */}
+        <div className="bg-gradient-to-r from-terracotta to-terracotta/90 text-white p-6 sm:p-8 rounded-[2rem] shadow-lg mb-12 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="space-y-1 text-center sm:text-left">
+            <span className="inline-block bg-white/20 text-white text-[11px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-1">
+              Weekend Exclusive Offer
+            </span>
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold">40% OFF Weekend Breakfast</h2>
+            <p className="text-white/80 text-sm max-w-md">
+              Enjoy 40% off all breakfast items every Saturday &amp; Sunday till 2:00 PM with code <strong className="text-white underline decoration-white/50">BREAKFAST40</strong>.
+            </p>
+          </div>
+          <Link
+            href="/hayes/menu?promo=BREAKFAST40"
+            className="px-6 py-3 bg-white text-terracotta font-black text-xs uppercase tracking-wider rounded-full hover:bg-pine hover:text-white transition-all shadow-md shrink-0 active:scale-95"
+          >
+            Claim 40% Off
+          </Link>
+        </div>
+
         {/* AEO (Answer Engine Optimization) Block */}
         <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-brand-text/5 mb-16">
           <h2 className="font-serif text-2xl mb-4 text-pine">Frequently Asked Questions</h2>

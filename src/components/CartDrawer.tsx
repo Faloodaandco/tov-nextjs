@@ -421,7 +421,7 @@ export function CartDrawer(p: any) {
                 {activePromo === 'BREAKFAST40' && promoDiscount === 0 && (
                   <div className="text-[11px] text-pine/50 font-medium italic">
                     {!isPromoTimeValid
-                      ? 'BREAKFAST40 is valid 9:00 AM – 2:00 PM only.'
+                      ? 'BREAKFAST40 is valid on Weekends (Sat & Sun) till 2:00 PM only.'
                       : 'Add breakfast items to your cart to get 40% off.'}
                   </div>
                 )}

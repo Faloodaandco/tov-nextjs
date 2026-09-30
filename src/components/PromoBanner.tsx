@@ -21,19 +21,19 @@ export const PromoBanner = () => {
     return () => clearInterval(timer);
   }, []);
 
-  if (!isVisible || !ACTIVE_PROMO.enabled || !isPromoHours) return null;
+  if (!isVisible || !ACTIVE_PROMO.enabled) return null;
 
   const handleApplyPromo = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!isPromoHours) {
-      setStatusMessage('⏰ Breakfast promo is only valid between 9:00 AM and 2:00 PM!');
-      setTimeout(() => setStatusMessage(null), 4000);
+      setStatusMessage('⏰ Weekend promo: Valid Saturdays & Sundays from 10:00 AM till 2:00 PM!');
+      setTimeout(() => setStatusMessage(null), 4500);
       return;
     }
 
     setActivePromo('BREAKFAST40');
     setStatusMessage('✓ 40% OFF CODE APPLIED TO BREAKFAST ITEMS!');
-    setTimeout(() => setStatusMessage(null), 4000);
+    setTimeout(() => setStatusMessage(null), 4500);
   };
 
   const isHayes = activeLocation?.id === 'hayes';
@@ -58,7 +58,7 @@ export const PromoBanner = () => {
                 <Clock size={14} className="opacity-80 flex-shrink-0" />
               )}
               <span className="uppercase font-black">
-                {ACTIVE_PROMO.bannerHeadline} (9:00 AM – 2:00 PM) {isHayes ? '• Hayes' : ''}
+                {ACTIVE_PROMO.bannerHeadline} (Sat &amp; Sun till 2:00 PM) {isHayes ? '• Hayes' : '• Slough'}
               </span>
               <span className="hidden sm:inline opacity-75">•</span>
               <span className="hidden sm:inline underline decoration-white/80 underline-offset-2">
@@ -67,7 +67,7 @@ export const PromoBanner = () => {
                 ) : isPromoHours ? (
                   'Tap to apply code BREAKFAST40'
                 ) : (
-                  'Valid 9am–2pm daily on breakfast items'
+                  'Valid Weekends 10am–2pm on all breakfast items'
                 )}
               </span>
             </button>

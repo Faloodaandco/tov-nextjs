@@ -348,6 +348,9 @@ export const BREAKFAST_PROMO_ELIGIBLE_IDS = new Set<string>([
   'tov_slough_halwapuri',              // Halwa Puri
   'tov_slough_pathorachanna',          // Pathora Channa (Bhaturay)
   'tov_slough_lambpaya',               // Lamb Paya
+  'tov_slough_nihari',                 // Nihari
+  'tov_slough_haleem',                 // Haleem
+  'tov_slough_channaparatha',          // Channa Paratha
 ]);
 
 export const BREAKFAST_PROMO_ELIGIBLE_NAMES = [
@@ -363,6 +366,11 @@ export const BREAKFAST_PROMO_ELIGIBLE_NAMES = [
   'chola bhatura',
   'pathora channa',
   'pathora chana',
+  'nihari',
+  'lamb nihari',
+  'haleem',
+  'lamb haleem',
+  'channa paratha',
 ] as const;
 
 /**
@@ -373,33 +381,44 @@ export const ACTIVE_PROMO = {
   code: 'BREAKFAST40',
   multiplier: 0.6,
   percentOff: 40,
-  cartLabel: 'BREAKFAST40 (40% Off Breakfast)',
-  floatingLabel: '-40% OFF BREAKFAST',
-  bannerHeadline: '40% OFF BREAKFAST!',
-  bannerSubtitle: 'Start your morning with our traditional Desi Nashta.',
-  bannerFinePrint: 'Valid 9:00 AM – 2:00 PM on breakfast items only.',
-  startHour: 9, // 09:00 AM
-  endHour: 14,  // 02:00 PM (14:00)
+  cartLabel: 'BREAKFAST40 (40% Off Weekend Breakfast)',
+  floatingLabel: '-40% OFF WEEKEND BREAKFAST',
+  bannerHeadline: 'WEEKEND 40% OFF BREAKFAST!',
+  bannerSubtitle: '40% off all breakfast items every Saturday & Sunday till 2:00 PM.',
+  bannerFinePrint: 'Valid Saturday & Sunday 10:00 AM – 2:00 PM on all breakfast items.',
+  startHour: 10, // 10:00 AM (Kitchen Open)
+  endHour: 14,   // 02:00 PM (14:00)
+  weekendsOnly: true,
   eligibleItemNames: [
     'Halwa Puri',
     'Desi Breakfast',
     'Paya',
     'Bhaturay',
+    'Nihari',
+    'Haleem',
+    'Channa Paratha',
   ] as const,
 } as const;
 
 /**
- * Checks if the breakfast promotion is currently within valid operating hours (09:00 - 14:00 UK time).
- * Strictly enforced in Europe/London timezone.
+ * Checks if the breakfast promotion is currently active.
+ * STRICT RULES:
+ *  - Weekends ONLY (Saturday & Sunday in Europe/London timezone)
+ *  - Operating hours: 10:00 AM to 14:00 (2:00 PM) UK time
  */
 export function isBreakfastPromoTime(date: Date = new Date()): boolean {
   try {
     const parts = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Europe/London',
+      weekday: 'short',
       hour: 'numeric',
       minute: 'numeric',
       hourCycle: 'h23',
     }).formatToParts(date);
+
+    const weekday = parts.find(p => p.type === 'weekday')?.value ?? '';
+    const isWeekend = weekday === 'Sat' || weekday === 'Sun';
+    if (!isWeekend) return false;
 
     const hourStr = parts.find(p => p.type === 'hour')?.value ?? '0';
     const minStr = parts.find(p => p.type === 'minute')?.value ?? '0';
@@ -407,11 +426,15 @@ export function isBreakfastPromoTime(date: Date = new Date()): boolean {
     const ukMinute = parseInt(minStr, 10);
     const ukTotalMinutes = ukHour * 60 + ukMinute;
 
-    const startMinutes = ACTIVE_PROMO.startHour * 60; // 09:00 AM (540 mins)
+    const startMinutes = ACTIVE_PROMO.startHour * 60; // 10:00 AM (600 mins)
     const endMinutes = ACTIVE_PROMO.endHour * 60;     // 02:00 PM (840 mins)
 
     return ukTotalMinutes >= startMinutes && ukTotalMinutes < endMinutes;
   } catch {
+    const day = date.getDay();
+    const isWeekend = day === 0 || day === 6; // 0 = Sunday, 6 = Saturday
+    if (!isWeekend) return false;
+
     const localHour = date.getHours();
     const localMinute = date.getMinutes();
     const localTotalMinutes = localHour * 60 + localMinute;
