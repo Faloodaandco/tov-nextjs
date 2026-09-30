@@ -7,6 +7,7 @@ import { isValidUKMobile } from '@/lib/validation';
 import { Phone, Star } from 'lucide-react';
 
 import QRCode from 'react-qr-code';
+import { formatCurrency } from '@/utils/formatters';
 const LiveOrderTracker = (p: any) => <div />;
 export function CartDrawer(p: any) {
   const {
@@ -143,7 +144,7 @@ export function CartDrawer(p: any) {
                     <div className="flex-1 min-w-0">
                       <h4 className="font-display font-bold text-base md:text-lg tracking-wider text-pine leading-tight truncate">{item.name}</h4>
                       {item.modifiers && <p className="text-[10px] text-pine/60 mt-0.5 uppercase tracking-widest">{item.modifiers.size}</p>}
-                      <p className="text-terracotta text-sm font-black mt-0.5 tabular-nums">£{(item.price * item.quantity).toFixed(2)}{item.quantity > 1 && <span className="text-pine/40 text-xs font-semibold ml-1.5">({item.quantity} × £{item.price.toFixed(2)})</span>}</p>
+                      <p className="text-terracotta text-sm font-black mt-0.5 tabular-nums">{formatCurrency((item.price * item.quantity))}{item.quantity > 1 && <span className="text-pine/40 text-xs font-semibold ml-1.5">({item.quantity} × {formatCurrency(item.price)})</span>}</p>
                     </div>
                     <div className="flex items-center gap-3 bg-white border border-pine/20 px-3 py-1.5 rounded-full shadow-sm shrink-0">
                       <button className="text-pine/60 hover:text-terracotta transition-colors font-black" title="Decrease quantity" onClick={() => updateQuantity(item._cartKey || item.id, item.quantity - 1)}><Minus size={16} strokeWidth={3} /></button>
@@ -178,7 +179,7 @@ export function CartDrawer(p: any) {
                     }}
                     className="relative z-10 bg-pine text-bg-sand px-4 py-2 rounded-full font-bold text-xs shadow-sm hover:bg-terracotta transition-all uppercase tracking-wider"
                   >
-                    + £{upsellSuggestions[0].price.toFixed(2)}
+                    + {formatCurrency(upsellSuggestions[0].price)}
                   </button>
                 </div>
               )}
@@ -242,7 +243,7 @@ export function CartDrawer(p: any) {
                         </div>
                         <span className="font-bold bg-emerald-200/80 text-emerald-900 px-2 py-0.5 rounded text-[10px]">
                           {activeDeliveryTier?.isValid && activeDeliveryTier.tier
-                            ? (discountedSubtotal >= activeDeliveryTier.tier.freeDeliveryThreshold ? 'FREE DELIVERY' : `£${activeDeliveryTier.tier.fee.toFixed(2)} Fee`)
+                            ? (discountedSubtotal >= activeDeliveryTier.tier.freeDeliveryThreshold ? 'FREE DELIVERY' : `${formatCurrency(activeDeliveryTier.tier.fee)} Fee`)
                             : (activeLocation.id === 'slough' ? 'From £3.50' : 'From £2.99')}
                         </span>
                       </div>
@@ -318,7 +319,7 @@ export function CartDrawer(p: any) {
                             ✓ We deliver to {deliveryAddress.postcode}
                             {discountedSubtotal >= activeDeliveryTier.tier.freeDeliveryThreshold
                               ? ' — FREE delivery!'
-                              : ` — £${activeDeliveryTier.tier.fee.toFixed(2)} delivery fee (free over £${activeDeliveryTier.tier.freeDeliveryThreshold})`
+                              : ` — ${formatCurrency(activeDeliveryTier.tier.fee)} delivery fee (free over £${activeDeliveryTier.tier.freeDeliveryThreshold})`
                             }
                           </p>
                         )}
@@ -419,14 +420,14 @@ export function CartDrawer(p: any) {
               <div className="space-y-2.5 mb-6 text-pine pt-2 border-t border-pine/10">
                 <div className="flex justify-between items-center text-xs text-pine/60 font-semibold uppercase tracking-wider">
                   <span>Subtotal</span>
-                  <span className="tabular-nums">£{cartTotal.toFixed(2)}</span>
+                  <span className="tabular-nums">{formatCurrency(cartTotal)}</span>
                 </div>
                 {promoDiscount > 0 && (
                   <div className="flex justify-between items-center text-xs text-terracotta font-bold uppercase tracking-wider">
                     <span className="flex items-center gap-1.5">
                       <Ticket size={14} /> {appliedVoucher ? `${appliedVoucher} VOUCHER` : ACTIVE_PROMO.cartLabel}
                     </span>
-                    <span className="tabular-nums">-£{promoDiscount.toFixed(2)}</span>
+                    <span className="tabular-nums">-{formatCurrency(promoDiscount)}</span>
                   </div>
                 )}
                 {activePromo === 'BREAKFAST40' && promoDiscount === 0 && (
@@ -439,18 +440,18 @@ export function CartDrawer(p: any) {
                 {isDeliveryOrder && deliveryFee > 0 && (
                   <div className="flex justify-between items-center text-xs text-pine/60 font-semibold uppercase tracking-wider">
                     <span>Delivery Fee</span>
-                    <span className="tabular-nums">{deliveryFee === 0 ? 'FREE' : `£${deliveryFee.toFixed(2)}`}</span>
+                    <span className="tabular-nums">{deliveryFee === 0 ? 'FREE' : `${formatCurrency(deliveryFee)}`}</span>
                   </div>
                 )}
                 {serviceFee > 0 && (
                   <div className="flex justify-between items-center text-xs text-pine/60 font-semibold uppercase tracking-wider">
                     <span>Service Fee (10%)</span>
-                    <span className="tabular-nums">£{serviceFee.toFixed(2)}</span>
+                    <span className="tabular-nums">{formatCurrency(serviceFee)}</span>
                   </div>
                 )}
                 <div className="flex justify-between items-baseline pt-3 mt-1 border-t-2 border-pine/15">
                   <span className="font-display text-xs uppercase tracking-[0.2em] font-bold text-pine/70">Total</span>
-                  <span className="font-display text-2xl font-bold tabular-nums text-pine">£{finalCartTotal.toFixed(2)}</span>
+                  <span className="font-display text-2xl font-bold tabular-nums text-pine">{formatCurrency(finalCartTotal)}</span>
                 </div>
               </div>
               
@@ -463,8 +464,8 @@ export function CartDrawer(p: any) {
               {isBelowMinOrder && (
                 <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
                   <div className="flex justify-between text-xs font-bold text-amber-800 mb-2">
-                    <span>Minimum order for delivery: £{minOrder.toFixed(2)}</span>
-                    <span className="tabular-nums">£{minOrderRemaining.toFixed(2)} more</span>
+                    <span>Minimum order for delivery: {formatCurrency(minOrder)}</span>
+                    <span className="tabular-nums">{formatCurrency(minOrderRemaining)} more</span>
                   </div>
                   <div className="w-full bg-amber-200 rounded-full h-2 overflow-hidden">
                     <div className="bg-amber-600 h-full rounded-full transition-all duration-500" style={{ width: `${minOrderProgress}%` }} />
@@ -474,8 +475,8 @@ export function CartDrawer(p: any) {
               {isDeliveryOrder && !isBelowMinOrder && activeDeliveryTier?.tier?.freeDeliveryThreshold && discountedSubtotal < activeDeliveryTier.tier.freeDeliveryThreshold && (
                 <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
                   <div className="flex justify-between text-xs font-bold text-emerald-800 mb-2">
-                    <span className="flex items-center gap-1"><Truck size={12} /> Free delivery at £{activeDeliveryTier.tier.freeDeliveryThreshold.toFixed(2)}</span>
-                    <span className="tabular-nums">£{(activeDeliveryTier.tier.freeDeliveryThreshold - discountedSubtotal).toFixed(2)} more</span>
+                    <span className="flex items-center gap-1"><Truck size={12} /> Free delivery at {formatCurrency(activeDeliveryTier.tier.freeDeliveryThreshold)}</span>
+                    <span className="tabular-nums">{formatCurrency((activeDeliveryTier.tier.freeDeliveryThreshold - discountedSubtotal))} more</span>
                   </div>
                   <div className="w-full bg-emerald-200 rounded-full h-2 overflow-hidden">
                     <div className="bg-emerald-600 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, (discountedSubtotal / activeDeliveryTier.tier.freeDeliveryThreshold) * 100)}%` }} />
@@ -489,8 +490,8 @@ export function CartDrawer(p: any) {
               >
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
                 <span className="relative z-10 flex justify-between px-6 items-center w-full">
-                  <span>{isBelowMinOrder ? `Add £${minOrderRemaining.toFixed(2)} more` : 'Checkout'}</span>
-                  <span className="text-lg tabular-nums">£{finalCartTotal.toFixed(2)}</span>
+                  <span>{isBelowMinOrder ? `Add ${formatCurrency(minOrderRemaining)} more` : 'Checkout'}</span>
+                  <span className="text-lg tabular-nums">{formatCurrency(finalCartTotal)}</span>
                 </span>
               </button>
 
@@ -636,7 +637,7 @@ export function CartDrawer(p: any) {
                             <Truck size={14} className="text-terracotta" /> Delivery Address ({activeLocation.id === 'hayes' ? 'Hayes Fleet' : 'Slough Branch'})
                           </span>
                           <span className="text-[10px] font-bold bg-terracotta/10 text-terracotta px-2 py-0.5 rounded-full">
-                            {activeDeliveryTier?.tier ? `Min Order £${activeDeliveryTier.tier.minOrder.toFixed(2)}` : 'Min Order £15'}
+                            {activeDeliveryTier?.tier ? `Min Order ${formatCurrency(activeDeliveryTier.tier.minOrder)}` : 'Min Order £15'}
                           </span>
                         </div>
 
@@ -711,7 +712,7 @@ export function CartDrawer(p: any) {
                             <span>
                               {deliveryFee === 0
                                 ? 'FREE Delivery Qualified!'
-                                : `£${activeDeliveryTier.tier.fee.toFixed(2)} (Free over £${activeDeliveryTier.tier.freeDeliveryThreshold})`}
+                                : `${formatCurrency(activeDeliveryTier.tier.fee)} (Free over £${activeDeliveryTier.tier.freeDeliveryThreshold})`}
                             </span>
                           </div>
                         ) : postcodeError ? (
@@ -745,7 +746,7 @@ export function CartDrawer(p: any) {
                         {promoDiscount > 0 && (
                           <div className="flex items-center justify-between text-emerald-800 font-bold bg-emerald-50 px-2.5 py-1.5 rounded-lg">
                             <span>🎁 Online Promotion Applied</span>
-                            <span>-£{promoDiscount.toFixed(2)}</span>
+                            <span>-{formatCurrency(promoDiscount)}</span>
                           </div>
                         )}
                         {isDeliveryOrder && (
@@ -758,7 +759,7 @@ export function CartDrawer(p: any) {
                             <span className={deliveryFee === 0 ? 'text-emerald-700 font-black' : 'text-pine font-black'}>
                               {deliveryFee === 0
                                 ? `FREE (Over £${activeDeliveryTier?.tier?.freeDeliveryThreshold || 35})`
-                                : `£${deliveryFee.toFixed(2)}`}
+                                : `${formatCurrency(deliveryFee)}`}
                             </span>
                           </div>
                         )}
@@ -810,7 +811,7 @@ export function CartDrawer(p: any) {
                               return;
                             }
                             if (discountedSubtotal < tierCheck.tier.minOrder) {
-                              alert(`Minimum order for delivery to ${tierCheck.outcode} (${tierCheck.tier.areaName}) is £${tierCheck.tier.minOrder.toFixed(2)}. Please add more items to your cart.`);
+                              alert(`Minimum order for delivery to ${tierCheck.outcode} (${tierCheck.tier.areaName}) is ${formatCurrency(tierCheck.tier.minOrder)}. Please add more items to your cart.`);
                               return;
                             }
                             if (!deliveryAddress.line1.trim()) {
@@ -842,7 +843,7 @@ export function CartDrawer(p: any) {
                               : 'Proceed to Payment (Apple Pay / Google Pay / Card)'
                             }
                           </span>
-                          <span className="text-lg font-sans">£{finalCartTotal.toFixed(2)}</span>
+                          <span className="text-lg font-sans">{formatCurrency(finalCartTotal)}</span>
                         </span>
                       </button>
                       
@@ -1107,7 +1108,7 @@ export function CartDrawer(p: any) {
                             )}
                           </div>
                           <span className="font-bold text-pine font-sans shrink-0">
-                            £{((Number(item.price || 0)) * (Number(item.quantity || 1))).toFixed(2)}
+                            {formatCurrency(((Number(item.price || 0)) * (Number(item.quantity || 1))))}
                           </span>
                         </div>
                       ))}
@@ -1116,12 +1117,12 @@ export function CartDrawer(p: any) {
                       {completedOrder.discount > 0 && (
                         <div className="flex justify-between text-emerald-700 font-bold">
                           <span>Discount</span>
-                          <span>-£{Number(completedOrder.discount).toFixed(2)}</span>
+                          <span>-{formatCurrency(Number(completedOrder.discount))}</span>
                         </div>
                       )}
                       <div className="flex justify-between text-pine font-black text-sm pt-1">
                         <span>Total Paid</span>
-                        <span className="text-[#a64036]">£{Number(completedOrder.total || 0).toFixed(2)}</span>
+                        <span className="text-[#a64036]">{formatCurrency(Number(completedOrder.total || 0))}</span>
                       </div>
                     </div>
                   </div>

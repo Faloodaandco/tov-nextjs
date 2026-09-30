@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Cinzel, Outfit } from "next/font/google";
 import Providers from "./providers";
+import { MobileOrderDock } from "@/components/MobileOrderDock";
 import "./globals.css";
 
 const cinzel = Cinzel({
@@ -313,7 +314,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-pine focus:text-white focus:rounded-lg focus:text-sm">Skip to main content</a>
-        <Providers><main id="main-content">{children}</main></Providers>
+        <Providers><main id="main-content">{children}</main><MobileOrderDock /></Providers>
         {/* Microsoft Clarity */}
         <Script
           id="clarity"

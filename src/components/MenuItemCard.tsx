@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { MenuItem } from '@/types';
+import { formatCurrency } from '@/utils/formatters';
 
 interface MenuItemCardProps {
   item: MenuItem;
@@ -24,7 +25,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, quantityInCart
       key={item.id}
       role="button"
       tabIndex={0}
-      aria-label={`${item.name} - £${item.price?.toFixed(2) || '0.00'}${item.is86d ? ' (Sold out)' : ''}`}
+      aria-label={`${item.name} - ${formatCurrency(item.price || 0)}${item.is86d ? ' (Sold out)' : ''}`}
       className={`group flex flex-col cursor-pointer transition-all duration-700 relative animate-fade-in-up ${item.is86d ? 'opacity-60 grayscale' : ''}`}
       style={{ animationDelay: `${(index % 12) * 40}ms`, animationFillMode: 'both' }}
       onClick={onClick}
@@ -98,10 +99,10 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, quantityInCart
           </h3>
           <div className="flex flex-col items-end shrink-0 pt-1">
             {item.originalPrice && item.originalPrice > item.price && (
-              <span className="text-pine/40 line-through text-[10px] font-bold mb-0.5">£{item.originalPrice.toFixed(2)}</span>
+              <span className="text-pine/40 line-through text-[10px] font-bold mb-0.5">{formatCurrency(item.originalPrice)}</span>
             )}
             <span className="font-sans font-black text-terracotta text-lg tracking-wider">
-              {item.price === 0 ? 'FREE' : `£${item.price.toFixed(2)}`}
+              {item.price === 0 ? 'FREE' : `${formatCurrency(item.price)}`}
             </span>
           </div>
         </div>

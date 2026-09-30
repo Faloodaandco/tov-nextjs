@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { AlertTriangle, Info, ChevronDown, ChevronUp, Leaf } from 'lucide-react';
 import type { MenuItem, CartItem } from '@/types';
 import { Drawer } from '@/components/ui/Drawer';
+import { formatCurrency } from '@/utils/formatters';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -243,7 +244,7 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
                     <p className={`font-bold text-sm ${selectedVariant?.id === v.id ? 'text-terracotta' : 'text-pine'}`}>
                       {v.name}
                     </p>
-                    <p className="font-black text-pine mt-0.5">£{v.price_override.toFixed(2)}</p>
+                    <p className="font-black text-pine mt-0.5">{formatCurrency(v.price_override)}</p>
                   </button>
                 ))}
               </div>
@@ -306,7 +307,7 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
                       </div>
                       {opt.price_delta !== 0 && (
                         <span className={`text-sm font-bold ${isSelected ? 'text-terracotta' : 'text-pine/50'}`}>
-                          {opt.price_delta > 0 ? '+' : ''}£{opt.price_delta.toFixed(2)}
+                          {opt.price_delta > 0 ? '+' : ''}{formatCurrency(opt.price_delta)}
                         </span>
                       )}
                     </button>
@@ -439,7 +440,7 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
           >
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
             <span className="relative z-10">Add to Order</span>
-            <span className="relative z-10 font-sans font-black text-xl">£{totalPrice.toFixed(2)}</span>
+            <span className="relative z-10 font-sans font-black text-xl">{formatCurrency(totalPrice)}</span>
           </button>
 
           {missingRequired && (

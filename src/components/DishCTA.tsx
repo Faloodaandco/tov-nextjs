@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
 import { MenuItem } from '@/types';
 import { ShoppingBag, Share2 } from 'lucide-react';
+import { formatCurrency } from '@/utils/formatters';
 
 interface DishCTAProps {
   item: MenuItem;
@@ -24,7 +25,7 @@ export function DishCTA({ item, locationId }: DishCTAProps) {
 
   const handleShare = async () => {
     const url = `${window.location.origin}/${locationId}/menu/${window.location.pathname.split('/').pop()}`;
-    const text = `${item.name} — £${item.price.toFixed(2)} at Taste of Village`;
+    const text = `${item.name} — ${formatCurrency(item.price)} at Taste of Village`;
 
     if (navigator.share) {
       try {

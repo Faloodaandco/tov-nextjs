@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Loader2, Lock, CreditCard, AlertCircle } from 'lucide-react';
+import { formatCurrency } from '@/utils/formatters';
 
 interface CustomerDetails {
   name?: string;
@@ -522,7 +523,7 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
               <span>Preparing Secure Payment…</span>
             </>
           ) : (
-            buttonLabel || `Pay £${total.toFixed(2)} Securely →`
+            buttonLabel || `Pay ${formatCurrency(total)} Securely →`
           )}
         </button>
 

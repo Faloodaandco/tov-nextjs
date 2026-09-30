@@ -2,6 +2,7 @@ import React from 'react';
 import { X } from 'lucide-react';
 import { MenuItem } from '@/types';
 import { WEB_SIZE_ITEMS } from '@/data/menuStaticData';
+import { formatCurrency } from '@/utils/formatters';
 
 interface SizePickerModalProps {
   item: MenuItem | null;
@@ -64,7 +65,7 @@ export function SizePickerModal({ item, onClose, onAddToCart, setToastMessage }:
                     <p className="font-bold text-pine group-hover:text-terracotta transition-colors">Regular</p>
                     <p className="text-pine/40 text-xs">Standard serving</p>
                   </div>
-                  <span className="font-sans font-black text-terracotta text-lg">£{regularPrice.toFixed(2)}</span>
+                  <span className="font-sans font-black text-terracotta text-lg">{formatCurrency(regularPrice)}</span>
                 </button>
                 <button
                   onClick={() => {
@@ -78,7 +79,7 @@ export function SizePickerModal({ item, onClose, onAddToCart, setToastMessage }:
                     <p className="font-bold text-pine group-hover:text-terracotta transition-colors">{largeLabel}</p>
                     <p className="text-pine/40 text-xs">{largeDesc}</p>
                   </div>
-                  <span className="font-sans font-black text-pine text-lg">£{largePrice.toFixed(2)}</span>
+                  <span className="font-sans font-black text-pine text-lg">{formatCurrency(largePrice)}</span>
                 </button>
               </>
             );

@@ -6,6 +6,7 @@ import { MenuItem } from '@/types';
 import { useStore } from '@/context/StoreContext';
 import tovMenuData from '@/data/tov-menu.json';
 import tovMenuSloughData from '@/data/tov-menu-slough.json';
+import { formatCurrency } from '@/utils/formatters';
 
 interface UpsellDrawerProps {
   isOpen: boolean;
@@ -238,7 +239,7 @@ export const UpsellDrawer: React.FC<UpsellDrawerProps> = ({ isOpen, onClose, onP
                           {item.pairingReason}
                         </span>
                         <h4 className="font-bold text-pine text-sm truncate">{item.name}</h4>
-                        <p className="text-terracotta font-black text-sm mt-0.5">£{item.price.toFixed(2)}</p>
+                        <p className="text-terracotta font-black text-sm mt-0.5">{formatCurrency(item.price)}</p>
                       </div>
                     </div>
                     <button 

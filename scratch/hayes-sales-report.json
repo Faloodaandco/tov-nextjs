@@ -1,0 +1,215 @@
+{
+  "branch": "Taste Of Village Hayes",
+  "period": "2026-07-01 to 2026-09-30",
+  "totalRevenue": 243450.08,
+  "totalTransactions": 17770,
+  "overallAOV": 13.700060776589757,
+  "monthly": {
+    "2026-09": {
+      "count": 7022,
+      "revenuePence": 9504773
+    },
+    "2026-08": {
+      "count": 7685,
+      "revenuePence": 10574696
+    },
+    "2026-07": {
+      "count": 3063,
+      "revenuePence": 4265539
+    }
+  },
+  "dayparts": {
+    "morning_breakfast": {
+      "name": "Morning / Breakfast (09:00 - 12:00)",
+      "hours": [
+        9,
+        10,
+        11
+      ],
+      "count": 567,
+      "revenuePence": 674787
+    },
+    "lunch": {
+      "name": "Lunch Rush (12:00 - 15:00)",
+      "hours": [
+        12,
+        13,
+        14
+      ],
+      "count": 2579,
+      "revenuePence": 3372869
+    },
+    "happy_hours_afternoon": {
+      "name": "Afternoon / Happy Hours (15:00 - 18:00)",
+      "hours": [
+        15,
+        16,
+        17
+      ],
+      "count": 3147,
+      "revenuePence": 4045940
+    },
+    "peak_dinner": {
+      "name": "Peak Dinner Rush (18:00 - 22:00)",
+      "hours": [
+        18,
+        19,
+        20,
+        21
+      ],
+      "count": 7508,
+      "revenuePence": 9991243
+    },
+    "late_night": {
+      "name": "Late Night (22:00 - 02:00)",
+      "hours": [
+        22,
+        23,
+        0,
+        1
+      ],
+      "count": 3902,
+      "revenuePence": 6157693
+    },
+    "other_early": {
+      "name": "Overnight / Pre-Open (02:00 - 09:00)",
+      "hours": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "count": 67,
+      "revenuePence": 102476
+    }
+  },
+  "hourly": [
+    {
+      "hour": 0,
+      "count": 856,
+      "revenuePence": 1338611
+    },
+    {
+      "hour": 1,
+      "count": 316,
+      "revenuePence": 500731
+    },
+    {
+      "hour": 2,
+      "count": 57,
+      "revenuePence": 100259
+    },
+    {
+      "hour": 3,
+      "count": 8,
+      "revenuePence": 1369
+    },
+    {
+      "hour": 4,
+      "count": 0,
+      "revenuePence": 0
+    },
+    {
+      "hour": 5,
+      "count": 1,
+      "revenuePence": 99
+    },
+    {
+      "hour": 6,
+      "count": 0,
+      "revenuePence": 0
+    },
+    {
+      "hour": 7,
+      "count": 0,
+      "revenuePence": 0
+    },
+    {
+      "hour": 8,
+      "count": 1,
+      "revenuePence": 749
+    },
+    {
+      "hour": 9,
+      "count": 0,
+      "revenuePence": 0
+    },
+    {
+      "hour": 10,
+      "count": 116,
+      "revenuePence": 146308
+    },
+    {
+      "hour": 11,
+      "count": 451,
+      "revenuePence": 528479
+    },
+    {
+      "hour": 12,
+      "count": 657,
+      "revenuePence": 859839
+    },
+    {
+      "hour": 13,
+      "count": 901,
+      "revenuePence": 1195538
+    },
+    {
+      "hour": 14,
+      "count": 1021,
+      "revenuePence": 1317492
+    },
+    {
+      "hour": 15,
+      "count": 920,
+      "revenuePence": 1255252
+    },
+    {
+      "hour": 16,
+      "count": 1052,
+      "revenuePence": 1354251
+    },
+    {
+      "hour": 17,
+      "count": 1175,
+      "revenuePence": 1436437
+    },
+    {
+      "hour": 18,
+      "count": 1524,
+      "revenuePence": 1802331
+    },
+    {
+      "hour": 19,
+      "count": 1896,
+      "revenuePence": 2454152
+    },
+    {
+      "hour": 20,
+      "count": 2118,
+      "revenuePence": 2825006
+    },
+    {
+      "hour": 21,
+      "count": 1970,
+      "revenuePence": 2909754
+    },
+    {
+      "hour": 22,
+      "count": 1506,
+      "revenuePence": 2392016
+    },
+    {
+      "hour": 23,
+      "count": 1224,
+      "revenuePence": 1926335
+    }
+  ],
+  "methods": {
+    "CARD": 17845635,
+    "CASH": 6499373
+  }
+}
