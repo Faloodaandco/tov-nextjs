@@ -150,7 +150,7 @@ export default function AdminPromosPage() {
             autoFocus
           />
           {error && <p className="text-terracotta text-sm mb-4">{error}</p>}
-          <button type="submit" disabled={loading} className="w-full bg-pine text-white py-3 rounded-xl font-bold hover:bg-pine/90">
+          <button aria-label="Button" type="submit" disabled={loading} className="w-full bg-pine text-white py-3 rounded-xl font-bold hover:bg-pine/90">
             {loading ? 'Verifying...' : 'Login'}
           </button>
         </form>
@@ -167,7 +167,7 @@ export default function AdminPromosPage() {
             <h1 className="text-3xl font-black uppercase tracking-tight">Promo Management</h1>
             <p className="text-pine/60 mt-1">Create and manage deep-link promotional codes</p>
           </div>
-          <button
+          <button aria-label="Button"
             onClick={() => setIsFormOpen(true)}
             className="flex items-center gap-2 bg-terracotta text-white px-6 py-3 rounded-full font-bold uppercase tracking-wider text-sm hover:bg-terracotta/90 transition"
           >
@@ -207,7 +207,7 @@ export default function AdminPromosPage() {
                   
                   <div>
                     <h3 className="font-bold text-lg">{promo.name}</h3>
-                    <p className="text-sm text-pine/70 font-medium">
+                    <p className="text-sm text-pine font-medium">
                       {promo.discountType === 'PERCENTAGE' 
                         ? `${promo.discountPercent}% OFF` 
                         : `£${(promo.fixedAmountPence! / 100).toFixed(2)} OFF`}
@@ -217,7 +217,7 @@ export default function AdminPromosPage() {
 
                   <div className="flex gap-2 flex-wrap">
                     {promo.branches.map(b => (
-                      <button
+                      <button aria-label="Button"
                         key={b}
                         onClick={() => copyLink(promo.code, b)}
                         className="text-xs flex items-center gap-1.5 bg-pine/5 hover:bg-pine/10 text-pine px-3 py-1.5 rounded-full font-medium transition"
@@ -241,7 +241,7 @@ export default function AdminPromosPage() {
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    <button
+                    <button aria-label="Button"
                       onClick={() => toggleActive(promo)}
                       className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition ${
                         promo.active ? 'bg-pine/10 text-pine hover:bg-pine/20' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
@@ -249,7 +249,7 @@ export default function AdminPromosPage() {
                     >
                       <Power size={16} /> {promo.active ? 'Disable' : 'Enable'}
                     </button>
-                    <button
+                    <button aria-label="Button"
                       onClick={() => deletePromo(promo.code)}
                       className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
                     >
@@ -264,7 +264,7 @@ export default function AdminPromosPage() {
           {promos.length === 0 && !loading && (
             <div className="text-center py-16 bg-white rounded-2xl border border-warm border-dashed">
               <Ticket className="mx-auto text-pine/20 mb-4" size={48} />
-              <p className="text-lg font-bold text-pine/50">No promotions found</p>
+              <p className="text-lg font-bold text-pine/80">No promotions found</p>
             </div>
           )}
         </div>
@@ -288,7 +288,7 @@ export default function AdminPromosPage() {
             >
               <div className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-warm p-6 flex justify-between items-center z-10">
                 <h2 className="text-2xl font-black uppercase tracking-wider">New Promo</h2>
-                <button onClick={() => setIsFormOpen(false)} className="p-2 bg-cream text-pine rounded-full hover:bg-warm transition">
+                <button aria-label="Button" onClick={() => setIsFormOpen(false)} className="p-2 bg-cream text-pine rounded-full hover:bg-warm transition">
                   <X size={20} />
                 </button>
               </div>
@@ -297,7 +297,7 @@ export default function AdminPromosPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-pine/70">Promo Code</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-pine">Promo Code</label>
                     <input
                       required
                       type="text"
@@ -309,7 +309,7 @@ export default function AdminPromosPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-pine/70">Display Name</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-pine">Display Name</label>
                     <input
                       required
                       type="text"
@@ -321,7 +321,7 @@ export default function AdminPromosPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-pine/70">Discount Type</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-pine">Discount Type</label>
                     <select
                       className="w-full p-4 bg-cream border border-warm rounded-xl font-medium"
                       value={formData.discountType}
@@ -333,7 +333,7 @@ export default function AdminPromosPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-pine/70">
+                    <label className="text-xs font-bold uppercase tracking-wider text-pine">
                       Value {formData.discountType === 'PERCENTAGE' ? '(%)' : '(£)'}
                     </label>
                     <input
@@ -354,7 +354,7 @@ export default function AdminPromosPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-pine/70">Min Order (£)</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-pine">Min Order (£)</label>
                     <input
                       required
                       type="number"
@@ -366,7 +366,7 @@ export default function AdminPromosPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-pine/70">Max Redemptions (0 for ∞)</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-pine">Max Redemptions (0 for ∞)</label>
                     <input
                       required
                       type="number"
@@ -377,7 +377,7 @@ export default function AdminPromosPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-pine/70">Start Date</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-pine">Start Date</label>
                     <input
                       required
                       type="date"
@@ -388,7 +388,7 @@ export default function AdminPromosPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-pine/70">End Date</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-pine">End Date</label>
                     <input
                       required
                       type="date"
@@ -401,7 +401,7 @@ export default function AdminPromosPage() {
                 </div>
 
                 <div className="space-y-3 pt-4 border-t border-warm">
-                  <label className="text-xs font-bold uppercase tracking-wider text-pine/70">Valid Branches</label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-pine">Valid Branches</label>
                   <div className="flex gap-4">
                     {['hayes', 'slough'].map(branch => (
                       <label key={branch} className="flex items-center gap-2 cursor-pointer p-4 bg-cream border border-warm rounded-xl flex-1 hover:bg-warm/50 transition">
@@ -425,7 +425,7 @@ export default function AdminPromosPage() {
                 </div>
 
                 <div className="pt-6 pb-2">
-                  <button type="submit" className="w-full bg-terracotta text-white py-4 rounded-xl font-black uppercase tracking-widest hover:bg-terracotta/90 transition shadow-md">
+                  <button aria-label="Button" type="submit" className="w-full bg-terracotta text-white py-4 rounded-xl font-black uppercase tracking-widest hover:bg-terracotta/90 transition shadow-md">
                     Create Promo
                   </button>
                 </div>

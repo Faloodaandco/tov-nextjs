@@ -441,7 +441,7 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
       {hasDigitalWallets && (
         <div className="relative my-4 flex items-center justify-center">
           <div className="border-t border-pine/10 w-full"></div>
-          <span className="bg-white px-3 text-[10px] text-pine/50 font-bold uppercase tracking-wider absolute">
+          <span className="bg-white px-3 text-[10px] text-pine/80 font-bold uppercase tracking-wider absolute">
             Or pay with card
           </span>
         </div>
@@ -487,7 +487,7 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
               <span>{error}</span>
               {!cardReady && (
                 <div className="mt-2">
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     onClick={() => {
                       setError(null);
@@ -506,7 +506,7 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
           </div>
         )}
 
-        <button
+        <button aria-label="Button"
           type="submit"
           disabled={busy || isInitializing || !cardReady || disabled}
           aria-busy={busy}
@@ -528,7 +528,7 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
         </button>
 
         {onCancel && (
-          <button
+          <button aria-label="Button"
             type="button"
             onClick={onCancel}
             disabled={busy}
@@ -539,14 +539,14 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
         )}
 
         <div className="flex flex-col items-center gap-2 pt-1">
-          <div className="flex items-center justify-center gap-1.5 text-[11px] text-pine/50 text-center">
+          <div className="flex items-center justify-center gap-1.5 text-[11px] text-pine/80 text-center">
             <Lock size={12} />
             <span>Processed by Square POS · 256-bit SSL encrypted · PCI-DSS Level 1</span>
           </div>
           {(() => {
             const isSloughBranch = appId === 'sq0idp-ZEv7rUulY8UD5q8eZTPR8A';
             return (
-              <a
+              <a aria-label="Food Hygiene Rating"
                 href={isSloughBranch
                   ? 'https://ratings.food.gov.uk/business/1963386/taste-of-village-slough'
                   : 'https://ratings.food.gov.uk/business/653844/a-taste-of-village'}
@@ -557,7 +557,7 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
                 <img
                   src={isSloughBranch ? '/assets/fhrs-badge-5-horizontal.svg' : '/assets/fhrs-badge-4-horizontal.svg'}
                   alt={`Food Hygiene Rating ${isSloughBranch ? '5' : '4'}`}
-                  className="h-5 w-auto opacity-60"
+                  className="h-5 w-auto opacity-60 object-cover"
                   loading="lazy"
                 />
               </a>

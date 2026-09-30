@@ -220,7 +220,7 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
           {/* Mobile Item title (hidden on desktop if we wanted, but good for flow) */}
           <div className="mb-6">
             {item.description && (
-              <p className="text-pine/70 text-sm leading-relaxed tracking-wide font-medium">{item.description}</p>
+              <p className="text-pine text-sm leading-relaxed tracking-wide font-medium">{item.description}</p>
             )}
           </div>
 
@@ -232,7 +232,7 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
               </p>
               <div className="flex gap-3">
                 {item.variants!.map(v => (
-                  <button
+                  <button aria-label="Button"
                     key={v.id}
                     onClick={() => setSelectedVariant(v)}
                     className={`flex-1 py-3.5 px-4 rounded-[20px] border shadow-sm text-left transition-all hover:-translate-y-0.5 ${
@@ -266,7 +266,7 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
                 </p>
               </div>
               {group.description && (
-                <p className="text-xs text-pine/50 mb-3">{group.description}</p>
+                <p className="text-xs text-pine/80 mb-3">{group.description}</p>
               )}
               <div className="space-y-2">
                 {group.options.map(opt => {
@@ -274,7 +274,7 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
                   const isRadio = group.max_selections === 1;
 
                   return (
-                    <button
+                    <button aria-label="Button"
                       key={opt.id}
                       onClick={() => toggleOption(group, opt.id)}
                       disabled={!opt.is_available}
@@ -306,7 +306,7 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
                         </span>
                       </div>
                       {opt.price_delta !== 0 && (
-                        <span className={`text-sm font-bold ${isSelected ? 'text-terracotta' : 'text-pine/50'}`}>
+                        <span className={`text-sm font-bold ${isSelected ? 'text-terracotta' : 'text-pine/80'}`}>
                           {opt.price_delta > 0 ? '+' : ''}{formatCurrency(opt.price_delta)}
                         </span>
                       )}
@@ -322,7 +322,7 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
           {hasAllergens && (
             <div className="mb-6 p-4 rounded-2xl bg-white/70 backdrop-blur-sm border border-pine/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
               <div className="flex items-center gap-2 mb-2.5">
-                <Info size={15} className="text-terracotta/80 flex-shrink-0" />
+                <Info size={15} className="text-terracotta flex-shrink-0" />
                 <p className="text-xs font-semibold text-pine tracking-wide">Allergen &amp; Dietary Information</p>
               </div>
 
@@ -369,9 +369,9 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
           {/* ─── Nutrition ───────────────────────────────── */}
           {hasNutrition && (
             <div className="mb-6">
-              <button
+              <button aria-label="Button"
                 onClick={() => setShowNutrition(v => !v)}
-                className="flex items-center gap-2 text-xs font-bold text-pine/50 hover:text-pine transition-colors"
+                className="flex items-center gap-2 text-xs font-bold text-pine/80 hover:text-pine transition-colors"
               >
                 <Info size={14} />
                 Nutritional Information
@@ -420,19 +420,19 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
           <div className="flex items-center justify-between mb-6">
             <p className="text-xs font-black text-pine uppercase tracking-[0.2em]">Quantity</p>
             <div className="flex items-center gap-6">
-              <button
+              <button aria-label="Button"
                 onClick={() => setQuantity(q => Math.max(1, q - 1))}
                 className="w-12 h-12 bg-bg-sand rounded-full border border-pine/10 flex items-center justify-center font-black text-pine hover:border-terracotta hover:text-terracotta transition-colors text-xl shadow-sm hover:shadow-md"
               >−</button>
               <span className="font-display font-bold text-pine text-2xl w-6 text-center">{quantity}</span>
-              <button
+              <button aria-label="Button"
                 onClick={() => setQuantity(q => q + 1)}
                 className="w-12 h-12 bg-bg-sand rounded-full border border-pine/10 flex items-center justify-center font-black text-pine hover:border-terracotta hover:text-terracotta transition-colors text-xl shadow-sm hover:shadow-md"
               >+</button>
             </div>
           </div>
 
-          <button
+          <button aria-label="Cart"
             onClick={handleAddToCart}
             disabled={missingRequired}
             className="w-full py-5 rounded-[30px] font-black text-sm uppercase tracking-[0.2em] transition-all flex items-center justify-between px-8 disabled:opacity-40 disabled:cursor-not-allowed

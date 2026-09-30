@@ -31,7 +31,7 @@ export default function SeoPage() {
         >
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">25 Minutes from Uxbridge</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Uxbridge's Favourite Taste of Village Destination</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             Uxbridge has chains, but nothing like Taste of Village. A short drive along the A4020 and M40 brings you to Slough's most talked-about dessert parlour — where every falooda is hand-crafted and every chaat is made fresh.
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function SeoPage() {
             className="bg-sand p-10 rounded-[3rem]"
           >
             <h2 className="font-serif text-3xl mb-4 text-pine">Quick Drive, Big Reward</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               Whether you're coming from Uxbridge town centre, Brunel University, or Hillingdon, you can be here in under 25 minutes. We're right on Farnham Road with easy access and local parking.
             </p>
             <div className="space-y-4">
@@ -76,7 +76,7 @@ export default function SeoPage() {
           className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-brand-text/5 text-center"
         >
           <h2 className="font-serif text-4xl mb-6">Visit Us from Uxbridge Today</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Join the growing number of Uxbridge locals who've made Taste of Village their go-to spot for authentic halal desserts and Indian street food classics.
           </p>
           

@@ -111,7 +111,7 @@ export default function SloughDeliveryPage() {
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Now Delivering Across SL1–SL4</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Halal Food Delivery in Slough</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             Our own drivers deliver Gujranwala-style Pakistani food from 260 Farnham Road to your door. Karahi, Haleem, BBQ — all within a 5-mile radius. Free delivery on orders over £30.
           </p>
         </div>
@@ -131,7 +131,7 @@ export default function SloughDeliveryPage() {
 
           <div className="bg-white p-10 rounded-[3rem] border border-pine/5">
             <h2 className="font-serif text-3xl mb-4 text-pine">Delivery Zones</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               We cover Slough, Langley, Colnbrook, Burnham, Datchet, and Farnham Royal. All SL1 through SL4 postcodes sit inside our delivery radius. Most orders arrive within 40 minutes.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
@@ -162,7 +162,7 @@ export default function SloughDeliveryPage() {
 
         <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-pine/5 text-center">
           <h2 className="font-serif text-4xl mb-6 text-pine">Order Delivery Now</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Browse the full Slough menu, add to basket, and check out. Our kitchen fires your order fresh and our driver brings it to you — every day, 10 AM to 2 AM.
           </p>
 

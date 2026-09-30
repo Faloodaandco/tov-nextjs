@@ -129,22 +129,22 @@ export default function TrackLanding() {
         {/* Mode Toggle */}
         <div className="flex justify-center mb-8">
           <div className="bg-white rounded-[2rem] p-2 shadow-lg shadow-pine/5 border border-pine/10 flex gap-2">
-            <button
+            <button aria-label="Button"
               onClick={() => { setMode('order'); setFoundOrders(null); setSearchValue(''); setPhoneError(null); }}
               className={`px-8 py-4 rounded-3xl font-bold text-sm transition-all ${
                 mode === 'order' 
                   ? 'bg-pine text-white shadow-md' 
-                  : 'text-pine/50 hover:bg-pine/5 hover:text-pine'
+                  : 'text-pine/80 hover:bg-pine/5 hover:text-pine'
               }`}
             >
               📋 Order Number
             </button>
-            <button
+            <button aria-label="Button"
               onClick={() => { setMode('phone'); setFoundOrders(null); setSearchValue(''); setPhoneError(null); }}
               className={`px-8 py-4 rounded-3xl font-bold text-sm transition-all ${
                 mode === 'phone' 
                   ? 'bg-pine text-white shadow-md' 
-                  : 'text-pine/50 hover:bg-pine/5 hover:text-pine'
+                  : 'text-pine/80 hover:bg-pine/5 hover:text-pine'
               }`}
             >
               📱 Phone Number
@@ -156,7 +156,7 @@ export default function TrackLanding() {
         <div className="bg-white rounded-[3rem] p-8 md:p-10 shadow-2xl shadow-pine/5 border border-pine/10 mb-8">
           <form onSubmit={mode === 'order' ? handleTrackByOrder : handleTrackByPhone} className="space-y-6">
             <div>
-              <label className="block text-xs font-black text-pine/50 uppercase tracking-[0.2em] mb-4">
+              <label className="block text-xs font-black text-pine/80 uppercase tracking-[0.2em] mb-4">
                 {mode === 'order' ? 'Order Number' : 'Phone Number'}
               </label>
               <div className={`relative transition-all ${shaking ? 'animate-shake' : ''}`}>
@@ -197,7 +197,7 @@ export default function TrackLanding() {
               </p>
             </div>
 
-            <button
+            <button aria-label="Button"
               type="submit"
               disabled={loading}
               className="w-full py-5 bg-terracotta text-white font-bold text-lg rounded-full hover:bg-[#a64036] transition-all shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-wait mt-4"
@@ -224,7 +224,7 @@ export default function TrackLanding() {
               <div className="text-center py-8">
                 <div className="w-16 h-16 bg-pine/5 text-pine rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">🔍</div>
                 <p className="font-display font-bold text-pine text-2xl mb-2">No orders found</p>
-                <p className="text-pine/50 text-sm max-w-sm mx-auto">
+                <p className="text-pine/80 text-sm max-w-sm mx-auto">
                   No orders were found for this phone number. If you placed an order recently, it may still be processing.
                 </p>
               </div>
@@ -264,14 +264,14 @@ export default function TrackLanding() {
                                 {statusInfo.emoji} {statusInfo.label}
                               </span>
                             </div>
-                            <p className="text-pine/50 text-xs flex items-center gap-1.5 mb-2 font-medium">
+                            <p className="text-pine/80 text-xs flex items-center gap-1.5 mb-2 font-medium">
                               <Clock size={12} />
                               {order.timestamp instanceof Date 
                                 ? order.timestamp.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
                                 : 'Unknown date'
                               }
                             </p>
-                            <p className="text-pine/70 text-sm truncate font-medium">
+                            <p className="text-pine text-sm truncate font-medium">
                               {order.items.map(i => `${i.quantity}x ${i.name}`).join(', ')}
                             </p>
                           </div>
@@ -303,7 +303,7 @@ export default function TrackLanding() {
               <Star size={20} />
             </div>
             <p className="font-bold text-pine text-sm">Check Rewards</p>
-            <p className="text-pine/50 text-[11px] mt-1 font-medium">View your loyalty points</p>
+            <p className="text-pine/80 text-[11px] mt-1 font-medium">View your loyalty points</p>
           </Link>
           <Link
             href="/menu"
@@ -313,13 +313,13 @@ export default function TrackLanding() {
               <Package size={20} />
             </div>
             <p className="font-bold text-pine text-sm">Order Again</p>
-            <p className="text-pine/50 text-[11px] mt-1 font-medium">Browse our full menu</p>
+            <p className="text-pine/80 text-[11px] mt-1 font-medium">Browse our full menu</p>
           </Link>
         </div>
 
         {/* How it Works */}
         <div className="bg-white rounded-[3rem] p-10 border border-pine/10 shadow-xl shadow-pine/5 mb-12">
-          <h3 className="font-bold text-xs text-pine/50 uppercase tracking-[0.2em] mb-8 flex items-center justify-center gap-2">
+          <h3 className="font-bold text-xs text-pine/80 uppercase tracking-[0.2em] mb-8 flex items-center justify-center gap-2">
             <Sparkles size={16} className="text-terracotta" />
             How Tracking Works
           </h3>
@@ -333,7 +333,7 @@ export default function TrackLanding() {
               <div key={i} className="text-center group">
                 <div className="w-16 h-16 bg-bg-sand rounded-full flex items-center justify-center text-2xl mx-auto mb-4 group-hover:scale-110 transition-transform shadow-inner border border-pine/5">{step.emoji}</div>
                 <p className="font-bold text-pine text-sm mb-1">{step.label}</p>
-                <p className="text-pine/50 text-[11px] uppercase tracking-widest">{step.desc}</p>
+                <p className="text-pine/80 text-[11px] uppercase tracking-widest">{step.desc}</p>
               </div>
             ))}
           </div>
@@ -341,9 +341,9 @@ export default function TrackLanding() {
 
         {/* Help Section */}
         <div className="text-center">
-          <p className="text-pine/50 text-xs font-bold uppercase tracking-widest mb-5">Need assistance?</p>
+          <p className="text-pine/80 text-xs font-bold uppercase tracking-widest mb-5">Need assistance?</p>
           <div className="flex justify-center gap-4">
-            <a
+            <a aria-label="Phone"
               href={`tel:${SHOP_CONFIG.phoneNumberRaw}`}
               className="flex items-center gap-3 px-8 py-4 bg-white rounded-full font-bold text-sm text-pine border border-pine/20 hover:border-pine transition-all shadow-md"
             >

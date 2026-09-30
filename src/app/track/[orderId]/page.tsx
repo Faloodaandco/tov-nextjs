@@ -122,7 +122,7 @@ export default function TrackOrder() {
           <div className="w-20 h-20 border-4 border-terracotta/30 rounded-full animate-spin border-t-terracotta"></div>
           <div className="absolute inset-0 flex items-center justify-center"><span className="text-2xl">🔍</span></div>
         </div>
-        <p className="mt-8 text-pine/70 font-bold font-display text-xl tracking-wider animate-pulse uppercase">Locating Signal...</p>
+        <p className="mt-8 text-pine font-bold font-display text-xl tracking-wider animate-pulse uppercase">Locating Signal...</p>
       </div>
     );
   }
@@ -185,7 +185,7 @@ export default function TrackOrder() {
 
       <div className="max-w-3xl mx-auto px-4 mt-8">
         
-        <Link href="/menu" className="inline-flex items-center gap-2 text-pine/50 hover:text-terracotta mb-8 font-black transition-colors text-[10px] uppercase tracking-[0.2em]">
+        <Link href="/menu" className="inline-flex items-center gap-2 text-pine/80 hover:text-terracotta mb-8 font-black transition-colors text-[10px] uppercase tracking-[0.2em]">
           <ChevronLeft size={14} /> Back to Menu
         </Link>
 
@@ -226,7 +226,7 @@ export default function TrackOrder() {
                   {isCompleted ? 'Collected' : isNoShow ? 'Voided' : currentStep.label}
                 </h1>
                 <p className={`text-sm font-medium leading-relaxed uppercase tracking-widest ${
-                  isCompleted || isNoShow ? 'text-white/60' : 'text-pine/50'
+                  isCompleted || isNoShow ? 'text-white/60' : 'text-pine/80'
                 }`}>
                   {isCompleted ? `Enjoy your meal, ${order.customerName}!` : isNoShow ? 'Order was not collected.' : currentStep.description}
                 </p>
@@ -262,7 +262,7 @@ export default function TrackOrder() {
                 <p className="text-xs text-pine/60 font-medium">Get a mobile alert the moment your bag is packed at the counter.</p>
               </div>
             </div>
-            <button
+            <button aria-label="Button"
               type="button"
               onClick={async () => {
                 if (orderId) {
@@ -336,14 +336,14 @@ export default function TrackOrder() {
                     </div>
                     <div className="flex-1 min-w-0 pt-1">
                       <p className="font-black text-pine text-sm uppercase tracking-widest leading-tight truncate mb-1">{item.name}</p>
-                      <p className="text-xs text-pine/50 font-mono font-bold">£{item.price.toFixed(2)}</p>
+                      <p className="text-xs text-pine/80 font-mono font-bold">£{item.price.toFixed(2)}</p>
                     </div>
                     <p className="font-black text-terracotta text-lg pt-1">£{(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
               <div className="mt-10 pt-6 border-t border-pine/10 flex justify-between items-end">
-                <span className="text-[10px] text-pine/50 font-black uppercase tracking-[0.3em]">Total</span>
+                <span className="text-[10px] text-pine/80 font-black uppercase tracking-[0.3em]">Total</span>
                 <span className="font-display text-4xl font-black text-pine">£{order.total.toFixed(2)}</span>
               </div>
             </div>
@@ -388,7 +388,7 @@ export default function TrackOrder() {
             </div>
 
             <div className="flex flex-col gap-4">
-              <a href={`tel:${branchConfig.phone.replace(/\s+/g, '')}`} className="flex items-center justify-center gap-3 bg-white py-5 font-black text-xs uppercase tracking-widest text-pine border-2 border-pine hover:bg-pine hover:text-white transition-all shadow-[4px_4px_0px_rgba(20,40,29,1)] hover:translate-y-0.5 hover:shadow-none">
+              <a aria-label="Phone" href={`tel:${branchConfig.phone.replace(/\s+/g, '')}`} className="flex items-center justify-center gap-3 bg-white py-5 font-black text-xs uppercase tracking-widest text-pine border-2 border-pine hover:bg-pine hover:text-white transition-all shadow-[4px_4px_0px_rgba(20,40,29,1)] hover:translate-y-0.5 hover:shadow-none">
                 <Phone size={16} /> Call Restaurant
               </a>
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 bg-[#25D366] text-white py-5 font-black text-xs uppercase tracking-widest hover:bg-[#20BD5A] transition-all shadow-[4px_4px_0px_rgba(37,211,102,0.4)] hover:translate-y-0.5 hover:shadow-none border-2 border-[#25D366]">
@@ -406,7 +406,7 @@ export default function TrackOrder() {
               <h4 className="font-display font-bold text-pine text-base uppercase tracking-wider mb-1">
                 Rate Your Experience
               </h4>
-              <p className="text-xs text-pine/70 mb-4 leading-relaxed font-medium">
+              <p className="text-xs text-pine mb-4 leading-relaxed font-medium">
                 Your 5-star review helps our family-run kitchen thrive in {branchConfig.city}. Takes only 15 seconds!
               </p>
               <div className="flex flex-col gap-2">
@@ -450,7 +450,7 @@ export default function TrackOrder() {
               <h2 className="font-display text-2xl md:text-3xl font-black text-pine mb-3 tracking-wide">
                 How Was Your Food?
               </h2>
-              <p className="text-pine/70 text-sm leading-relaxed mb-6 font-medium">
+              <p className="text-pine text-sm leading-relaxed mb-6 font-medium">
                 Your 5-star review helps our family-run kitchen reach more food lovers in {branchConfig.city}. It takes only 15 seconds to support us!
               </p>
               <div className="space-y-3">
@@ -475,7 +475,7 @@ export default function TrackOrder() {
                   Send Feedback on WhatsApp
                 </a>
               </div>
-              <button
+              <button aria-label="Button"
                 onClick={() => setShowReviewPrompt(false)}
                 className="mt-4 w-full py-2 text-pine/40 hover:text-pine text-xs font-semibold transition-colors"
               >

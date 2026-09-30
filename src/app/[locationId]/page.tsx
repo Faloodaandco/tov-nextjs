@@ -155,7 +155,7 @@ export default function TOVHome() {
               <span>Order {branchLoc.id === 'hayes' ? 'Hayes' : 'Slough'} Menu</span>
               <ArrowRight size={16} />
             </Link>
-            <button 
+            <button aria-label="Button" 
               onClick={() => setIsLocationModalOpen(true)}
               className="w-full sm:w-auto bg-white/10 backdrop-blur-md text-bg-sand py-3.5 px-6 font-sans uppercase font-bold text-xs sm:text-sm hover:bg-white/20 hover:-translate-y-0.5 active:scale-[0.98] transition-all shadow-md tracking-[0.15em] rounded-full border border-white/20 flex items-center justify-center gap-2"
             >
@@ -192,14 +192,14 @@ export default function TOVHome() {
             transition={{ duration: 0.8, delay: 0.7 }}
             className="mt-4 flex flex-wrap items-center justify-center gap-3"
           >
-            <a
+            <a aria-label="Phone"
               href={`tel:${branchLoc.phone.replace(/\s+/g, '')}`}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 text-white text-xs font-bold tracking-wider uppercase border border-white/20 transition-all hover:scale-105"
             >
               <Phone size={13} className="text-green-400" />
               <span>Call: {branchLoc.phone}</span>
             </a>
-            <a
+            <a aria-label="Google Maps Directions"
               href={isSlough 
                 ? 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+260+Farnham+Road+Slough+SL1+4XQ'
                 : 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+766B+Uxbridge+Rd+Hayes+UB4+0RU'}
@@ -249,7 +249,7 @@ export default function TOVHome() {
               }}
               onKeyDown={e => e.key === 'Enter' && checkPostcode()}
             />
-            <button 
+            <button aria-label="Button" 
               onClick={checkPostcode}
               className="bg-terracotta hover:bg-terracotta-light text-white px-5 py-2.5 rounded-full text-xs font-black tracking-widest uppercase transition-all flex-shrink-0 shadow-md"
             >
@@ -563,7 +563,7 @@ export default function TOVHome() {
                     : 'Customer street parking available along Uxbridge Road parade.'}
                 </p>
               </div>
-              <a 
+              <a aria-label="Google Maps Directions" 
                 href={isSlough 
                   ? 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+260+Farnham+Road+Slough+SL1+4XQ'
                   : 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+766B+Uxbridge+Rd+Hayes+UB4+0RU'}
@@ -641,7 +641,7 @@ export default function TOVHome() {
                   Open 7 Days (10:00 AM – 2:00 AM). Call our team directly for table bookings, large family feasts, or catering.
                 </p>
               </div>
-              <a
+              <a aria-label="Phone"
                 href={`tel:${branchLoc.phone.replace(/\s+/g, '')}`}
                 className="mt-6 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-terracotta-light hover:text-white transition-colors"
               >
@@ -917,7 +917,7 @@ export default function TOVHome() {
                 key={idx} 
                 className="border border-pine/10 rounded-2xl overflow-hidden transition-all bg-bg-sand/30 hover:bg-bg-sand/60"
               >
-                <button
+                <button aria-label="Button"
                   type="button"
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
                   className="w-full px-6 py-5 flex items-center justify-between text-left font-display font-bold text-base md:text-lg text-pine tracking-wide uppercase cursor-pointer"
@@ -936,7 +936,7 @@ export default function TOVHome() {
                       transition={{ duration: 0.25 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 pb-6 text-pine/70 font-sans text-sm md:text-base leading-relaxed normal-case border-t border-pine/5 pt-4">
+                      <div className="px-6 pb-6 text-pine font-sans text-sm md:text-base leading-relaxed normal-case border-t border-pine/5 pt-4">
                         {faq.a}
                       </div>
                     </motion.div>

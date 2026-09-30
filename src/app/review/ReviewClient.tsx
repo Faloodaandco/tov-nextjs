@@ -70,7 +70,7 @@ export const ReviewGate = () => {
 
               <div className="flex justify-center gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <button
+                  <button aria-label="Button"
                     key={star}
                     onMouseEnter={() => setHoveredRating(star)}
                     onMouseLeave={() => setHoveredRating(null)}
@@ -113,7 +113,7 @@ export const ReviewGate = () => {
               >
                 Continue to Google <Send size={20} />
               </a>
-              <button 
+              <button aria-label="Button" 
                 onClick={() => setStep('rate')}
                 className="text-brand-text/40 text-sm font-bold uppercase tracking-widest hover:text-brand-text/80 transition-colors"
               >
@@ -141,7 +141,7 @@ export const ReviewGate = () => {
                 className="w-full h-32 p-5 bg-bg-sand rounded-2xl border-none focus:ring-2 focus:ring-terracotta/50 outline-none resize-none font-medium text-brand-text"
               />
 
-              <button 
+              <button aria-label="Button" 
                 onClick={submitFeedback}
                 disabled={!feedback || isSubmitting}
                 className="w-full py-5 bg-terracotta text-white rounded-[2rem] font-bold text-lg shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3 uppercase tracking-wider"
@@ -165,7 +165,7 @@ export const ReviewGate = () => {
                 <h2 className="text-3xl font-sans font-black text-brand-text uppercase tracking-wide">Thank you.</h2>
                 <p className="text-brand-text/60 normal-case">Your feedback has been sent directly to our management team. We value your honesty.</p>
               </div>
-              <button 
+              <button aria-label="Button" 
                 onClick={() => router.push('/')}
                 className="w-full py-5 bg-brand-text/5 text-brand-text rounded-[2rem] font-bold text-lg hover:bg-brand-text/10 transition-colors uppercase tracking-wider"
               >

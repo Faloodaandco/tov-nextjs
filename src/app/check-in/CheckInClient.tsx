@@ -282,7 +282,7 @@ function CheckInContent() {
             boxShadow: '0 8px 24px -4px rgba(26, 60, 52, 0.08), inset 0 1px 1px rgba(255,255,255,0.8)'
           }}
         >
-          <button
+          <button aria-label="Button"
             type="button"
             onClick={() => setSelectedBranch('hayes')}
             className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
@@ -294,7 +294,7 @@ function CheckInContent() {
             <MapPin size={14} className={selectedBranch === 'hayes' ? 'text-[#E26D5C]' : ''} />
             <span>Hayes Branch</span>
           </button>
-          <button
+          <button aria-label="Button"
             type="button"
             onClick={() => setSelectedBranch('slough')}
             className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
@@ -386,7 +386,7 @@ function CheckInContent() {
                     <span className="text-3xl sm:text-4xl font-black text-[#1A3C34] tracking-wider font-mono">
                       {activeVoucher.code}
                     </span>
-                    <button
+                    <button aria-label="Button"
                       type="button"
                       onClick={handleCopyCode}
                       title="Copy Voucher Code"
@@ -460,7 +460,7 @@ function CheckInContent() {
 
                 {/* Action Buttons */}
                 <div className="space-y-2 pt-1">
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     onClick={() => router.push(`/${activeVoucher.branch}/menu`)}
                     className="w-full py-4 bg-gradient-to-r from-[#D14836] to-[#E26D5C] text-white font-black text-sm uppercase tracking-wider rounded-2xl shadow-xl shadow-[#D14836]/25 hover:shadow-2xl hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
@@ -469,7 +469,7 @@ function CheckInContent() {
                     <ArrowRight size={16} />
                   </button>
 
-                  <button
+                  <button aria-label="Button"
                     type="button"
                     onClick={handleClearVoucher}
                     className="w-full py-2.5 text-xs font-bold text-gray-500 hover:text-gray-800 transition-colors text-center cursor-pointer"
@@ -636,7 +636,7 @@ function CheckInContent() {
                   </motion.div>
                 )}
 
-                <button
+                <button aria-label="Button"
                   type="submit"
                   disabled={status === 'loading'}
                   className="w-full bg-gradient-to-r from-[#1A3C34] to-[#285B50] text-[#FDF9F1] font-black text-sm uppercase tracking-wider py-4 rounded-2xl shadow-xl shadow-[#1A3C34]/25 hover:shadow-2xl hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center mt-3 cursor-pointer border border-white/20"

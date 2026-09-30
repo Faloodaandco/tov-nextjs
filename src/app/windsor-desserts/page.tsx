@@ -31,7 +31,7 @@ export default function SeoPage() {
         >
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Just 10 Minutes from Windsor Castle</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Windsor's Premier Choice for Late-Night Halal Desserts</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             Windsor is beautiful, but when the late-night cravings hit, the options can be limited. Just a short drive away on the vibrant Farnham Road, Taste of Village offers the ultimate luxury dessert experience.
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function SeoPage() {
             className="bg-sand p-10 rounded-[3rem]"
           >
             <h2 className="font-serif text-3xl mb-4 text-pine">A Taste of the East</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               Looking for something more exotic than standard ice cream? Our renowned Royal Shahi Kulfi Falooda is the perfect blend of sweet basil seeds, Rooh Afza, and rich Kulfi, bridging the gap between traditional South Asian sweets and modern luxury.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
@@ -70,7 +70,7 @@ export default function SeoPage() {
           className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-brand-text/5 text-center"
         >
           <h2 className="font-serif text-4xl mb-6">Make the Short Trip from Windsor Today</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Hop onto the A332 and join us for the ultimate dessert experience. Plenty of parking nearby and a luxurious dine-in atmosphere waiting for you.
           </p>
           

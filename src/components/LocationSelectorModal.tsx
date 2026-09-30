@@ -57,7 +57,7 @@ export const LocationSelectorModal: React.FC<Props> = ({ isOpen, onClose, destin
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-terracotta/10 blur-[60px] rounded-full pointer-events-none"></div>
             <button 
               onClick={onClose}
-              className="absolute top-6 right-6 md:top-8 md:right-8 text-pine/50 hover:text-pine bg-pine/5 hover:bg-pine/10 rounded-full p-2 md:p-3 backdrop-blur-md transition-all z-50 flex items-center justify-center"
+              className="absolute top-6 right-6 md:top-8 md:right-8 text-pine/80 hover:text-pine bg-pine/5 hover:bg-pine/10 rounded-full p-2 md:p-3 backdrop-blur-md transition-all z-50 flex items-center justify-center"
               aria-label="Close"
             >
               <X size={24} strokeWidth={1.5} />
@@ -72,13 +72,13 @@ export const LocationSelectorModal: React.FC<Props> = ({ isOpen, onClose, destin
             <h2 className="font-display font-black text-3xl md:text-5xl text-pine tracking-[0.15em] uppercase mb-4 relative z-10">
               CHOOSE YOUR VILLAGE
             </h2>
-            <p className="text-pine/70 text-lg md:text-xl font-medium max-w-xl mx-auto mb-12 relative z-10 normal-case">
+            <p className="text-pine text-lg md:text-xl font-medium max-w-xl mx-auto mb-12 relative z-10 normal-case">
               Select a location to view the live menu, see current wait times, and place your order.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl relative z-10 px-2">
               {Object.values(LOCATIONS).map((loc) => (
-                <button
+                <button aria-label="Button"
                   key={loc.id}
                   onClick={() => handleSelect(loc.id as LocationId)}
                   className="group relative bg-white/40 backdrop-blur-xl rounded-t-[50px] rounded-b-[20px] p-10 text-left transition-all duration-700 hover:bg-white/70 hover:shadow-[0_30px_60px_-15px_rgba(138,61,42,0.25)] hover:-translate-y-3 overflow-hidden border border-white/30 tov-arch-glow"
@@ -107,7 +107,7 @@ export const LocationSelectorModal: React.FC<Props> = ({ isOpen, onClose, destin
                     <span className="w-1.5 h-1.5 rounded-full bg-terracotta animate-pulse"></span>
                     <span>{loc.address}</span>
                   </div>
-                  <p className="text-pine/50 font-mono text-sm mt-2 tracking-wider uppercase ml-4">{loc.postcode}</p>
+                  <p className="text-pine/80 font-mono text-sm mt-2 tracking-wider uppercase ml-4">{loc.postcode}</p>
                   <p className="text-terracotta/90 font-mono text-sm mt-3 tracking-widest ml-4 font-bold flex items-center gap-2">
                     📞 {loc.phone}
                   </p>

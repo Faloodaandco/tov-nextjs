@@ -48,7 +48,7 @@ export default function PrintQRs() {
             </p>
           </div>
 
-          <button
+          <button aria-label="Button"
             type="button"
             onClick={handlePrint}
             className="px-6 py-3 bg-[#D14836] text-white font-black text-sm uppercase tracking-wider rounded-xl shadow-md hover:bg-[#b83b2b] transition-all flex items-center gap-2 cursor-pointer shrink-0"
@@ -65,7 +65,7 @@ export default function PrintQRs() {
               Select Branch
             </label>
             <div className="flex bg-gray-100 p-1 rounded-xl">
-              <button
+              <button aria-label="Button"
                 type="button"
                 onClick={() => setSelectedBranch('hayes')}
                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
@@ -74,7 +74,7 @@ export default function PrintQRs() {
               >
                 Hayes (766B Uxbridge Rd)
               </button>
-              <button
+              <button aria-label="Button"
                 type="button"
                 onClick={() => setSelectedBranch('slough')}
                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
@@ -91,7 +91,7 @@ export default function PrintQRs() {
               Marketing Format
             </label>
             <div className="flex bg-gray-100 p-1 rounded-xl">
-              <button
+              <button aria-label="Button"
                 type="button"
                 onClick={() => setActiveTab('receipt')}
                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
@@ -100,7 +100,7 @@ export default function PrintQRs() {
               >
                 Till Receipt Footer
               </button>
-              <button
+              <button aria-label="Button"
                 type="button"
                 onClick={() => setActiveTab('table')}
                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
@@ -109,7 +109,7 @@ export default function PrintQRs() {
               >
                 Table Tent (A6)
               </button>
-              <button
+              <button aria-label="Button"
                 type="button"
                 onClick={() => setActiveTab('bag')}
                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${

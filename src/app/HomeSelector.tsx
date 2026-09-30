@@ -36,9 +36,9 @@ export default function HomeSelector() {
         {/* Left Nav */}
         <div className="flex-1 flex justify-start">
           <nav className="hidden md:flex items-center gap-8 text-[10px] tracking-[0.25em] font-medium text-pine/80 uppercase">
-            <button onClick={() => window.scrollTo({ top: 400, behavior: 'smooth' })} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Explore</button>
-            <button onClick={() => window.scrollTo({ top: 300, behavior: 'smooth' })} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Menus</button>
-            <button onClick={() => { window.location.href = 'mailto:info@tasteofvillagerestaurants.co.uk?subject=Catering%20Inquiry'; }} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Catering</button>
+            <button aria-label="Button" onClick={() => window.scrollTo({ top: 400, behavior: 'smooth' })} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Explore</button>
+            <button aria-label="Button" onClick={() => window.scrollTo({ top: 300, behavior: 'smooth' })} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Menus</button>
+            <button aria-label="Button" onClick={() => { window.location.href = 'mailto:info@tasteofvillagerestaurants.co.uk?subject=Catering%20Inquiry'; }} className="cursor-pointer hover:text-terracotta transition-colors uppercase tracking-[0.25em]">Catering</button>
           </nav>
         </div>
 
@@ -47,11 +47,11 @@ export default function HomeSelector() {
           <img 
             src="/assets/tov-logo-pine.png" 
             alt="Taste of Village" 
-            className="h-10 md:h-12 w-auto cursor-pointer"
+            className="h-10 md:h-12 w-auto cursor-pointer object-cover"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           />
           {/* Tagline under logo as requested */}
-          <span className="text-pine/70 italic font-serif text-[8px] md:text-[9px] mt-1 hidden md:block">
+          <span className="text-pine italic font-serif text-[8px] md:text-[9px] mt-1 hidden md:block">
             Home-style flavours, made fresh daily
           </span>
         </div>
@@ -59,13 +59,13 @@ export default function HomeSelector() {
         {/* Right Actions */}
         <div className="flex-1 flex justify-end">
           <div className="hidden md:flex items-center gap-6">
-            <button onClick={() => window.location.href='mailto:info@tasteofvillagerestaurants.co.uk'} className="px-6 py-2 border-[0.5px] border-pine text-pine text-[10px] tracking-[0.2em] uppercase rounded-full hover:bg-pine hover:text-white transition-colors">
+            <button aria-label="Button" onClick={() => window.location.href='mailto:info@tasteofvillagerestaurants.co.uk'} className="px-6 py-2 border-[0.5px] border-pine text-pine text-[10px] tracking-[0.2em] uppercase rounded-full hover:bg-pine hover:text-white transition-colors">
               Contact Us
             </button>
           </div>
           {/* Mobile Menu Toggle */}
           <div className="md:hidden flex items-center">
-            <button className="text-[10px] tracking-[0.2em] uppercase border-b border-pine/30 pb-0.5">Menu</button>
+            <button aria-label="Button" className="text-[10px] tracking-[0.2em] uppercase border-b border-pine/30 pb-0.5">Menu</button>
           </div>
         </div>
       </header>
@@ -75,7 +75,7 @@ export default function HomeSelector() {
         {/* Select Destination Text */}
         <div className="flex items-center gap-4 mb-12">
           <div className="h-px w-8 md:w-16 bg-gradient-to-r from-transparent to-terracotta/50"></div>
-          <p className="text-pine/70 text-[10px] md:text-xs font-sans tracking-[0.3em] uppercase font-bold drop-shadow-sm">
+          <p className="text-pine text-[10px] md:text-xs font-sans tracking-[0.3em] uppercase font-bold drop-shadow-sm">
             Select your destination
           </p>
           <div className="h-px w-8 md:w-16 bg-gradient-to-l from-transparent to-terracotta/50"></div>
@@ -131,7 +131,7 @@ export default function HomeSelector() {
                       </div>
                       
                       <div className="mt-auto mb-6">
-                        <button 
+                        <button aria-label="Button" 
                           onClick={(e) => navigateTo(e, '/' + loc.id + '/menu', loc.id, loc.name)}
                           className="px-6 py-2 rounded-full border-[0.5px] border-pine/40 group-hover:border-terracotta text-pine group-hover:text-terracotta transition-all duration-500 flex items-center gap-2 bg-transparent"
                         >
@@ -154,12 +154,12 @@ export default function HomeSelector() {
         <div className="relative z-10 max-w-4xl mx-auto px-6 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-24">
           <div className="flex flex-col items-center gap-2">
             <span className="text-pine/60 text-[8px] uppercase tracking-[0.3em] font-bold">Hayes Branch</span>
-            <img src="/assets/fhrs-badge-4-horizontal.svg" alt="Hayes Food Hygiene Rating 4" className="h-6 w-auto opacity-70 hover:opacity-100 transition-opacity duration-300" loading="lazy" />
+            <img src="/assets/fhrs-badge-4-horizontal.svg" alt="Hayes Food Hygiene Rating 4" className="h-6 w-auto opacity-70 hover:opacity-100 transition-opacity duration-300 object-cover" loading="lazy" />
           </div>
           
           <div className="flex flex-col items-center gap-2">
             <span className="text-pine/60 text-[8px] uppercase tracking-[0.3em] font-bold">Slough Branch</span>
-            <img src="/assets/fhrs-badge-5-horizontal.svg" alt="Slough Food Hygiene Rating 5" className="h-6 w-auto opacity-70 hover:opacity-100 transition-opacity duration-300" loading="lazy" />
+            <img src="/assets/fhrs-badge-5-horizontal.svg" alt="Slough Food Hygiene Rating 5" className="h-6 w-auto opacity-70 hover:opacity-100 transition-opacity duration-300 object-cover" loading="lazy" />
           </div>
         </div>
       </footer>
@@ -178,8 +178,8 @@ export default function HomeSelector() {
           </div>
 
           <div className="flex gap-8 text-[#889B8D] text-[9px] tracking-[0.25em] uppercase font-sans">
-            <button onClick={() => router.push('/book')} className="hover:text-terracotta cursor-pointer transition-colors uppercase tracking-[0.25em]">Reservations</button>
-            <button onClick={() => window.location.href='mailto:info@tasteofvillagerestaurants.co.uk'} className="hover:text-terracotta cursor-pointer transition-colors uppercase tracking-[0.25em]">Contact</button>
+            <button aria-label="Button" onClick={() => router.push('/book')} className="hover:text-terracotta cursor-pointer transition-colors uppercase tracking-[0.25em]">Reservations</button>
+            <button aria-label="Button" onClick={() => window.location.href='mailto:info@tasteofvillagerestaurants.co.uk'} className="hover:text-terracotta cursor-pointer transition-colors uppercase tracking-[0.25em]">Contact</button>
           </div>
 
         </div>

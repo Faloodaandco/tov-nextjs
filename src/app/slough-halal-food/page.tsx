@@ -99,7 +99,7 @@ export default function SeoPage() {
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Certified Halal &bull; Farnham Road</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Halal Pakistani Restaurant in Slough</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             We serve fully Halal certified Gujranwala-style Pakistani cuisine from our kitchen on Farnham Road. Every dish honours the bold, rustic traditions of Punjab — prepared fresh and served with pride.
           </p>
         </div>
@@ -119,7 +119,7 @@ export default function SeoPage() {
 
           <div className="bg-sand p-10 rounded-[3rem] border border-pine/10">
             <h2 className="font-serif text-3xl mb-4 text-pine">BBQ Platters & Tandoor</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               Our tandoor fires up daily for charcoal-grilled Seekh Kebabs, Lamb Chops, and mixed BBQ platters. We marinate every cut in-house using whole spices — no shortcuts, no pre-made pastes.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
@@ -142,7 +142,7 @@ export default function SeoPage() {
 
         <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-pine/5 text-center">
           <h2 className="font-serif text-4xl mb-6 text-pine">Dine In or Order for Delivery</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Bring the whole family for an authentic Pakistani dining experience, or order online and enjoy Gujranwala-style cuisine at home. We welcome large party bookings for private events.
           </p>
 

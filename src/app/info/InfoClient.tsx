@@ -87,17 +87,17 @@ function InfoContent() {
           <div className="md:w-1/4 flex-shrink-0">
             <div className="sticky top-32 bg-[#FBF9F4] p-6 border-[0.5px] border-pine/20 space-y-2">
               {TABS.map((tab) => (
-                <button
+                <button aria-label="Button"
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
                   className={`w-full flex items-center justify-between px-2 py-4 font-sans text-[10px] tracking-[0.25em] uppercase font-medium transition-all ${
                     activeTab === tab.id
                     ? 'text-terracotta border-b-[0.5px] border-terracotta/30'
-                    : 'text-pine/70 hover:text-pine border-b-[0.5px] border-transparent'
+                    : 'text-pine hover:text-pine border-b-[0.5px] border-transparent'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className={activeTab === tab.id ? 'text-terracotta' : 'text-pine/50'}>{tab.icon}</span>
+                    <span className={activeTab === tab.id ? 'text-terracotta' : 'text-pine/80'}>{tab.icon}</span>
                     <span>{tab.label}</span>
                   </div>
                   {activeTab === tab.id && <span className="text-terracotta">✤</span>}
@@ -118,15 +118,15 @@ function InfoContent() {
                 <div className="space-y-8">
                   <div>
                     <h4 className="font-sans font-bold text-[10px] md:text-[11px] tracking-[0.2em] uppercase text-pine/80 mb-3">Is all meat HMC Halal?</h4>
-                    <p className="text-pine/70 leading-relaxed text-sm">Yes, we buy exclusively from HMC certified halal suppliers.</p>
+                    <p className="text-pine leading-relaxed text-sm">Yes, we buy exclusively from HMC certified halal suppliers.</p>
                   </div>
                   <div>
                     <h4 className="font-sans font-bold text-[10px] md:text-[11px] tracking-[0.2em] uppercase text-pine/80 mb-3">Do you offer catering for large events or weddings?</h4>
-                    <p className="text-pine/70 leading-relaxed text-sm">Yes, catering and large event orders can be made. Please book 2 weeks before the event to ensure availability and proper preparation.</p>
+                    <p className="text-pine leading-relaxed text-sm">Yes, catering and large event orders can be made. Please book 2 weeks before the event to ensure availability and proper preparation.</p>
                   </div>
                   <div>
                     <h4 className="font-sans font-bold text-[10px] md:text-[11px] tracking-[0.2em] uppercase text-pine/80 mb-3">Are your curries made fresh?</h4>
-                    <p className="text-pine/70 leading-relaxed text-sm">Yes, all our curries are made fresh. We pride ourselves on preparing our dishes daily using authentic, fresh ingredients.</p>
+                    <p className="text-pine leading-relaxed text-sm">Yes, all our curries are made fresh. We pride ourselves on preparing our dishes daily using authentic, fresh ingredients.</p>
                   </div>
                 </div>
               </div>
@@ -144,7 +144,7 @@ function InfoContent() {
                   </p>
                 </div>
                 
-                <div className="space-y-6 text-pine/70 leading-relaxed text-sm">
+                <div className="space-y-6 text-pine leading-relaxed text-sm">
                   <p><strong>NUTS & SEEDS:</strong> Pistachios, almonds, and various seeds are standard ingredients scattered freely across our kitchen and used in many traditional curries and desserts. <strong>If you have a severe nut allergy, we strongly advise against dining with us to guarantee your safety.</strong></p>
                   
                   <p><strong>DAIRY:</strong> Ghee, butter, milk, and yogurt form the bedrock of authentic Indian and Pakistani cuisine. Very few items are truly dairy-free, and cross-contamination is highly likely across grills and curries.</p>
@@ -164,7 +164,7 @@ function InfoContent() {
                   <Leaf className="text-terracotta"/> Food & Hygiene Standards
                 </h2>
                 
-                <div className="space-y-8 text-pine/70 leading-relaxed text-sm">
+                <div className="space-y-8 text-pine leading-relaxed text-sm">
                   <div>
                     <h3 className="text-xl font-bold text-pine mb-3">100% Halal Guarantee</h3>
                     <p>Every single ingredient and meat product entering our premises is meticulously checked to ensure it is HMC certified Halal. We do not prepare, serve, or allow any non-halal items or alcohol into our premises.</p>
@@ -187,7 +187,7 @@ function InfoContent() {
                   <RefreshCw className="text-terracotta"/> Return & Refund Policy
                 </h2>
                 
-                <div className="space-y-6 text-pine/70 leading-relaxed text-sm">
+                <div className="space-y-6 text-pine leading-relaxed text-sm">
                   <p>Due to the perishable nature of hot food, our return policy operates on strict parameters inline with standard food delivery consumer rights.</p>
 
                   <div>
@@ -214,7 +214,7 @@ function InfoContent() {
                   <Shield className="text-terracotta"/> Privacy Policy
                 </h2>
                 
-                <div className="space-y-6 text-pine/70 leading-relaxed text-sm">
+                <div className="space-y-6 text-pine leading-relaxed text-sm">
                   <p>Taste of Village ("we", "our", "us") respects your privacy. This policy outlines how we collect, process, and protect your data.</p>
 
                   <div>
@@ -244,7 +244,7 @@ function InfoContent() {
                   <MapPin className="text-terracotta"/> Terms & Conditions
                 </h2>
                 
-                <div className="space-y-6 text-pine/70 leading-relaxed text-sm">
+                <div className="space-y-6 text-pine leading-relaxed text-sm">
                   <p>Welcome to Taste of Village. By using this website to place orders or book tables, you agree to the following terms:</p>
                   
                   <ul className="list-disc pl-5 space-y-4">

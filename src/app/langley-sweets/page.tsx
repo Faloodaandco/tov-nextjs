@@ -31,7 +31,7 @@ export default function SeoPage() {
         >
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Serving the Langley Community</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Traditional Sweets & Family Desserts</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             Located just moments from Langley, Taste of Village provides a premium, family-friendly environment focusing on authentic South Asian dessert heritage and modern halal treats.
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function SeoPage() {
             className="bg-sand p-10 rounded-[3rem]"
           >
             <h2 className="font-serif text-3xl mb-4 text-pine">Modern Halal Favorites</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               Prefer something contemporary? Our kitchen also bakes incredible hot cookie dough, frothy milkshakes, and luxurious cheesecakes. 100% Halal certified, making it the perfect safe dining spot for Langley families.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
@@ -70,7 +70,7 @@ export default function SeoPage() {
           className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-brand-text/5 text-center"
         >
           <h2 className="font-serif text-4xl mb-6">Your Local Dessert Spot</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Whether it's a post-dinner family outing or a quick catch-up over Karak Chai, we are Langley's closest premium dessert parlour.
           </p>
           

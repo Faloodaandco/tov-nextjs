@@ -54,7 +54,7 @@ export function CartDrawer(p: any) {
                       const isPending = i > currentIdx;
                       return (
                         <React.Fragment key={step}>
-                          <button
+                          <button aria-label="Button"
                             type="button"
                             onClick={() => {
                               if (step === 'cart') setCheckoutStep('cart');
@@ -72,7 +72,7 @@ export function CartDrawer(p: any) {
                             </span>
                             <span className={`text-[10px] font-black uppercase tracking-wider transition-colors duration-300 ${
                               isActive ? 'text-terracotta' :
-                              isCompleted ? 'text-pine/70' :
+                              isCompleted ? 'text-pine' :
                               'text-pine/30'
                             }`}>
                               {stepLabels[i]}
@@ -93,9 +93,9 @@ export function CartDrawer(p: any) {
               </div>
               <div className="flex items-center gap-4">
                 {checkoutStep === 'cart' && cart.length > 0 && (
-                  <button onClick={() => clearCart()} className="text-[10px] uppercase tracking-widest text-pine/40 hover:text-terracotta font-bold transition-colors">Clear Cart</button>
+                  <button aria-label="Button" onClick={() => clearCart()} className="text-[10px] uppercase tracking-widest text-pine/40 hover:text-terracotta font-bold transition-colors">Clear Cart</button>
                 )}
-                <button 
+                <button aria-label="Button" 
                   onClick={() => {
                     setIsCartOpen(false);
                     if (checkoutStep === 'success') {
@@ -118,11 +118,11 @@ export function CartDrawer(p: any) {
               <div className="p-6 space-y-4 md:min-h-[200px]">
               {cart.length === 0 ? (
                 <div className="text-center text-pine/30 mt-20 flex flex-col items-center animate-fade-in-up">
-                  <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="" className="w-32 h-32 opacity-20 mb-6 grayscale mix-blend-multiply" />
-                  <p className="font-display text-2xl font-bold uppercase tracking-widest text-pine/50">Your table is waiting</p>
+                  <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="" className="w-32 h-32 opacity-20 mb-6 grayscale mix-blend-multiply object-cover" />
+                  <p className="font-display text-2xl font-bold uppercase tracking-widest text-pine/80">Your table is waiting</p>
                   <p className="text-xs font-bold tracking-widest uppercase mt-4">Add items to begin</p>
                   {lastOrder && Array.isArray(lastOrder.items) && lastOrder.items.length > 0 && (
-                    <button
+                    <button aria-label="Button"
                       type="button"
                       onClick={handleReorderLastMeal}
                       className="mt-6 inline-flex items-center gap-2 px-5 py-3 rounded-full bg-pine text-white text-xs font-bold uppercase tracking-wider hover:bg-terracotta transition-all shadow-md hover:scale-105 active:scale-95 cursor-pointer"
@@ -147,9 +147,9 @@ export function CartDrawer(p: any) {
                       <p className="text-terracotta text-sm font-black mt-0.5 tabular-nums">{formatCurrency((item.price * item.quantity))}{item.quantity > 1 && <span className="text-pine/40 text-xs font-semibold ml-1.5">({item.quantity} × {formatCurrency(item.price)})</span>}</p>
                     </div>
                     <div className="flex items-center gap-3 bg-white border border-pine/20 px-3 py-1.5 rounded-full shadow-sm shrink-0">
-                      <button className="text-pine/60 hover:text-terracotta transition-colors font-black" title="Decrease quantity" onClick={() => updateQuantity(item._cartKey || item.id, item.quantity - 1)}><Minus size={16} strokeWidth={3} /></button>
+                      <button aria-label="Button" className="text-pine/60 hover:text-terracotta transition-colors font-black" title="Decrease quantity" onClick={() => updateQuantity(item._cartKey || item.id, item.quantity - 1)}><Minus size={16} strokeWidth={3} /></button>
                       <span className="font-black text-sm text-pine w-4 text-center tabular-nums">{item.quantity}</span>
-                      <button className="text-pine/60 hover:text-terracotta transition-colors font-black" title="Increase quantity" onClick={() => addToCart(item)}><Plus size={16} strokeWidth={3} /></button>
+                      <button aria-label="Button" className="text-pine/60 hover:text-terracotta transition-colors font-black" title="Increase quantity" onClick={() => addToCart(item)}><Plus size={16} strokeWidth={3} /></button>
                     </div>
                   </div>
                   );
@@ -169,7 +169,7 @@ export function CartDrawer(p: any) {
                       <p className="font-bold text-pine text-sm leading-tight truncate">{upsellSuggestions[0].name}</p>
                     </div>
                   </div>
-                  <button 
+                  <button aria-label="Button" 
                     onClick={() => {
                       if (SIZE_CATEGORIES.includes(upsellSuggestions[0].category)) {
                         setSizePickerItem(upsellSuggestions[0]);
@@ -191,7 +191,7 @@ export function CartDrawer(p: any) {
                     Order Type
                   </label>
                   <div className="grid grid-cols-2 gap-0 p-1 bg-pine/5 border border-pine/10 rounded-2xl">
-                    <button
+                    <button aria-label="Button"
                       type="button"
                       onClick={() => {
                         setFulfillmentType('delivery');
@@ -203,7 +203,7 @@ export function CartDrawer(p: any) {
                       }`}
                     >
                       <span className="flex items-center gap-2 text-sm">
-                        <Truck size={16} strokeWidth={2.5} className={fulfillmentType === 'delivery' ? 'text-white' : 'text-pine/50'} />
+                        <Truck size={16} strokeWidth={2.5} className={fulfillmentType === 'delivery' ? 'text-white' : 'text-pine/80'} />
                         <span>Delivery</span>
                       </span>
                       <span className="text-[10px] opacity-90 normal-case font-medium">
@@ -213,7 +213,7 @@ export function CartDrawer(p: any) {
                       </span>
                     </button>
 
-                    <button
+                    <button aria-label="Button"
                       type="button"
                       onClick={() => {
                         setFulfillmentType('collection');
@@ -226,7 +226,7 @@ export function CartDrawer(p: any) {
                       }`}
                     >
                       <span className="flex items-center gap-2 text-sm">
-                        <Store size={16} strokeWidth={2.5} className={fulfillmentType === 'collection' ? 'text-white' : 'text-pine/50'} />
+                        <Store size={16} strokeWidth={2.5} className={fulfillmentType === 'collection' ? 'text-white' : 'text-pine/80'} />
                         <span>Collection</span>
                       </span>
                       <span className="text-[10px] opacity-80 normal-case font-medium">Free · Ready ~20-25m</span>
@@ -285,7 +285,7 @@ export function CartDrawer(p: any) {
                             }}
                             className="flex-1 px-3 py-2 text-base sm:text-sm font-bold text-pine bg-white rounded-lg border border-emerald-200 focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 placeholder:text-pine/30 placeholder:font-normal uppercase"
                           />
-                          <button
+                          <button aria-label="Button"
                             type="button"
                             onClick={() => {
                               const pc = deliveryAddress.postcode.trim();
@@ -305,7 +305,7 @@ export function CartDrawer(p: any) {
                         {postcodeError && (
                           <div className="mt-2 p-2.5 bg-red-50 border border-red-200 rounded-lg text-xs text-red-800 font-medium">
                             <p>{postcodeError}</p>
-                            <button
+                            <button aria-label="Button"
                               type="button"
                               onClick={() => { setFulfillmentType('collection'); setPostcodeError(null); }}
                               className="mt-1.5 text-[10px] font-bold text-pine underline underline-offset-2 hover:text-terracotta transition-colors"
@@ -345,7 +345,7 @@ export function CartDrawer(p: any) {
                       className="flex-1 bg-transparent px-2.5 py-2 text-base sm:text-sm font-bold text-pine uppercase focus:outline-none placeholder:text-pine/30 placeholder:normal-case"
                     />
                   </div>
-                  <button
+                  <button aria-label="Button"
                     onClick={async () => {
                       const code = customVoucher.trim();
                       if (!code) return;
@@ -411,7 +411,7 @@ export function CartDrawer(p: any) {
                     <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5">
                       <CheckCircle2 size={12} /> {appliedVoucher} Applied
                     </span>
-                    <button onClick={() => { setAppliedVoucher(null); setCustomVoucher(''); }} className="text-emerald-700/50 hover:text-emerald-700">
+                    <button aria-label="Button" onClick={() => { setAppliedVoucher(null); setCustomVoucher(''); }} className="text-emerald-700/50 hover:text-emerald-700">
                       <X size={14} />
                     </button>
                   </div>
@@ -431,7 +431,7 @@ export function CartDrawer(p: any) {
                   </div>
                 )}
                 {activePromo === 'BREAKFAST40' && promoDiscount === 0 && (
-                  <div className="text-[11px] text-pine/50 font-medium italic">
+                  <div className="text-[11px] text-pine/80 font-medium italic">
                     {!isPromoTimeValid
                       ? 'BREAKFAST40 is valid on Weekends (Sat & Sun) till 2:00 PM only.'
                       : 'Add breakfast items to your cart to get 40% off.'}
@@ -450,7 +450,7 @@ export function CartDrawer(p: any) {
                   </div>
                 )}
                 <div className="flex justify-between items-baseline pt-3 mt-1 border-t-2 border-pine/15">
-                  <span className="font-display text-xs uppercase tracking-[0.2em] font-bold text-pine/70">Total</span>
+                  <span className="font-display text-xs uppercase tracking-[0.2em] font-bold text-pine">Total</span>
                   <span className="font-display text-2xl font-bold tabular-nums text-pine">{formatCurrency(finalCartTotal)}</span>
                 </div>
               </div>
@@ -483,7 +483,7 @@ export function CartDrawer(p: any) {
                   </div>
                 </div>
               )}
-              <button
+              <button aria-label="Cart"
                 onClick={handleProceedToDetails}
                 disabled={cart.length === 0 || isBelowMinOrder}
                 className="w-full py-4.5 md:py-5 bg-pine text-white font-black hover:bg-terracotta active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed uppercase tracking-[0.2em] shadow-xl hover:shadow-2xl relative overflow-hidden group mb-4 rounded-xl"
@@ -519,7 +519,7 @@ export function CartDrawer(p: any) {
                       <div className="mb-2">
                         {tableParam ? (
                           <>
-                            <p className="text-xs font-bold text-pine/50 uppercase tracking-[0.2em] mb-2 flex items-center gap-1.5"><MapPin size={14} /> Dine-In · Table {tableParam}</p>
+                            <p className="text-xs font-bold text-pine/80 uppercase tracking-[0.2em] mb-2 flex items-center gap-1.5"><MapPin size={14} /> Dine-In · Table {tableParam}</p>
                             <h3 className="font-display text-3xl font-bold text-pine leading-tight">Your Details</h3>
                             <p className="text-pine/60 text-sm mt-3 normal-case leading-relaxed font-medium">Sit back and relax. Your order will be sent straight to the chef. You can pay with our staff before you leave.</p>
                           </>
@@ -556,7 +556,7 @@ export function CartDrawer(p: any) {
                                     <p className="text-xs text-pine/60 mt-0.5">{activeLocation.address}, {activeLocation.postcode}</p>
                                   </div>
                                 </div>
-                                <button
+                                <button aria-label="Button"
                                   type="button"
                                   onClick={() => setIsLocationModalOpen(true)}
                                   className="text-xs font-black uppercase tracking-wider text-terracotta underline hover:text-pine shrink-0 ml-3"
@@ -797,7 +797,7 @@ export function CartDrawer(p: any) {
                           <span><strong>Pre-Order:</strong> Scheduled for kitchen opening (10:00 AM)</span>
                         </div>
                       )}
-                      <button
+                      <button aria-label="Button"
                         type="button"
                         onClick={(e) => {
                           if (isSubmitting || customerInfo.name.trim() === '' || customerInfo.phone.trim() === '' || customerInfo.email.trim() === '' || !!phoneError) return;
@@ -847,7 +847,7 @@ export function CartDrawer(p: any) {
                         </span>
                       </button>
                       
-                      <button
+                      <button aria-label="Button"
                         type="button"
                         onClick={() => setCheckoutStep('cart')}
                         className="w-full py-1.5 text-pine/40 font-bold hover:text-terracotta transition-colors uppercase tracking-[0.2em] text-[10px]"
@@ -899,14 +899,14 @@ export function CartDrawer(p: any) {
                         )
                       )}
                       
-                      <div className="bg-white/80 border border-pine/10 rounded-2xl p-3.5 mb-4 text-xs text-pine/70 shadow-sm">
+                      <div className="bg-white/80 border border-pine/10 rounded-2xl p-3.5 mb-4 text-xs text-pine shadow-sm">
                         <div className="flex items-center gap-2 font-semibold text-pine mb-1">
-                          <Info size={14} className="text-terracotta/80 shrink-0" />
+                          <Info size={14} className="text-terracotta shrink-0" />
                           <span>Food Allergy &amp; Dietary Notice</span>
                         </div>
                         <p className="leading-relaxed text-[11px]">
                           Our kitchen prepares dishes that may contain allergens. If you or someone you are ordering for has a food allergy or intolerance, please speak with us on{' '}
-                          <a href={`tel:${activeLocation.phone}`} className="font-semibold text-pine underline decoration-terracotta/40 hover:text-terracotta transition-colors">{activeLocation.phone}</a>.
+                          <a aria-label="Phone" href={`tel:${activeLocation.phone}`} className="font-semibold text-pine underline decoration-terracotta/40 hover:text-terracotta transition-colors">{activeLocation.phone}</a>.
                         </p>
                         <label className="flex items-start gap-2.5 mt-2.5 pt-2 border-t border-pine/10 cursor-pointer select-none group">
                           <input
@@ -1026,7 +1026,7 @@ export function CartDrawer(p: any) {
                       Your order has been sent directly to the kitchen.
                     </p>
                     {completedOrder.customerEmail && (
-                      <p className="text-[11px] text-pine/70 font-semibold mt-1">
+                      <p className="text-[11px] text-pine font-semibold mt-1">
                         📧 Order confirmation ticket dispatched to <span className="text-pine font-bold underline">{completedOrder.customerEmail}</span>.
                       </p>
                     )}
@@ -1045,14 +1045,14 @@ export function CartDrawer(p: any) {
 
                   {/* Or call & print */}
                   <div className="grid grid-cols-2 gap-3 w-full">
-                    <a
+                    <a aria-label="Phone"
                       href={`tel:${activeLocation.phone.replace(/\s+/g, '')}`}
                       className="py-3 bg-white text-pine rounded-full font-bold border border-pine/20 flex items-center justify-center gap-2 hover:bg-pine/5 transition-colors shadow-sm text-xs"
                     >
                       <Phone size={16} />
                       Call Restaurant
                     </a>
-                    <button
+                    <button aria-label="Button"
                       type="button"
                       onClick={() => (typeof window !== 'undefined' ? (window as any).print() : null)}
                       className="py-3 bg-white text-pine rounded-full font-bold border border-pine/20 flex items-center justify-center gap-2 hover:bg-pine/5 transition-colors shadow-sm text-xs"
@@ -1094,7 +1094,7 @@ export function CartDrawer(p: any) {
                   <div className="w-full bg-white border border-pine/10 rounded-2xl p-5 text-left shadow-sm">
                     <div className="flex items-center justify-between border-b border-pine/10 pb-3 mb-3">
                       <h4 className="font-serif text-sm font-bold text-pine uppercase tracking-wider">Order Items</h4>
-                      <span className="text-[11px] font-bold text-pine/50">
+                      <span className="text-[11px] font-bold text-pine/80">
                         {completedOrder.items?.reduce((acc: number, it: any) => acc + (it.quantity || 1), 0) || 0} Items
                       </span>
                     </div>
@@ -1135,7 +1135,7 @@ export function CartDrawer(p: any) {
                         <span>🔔 Phone Alerts Active! We will alert you the second your food is ready.</span>
                       </div>
                     ) : (
-                      <button
+                      <button aria-label="Button"
                         type="button"
                         onClick={async () => {
                           if (completedOrder?.id) {
@@ -1171,7 +1171,7 @@ export function CartDrawer(p: any) {
                     <h4 className="font-display font-bold text-pine text-base uppercase tracking-wider mb-1">
                       Support {activeLocation.name} on Google
                     </h4>
-                    <p className="text-xs text-pine/70 mb-3.5 leading-relaxed font-medium">
+                    <p className="text-xs text-pine mb-3.5 leading-relaxed font-medium">
                       Your 5-star review helps our kitchen family thrive in {activeLocation.city}. Takes only 15 seconds!
                     </p>
                     <a
@@ -1204,7 +1204,7 @@ export function CartDrawer(p: any) {
                     Get Directions ({activeLocation.name.replace('Taste Of Village ', '')})
                   </a>
 
-                  <button
+                  <button aria-label="Button"
                     onClick={() => {
                       setIsCartOpen(false);
                       setCheckoutStep('cart');

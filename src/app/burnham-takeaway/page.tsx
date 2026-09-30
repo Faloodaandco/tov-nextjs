@@ -92,7 +92,7 @@ export default function SeoPage() {
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Minutes from Burnham</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Pakistani Takeaway Near Burnham</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             Burnham residents order from us every week. We sit just a short drive down the A4 — collect from our Farnham Road kitchen or get hot delivery straight to your door in Burnham.
           </p>
         </div>
@@ -112,7 +112,7 @@ export default function SeoPage() {
 
           <div className="bg-sand p-10 rounded-[3rem] border border-pine/10">
             <h2 className="font-serif text-3xl mb-4 text-pine">Tandoori BBQ & Sides</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               Fire up your evening with charcoal Tandoori BBQ. We prepare every kebab and tikka fresh — never frozen, never reheated. Add our signature Raita and Chutney trio on the side.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
@@ -135,7 +135,7 @@ export default function SeoPage() {
 
         <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-pine/5 text-center">
           <h2 className="font-serif text-4xl mb-6 text-pine">Order Your Takeaway Now</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Skip the ordinary takeaways. Taste authentic Pakistani cuisine made fresh on Farnham Road — Burnham's closest source for genuine Karahi, BBQ, and Naan.
           </p>
 

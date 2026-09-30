@@ -178,7 +178,7 @@ export default async function DishPage({ params }: PageProps) {
           {/* Right: Dish Details */}
           <div className="flex flex-col space-y-6">
             {item.category && (
-              <span className="text-[11px] uppercase tracking-[0.18em] text-pine/50 font-bold">
+              <span className="text-[11px] uppercase tracking-[0.18em] text-pine/80 font-bold">
                 {item.category.replace(/_/g, ' ')}
               </span>
             )}
@@ -200,7 +200,7 @@ export default async function DishPage({ params }: PageProps) {
                   return (
                     <span
                       key={d}
-                      className="text-[10px] uppercase font-bold tracking-[0.15em] px-3 py-1 rounded-full border border-pine/10 text-pine/70 bg-white"
+                      className="text-[10px] uppercase font-bold tracking-[0.15em] px-3 py-1 rounded-full border border-pine/10 text-pine bg-white"
                     >
                       {info.emoji} {info.label}
                     </span>
@@ -209,7 +209,7 @@ export default async function DishPage({ params }: PageProps) {
               </div>
             )}
 
-            <p className="text-lg text-pine/70 leading-relaxed max-w-[65ch]">
+            <p className="text-lg text-pine leading-relaxed max-w-[65ch]">
               {item.description}
             </p>
 

@@ -18,7 +18,7 @@ export function SizePickerModal({ item, onClose, onAddToCart, setToastMessage }:
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose}></div>
       <div className="relative bg-[#FDFBF7] rounded-[28px] p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-pine/10 animate-fade-up">
-        <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-pine/5 text-pine/40 hover:text-pine rounded-full transition-colors">
+        <button aria-label="Close" onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-pine/5 text-pine/40 hover:text-pine rounded-full transition-colors">
           <X size={20} />
         </button>
         
@@ -30,7 +30,7 @@ export function SizePickerModal({ item, onClose, onAddToCart, setToastMessage }:
             onError={(e: any) => { e.target.onerror = null; e.target.src = '/assets/tov-logo-tree-terracotta-alpha.png'; }} 
           />
           <h3 className="font-display text-xl font-bold text-pine leading-tight">{item.name}</h3>
-          <p className="text-pine/50 text-xs font-semibold uppercase tracking-wider mt-1">Choose your option</p>
+          <p className="text-pine/80 text-xs font-semibold uppercase tracking-wider mt-1">Choose your option</p>
         </div>
         
         <div className="space-y-3">
@@ -53,7 +53,7 @@ export function SizePickerModal({ item, onClose, onAddToCart, setToastMessage }:
 
             return (
               <>
-                <button
+                <button aria-label="Button"
                   onClick={() => {
                     onAddToCart({ ...item, id: `${item.id}_regular`, name: `${item.name} (Regular)`, price: regularPrice });
                     onClose();
@@ -67,7 +67,7 @@ export function SizePickerModal({ item, onClose, onAddToCart, setToastMessage }:
                   </div>
                   <span className="font-sans font-black text-terracotta text-lg">{formatCurrency(regularPrice)}</span>
                 </button>
-                <button
+                <button aria-label="Button"
                   onClick={() => {
                     onAddToCart({ ...item, id: `${item.id}_large`, name: `${item.name} (${isMeal ? 'Meal' : 'Large'})`, price: largePrice });
                     onClose();

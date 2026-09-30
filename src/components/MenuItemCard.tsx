@@ -59,7 +59,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, quantityInCart
           <img 
             src="/assets/tov-logo-pine.png" 
             alt="Taste of Village"
-            className="w-20 md:w-24 h-auto opacity-20 group-hover:opacity-40 transition-opacity duration-700 mb-2 transform group-hover:scale-105"
+            className="w-20 md:w-24 h-auto opacity-20 group-hover:opacity-40 transition-opacity duration-700 mb-2 transform group-hover:scale-105 object-cover"
           />
           <span className="text-[9px] font-display font-bold uppercase tracking-[0.3em] text-pine/30 relative z-10">
             Taste of Village
@@ -110,7 +110,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, quantityInCart
         {item.dietary && item.dietary.length > 0 && (
           <div className="flex gap-1.5 mb-3 flex-wrap">
             {item.dietary.map((d: string) => (
-              <span key={d} className="text-[8px] uppercase font-black tracking-[0.25em] px-2.5 py-0.5 rounded-full border border-pine/15 text-pine/70 bg-transparent flex items-center gap-1">
+              <span key={d} className="text-[8px] uppercase font-black tracking-[0.25em] px-2.5 py-0.5 rounded-full border border-pine/15 text-pine bg-transparent flex items-center gap-1">
                 {d === 'vegan' && <span className="text-green-600" role="img" aria-label="vegan">🌱</span>}
                 {d === 'vegetarian' && <span className="text-yellow-600" role="img" aria-label="vegetarian">🧀</span>}
                 {d === 'halal' && <span className="text-emerald-600" role="img" aria-label="halal">☪</span>}
@@ -123,7 +123,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, quantityInCart
         )}
 
         {item.description && (
-          <p className={`text-pine/70 font-medium text-[13px] leading-relaxed mb-6 flex-1 ${['bbq_platters', 'platters'].includes(item.category) ? '' : 'line-clamp-2'}`}>
+          <p className={`text-pine font-medium text-[13px] leading-relaxed mb-6 flex-1 ${['bbq_platters', 'platters'].includes(item.category) ? '' : 'line-clamp-2'}`}>
             {item.description}
           </p>
         )}
@@ -133,7 +133,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, quantityInCart
             <Link
               href={dishUrl}
               onClick={(e) => e.stopPropagation()}
-              className="text-[9px] text-pine/50 hover:text-terracotta font-bold uppercase tracking-[0.2em] transition-colors"
+              className="text-[9px] text-pine/80 hover:text-terracotta font-bold uppercase tracking-[0.2em] transition-colors"
             >
               Details →
             </Link>

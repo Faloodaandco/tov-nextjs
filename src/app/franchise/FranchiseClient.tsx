@@ -38,10 +38,10 @@ export default function FranchiseClient() {
           <CheckCircle2 size={48} />
         </div>
         <h2 className="font-display text-4xl md:text-5xl font-black text-pine mb-4 text-center tracking-widest uppercase">Application Received</h2>
-        <p className="text-pine/70 text-lg max-w-md text-center mb-10">
+        <p className="text-pine text-lg max-w-md text-center mb-10">
           Thank you for your interest. Our franchise team will review your details and contact you shortly.
         </p>
-        <button
+        <button aria-label="Button"
           onClick={() => setSubmitted(false)}
           className="px-10 py-5 bg-pine text-white font-black uppercase tracking-[0.2em] text-sm hover:bg-terracotta transition-all shadow-[8px_8px_0px_rgba(138,61,42,0.2)] hover:-translate-y-1"
         >
@@ -59,7 +59,7 @@ export default function FranchiseClient() {
           <h1 className="font-display text-5xl md:text-7xl font-black text-pine tracking-tight mb-8 leading-tight uppercase">
             Own a Taste of Village Franchise
           </h1>
-          <p className="text-lg text-pine/70 max-w-2xl mx-auto mb-12 font-medium">
+          <p className="text-lg text-pine max-w-2xl mx-auto mb-12 font-medium">
             Bring the authentic taste of the Mughal Empire to your city. Partner with a proven, high-growth restaurant brand.
           </p>
           <a href="#apply" className="inline-flex items-center gap-4 px-10 py-5 bg-pine text-white uppercase tracking-[0.2em] font-black text-sm hover:bg-terracotta transition-all shadow-[8px_8px_0px_rgba(138,61,42,0.2)] hover:-translate-y-1 border border-pine">
@@ -80,7 +80,7 @@ export default function FranchiseClient() {
                 <TrendingUp size={28} />
               </div>
               <h3 className="font-display font-bold text-2xl text-pine mb-4 uppercase">Proven Concept</h3>
-              <p className="text-pine/70 leading-relaxed font-medium">
+              <p className="text-pine leading-relaxed font-medium">
                 Our menu of authentic curries, grills, and heritage dishes has a proven track record of high demand and exceptional customer retention.
               </p>
             </div>
@@ -89,7 +89,7 @@ export default function FranchiseClient() {
                 <ShieldCheck size={28} />
               </div>
               <h3 className="font-display font-bold text-2xl text-pine mb-4 uppercase">Operational Excellence</h3>
-              <p className="text-pine/70 leading-relaxed font-medium">
+              <p className="text-pine leading-relaxed font-medium">
                 Access our proprietary Restaurant OS, supply chain networks, and standardized operational procedures that maximize efficiency.
               </p>
             </div>
@@ -98,7 +98,7 @@ export default function FranchiseClient() {
                 <ChefHat size={28} />
               </div>
               <h3 className="font-display font-bold text-2xl text-pine mb-4 uppercase">Comprehensive Training</h3>
-              <p className="text-pine/70 leading-relaxed font-medium">
+              <p className="text-pine leading-relaxed font-medium">
                 From kitchen operations to front-of-house management, we provide extensive training for you and your staff to ensure success.
               </p>
             </div>
@@ -152,7 +152,7 @@ export default function FranchiseClient() {
                 <textarea value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} rows={4} className="w-full px-5 py-4 bg-transparent border-2 border-pine/20 focus:border-terracotta outline-none transition-all text-pine font-medium resize-none rounded-none" placeholder="Tell us a bit about your experience..." />
               </div>
 
-              <button type="submit" className="w-full py-6 bg-terracotta text-white font-black uppercase tracking-[0.2em] text-sm hover:bg-[#a64036] transition-all border-2 border-terracotta hover:border-[#a64036] shadow-[8px_8px_0px_rgba(20,40,29,0.1)] hover:-translate-y-1 mt-6">
+              <button aria-label="Button" type="submit" className="w-full py-6 bg-terracotta text-white font-black uppercase tracking-[0.2em] text-sm hover:bg-[#a64036] transition-all border-2 border-terracotta hover:border-[#a64036] shadow-[8px_8px_0px_rgba(20,40,29,0.1)] hover:-translate-y-1 mt-6">
                 Submit Inquiry
               </button>
             </form>

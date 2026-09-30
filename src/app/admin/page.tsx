@@ -138,7 +138,7 @@ export default function AdminDashboard() {
               />
             </div>
             {authError && <p className="text-[#a64036] text-sm font-medium">{authError}</p>}
-            <button
+            <button aria-label="Button"
               type="submit"
               disabled={isLoadingAuth}
               className="w-full bg-[#1C2D22] text-[#FAF6F0] py-2 px-4 rounded-md font-semibold hover:bg-[#354D3D] transition-colors disabled:opacity-50"
@@ -156,7 +156,7 @@ export default function AdminDashboard() {
       <header className="bg-[#1C2D22] text-[#FAF6F0] p-4 shadow-md sticky top-0 z-10">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <h1 className="text-xl font-bold tracking-wider">TASTE OF VILLAGE — ADMIN</h1>
-          <button 
+          <button aria-label="Button" 
             onClick={() => { sessionStorage.removeItem('tov_admin_pin'); setIsAuthenticated(false); }}
             className="text-sm bg-[#354D3D] px-3 py-1 rounded hover:bg-[#a64036] transition-colors"
           >
@@ -404,7 +404,7 @@ export default function AdminDashboard() {
             <div className="mb-8 p-4 bg-[#FAF6F0] border border-[#e5e5e5] rounded-lg">
               <h3 className="font-bold text-[#1C2D22] mb-2">Search Engine Indexing</h3>
               <p className="text-sm text-[#354D3D] mb-4">Notify search engines of recent content changes.</p>
-              <button
+              <button aria-label="Button"
                 onClick={handleReindex}
                 disabled={indexNowLoading}
                 className="bg-[#a64036] hover:bg-red-800 text-white font-semibold py-2 px-4 rounded transition-colors disabled:opacity-50 flex items-center justify-center min-w-[160px]"

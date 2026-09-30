@@ -48,7 +48,7 @@ export const PromoBanner = () => {
           className="w-full bg-terracotta text-white pointer-events-auto border-b border-white/10 shadow-sm"
         >
           <div className="max-w-7xl mx-auto px-3 py-3 sm:py-2.5 flex items-center justify-between gap-2">
-            <button 
+            <button  
               onClick={handleApplyPromo}
               className="flex-1 flex items-center justify-center gap-2 hover:opacity-90 transition-opacity text-[11px] sm:text-xs font-bold tracking-wider text-center py-3"
             >
@@ -71,7 +71,7 @@ export const PromoBanner = () => {
                 )}
               </span>
             </button>
-            <button 
+            <button  
               onClick={(e) => {
                 e.stopPropagation();
                 setIsVisible(false);

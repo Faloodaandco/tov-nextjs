@@ -38,7 +38,7 @@ export default function HayesHalalFoodPage() {
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Halal Certified · Hayes</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Authentic Halal Pakistani Food in Hayes</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             Every cut of meat we serve carries full halal certification. Our chefs grind spices in-house daily and fire every Karahi to order. Dine in with your family or order online for collection and delivery.
           </p>
         </div>
@@ -58,7 +58,7 @@ export default function HayesHalalFoodPage() {
 
           <div className="bg-white p-10 rounded-[3rem] border border-pine/5">
             <h2 className="font-serif text-3xl mb-4 text-pine">Menu Highlights</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               Our kitchen runs a tight menu built around dishes we perfected over decades. Hand-ground spices, clay-oven tandoori, and wok-fired Karahi define every service.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
@@ -90,7 +90,7 @@ export default function HayesHalalFoodPage() {
 
         <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-pine/5 text-center">
           <h2 className="font-serif text-4xl mb-6 text-pine">Visit Us in Hayes</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Walk in for lunch, bring the family for dinner, or order online. We cook every dish fresh — open daily, 12 PM to 11 PM.
           </p>
 

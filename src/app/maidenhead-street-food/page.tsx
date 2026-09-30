@@ -31,7 +31,7 @@ export default function SeoPage() {
         >
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">A Quick Drive from Maidenhead</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Authentic Indian Street Food & Late Night Chaat</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             Maidenhead locals know that for truly authentic, late-night sub-continent flavors, a quick trip down the M4 to Farnham Road is worth every minute.
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function SeoPage() {
             className="bg-sand p-10 rounded-[3rem]"
           >
             <h2 className="font-serif text-3xl mb-4 text-pine">Karak Chai & Desserts</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               Pair your savory street food with the finest Karak Chai in Berkshire, brewed fresh every evening. Or finish off with our signature Halal desserts, including the Royal Heritage Taste of Village.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
@@ -70,7 +70,7 @@ export default function SeoPage() {
           className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-brand-text/5 text-center"
         >
           <h2 className="font-serif text-4xl mb-6">Visit Us from Maidenhead</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Skip the local takeaways and experience premium dine-in street food. We're open late to satisfy all your savory and sweet cravings.
           </p>
           

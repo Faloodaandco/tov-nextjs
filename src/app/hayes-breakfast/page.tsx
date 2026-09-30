@@ -118,7 +118,7 @@ export default function HayesBreakfastPage() {
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Authentic Lahori Nashta</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Traditional Breakfast in Hayes</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             Experience the true taste of a Lahori morning. We prepare fresh Halwa Puri, slow-cook our Nihari overnight, and brew authentic Karak Chai for the ultimate Desi breakfast experience in West London.
           </p>
         </div>
@@ -181,7 +181,7 @@ export default function HayesBreakfastPage() {
 
           <div className="bg-sand p-10 rounded-[3rem] border border-pine/10">
             <h2 className="font-serif text-3xl mb-4 text-pine">Proper Karak Chai</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               A Desi breakfast is incomplete without tea. We brew strong, authentic Karak Chai, slowly simmered to achieve the perfect golden color and rich flavor profile.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
@@ -194,7 +194,7 @@ export default function HayesBreakfastPage() {
 
         <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-brand-text/5 text-center">
           <h2 className="font-serif text-4xl mb-6">Join Us for Breakfast</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Bring your family and enjoy the most authentic Pakistani breakfast spread in Hayes. Available for dine-in or collection.
           </p>
           

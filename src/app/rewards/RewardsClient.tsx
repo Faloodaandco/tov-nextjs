@@ -128,7 +128,7 @@ export default function RewardsClient() {
           <h1 className="font-display text-4xl md:text-5xl font-black text-pine tracking-[0.15em] uppercase mb-6">
             Heritage Rewards
           </h1>
-          <p className="text-pine/70 text-lg max-w-md mx-auto font-medium">
+          <p className="text-pine text-lg max-w-md mx-auto font-medium">
             Earn 1 point for every £1 spent across all our restaurants. Unlock exclusive dining experiences.
           </p>
         </motion.div>
@@ -150,7 +150,7 @@ export default function RewardsClient() {
                 </p>
               </div>
 
-              <button
+              <button aria-label="Button"
                 onClick={handleGoogleLogin}
                 disabled={loading}
                 className="w-full flex items-center justify-center gap-4 py-5 px-6 border-2 border-pine/10 hover:border-terracotta hover:bg-bg-sand transition-all font-black text-pine tracking-[0.2em] uppercase disabled:opacity-50 shadow-[4px_4px_0px_rgba(20,40,29,0.05)] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_rgba(138,61,42,0.1)]"
@@ -181,7 +181,7 @@ export default function RewardsClient() {
                         <step.icon size={20} />
                       </div>
                       <p className="font-display font-black uppercase tracking-wider text-pine mb-2">{step.title}</p>
-                      <p className="text-pine/50 text-xs leading-relaxed font-medium">{step.desc}</p>
+                      <p className="text-pine/80 text-xs leading-relaxed font-medium">{step.desc}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -204,10 +204,10 @@ export default function RewardsClient() {
                   </div>
                   <div>
                     <h2 className="font-display font-black text-xl tracking-widest text-pine uppercase">Welcome, {user?.displayName?.split(' ')[0] || 'Guest'}</h2>
-                    <p className="text-pine/50 text-xs font-bold uppercase tracking-widest mt-1">Almost Done</p>
+                    <p className="text-pine/80 text-xs font-bold uppercase tracking-widest mt-1">Almost Done</p>
                   </div>
                 </div>
-                <button onClick={logout} title="Sign Out" className="p-2 text-pine/40 hover:text-terracotta transition-colors">
+                <button aria-label="Button" onClick={logout} title="Sign Out" className="p-2 text-pine/40 hover:text-terracotta transition-colors">
                   <LogOut size={20} />
                 </button>
               </div>
@@ -222,7 +222,7 @@ export default function RewardsClient() {
                   placeholder="07XXX XXXXXX"
                   className="flex-1 px-6 py-4 border border-pine/20 focus:border-terracotta outline-none text-lg font-bold text-pine transition-colors bg-white shadow-inner"
                 />
-                <button
+                <button aria-label="Button"
                   onClick={handleLinkPhone} disabled={loading}
                   className="px-10 py-4 bg-pine text-white font-black uppercase tracking-[0.2em] hover:bg-terracotta transition-all shadow-[4px_4px_0px_rgba(20,40,29,0.2)] hover:shadow-[6px_6px_0px_rgba(138,61,42,0.3)] hover:-translate-y-0.5 disabled:opacity-50 flex items-center justify-center gap-3 border border-pine"
                 >
@@ -265,7 +265,7 @@ export default function RewardsClient() {
                         <p className="text-white/50 text-xs font-mono mt-1">{account.phone}</p>
                       </div>
                     </div>
-                    <button onClick={logout} className="text-white/50 hover:text-white text-[10px] font-black tracking-widest uppercase transition-colors flex items-center gap-2 border border-white/10 px-4 py-2 hover:bg-white/10">
+                    <button aria-label="Button" onClick={logout} className="text-white/50 hover:text-white text-[10px] font-black tracking-widest uppercase transition-colors flex items-center gap-2 border border-white/10 px-4 py-2 hover:bg-white/10">
                       <LogOut size={14} /> Sign Out
                     </button>
                   </div>

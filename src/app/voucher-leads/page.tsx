@@ -61,7 +61,7 @@ function VoucherLeadsContent() {
             placeholder="Enter Staff PIN"
             className="w-full border-2 border-gray-300 rounded-lg p-3 text-center text-xl tracking-widest font-mono focus:border-[#D14836] outline-none"
           />
-          <button type="submit" className="w-full bg-[#1A3C34] text-white p-3 rounded-lg font-bold mt-4">
+          <button aria-label="Button" type="submit" className="w-full bg-[#1A3C34] text-white p-3 rounded-lg font-bold mt-4">
             Unlock Dashboard
           </button>
         </form>
@@ -74,7 +74,7 @@ function VoucherLeadsContent() {
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-black text-[#1A3C34]">Voucher Leads Dashboard</h1>
-          <button onClick={fetchLeads} className="bg-gray-200 px-4 py-2 rounded font-bold text-sm">
+          <button aria-label="Button" onClick={fetchLeads} className="bg-gray-200 px-4 py-2 rounded font-bold text-sm">
             Refresh
           </button>
         </div>
@@ -85,7 +85,7 @@ function VoucherLeadsContent() {
               <p className="font-bold">Scanned Customer Code:</p>
               <p className="text-2xl font-mono">{scanId}</p>
             </div>
-            <button className="bg-green-600 text-white px-6 py-2 rounded-lg font-black uppercase shadow hover:bg-green-700">
+            <button aria-label="Button" className="bg-green-600 text-white px-6 py-2 rounded-lg font-black uppercase shadow hover:bg-green-700">
               Redeem Now
             </button>
           </div>

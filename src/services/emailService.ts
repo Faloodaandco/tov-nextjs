@@ -167,7 +167,7 @@ export function formatOrderHtml(order: Order): string {
         <div style="background: #F8F5EE; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #1E3A34;">
           <h3 style="margin: 0 0 8px 0; font-size: 14px; text-transform: uppercase; color: #1E3A34; letter-spacing: 1px;">Customer Information</h3>
           <p style="margin: 4px 0; font-size: 14px; color: #1E3A34;"><strong>Name:</strong> ${order.customerName}</p>
-          <p style="margin: 4px 0; font-size: 14px; color: #1E3A34;"><strong>Phone:</strong> <a href="tel:${order.customerPhone}" style="color: #8A3D2A; text-decoration: none; font-weight: bold;">${order.customerPhone}</a></p>
+          <p style="margin: 4px 0; font-size: 14px; color: #1E3A34;"><strong>Phone:</strong> <a aria-label="Phone" href="tel:${order.customerPhone}" style="color: #8A3D2A; text-decoration: none; font-weight: bold;">${order.customerPhone}</a></p>
           ${order.customerEmail ? `<p style="margin: 4px 0; font-size: 14px; color: #1E3A34;"><strong>Email:</strong> ${order.customerEmail}</p>` : ''}
         </div>
 

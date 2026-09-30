@@ -95,7 +95,7 @@ export const BookingPortal: React.FC = () => {
                                 </label>
                                 <div className="grid grid-cols-4 gap-3">
                                     {['17:00', '18:00', '19:00', '20:00', '21:00', '22:00'].map(t => (
-                                        <button
+                                        <button aria-label="Button"
                                             key={t}
                                             type="button"
                                             onClick={() => setFormData({ ...formData, time: t })}
@@ -111,7 +111,7 @@ export const BookingPortal: React.FC = () => {
                             </div>
                         </div>
 
-                        <button
+                        <button aria-label="Button"
                             onClick={() => setStep(2)}
                             disabled={!formData.date}
                             className="w-full py-5 bg-brand-obsidian text-white rounded-2xl font-black uppercase tracking-[2px] hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 shadow-lg"
@@ -170,14 +170,14 @@ export const BookingPortal: React.FC = () => {
                         </div>
 
                         <div className="flex gap-4">
-                            <button
+                            <button aria-label="Button"
                                 type="button"
                                 onClick={() => setStep(1)}
                                 className="flex-1 py-5 bg-black/5 text-brand-obsidian/40 rounded-2xl font-black uppercase tracking-[2px] border border-brand-pink/10 hover:bg-black/10 transition-all text-sm"
                             >
                                 Back
                             </button>
-                            <button
+                            <button aria-label="Button"
                                 type="submit"
                                 disabled={loading}
                                 className="flex-[2] py-5 bg-brand-pink text-white rounded-2xl font-black uppercase tracking-[2px] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center shadow-lg"
@@ -196,7 +196,7 @@ export const BookingPortal: React.FC = () => {
                         <h2 className="font-display text-5xl font-bold text-brand-obsidian">Thank You!</h2>
                         <p className="text-xl text-brand-obsidian/70">Your reservation is being processed. You will receive a confirmation shortly.</p>
                         <div className="pt-8">
-                            <button
+                            <button aria-label="Button"
                                 onClick={() => router.push('/')}
                                 className="px-12 py-4 bg-white/5 text-brand-electricPeach rounded-2xl font-black uppercase tracking-[2px] border border-brand-electricPeach/30 hover:bg-brand-electricPeach/10 transition-all"
                             >

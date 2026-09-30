@@ -56,7 +56,7 @@ export const Navbar = () => {
     setIsOpen(false);
   }, [pathname]);
 
-  const isActive = (path: string) => pathname === path ? 'text-terracotta font-bold' : 'text-pine/70 hover:text-terracotta';
+  const isActive = (path: string) => pathname === path ? 'text-terracotta font-bold' : 'text-pine hover:text-terracotta';
   
   const isMenu = pathname.includes('/menu');
   const useWhiteLogo = isMenu && !scrolled;
@@ -83,13 +83,13 @@ export const Navbar = () => {
           
           {/* Left: Global Hamburger Menu & Location */}
           <div className="flex flex-row items-center gap-2 sm:gap-3 pointer-events-auto">
-            <button
+            <button 
               onClick={() => setIsOpen(!isOpen)}
               className={`p-2.5 sm:p-3.5 transition-all focus:outline-none duration-300 rounded-full hover:-translate-y-0.5 ${pillClasses}`}
             >
               {isOpen ? <X size={20} className="sm:w-6 sm:h-6" /> : <MenuIcon size={20} className="sm:w-6 sm:h-6" />}
             </button>
-            <button
+            <button 
               suppressHydrationWarning
               onClick={() => setShowLocationModal(true)}
               className={`hidden sm:flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] transition-all duration-300 rounded-full hover:-translate-y-0.5 px-5 py-2 sm:py-3 ${pillClasses}`}
@@ -110,7 +110,7 @@ export const Navbar = () => {
 
           {/* Right: Actions */}
           <div className="flex flex-row items-center gap-2 sm:gap-3 pointer-events-auto">
-            <button
+            <button 
               onClick={() => setShowLocationModal(true)}
               className={`sm:hidden flex items-center justify-center p-2.5 transition-all focus:outline-none duration-300 rounded-full hover:-translate-y-0.5 ${pillClasses}`}
             >
@@ -123,7 +123,7 @@ export const Navbar = () => {
                 <UserCircle2 size={20} className="sm:w-6 sm:h-6" />
               </Link>
             ) : (
-              <button 
+              <button  
                 onClick={() => { setAuthTab('login'); setShowAuth(true); }}
                 className={`flex items-center justify-center p-2.5 sm:p-3.5 transition-all duration-300 rounded-full hover:-translate-y-0.5 ${pillClasses}`}
               >
@@ -131,7 +131,7 @@ export const Navbar = () => {
               </button>
             )}
 
-            <button 
+            <button  
               onClick={() => {
                 setIsCartOpen(true);
                 if (!pathname.includes('/menu')) {
@@ -177,7 +177,7 @@ export const Navbar = () => {
              {/* Header */}
              <div className="px-8 py-6 flex justify-between items-center border-b border-pine/10">
                <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="Taste of Village" className="h-10 object-contain drop-shadow-sm" />
-               <button onClick={() => setIsOpen(false)} className="p-2 rounded-full border border-pine/20 text-pine hover:bg-pine hover:text-bg-sand transition-all">
+               <button  onClick={() => setIsOpen(false)} className="p-2 rounded-full border border-pine/20 text-pine hover:bg-pine hover:text-bg-sand transition-all">
                  <X size={20} strokeWidth={1.5} />
                </button>
              </div>
@@ -198,7 +198,7 @@ export const Navbar = () => {
                     {isLoggedIn ? (
                       <Link href="/rewards" className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta transition-colors" onClick={() => setIsOpen(false)}><UserCircle2 size={20} /> My Account</Link>
                     ) : (
-                      <button onClick={() => { setAuthTab('signup'); setShowAuth(true); setIsOpen(false); }} className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta transition-colors text-left"><UserCircle2 size={20} /> Sign Up / Login</button>
+                      <button  onClick={() => { setAuthTab('signup'); setShowAuth(true); setIsOpen(false); }} className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta transition-colors text-left"><UserCircle2 size={20} /> Sign Up / Login</button>
                     )}
                     <Link href="/track" className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta transition-colors"><Truck size={20} /> Track Order</Link>
                     <Link href="/book" className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta transition-colors"><MapPin size={20} /> Book A Table</Link>
@@ -209,7 +209,7 @@ export const Navbar = () => {
 
                 {/* Contact & Location Block */}
                 <div className="px-8 py-8 bg-pine/5 border-t border-pine/10 flex flex-col gap-5">
-                  <button 
+                  <button  
                     onClick={() => { setShowLocationModal(true); setIsOpen(false); }}
                     className="text-xs font-black tracking-[0.2em] uppercase flex items-center justify-between w-full p-4 border border-pine/20 hover:border-terracotta hover:text-terracotta transition-colors text-pine bg-white/50 shadow-sm"
                   >
@@ -218,11 +218,11 @@ export const Navbar = () => {
                   </button>
 
                   <div className="flex items-center justify-between mt-2 px-2">
-                    <a href={`tel:${SHOP_CONFIG.phoneNumberRaw}`} className="text-xs font-bold tracking-widest uppercase text-pine/70 hover:text-terracotta flex items-center gap-2 transition-colors">
+                    <a aria-label="Phone" href={`tel:${SHOP_CONFIG.phoneNumberRaw}`} className="text-xs font-bold tracking-widest uppercase text-pine hover:text-terracotta flex items-center gap-2 transition-colors">
                       <Phone size={16} /> Call Us
                     </a>
                     <div className="w-px h-4 bg-pine/20"></div>
-                    <a href={buildWhatsAppLink('Hi! I have a question.')} target="_blank" rel="noopener noreferrer" className="text-xs font-bold tracking-widest uppercase text-pine/70 hover:text-terracotta flex items-center gap-2 transition-colors">
+                    <a href={buildWhatsAppLink('Hi! I have a question.')} target="_blank" rel="noopener noreferrer" className="text-xs font-bold tracking-widest uppercase text-pine hover:text-terracotta flex items-center gap-2 transition-colors">
                       <MessageCircle size={16} /> WhatsApp
                     </a>
                   </div>

@@ -173,7 +173,7 @@ export const AuthModal = ({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
         onClick={e => e.stopPropagation()}
       >
         {/* Close */}
-        <button onClick={onClose} className="absolute top-6 right-6 text-gray-300 hover:text-gray-600 transition-colors">
+        <button aria-label="Close" onClick={onClose} className="absolute top-6 right-6 text-gray-300 hover:text-gray-600 transition-colors">
           <X size={24} />
         </button>
 
@@ -193,7 +193,7 @@ export const AuthModal = ({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
         {/* Google Sign-In */}
         {!verificationResult && !success && (
           <>
-            <button
+            <button aria-label="Button"
               onClick={handleGoogle}
               disabled={loading || !!success}
               className="w-full flex items-center justify-center gap-3 py-4 px-6 rounded-none border-2 border-gray-100 hover:border-gray-200 hover:bg-gray-50 transition-all font-bold text-brand-text disabled:opacity-50"
@@ -214,14 +214,14 @@ export const AuthModal = ({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
 
             {/* Auth Method Toggle */}
             <div className="flex gap-2 mb-6">
-              <button 
+              <button aria-label="Button" 
                 type="button"
                 onClick={() => {setAuthMethod('email'); setError('');}}
                 className={`flex-1 py-3 text-sm font-bold border-2 transition-colors flex items-center justify-center gap-2 ${authMethod === 'email' ? 'border-brand-text bg-brand-text text-white' : 'border-gray-100 text-brand-text hover:border-gray-200'}`}
               >
                 <Mail size={16} /> Email Link
               </button>
-              <button 
+              <button aria-label="Button" 
                 type="button"
                 onClick={() => {setAuthMethod('phone'); setError('');}}
                 className={`flex-1 py-3 text-sm font-bold border-2 transition-colors flex items-center justify-center gap-2 ${authMethod === 'phone' ? 'border-brand-text bg-brand-text text-white' : 'border-gray-100 text-brand-text hover:border-gray-200'}`}
@@ -253,14 +253,14 @@ export const AuthModal = ({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
               {error && (
                 <p className="text-red-500 text-sm font-bold bg-red-50 p-3 rounded-none">{error}</p>
               )}
-              <button
+              <button aria-label="Button"
                 type="submit"
                 disabled={loading || form.otp.length < 6}
                 className="w-full py-4 bg-brand-text text-white font-bold rounded-none hover:bg-brand-text/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? <Loader2 size={20} className="animate-spin" /> : 'Verify & Login'}
               </button>
-              <button
+              <button aria-label="Button"
                  type="button"
                  onClick={() => { setVerificationResult(null); setForm(f => ({...f, otp: ''})); setError(''); }}
                  className="w-full text-center text-sm font-bold text-brand-text/50 hover:text-brand-text mt-4"
@@ -351,7 +351,7 @@ export const AuthModal = ({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
             )}
 
             {!success && (
-              <button
+              <button aria-label="Button"
                 type="submit"
                 disabled={loading}
                 className="w-full py-4 bg-brand-text text-white font-bold rounded-none hover:bg-brand-text/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 flex items-center justify-center gap-2 mt-4"
@@ -373,7 +373,7 @@ export const AuthModal = ({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
             {tab === 'login' && (
               <p className="text-brand-text/40">
                 Don't have an account?{' '}
-                <button onClick={() => { setTab('signup'); setError(''); }} className="text-brand-pink font-bold hover:underline">
+                <button aria-label="Button" onClick={() => { setTab('signup'); setError(''); }} className="text-brand-pink font-bold hover:underline">
                   Sign Up
                 </button>
               </p>
@@ -381,7 +381,7 @@ export const AuthModal = ({ isOpen, onClose, defaultTab = 'login' }: AuthModalPr
             {tab === 'signup' && (
               <p className="text-brand-text/40">
                 Already have an account?{' '}
-                <button onClick={() => { setTab('login'); setError(''); }} className="text-brand-pink font-bold hover:underline">
+                <button aria-label="Button" onClick={() => { setTab('login'); setError(''); }} className="text-brand-pink font-bold hover:underline">
                   Sign In
                 </button>
               </p>

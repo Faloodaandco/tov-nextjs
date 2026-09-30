@@ -88,7 +88,7 @@ export default function SloughDessertsPage() {
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Farnham Road Sweet Treats</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Authentic Pakistani Halal Desserts in Slough</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             From creamy Shahi Kulfi Falooda to slow-cooked Gajar Ka Halwa and steaming hot Karak Chai, complete your meal with traditional sub-continent sweetness on Farnham Road.
           </p>
         </div>
@@ -109,7 +109,7 @@ export default function SloughDessertsPage() {
 
           <div className="p-10 rounded-[3rem] bg-white border border-pine/10">
             <h2 className="font-serif text-3xl mb-4 text-pine">Chai &amp; Evening Treats</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               Nothing matches the pairing of fresh Desi sweets with a cup of freshly boiled Karak Chai or Pink Kashmiri Tea. Perfect for evening meetups and family dinners.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
@@ -123,7 +123,7 @@ export default function SloughDessertsPage() {
 
         <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-pine/5 text-center">
           <h2 className="font-serif text-4xl mb-6 text-pine">Dine In or Order for Collection</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Enjoy our full desserts and savory menu for dine-in or fast collection at 260 Farnham Road, Slough.
           </p>
 

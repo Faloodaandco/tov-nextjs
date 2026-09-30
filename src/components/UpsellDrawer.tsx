@@ -242,7 +242,7 @@ export const UpsellDrawer: React.FC<UpsellDrawerProps> = ({ isOpen, onClose, onP
                         <p className="text-terracotta font-black text-sm mt-0.5">{formatCurrency(item.price)}</p>
                       </div>
                     </div>
-                    <button 
+                    <button aria-label="Button" 
                       onClick={() => handleAddItem(item)}
                       disabled={isAdded}
                       className={`px-4 py-3 sm:px-4 sm:py-3 min-h-[48px] rounded-full font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm shrink-0 ${
@@ -270,7 +270,7 @@ export const UpsellDrawer: React.FC<UpsellDrawerProps> = ({ isOpen, onClose, onP
           </div>
 
           <div className="p-6 bg-white border-t border-pine/10 sticky bottom-0 flex gap-3">
-            <button 
+            <button aria-label="Button" 
               onClick={onProceed}
               className="w-full py-4 bg-pine text-white rounded-full font-black uppercase tracking-widest text-sm hover:bg-pine-light transition-all flex items-center justify-center gap-2 shadow-xl hover:-translate-y-0.5 active:scale-98"
             >

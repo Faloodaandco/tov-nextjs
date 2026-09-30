@@ -31,7 +31,7 @@ export default function SeoPage() {
         >
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Worth Every Mile from Reading</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Reading's Best-Kept Dessert Secret is in Slough</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             Reading has plenty of restaurants, but when it comes to authentic South Asian luxury desserts, locals are making the easy 30-minute drive along the M4 to Taste of Village on Farnham Road.
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function SeoPage() {
             className="bg-sand p-10 rounded-[3rem]"
           >
             <h2 className="font-serif text-3xl mb-4 text-pine">Easy M4 Access</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               Jump on the M4 from Reading, exit at Junction 6, and you're on Farnham Road in under 30 minutes. Plenty of free parking nearby and a luxurious dine-in atmosphere that makes the journey worthwhile.
             </p>
             <div className="space-y-4">
@@ -76,7 +76,7 @@ export default function SeoPage() {
           className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-brand-text/5 text-center"
         >
           <h2 className="font-serif text-4xl mb-6">Drive from Reading. Arrive in Luxury.</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Whether it's a date night, family outing, or late-night craving, Taste of Village delivers an experience that Reading dessert lovers are raving about.
           </p>
           

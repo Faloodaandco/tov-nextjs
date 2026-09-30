@@ -26,7 +26,7 @@ const SquareCheckoutForm = ({ cart, cartTotal, onCreateOrder, onPaymentSuccess, 
   return (
     <div className="flex flex-col h-full bg-white relative">
        <div className="p-6 bg-gray-50 border-b relative">
-         <button onClick={onBack} className="absolute left-6 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-200 rounded-full">
+         <button aria-label="Button" onClick={onBack} className="absolute left-6 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-200 rounded-full">
            <X size={20} />
          </button>
          <h2 className="text-xl font-bold text-center">Complete Payment</h2>
@@ -46,9 +46,9 @@ const SquareCheckoutForm = ({ cart, cartTotal, onCreateOrder, onPaymentSuccess, 
          {/* Loyalty Integration */}
          <div className="mt-6 p-4 bg-terracotta/5 border border-terracotta/20 rounded-xl">
            <h3 className="font-bold text-pine flex items-center gap-2"><Sparkles size={18} className="text-terracotta" /> Taste of Village Loyalty</h3>
-           <p className="text-xs text-pine/70 mt-1 mb-3">Earn points on every order. Enter your phone number above to check your balance or join!</p>
+           <p className="text-xs text-pine mt-1 mb-3">Earn points on every order. Enter your phone number above to check your balance or join!</p>
            <div className="flex items-center gap-3">
-             <button
+             <button aria-label="Button"
                type="button"
                disabled={!customerInfo.phone || isProcessing}
                onClick={async () => {
@@ -118,7 +118,7 @@ const SquareCheckoutForm = ({ cart, cartTotal, onCreateOrder, onPaymentSuccess, 
             />
             {isCollection && (
               <div className="mt-4 pt-4 border-t border-gray-200">
-                <button 
+                <button aria-label="Button" 
                   type="button" 
                   disabled={isProcessing} 
                   onClick={async () => {
@@ -317,7 +317,7 @@ const OrderInner = () => {
             <div className="max-w-7xl mx-auto px-4 overflow-x-auto [&::-webkit-scrollbar]:hidden" style={{ scrollBehavior: 'smooth' }}>
               <div className="flex space-x-4 pb-2">
                 {groupedMenu.map((cat) => (
-                  <button
+                  <button aria-label="Button"
                     key={cat.id}
                     onClick={() => scrollToCategory(cat.id)}
                     className={`px-6 py-2.5 rounded-none font-bold whitespace-nowrap transition-all border-2 border-[#1A3C34] uppercase tracking-widest text-xs ${
@@ -345,7 +345,7 @@ const OrderInner = () => {
                        </div>
                        <div className="flex items-center justify-between mt-auto">
                          <span className="text-[#D14836] font-black text-xl tracking-widest">£{item.price.toFixed(2)}</span>
-                         <button
+                         <button aria-label="Button"
                             onClick={() => { addToCart(item); setIsCartOpen(true); }}
                             className="w-12 h-12 rounded-none bg-white border-2 border-[#1A3C34] text-[#1A3C34] flex justify-center items-center font-black shadow-[2px_2px_0px_#1A3C34] hover:bg-[#D14836] hover:text-white hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex-shrink-0"
                           >
@@ -363,7 +363,7 @@ const OrderInner = () => {
 
       {/* Floating Cart Button */}
       {cart.length > 0 && !isCartOpen && (
-        <button
+        <button aria-label="Button"
           onClick={() => setIsCartOpen(true)}
           className="fixed bottom-6 w-[calc(100%-3rem)] max-w-sm left-1/2 -translate-x-1/2 z-50 bg-[#1A3C34] text-[#FDF9F1] px-6 py-4 rounded-none border-4 border-[#D14836] font-black shadow-[8px_8px_0px_#D14836] hover:-translate-y-[2px] hover:shadow-[10px_10px_0px_#D14836] transition-all flex items-center justify-between uppercase tracking-widest"
         >
@@ -384,7 +384,7 @@ const OrderInner = () => {
               <h2 className="font-display text-2xl font-bold text-brand-text">
                 {checkoutStep === 'cart' ? 'Your Order' : checkoutStep === 'details' ? 'Complete Order' : 'Success!'}
               </h2>
-              <button 
+              <button aria-label="Button" 
                 onClick={() => setIsCartOpen(false)} 
                 className="p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
               >
@@ -402,9 +402,9 @@ const OrderInner = () => {
                         <p className="text-brand-pink text-sm font-bold">£{item.price.toFixed(2)}</p>
                       </div>
                       <div className="flex items-center gap-4 bg-white rounded-full px-2 py-1 shadow-sm border border-gray-100">
-                        <button className="text-gray-400 p-2" onClick={() => removeFromCart(item.id)}><Minus size={14} /></button>
+                        <button aria-label="Button" className="text-gray-400 p-2" onClick={() => removeFromCart(item.id)}><Minus size={14} /></button>
                         <span className="font-bold text-brand-text w-4 text-center">{item.quantity}</span>
-                        <button className="text-gray-400 p-2" onClick={() => addToCart(item)}><Plus size={14} /></button>
+                        <button aria-label="Button" className="text-gray-400 p-2" onClick={() => addToCart(item)}><Plus size={14} /></button>
                       </div>
                     </div>
                   ))}
@@ -414,7 +414,7 @@ const OrderInner = () => {
                     <span>Total</span>
                     <span>£{cartTotal.toFixed(2)}</span>
                   </div>
-                  <button
+                  <button aria-label="Button"
                     onClick={() => setCheckoutStep('details')}
                     disabled={cart.length === 0}
                     className="w-full py-4 bg-brand-pink text-white rounded-xl font-bold hover:bg-brand-pink/90 transition-colors"
@@ -503,7 +503,7 @@ const OrderInner = () => {
                    </div>
                  )}
                  
-                 <button onClick={() => {setIsCartOpen(false); setCheckoutStep('cart'); setCompletedOrderId(null);}} className="w-full py-4 bg-brand-text text-white rounded-xl font-bold mt-4">Start New Order</button>
+                 <button aria-label="Button" onClick={() => {setIsCartOpen(false); setCheckoutStep('cart'); setCompletedOrderId(null);}} className="w-full py-4 bg-brand-text text-white rounded-xl font-bold mt-4">Start New Order</button>
                </div>
             )}
 

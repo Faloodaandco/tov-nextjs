@@ -36,7 +36,7 @@ export const Footer = () => {
       <div className="absolute inset-0 tov-feature-wall-light opacity-[0.04] pointer-events-none animate-ken-burns origin-center"></div>
       
       {/* Massive Background Monogram */}
-      <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="" className="absolute -bottom-40 -right-40 w-[600px] h-[600px] opacity-[0.02] transform -rotate-12 pointer-events-none" />
+      <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="" className="absolute -bottom-40 -right-40 w-[600px] h-[600px] opacity-[0.02] transform -rotate-12 pointer-events-none object-cover" />
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
@@ -50,16 +50,16 @@ export const Footer = () => {
               Bringing the authentic Desi taste of Lahore and Gujranwala straight to {SHOP_CONFIG.name.replace('Taste Of Village ', '')}. Curries, Karahis, and Grills crafted with passion and zero shortcuts.
             </p>
             <div className="flex gap-4">
-              <a href={SHOP_CONFIG.instagram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg">
+              <a aria-label="Instagram" href={SHOP_CONFIG.instagram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg">
                 <Instagram size={20} />
               </a>
-              <a href={SHOP_CONFIG.facebook} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg">
+              <a aria-label="Facebook" href={SHOP_CONFIG.facebook} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg">
                 <Facebook size={20} />
               </a>
-              <a href="https://wa.me/442034093786" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Hayes">
+              <a aria-label="WhatsApp" href="https://wa.me/442034093786" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Hayes">
                 <MessageCircle size={20} />
               </a>
-              <a href="https://wa.me/441753326341" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Slough">
+              <a aria-label="WhatsApp" href="https://wa.me/441753326341" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Slough">
                 <MessageCircle size={20} />
               </a>
             </div>
@@ -67,7 +67,7 @@ export const Footer = () => {
 
           {/* Links Quick */}
           <div>
-            <h4 className="font-sans font-bold text-xs mb-8 tracking-[0.2em] uppercase text-bg-sand/40">Explore</h4>
+            <h4 className="font-sans font-bold text-xs mb-8 tracking-[0.2em] uppercase text-bg-sand/70">Explore</h4>
             <ul className="space-y-5">
               <li><Link href={`/${loc.id}`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Home</Link></li>
               <li><Link href={`/${loc.id}/menu`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Our Menu</Link></li>
@@ -78,7 +78,7 @@ export const Footer = () => {
 
           {/* Legal / Policy Hub */}
           <div>
-            <h4 className="font-sans font-bold text-xs mb-8 tracking-[0.2em] uppercase text-bg-sand/40">Legal & Policies</h4>
+            <h4 className="font-sans font-bold text-xs mb-8 tracking-[0.2em] uppercase text-bg-sand/70">Legal & Policies</h4>
             <ul className="space-y-5">
               <li><Link href="/info?tab=allergies" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Allergy Guide</Link></li>
               <li><Link href="/info?tab=terms" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Terms & Conditions</Link></li>
@@ -89,24 +89,24 @@ export const Footer = () => {
 
           {/* Find Us */}
           <div>
-            <h4 className="font-sans font-bold text-xs mb-8 tracking-[0.2em] uppercase text-bg-sand/40">Find Us</h4>
-            <ul className="space-y-6">
+            <h4 className="font-sans font-bold text-xs mb-8 tracking-[0.2em] uppercase text-bg-sand/70">Find Us</h4>
+            <div className="space-y-6">
               {Object.values(LOCATIONS).map((branch) => (
                 <div key={branch.id} className="mb-6">
                   <h5 className="text-terracotta font-bold text-xs uppercase tracking-widest mb-3">{branch.name}</h5>
-                  <li className="flex items-start gap-4 mb-3">
+                  <div className="flex items-start gap-4 mb-3">
                     <MapPin size={20} className="text-terracotta flex-shrink-0 mt-0.5" />
                     <span className="text-bg-sand/70 leading-relaxed font-medium text-sm normal-case tracking-wide">
                       {branch.address}<br/>
                       <span className="text-xs font-black uppercase tracking-[0.2em] text-bg-sand">{branch.postcode}</span>
                     </span>
-                  </li>
-                  <li className="flex items-center gap-4 mb-4">
+                  </div>
+                  <div className="flex items-center gap-4 mb-4">
                     <Phone size={20} className="text-terracotta flex-shrink-0" />
                     <span className="text-bg-sand/70 font-medium text-sm tracking-widest">{branch.phone}</span>
-                  </li>
-                  <li>
-                    <a 
+                  </div>
+                  <div>
+                    <a aria-label="Google Maps Directions" 
                       href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(branch.address + ', ' + branch.postcode)}`}
                       target="_blank" 
                       rel="noopener noreferrer"
@@ -117,10 +117,10 @@ export const Footer = () => {
                         <span className="font-sans font-black tracking-[0.2em] text-[10px] uppercase text-white">Get Directions</span>
                       </div>
                     </a>
-                  </li>
+                  </div>
                 </div>
               ))}
-            </ul>
+            </div>
           </div>
 
         </div>
@@ -154,7 +154,7 @@ export const Footer = () => {
               alt={`Food Hygiene Rating ${loc.id === 'slough' ? '5 — Very Good' : '4 — Good'}`}
               width={146}
               height={81}
-              className="h-16 md:h-20 w-auto"
+              className="h-16 md:h-20 w-auto object-cover"
               loading="lazy"
             />
             <span className="text-[9px] text-bg-sand/30 font-bold uppercase tracking-[0.2em]">
@@ -167,11 +167,11 @@ export const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-bg-sand/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
-          <p className="text-bg-sand/40 text-[10px] md:text-xs font-black uppercase tracking-[0.2em]">
+          <p className="text-bg-sand/70 text-[10px] md:text-xs font-black uppercase tracking-[0.2em]">
             © {currentYear} Taste Of Village. All rights reserved.
           </p>
-          <p className="text-bg-sand/50 text-[10px] md:text-xs font-medium tracking-wide">
-            Built with love by <a href="https://marketricks.co.uk" target="_blank" rel="noopener noreferrer" className="text-terracotta hover:underline font-bold">Marketricks</a>
+          <p className="text-bg-sand/80 text-[10px] md:text-xs font-medium tracking-wide">
+            Built with love by <a aria-label="Marketricks" href="https://marketricks.co.uk" target="_blank" rel="noopener noreferrer" className="text-terracotta hover:underline font-bold">Marketricks</a>
           </p>
         </div>
       </div>

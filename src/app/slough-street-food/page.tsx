@@ -88,7 +88,7 @@ export default function SloughStreetFood() {
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Farnham Road Desi Street Flavours</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Authentic Pakistani Street Food in Slough</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             Experience the vibrant street flavours of Lahore and Gujranwala right here on Farnham Road. From tangy, spice-layered chaats to charcoal-seared seekh kebab rolls and hot Karak Chai.
           </p>
         </div>
@@ -109,7 +109,7 @@ export default function SloughStreetFood() {
 
           <div className="p-10 rounded-[3rem] bg-white border border-pine/10">
             <h2 className="font-serif text-3xl mb-4 text-pine">Charcoal Tandoor Rolls</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               Prime spiced minced meat skewered and charred over glowing coals in our clay tandoor, rolled inside a freshly baked buttered naan with sliced red onion and herb chutneys.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
@@ -123,7 +123,7 @@ export default function SloughStreetFood() {
 
         <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-pine/5 text-center">
           <h2 className="font-serif text-4xl mb-6 text-pine">Order Street Food for Fast Collection</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Order online and pick up your hot street food from our 260 Farnham Road kitchen in 15–20 minutes, or enjoy dine-in seating with family and friends.
           </p>
 

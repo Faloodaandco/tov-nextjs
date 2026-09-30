@@ -112,7 +112,7 @@ export default function HayesDeliveryPage() {
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Now Delivering Across UB1–UB5</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Halal Food Delivery in Hayes</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             Our own drivers deliver hand-cooked Pakistani food straight from 766B Uxbridge Road to your door. Karahi, Nihari, BBQ platters — all within a 5-mile radius. Free delivery on orders over £30.
           </p>
         </div>
@@ -132,7 +132,7 @@ export default function HayesDeliveryPage() {
 
           <div className="bg-white p-10 rounded-[3rem] border border-pine/5">
             <h2 className="font-serif text-3xl mb-4 text-pine">Delivery Zones</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               We cover Hayes, Southall, Uxbridge, West Drayton, Yeading, and Hillingdon. All UB1 through UB5 postcodes fall inside our delivery radius. Most orders arrive within 40 minutes.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
@@ -167,22 +167,22 @@ export default function HayesDeliveryPage() {
           <div className="space-y-6 max-w-2xl mx-auto">
             <div>
               <h3 className="font-bold text-pine mb-2">Which areas in Hayes do you deliver to?</h3>
-              <p className="text-pine/70 leading-relaxed">Our dedicated delivery fleet covers a 5-mile radius from 766B Uxbridge Road, including Hayes, Southall, Uxbridge, West Drayton, Yeading, and Hillingdon (postcodes UB1 through UB5).</p>
+              <p className="text-pine leading-relaxed">Our dedicated delivery fleet covers a 5-mile radius from 766B Uxbridge Road, including Hayes, Southall, Uxbridge, West Drayton, Yeading, and Hillingdon (postcodes UB1 through UB5).</p>
             </div>
             <div>
               <h3 className="font-bold text-pine mb-2">What is the minimum order and free delivery threshold?</h3>
-              <p className="text-pine/70 leading-relaxed">The minimum delivery order is £20. All orders over £30 qualify for free delivery directly to your door.</p>
+              <p className="text-pine leading-relaxed">The minimum delivery order is £20. All orders over £30 qualify for free delivery directly to your door.</p>
             </div>
             <div>
               <h3 className="font-bold text-pine mb-2">Is the food freshly cooked for delivery?</h3>
-              <p className="text-pine/70 leading-relaxed">Yes. Every dish is cooked fresh to order in our kitchen at 766B Uxbridge Road and delivered in thermal sealed packaging to arrive piping hot.</p>
+              <p className="text-pine leading-relaxed">Yes. Every dish is cooked fresh to order in our kitchen at 766B Uxbridge Road and delivered in thermal sealed packaging to arrive piping hot.</p>
             </div>
           </div>
         </div>
 
         <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-pine/5 text-center">
           <h2 className="font-serif text-4xl mb-6 text-pine">Order Delivery Now</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Browse the full Hayes menu, add to basket, and check out. Our kitchen fires your order fresh and our driver brings it to you — every day, 10 AM to 2 AM.
           </p>
 

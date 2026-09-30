@@ -874,7 +874,7 @@ function MenuPageContent() {
 
       {/* Cost calculation breakdown */}
       <div className="space-y-2 pt-4 border-t border-pine/10 text-xs">
-        <div className="flex justify-between text-pine/70 font-semibold">
+        <div className="flex justify-between text-pine font-semibold">
           <span>Subtotal</span>
           <span>£{cartTotal.toFixed(2)}</span>
         </div>
@@ -889,7 +889,7 @@ function MenuPageContent() {
         )}
 
         {isDeliveryOrder && (
-          <div className="flex justify-between text-pine/70 font-semibold">
+          <div className="flex justify-between text-pine font-semibold">
             <span>
               Delivery Fee ({activeDeliveryTier?.outcode || (activeLocation.id === 'hayes' ? 'Hayes Fleet' : 'Slough')})
             </span>
@@ -900,28 +900,28 @@ function MenuPageContent() {
         )}
 
         {serviceFee > 0 && (
-          <div className="flex justify-between text-pine/70 font-semibold">
+          <div className="flex justify-between text-pine font-semibold">
             <span>Service Fee (10%)</span>
             <span>£{serviceFee.toFixed(2)}</span>
           </div>
         )}
 
         <div className="flex justify-between items-baseline pt-3 border-t border-pine/10 text-pine">
-          <span className="font-display font-bold text-xs uppercase tracking-widest text-pine/70">Total</span>
+          <span className="font-display font-bold text-xs uppercase tracking-widest text-pine">Total</span>
           <span className="font-display font-bold text-2xl text-pine">£{finalCartTotal.toFixed(2)}</span>
         </div>
       </div>
 
       {/* Security assurances */}
-      <div className="mt-6 pt-4 border-t border-pine/10 flex flex-col items-center gap-2 text-center text-[10px] text-pine/50">
-        <div className="flex items-center gap-2 font-bold text-pine/70">
+      <div className="mt-6 pt-4 border-t border-pine/10 flex flex-col items-center gap-2 text-center text-[10px] text-pine/80">
+        <div className="flex items-center gap-2 font-bold text-pine">
           <span>🔒 256-bit SSL</span>
           <span>•</span>
           <span>Square Verified</span>
           <span>•</span>
           <span>Live Kitchen Tracking</span>
         </div>
-        <a
+        <a aria-label="Food Hygiene Rating"
           href={activeLocation.id === 'slough'
             ? 'https://ratings.food.gov.uk/business/1963386/taste-of-village-slough'
             : 'https://ratings.food.gov.uk/business/653844/a-taste-of-village'}
@@ -932,7 +932,7 @@ function MenuPageContent() {
           <img
             src={activeLocation.id === 'slough' ? '/assets/fhrs-badge-5-horizontal.svg' : '/assets/fhrs-badge-4-horizontal.svg'}
             alt={`Food Hygiene Rating ${activeLocation.id === 'slough' ? '5' : '4'}`}
-            className="h-6 w-auto"
+            className="h-6 w-auto object-cover"
             loading="lazy"
           />
         </a>
@@ -1006,11 +1006,11 @@ function MenuPageContent() {
 
       {/* UK FSA Food Allergy Notice — Natasha's Law (2021) Compliance */}
       <div className="max-w-7xl mx-auto px-4 pt-3">
-        <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/60 backdrop-blur-sm border border-pine/10 text-pine/70 text-xs leading-relaxed">
-          <Info size={15} className="text-terracotta/80 shrink-0" aria-hidden="true" />
+        <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/60 backdrop-blur-sm border border-pine/10 text-pine text-xs leading-relaxed">
+          <Info size={15} className="text-terracotta shrink-0" aria-hidden="true" />
           <p className="flex-1">
             <strong className="text-pine font-medium">Food Allergies &amp; Dietary Requirements:</strong> If you or someone you are ordering for has a food allergy or intolerance, please speak with our team directly on{' '}
-            <a href={`tel:${activeLocation.phone}`} className="font-semibold text-pine underline decoration-terracotta/40 underline-offset-2 hover:text-terracotta transition-colors">
+            <a aria-label="Phone" href={`tel:${activeLocation.phone}`} className="font-semibold text-pine underline decoration-terracotta/40 underline-offset-2 hover:text-terracotta transition-colors">
               {activeLocation.phone}
             </a>{' '}
             before placing your order. All our meat is 100% Halal certified.
@@ -1116,7 +1116,7 @@ function MenuPageContent() {
 
         {/* Loading state */}
         {isLoading && (
-          <div className="text-center py-20 font-bold text-pine/50 flex flex-col items-center">
+          <div className="text-center py-20 font-bold text-pine/80 flex flex-col items-center">
             <div className="w-12 h-12 border-4 border-terracotta border-t-transparent rounded-full animate-spin mb-4"></div>
             Loading menu...
           </div>
@@ -1135,7 +1135,7 @@ function MenuPageContent() {
             {CATEGORY_DESCRIPTIONS[group.id] && (
               <div className="mb-12 text-center max-w-2xl mx-auto px-4">
                 <strong className="font-sans text-terracotta tracking-[0.2em] uppercase text-xs md:text-sm block mb-3">{CATEGORY_DESCRIPTIONS[group.id].title}</strong>
-                <p className="text-pine/70 font-medium leading-loose text-sm tracking-wide">
+                <p className="text-pine font-medium leading-loose text-sm tracking-wide">
                   {CATEGORY_DESCRIPTIONS[group.id].text}
                 </p>
               </div>
@@ -1319,7 +1319,7 @@ function MenuPageContent() {
             <div className="text-center mb-6">
               <img src={sizePickerItem.image} alt={sizePickerItem.name} className="w-24 h-24 rounded-2xl object-cover mx-auto mb-4 shadow-md border border-pine/10" onError={(e: any) => { e.target.onerror = null; e.target.src = '/assets/tov-logo-tree-terracotta-alpha.png'; }} />
               <h3 className="font-display text-xl font-bold text-pine leading-tight">{sizePickerItem.name}</h3>
-              <p className="text-pine/50 text-xs font-semibold uppercase tracking-wider mt-1">Choose your option</p>
+              <p className="text-pine/80 text-xs font-semibold uppercase tracking-wider mt-1">Choose your option</p>
             </div>
             <div className="space-y-3">
               {(() => {

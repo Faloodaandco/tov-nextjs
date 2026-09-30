@@ -267,9 +267,9 @@ export default function BookClient() {
           </div>
 
           <div className="bg-bg-sand p-6 rounded-2xl border border-pine/10 border-dashed space-y-2">
-            <p className="text-xs text-pine/50 uppercase tracking-widest font-bold">Booking Reference</p>
+            <p className="text-xs text-pine/80 uppercase tracking-widest font-bold">Booking Reference</p>
             <p className="font-mono text-3xl font-black text-terracotta">{confirmedBooking.id}</p>
-            <p className="text-sm text-pine/70 mt-2 font-medium">
+            <p className="text-sm text-pine mt-2 font-medium">
               {confirmedBooking.guests} guests • {confirmedBooking.date} • {confirmedBooking.time}
             </p>
           </div>
@@ -277,7 +277,7 @@ export default function BookClient() {
           {/* Pre-order summary */}
           {confirmedBooking.preOrderItems?.length > 0 && (
             <div className="bg-bg-sand p-6 rounded-2xl border border-pine/10 text-left">
-              <p className="text-xs text-pine/50 uppercase tracking-widest font-bold mb-4">🍽️ Pre-Order — Ready on Arrival</p>
+              <p className="text-xs text-pine/80 uppercase tracking-widest font-bold mb-4">🍽️ Pre-Order — Ready on Arrival</p>
               {confirmedBooking.preOrderItems.map((item: any) => (
                 <div key={item.id} className="flex justify-between text-sm py-1.5">
                   <span className="text-pine font-medium">{item.quantity}x {item.name}</span>
@@ -288,7 +288,7 @@ export default function BookClient() {
                 <span>Total</span>
                 <span>£{confirmedBooking.preOrderTotal?.toFixed(2)}</span>
               </div>
-              <p className="text-xs text-pine/50 mt-3 font-medium">
+              <p className="text-xs text-pine/80 mt-3 font-medium">
                 {confirmedBooking.paymentMethod === 'online' ? '✅ Paid online' : '💳 Pay in restaurant on arrival'}
               </p>
             </div>
@@ -303,7 +303,7 @@ export default function BookClient() {
             <MessageCircle size={24} /> Resend via WhatsApp
           </a>
 
-          <button
+          <button aria-label="Button"
             onClick={() => setConfirmedBooking(null)}
             className="w-full py-4 bg-white text-pine border border-pine/20 rounded-full font-bold mt-2 hover:bg-pine hover:text-white transition-all"
           >
@@ -397,7 +397,7 @@ export default function BookClient() {
                   date.setDate(date.getDate() + i);
                   const isSelected = formData.date === date.toISOString().split('T')[0];
                   return (
-                    <button
+                    <button aria-label="Button"
                       key={i}
                       type="button"
                       onClick={() => setFormData({ ...formData, date: date.toISOString().split('T')[0] })}
@@ -440,7 +440,7 @@ export default function BookClient() {
                   const isFullyBooked = existingBookingsForSlot >= 5; // Max 5 bookings per 30m slot
 
                   return (
-                    <button
+                    <button aria-label="Button"
                       key={time}
                       type="button"
                       disabled={isFullyBooked}
@@ -490,7 +490,7 @@ export default function BookClient() {
 
           {/* ─── Pre-Order Toggle ─── */}
           <div className="border-t border-pine/10 pt-8 mt-8">
-            <button
+            <button aria-label="Button"
               type="button"
               onClick={() => setShowPreOrder(!showPreOrder)}
               className="w-full flex items-center justify-between p-5 bg-pine/5 rounded-2xl border border-pine/10 hover:border-pine/30 transition-all group"
@@ -501,10 +501,10 @@ export default function BookClient() {
                 </div>
                 <div className="text-left">
                   <p className="font-bold text-pine text-sm">Pre-Order Your Food</p>
-                  <p className="text-pine/50 text-xs">Arrive to a table already full of hot food.</p>
+                  <p className="text-pine/80 text-xs">Arrive to a table already full of hot food.</p>
                 </div>
               </div>
-              <ChevronDown size={20} className={`text-pine/50 transition-transform ${showPreOrder ? 'rotate-180' : ''}`} />
+              <ChevronDown size={20} className={`text-pine/80 transition-transform ${showPreOrder ? 'rotate-180' : ''}`} />
             </button>
 
             {showPreOrder && (
@@ -519,14 +519,14 @@ export default function BookClient() {
                           <p className="text-white/60 text-xs">£{item.price.toFixed(2)} each</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button type="button" onClick={() => removePreOrderItem(item.id)} className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors">
+                          <button aria-label="Button" type="button" onClick={() => removePreOrderItem(item.id)} className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors">
                             <Minus size={14} />
                           </button>
                           <span className="font-bold w-6 text-center">{item.quantity}</span>
-                          <button type="button" onClick={() => addPreOrderItem(item)} className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors">
+                          <button aria-label="Button" type="button" onClick={() => addPreOrderItem(item)} className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors">
                             <Plus size={14} />
                           </button>
-                          <button type="button" onClick={() => setPreOrderItems(prev => prev.filter(i => i.id !== item.id))} className="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center hover:bg-red-500/40 transition-colors ml-1">
+                          <button aria-label="Button" type="button" onClick={() => setPreOrderItems(prev => prev.filter(i => i.id !== item.id))} className="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center hover:bg-red-500/40 transition-colors ml-1">
                             <X size={14} className="text-red-200" />
                           </button>
                         </div>
@@ -540,7 +540,7 @@ export default function BookClient() {
                 )}
 
                 {/* Add items button */}
-                <button
+                <button aria-label="Button"
                   type="button"
                   onClick={() => setShowMenuPicker(!showMenuPicker)}
                   className="w-full py-4 border-2 border-dashed border-pine/20 rounded-2xl text-pine font-bold text-sm hover:border-terracotta hover:bg-terracotta/5 hover:text-terracotta transition-all flex items-center justify-center gap-2"
@@ -552,7 +552,7 @@ export default function BookClient() {
                 {showMenuPicker && (
                   <div className="max-h-72 overflow-y-auto space-y-2 border border-pine/10 rounded-2xl p-4 bg-white shadow-inner">
                     {preOrderMenuItems.map(item => (
-                      <button
+                      <button aria-label="Button"
                         key={item.id}
                         type="button"
                         onClick={() => addPreOrderItem(item)}
@@ -578,7 +578,7 @@ export default function BookClient() {
                   <div className="space-y-3 pt-4">
                     <p className="text-xs font-bold text-pine uppercase tracking-widest">Payment Method</p>
                     <div className="grid grid-cols-2 gap-4">
-                      <button
+                      <button aria-label="Button"
                         type="button"
                         onClick={() => setPaymentMethod('store')}
                         className={`p-5 rounded-2xl border-2 flex flex-col items-center gap-3 transition-all ${
@@ -589,9 +589,9 @@ export default function BookClient() {
                       >
                         <Store size={24} className={paymentMethod === 'store' ? 'text-terracotta' : 'text-pine/40'} />
                         <span className="text-sm font-bold text-pine">Pay In Restaurant</span>
-                        <span className="text-[10px] text-pine/50 uppercase tracking-widest">With staff during dining</span>
+                        <span className="text-[10px] text-pine/80 uppercase tracking-widest">With staff during dining</span>
                       </button>
-                      <button
+                      <button aria-label="Button"
                         type="button"
                         onClick={() => setPaymentMethod('online')}
                         className={`p-5 rounded-2xl border-2 flex flex-col items-center gap-3 transition-all ${
@@ -602,7 +602,7 @@ export default function BookClient() {
                       >
                         <CreditCard size={24} className={paymentMethod === 'online' ? 'text-terracotta' : 'text-pine/40'} />
                         <span className="text-sm font-bold text-pine">Pay Online</span>
-                        <span className="text-[10px] text-pine/50 uppercase tracking-widest">Coming soon</span>
+                        <span className="text-[10px] text-pine/80 uppercase tracking-widest">Coming soon</span>
                       </button>
                     </div>
                   </div>
@@ -611,7 +611,7 @@ export default function BookClient() {
             )}
           </div>
 
-          <button
+          <button aria-label="Button"
             type="submit"
             disabled={isSubmitting}
             className="w-full py-5 bg-terracotta text-white font-bold text-lg rounded-full hover:bg-[#a64036] transition-all shadow-xl hover:-translate-y-0.5 disabled:opacity-50 mt-6"

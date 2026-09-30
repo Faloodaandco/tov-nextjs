@@ -43,7 +43,7 @@ export const MenuCategoryNav: React.FC<MenuCategoryNavProps> = ({
           />
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-pine/40 w-3.5 h-3.5 pointer-events-none" />
           {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="absolute right-1 top-1/2 -translate-y-1/2 text-pine/40 hover:text-terracotta min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Clear search">
+            <button  onClick={() => setSearchQuery('')} className="absolute right-1 top-1/2 -translate-y-1/2 text-pine/40 hover:text-terracotta min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Clear search">
               <X className="w-4 h-4" />
             </button>
           )}
@@ -53,7 +53,7 @@ export const MenuCategoryNav: React.FC<MenuCategoryNavProps> = ({
         <div id="category-nav-container" className="overflow-x-auto [&::-webkit-scrollbar]:hidden flex-1" style={{ scrollBehavior: 'smooth' }}>
           <div className="flex gap-2 px-1">
             {groupedMenu.map((cat) => (
-              <button
+              <button 
                 key={cat.id}
                 id={`nav-btn-${cat.id}`}
                 onClick={() => scrollToCategory(cat.id)}

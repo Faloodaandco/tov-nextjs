@@ -31,7 +31,7 @@ export default function SeoPage() {
         >
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">A Short Drive from High Wycombe</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Finally. An Authentic Taste of Village Experience.</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             High Wycombe locals know that finding a truly authentic falooda or traditional Dahi Bhalla nearby is almost impossible. That's why we invite you to make the short trip to Farnham Road. We do it the traditional way.
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function SeoPage() {
             className="bg-sand p-10 rounded-[3rem]"
           >
             <h2 className="font-serif text-3xl mb-4 text-pine">London's Best Chaat?</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               We say yes. We refuse to use tinned chickpeas. Our Samosa Chaat and Dahi Bhallay feature chickpeas slow-cooked for hours to perfection. Everything from the papdi to the bhallas is made fresh in-house, never store-bought, guaranteeing an unbeatable authentic crunch.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
@@ -70,7 +70,7 @@ export default function SeoPage() {
           className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-brand-text/5 text-center"
         >
           <h2 className="font-serif text-4xl mb-6">Come Taste the Difference</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Don't settle for mediocre street food. Take the quick drive down to Slough and experience the most authentic Taste of Village and handcrafted Chaat available outside of South Asia.
           </p>
           

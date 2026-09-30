@@ -40,7 +40,7 @@ export function DishCTA({ item, locationId }: DishCTAProps) {
 
   return (
     <div className="flex flex-col sm:flex-row gap-3">
-      <button
+      <button aria-label="Button"
         onClick={handleAdd}
         disabled={isAdding}
         className="group relative inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-terracotta px-8 font-bold text-white transition-all active:scale-[0.98] disabled:opacity-70 hover:bg-terracotta/90 flex-1 sm:flex-initial"
@@ -49,9 +49,9 @@ export function DishCTA({ item, locationId }: DishCTAProps) {
         <span>{isAdding ? 'Adding...' : 'Order This Dish'}</span>
       </button>
 
-      <button
+      <button aria-label="Button"
         onClick={handleShare}
-        className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-pine/20 px-6 font-medium text-pine/70 hover:text-pine hover:border-pine/40 transition-colors"
+        className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-pine/20 px-6 font-medium text-pine hover:text-pine hover:border-pine/40 transition-colors"
       >
         <Share2 className="h-4 w-4" />
         <span>Share</span>

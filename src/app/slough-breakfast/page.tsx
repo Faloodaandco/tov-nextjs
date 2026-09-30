@@ -118,7 +118,7 @@ export default function SloughBreakfastPage() {
         <div className="text-center mb-16">
           <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Gujranwala Kitchen Heritage</span>
           <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Desi Breakfast in Slough</h1>
-          <p className="text-lg text-pine/70 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
             Experience an authentic Pakistani morning right on Farnham Road. We prepare traditional Halwa Puri, slow-cooked Nihari, and rich Paya exactly the way it's done back home.
           </p>
         </div>
@@ -181,7 +181,7 @@ export default function SloughBreakfastPage() {
 
           <div className="bg-sand p-10 rounded-[3rem] border border-pine/10">
             <h2 className="font-serif text-3xl mb-4 text-pine">Morning Beverages</h2>
-            <p className="text-pine/70 leading-relaxed mb-6">
+            <p className="text-pine leading-relaxed mb-6">
               Pair your spicy, rich breakfast with our traditional hot and cold beverages, prepared fresh by our tea specialists.
             </p>
             <ul className="space-y-3 font-semibold text-pine">
@@ -194,7 +194,7 @@ export default function SloughBreakfastPage() {
 
         <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-brand-text/5 text-center">
           <h2 className="font-serif text-4xl mb-6">Your Local Breakfast Spot</h2>
-          <p className="text-pine/70 leading-relaxed max-w-xl mx-auto mb-10">
+          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
             Join us for a premium family breakfast experience right in the heart of Slough. Perfect for weekend brunching.
           </p>
           
