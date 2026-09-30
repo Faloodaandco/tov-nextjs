@@ -40,7 +40,7 @@ function MenuPageContent() {
   const activeLocation = contextLocation || LOCATIONS[routeLocationId] || LOCATIONS.hayes;
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   const tableParam = searchParams.get('table') || searchParams.get('t');
-  const { addToCart, cart, removeFromCart, addOrder, clearCart, activePromo, isCartOpen, setIsCartOpen, reorderItems } = useStore();
+  const { addToCart, cart, removeFromCart, updateQuantity, addOrder, clearCart, activePromo, isCartOpen, setIsCartOpen, reorderItems } = useStore();
   const [activeCategory, setActiveCategory] = useState<string>('starters');
   const [activeDietaryFilters, setActiveDietaryFilters] = useState<string[]>([]);
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'details' | 'payment' | 'success'>('cart');
@@ -1245,6 +1245,7 @@ function MenuPageContent() {
       lastOrder={lastOrder}
       handleReorderLastMeal={handleReorderLastMeal}
       removeFromCart={removeFromCart}
+      updateQuantity={updateQuantity}
       addToCart={addToCart}
       upsellSuggestions={upsellSuggestions}
       SIZE_CATEGORIES={SIZE_CATEGORIES}
