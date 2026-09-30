@@ -9,9 +9,36 @@ if (typeof window !== 'undefined') {
 let adminApp: App;
 
 if (!getApps().length) {
-  adminApp = initializeApp({
-    projectId: 'taste-of-village-21052',
-  });
+  // ── Credential Resolution ──────────────────────────────────────────
+  // Priority:
+  //   1. FIREBASE_SERVICE_ACCOUNT_BASE64 (Vercel production)
+  //   2. GOOGLE_APPLICATION_CREDENTIALS file path (local dev / GCE)
+  //   3. ADC fallback (gcloud auth application-default login)
+  const base64Key = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+
+  if (base64Key) {
+    // Vercel: decode base64-encoded service account JSON
+    try {
+      const serviceAccount = JSON.parse(
+        Buffer.from(base64Key, 'base64').toString('utf-8')
+      );
+      adminApp = initializeApp({
+        credential: cert(serviceAccount),
+        projectId: serviceAccount.project_id || 'taste-of-village-21052',
+      });
+    } catch (parseErr) {
+      console.error('[FirebaseAdmin] Failed to parse FIREBASE_SERVICE_ACCOUNT_BASE64:', parseErr);
+      // Fall through to ADC
+      adminApp = initializeApp({
+        projectId: 'taste-of-village-21052',
+      });
+    }
+  } else {
+    // Local dev: relies on GOOGLE_APPLICATION_CREDENTIALS or gcloud ADC
+    adminApp = initializeApp({
+      projectId: 'taste-of-village-21052',
+    });
+  }
 } else {
   adminApp = getApps()[0];
 }
