@@ -87,6 +87,7 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [hasDigitalWallets, setHasDigitalWallets] = useState(false);
   const [isApplePayReady, setIsApplePayReady] = useState(false);
+  const [initRetry, setInitRetry] = useState(0);
 
   const cardRef = useRef<any>(null);
   const applePayRef = useRef<any>(null);
@@ -298,8 +299,21 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
         } catch {}
         cardRef.current = null;
       }
+      if (applePayRef.current) {
+        try {
+          applePayRef.current.destroy();
+        } catch {}
+        applePayRef.current = null;
+      }
+      if (googlePayRef.current) {
+        try {
+          googlePayRef.current.destroy();
+        } catch {}
+        googlePayRef.current = null;
+      }
+      paymentsRef.current = null;
     };
-  }, [appId, locationId, isProduction, branchName]);
+  }, [appId, locationId, isProduction, branchName, initRetry]);
 
   const handleCardSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -470,7 +484,23 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
             <AlertCircle size={16} className="text-red-600 shrink-0 mt-0.5" />
             <div className="flex-1">
               <span>{error}</span>
-              <p className="text-[11px] text-red-600/80 mt-0.5">Please check your card details or try Apple Pay / Google Pay.</p>
+              {!cardReady && (
+                <div className="mt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setError(null);
+                      setInitRetry(r => r + 1);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 active:scale-95 transition-all uppercase tracking-wider"
+                  >
+                    <span>↻ Retry Connection</span>
+                  </button>
+                </div>
+              )}
+              {cardReady && (
+                <p className="text-[11px] text-red-600/80 mt-0.5">Please check your card details or try Apple Pay / Google Pay.</p>
+              )}
             </div>
           </div>
         )}

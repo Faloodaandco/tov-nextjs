@@ -13,18 +13,29 @@ export function CartDrawer(p: any) {
     isCartOpen, setIsCartOpen, checkoutStep, setCheckoutStep, cart, clearCart, lastOrder, handleReorderLastMeal, removeFromCart, updateQuantity, addToCart, upsellSuggestions, SIZE_CATEGORIES, setSizePickerItem, tableParam, setFulfillmentType, fulfillmentType, activeDeliveryTier, discountedSubtotal, activeLocation, deliveryFee, isDeliveryOrder, postcodeError, setPostcodeError, customVoucher, setCustomVoucher, setVoucherError, appliedVoucher, setAppliedVoucher, voucherError, cartTotal, promoDiscount, ACTIVE_PROMO, isPromoTimeValid, serviceFee, finalCartTotal, isKitchenClosed, isBelowMinOrder, minOrder, minOrderRemaining, minOrderProgress, handleProceedToDetails, customerInfo, setCustomerInfo, phoneError, setPhoneError, getPhoneError, deliveryAddress, setDeliveryAddress, setIsLocationModalOpen, isPostcodeInDeliveryZone, marketingOptIn, setMarketingOptIn, submitOrder, isSubmitting, paymentMethod, setPaymentMethod, completedOrder, setCompletedOrder, handleSquarePaymentSuccess, getWhatsAppOrderLink, pushAlertActive, setPushAlertActive, requestPushPermission, SHOP_CONFIG, activePromo, desktopOrderSummary, tableSession
   } = p;
 
+  React.useEffect(() => {
+    if (!isCartOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isCartOpen]);
+
   return (
     <>
     {isCartOpen && (
-        <div className="fixed inset-0 z-[100] flex justify-end">
+        <div className="fixed inset-0 z-[100] flex justify-end" style={{ overscrollBehavior: 'contain' }}>
           <div className="absolute inset-0 bg-pine/80 backdrop-blur-sm animate-fade-in transition-opacity" onClick={() => setIsCartOpen(false)}></div>
-          <div className={`relative w-full bg-bg-sand h-full shadow-[-10px_0_40px_rgba(0,0,0,0.25)] flex flex-col animate-slide-in-right border-l border-pine/10 transition-all duration-300 ease-in-out ${
+          <div className={`relative w-full bg-bg-sand h-[100dvh] max-h-[100dvh] shadow-[-10px_0_40px_rgba(0,0,0,0.25)] flex flex-col animate-slide-in-right border-l border-pine/10 transition-all duration-300 ease-in-out overflow-hidden overscroll-contain ${
             checkoutStep === 'details' || checkoutStep === 'payment'
               ? 'max-w-full md:max-w-2xl lg:max-w-4xl xl:max-w-5xl'
               : checkoutStep === 'success'
               ? 'max-w-full md:max-w-xl lg:max-w-2xl'
               : 'max-w-full md:max-w-lg lg:max-w-xl'
-          }`}>
+          }`}
+          style={{ height: '100dvh' }}
+          >
             <div className="p-5 md:px-8 border-b border-pine/10 flex justify-between items-center bg-white shrink-0">
               <div>
                 <h2 className="font-display text-xl md:text-2xl font-bold text-pine uppercase tracking-widest leading-tight">
@@ -271,7 +282,7 @@ export function CartDrawer(p: any) {
                               setDeliveryAddress((prev: any) => ({ ...prev, postcode: val }));
                               setPostcodeError(null);
                             }}
-                            className="flex-1 px-3 py-2 text-sm font-bold text-pine bg-white rounded-lg border border-emerald-200 focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 placeholder:text-pine/30 placeholder:font-normal uppercase"
+                            className="flex-1 px-3 py-2 text-base sm:text-sm font-bold text-pine bg-white rounded-lg border border-emerald-200 focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 placeholder:text-pine/30 placeholder:font-normal uppercase"
                           />
                           <button
                             type="button"
@@ -330,7 +341,7 @@ export function CartDrawer(p: any) {
                         setCustomVoucher(e.target.value.toUpperCase());
                         setVoucherError('');
                       }}
-                      className="flex-1 bg-transparent px-2.5 py-2 text-sm font-bold text-pine uppercase focus:outline-none placeholder:text-pine/30 placeholder:normal-case"
+                      className="flex-1 bg-transparent px-2.5 py-2 text-base sm:text-sm font-bold text-pine uppercase focus:outline-none placeholder:text-pine/30 placeholder:normal-case"
                     />
                   </div>
                   <button
@@ -500,10 +511,10 @@ export function CartDrawer(p: any) {
             )}
 
             {checkoutStep === 'details' && (
-              <form onSubmit={submitOrder} className="flex-1 flex flex-col min-h-0">
-                <div className="flex-1 min-h-0 lg:grid lg:grid-cols-12">
-                  <div className="lg:col-span-7 flex flex-col min-h-0 bg-white lg:border-r border-pine/10">
-                    <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
+              <form onSubmit={submitOrder} className="flex-1 min-h-0 flex flex-col h-full overflow-hidden">
+                <div className="flex-1 min-h-0 flex flex-col h-full lg:grid lg:grid-cols-12 overflow-hidden">
+                  <div className="lg:col-span-7 flex-1 min-h-0 flex flex-col h-full bg-white lg:border-r border-pine/10 overflow-hidden">
+                    <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-5 sm:p-6 md:p-8 space-y-6" style={{ WebkitOverflowScrolling: 'touch' }}>
                       <div className="mb-2">
                         {tableParam ? (
                           <>
@@ -573,7 +584,7 @@ export function CartDrawer(p: any) {
                               type="text"
                               required
                               autoFocus
-                              className="w-full p-3.5 bg-white border border-pine/15 focus:border-pine focus:ring-1 focus:ring-brand-text/20 outline-none transition-all text-pine rounded-xl text-sm"
+                              className="w-full p-3.5 bg-white border border-pine/15 focus:border-pine focus:ring-1 focus:ring-brand-text/20 outline-none transition-all text-pine rounded-xl text-base sm:text-sm"
                               value={customerInfo.name}
                               onChange={e => setCustomerInfo({ ...customerInfo, name: e.target.value })}
                               placeholder="John Doe"
@@ -584,7 +595,7 @@ export function CartDrawer(p: any) {
                             <input
                               type="tel"
                               required
-                              className={`w-full p-3.5 bg-white border outline-none transition-all text-pine font-medium shadow-sm rounded-xl text-sm ${
+                              className={`w-full p-3.5 bg-white border outline-none transition-all text-pine font-medium shadow-sm rounded-xl text-base sm:text-sm ${
                                 phoneError
                                   ? 'border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-200'
                                   : 'border-pine/15 focus:border-pine'
@@ -610,7 +621,7 @@ export function CartDrawer(p: any) {
                           <input
                             type="email"
                             required
-                            className="w-full p-3.5 bg-white border border-pine/15 focus:border-pine outline-none transition-all text-pine font-medium shadow-sm rounded-xl text-sm"
+                            className="w-full p-3.5 bg-white border border-pine/15 focus:border-pine outline-none transition-all text-pine font-medium shadow-sm rounded-xl text-base sm:text-sm"
                             value={customerInfo.email}
                             onChange={e => setCustomerInfo({ ...customerInfo, email: e.target.value })}
                             placeholder="your@email.com"
@@ -637,7 +648,7 @@ export function CartDrawer(p: any) {
                             value={deliveryAddress.line1}
                             onChange={e => setDeliveryAddress({ ...deliveryAddress, line1: e.target.value })}
                             placeholder="Flat / House number and street name"
-                            className="w-full p-3.5 bg-white border border-pine/15 focus:border-terracotta focus:ring-1 focus:ring-terracotta/20 rounded-xl text-sm outline-none text-pine"
+                            className="w-full p-3.5 bg-white border border-pine/15 focus:border-terracotta focus:ring-1 focus:ring-terracotta/20 rounded-xl text-base sm:text-sm outline-none text-pine"
                           />
                         </div>
 
@@ -648,7 +659,7 @@ export function CartDrawer(p: any) {
                             value={deliveryAddress.line2}
                             onChange={e => setDeliveryAddress({ ...deliveryAddress, line2: e.target.value })}
                             placeholder="Apartment, building, unit, etc."
-                            className="w-full p-3.5 bg-white border border-pine/15 focus:border-terracotta focus:ring-1 focus:ring-terracotta/20 rounded-xl text-sm outline-none text-pine"
+                            className="w-full p-3.5 bg-white border border-pine/15 focus:border-terracotta focus:ring-1 focus:ring-terracotta/20 rounded-xl text-base sm:text-sm outline-none text-pine"
                           />
                         </div>
 
@@ -661,7 +672,7 @@ export function CartDrawer(p: any) {
                               value={deliveryAddress.city}
                               onChange={e => setDeliveryAddress({ ...deliveryAddress, city: e.target.value })}
                               placeholder={activeLocation.id === 'hayes' ? 'Hayes' : 'Slough'}
-                              className="w-full p-3.5 bg-white border border-pine/15 focus:border-terracotta focus:ring-1 focus:ring-terracotta/20 rounded-xl text-sm outline-none text-pine"
+                              className="w-full p-3.5 bg-white border border-pine/15 focus:border-terracotta focus:ring-1 focus:ring-terracotta/20 rounded-xl text-base sm:text-sm outline-none text-pine"
                             />
                           </div>
                           <div>
@@ -685,7 +696,7 @@ export function CartDrawer(p: any) {
                                 }
                               }}
                               placeholder={activeLocation.id === 'hayes' ? 'e.g. UB4 0RU' : 'e.g. SL1 4XQ'}
-                              className={`w-full p-3.5 bg-white border rounded-xl text-sm uppercase font-bold outline-none ${
+                              className={`w-full p-3.5 bg-white border rounded-xl text-base sm:text-sm uppercase font-bold outline-none ${
                                 postcodeError
                                   ? 'border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-200 text-red-700'
                                   : 'border-pine/15 focus:border-terracotta focus:ring-1 focus:ring-terracotta/20 text-pine'
@@ -722,7 +733,7 @@ export function CartDrawer(p: any) {
                             value={deliveryAddress.instructions}
                             onChange={e => setDeliveryAddress({ ...deliveryAddress, instructions: e.target.value })}
                             placeholder="e.g. Ring buzzer 4, leave by front porch"
-                            className="w-full p-3.5 bg-white border border-pine/15 focus:border-terracotta focus:ring-1 focus:ring-terracotta/20 rounded-xl text-sm outline-none text-pine"
+                            className="w-full p-3.5 bg-white border border-pine/15 focus:border-terracotta focus:ring-1 focus:ring-terracotta/20 rounded-xl text-base sm:text-sm outline-none text-pine"
                           />
                         </div>
                       </div>
@@ -778,7 +789,7 @@ export function CartDrawer(p: any) {
                 </div>
 
                 {/* Pinned Bottom in Left Column */}
-                <div className="shrink-0 p-5 md:px-8 border-t border-pine/10 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.04)] z-20 space-y-3">
+                <div className="shrink-0 p-4 sm:p-5 md:px-8 border-t border-pine/10 bg-white/95 backdrop-blur-md shadow-[0_-10px_30px_rgba(0,0,0,0.06)] z-20 space-y-2 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
                       {isKitchenClosed && (
                         <div className="bg-amber-500/10 border border-amber-500/20 text-pine rounded-xl p-2.5 mb-2 text-center text-xs font-semibold flex items-center justify-center gap-1.5">
                           <Clock size={13} className="text-amber-600 shrink-0" />
@@ -852,10 +863,13 @@ export function CartDrawer(p: any) {
             )}
 
             {checkoutStep === 'payment' && (
-              <div className="flex-1 flex flex-col min-h-0 bg-white">
-                <div className="flex-1 min-h-0 lg:grid lg:grid-cols-12">
+              <div className="flex-1 min-h-0 flex flex-col h-full bg-white overflow-hidden">
+                <div className="flex-1 min-h-0 flex flex-col h-full lg:grid lg:grid-cols-12 overflow-hidden">
                   {/* Left Column: Payment Form */}
-                  <div className="lg:col-span-7 flex flex-col min-h-0 overflow-y-auto p-6 md:p-8 space-y-6 pb-24 bg-white lg:border-r border-pine/10">
+                  <div 
+                    className="lg:col-span-7 flex-1 min-h-0 flex flex-col h-full overflow-y-auto overscroll-contain p-5 sm:p-6 md:p-8 space-y-6 pb-28 bg-white lg:border-r border-pine/10"
+                    style={{ WebkitOverflowScrolling: 'touch' }}
+                  >
                     <div>
                       <h3 className="font-sans text-xl md:text-2xl font-bold text-pine uppercase tracking-widest mb-1 leading-none">Complete Payment</h3>
                       <p className="text-pine/60 text-xs normal-case mb-6">Choose Express Checkout (Apple Pay / Google Pay) or enter card details below. We do not store card numbers.</p>
