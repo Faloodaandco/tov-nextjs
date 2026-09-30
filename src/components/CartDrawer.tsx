@@ -102,7 +102,8 @@ export function CartDrawer(p: any) {
             {checkoutStep === 'cart' && (
               <>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin">
+            <div className="flex-1 overflow-y-auto scrollbar-thin">
+              <div className="p-6 space-y-4 md:min-h-[200px]">
               {cart.length === 0 ? (
                 <div className="text-center text-pine/30 mt-20 flex flex-col items-center animate-fade-in-up">
                   <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="" className="w-32 h-32 opacity-20 mb-6 grayscale mix-blend-multiply" />
@@ -128,23 +129,23 @@ export function CartDrawer(p: any) {
                       <img src={item.image} alt="" onError={(e: any) => { e.target.onerror = null; e.target.src = '/assets/tov-logo-tree-terracotta-alpha.png'; e.target.className = 'w-full h-full object-contain p-3 opacity-40 transition-transform duration-700 group-hover:scale-110'; }} className={`w-full h-full transition-transform duration-700 group-hover:scale-110 ${isFallback ? 'object-contain p-3 opacity-40' : 'object-cover'}`} />
                       <div className="absolute inset-0 bg-pine/5 group-hover:bg-transparent transition-colors"></div>
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-display font-bold text-lg tracking-wider text-pine leading-tight">{item.name}</h4>
-                      {item.modifiers && <p className="text-[10px] text-pine/60 mt-1 uppercase tracking-widest">{item.modifiers.size}</p>}
-                      <p className="text-terracotta text-sm font-black mt-1">£{item.price.toFixed(2)}</p>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-display font-bold text-base md:text-lg tracking-wider text-pine leading-tight truncate">{item.name}</h4>
+                      {item.modifiers && <p className="text-[10px] text-pine/60 mt-0.5 uppercase tracking-widest">{item.modifiers.size}</p>}
+                      <p className="text-terracotta text-sm font-black mt-0.5 tabular-nums">£{(item.price * item.quantity).toFixed(2)}{item.quantity > 1 && <span className="text-pine/40 text-xs font-semibold ml-1.5">({item.quantity} × £{item.price.toFixed(2)})</span>}</p>
                     </div>
-                    <div className="flex items-center gap-3 bg-white border border-pine/20 px-3 py-1.5 rounded-full shadow-sm">
+                    <div className="flex items-center gap-3 bg-white border border-pine/20 px-3 py-1.5 rounded-full shadow-sm shrink-0">
                       <button className="text-pine/60 hover:text-terracotta transition-colors font-black" title="Decrease quantity" onClick={() => removeFromCart(item.id)}><Minus size={16} strokeWidth={3} /></button>
-                      <span className="font-black text-sm text-pine w-4 text-center">{item.quantity}</span>
+                      <span className="font-black text-sm text-pine w-4 text-center tabular-nums">{item.quantity}</span>
                       <button className="text-pine/60 hover:text-terracotta transition-colors font-black" title="Increase quantity" onClick={() => addToCart(item)}><Plus size={16} strokeWidth={3} /></button>
                     </div>
                   </div>
                   );
                 })
               )}
-            </div>
+              </div>
 
-            <div className="p-6 border-t border-pine/10 bg-bg-sand">
+            <div className="px-6 pb-6 pt-4 border-t border-pine/10 mt-2">
               {/* ─── Cart Upsell Engine Render ─── */}
               {upsellSuggestions.length > 0 && cartTotal > 0 && (
                 <div className="mb-4 bg-white p-4 rounded-2xl border border-pine/10 flex items-center justify-between relative overflow-hidden group shadow-sm">
@@ -477,6 +478,7 @@ export function CartDrawer(p: any) {
                 </div>
                 <p className="text-[8px] text-pine/30 font-bold uppercase tracking-[0.2em]">256-bit SSL · Square Verified</p>
               </div>
+            </div>
             </div>
             </>
             )}

@@ -635,21 +635,39 @@ function MenuPageContent() {
         service_fee: serviceFee,
       };
 
-      // Hit Next.js Route Handler (single payment path — no Cloud Function fallback)
-      const res = await fetch('/api/checkout/square', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      // Hit Next.js Route Handler with retry for infrastructure errors only
+      let res: Response | null = null;
+      const MAX_RETRIES = 1; // 1 retry max — nonces are single-use
+      for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        res = await fetch('/api/checkout/square', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
 
-      if (!res.ok) {
-        let errData;
+        // Only retry on 502/503/504 (gateway/infra errors, not app 500s)
+        // App-level 500s return JSON and indicate the request reached our code
+        if (res.ok || res.status < 502 || attempt === MAX_RETRIES) break;
+        await new Promise(r => setTimeout(r, 1500));
+      }
+
+      if (!res || !res.ok) {
+        let errMsg = 'Payment processing failed. Please try again or call us.';
         try {
-          errData = await res.json();
-        } catch (e) {
-          errData = { error: `Server error: HTTP ${res.status}. Please check your order status or contact the restaurant.` };
+          const responseText = await res!.text();
+          try {
+            const errData = JSON.parse(responseText);
+            errMsg = errData.error || errMsg;
+          } catch {
+            // Non-JSON response (Vercel HTML error page / cold start crash)
+            if (res!.status >= 500) {
+              errMsg = `Server error (${res!.status}). Your card was NOT charged. Please try again or call ${activeLocation.phone || 'the restaurant'}.`;
+            }
+          }
+        } catch {
+          errMsg = `Connection error. Please check your internet and try again, or call ${activeLocation.phone || 'the restaurant'}.`;
         }
-        throw new Error(errData.error || 'Square POS payment failed');
+        throw new Error(errMsg);
       }
 
       const data = await res.json();
@@ -731,9 +749,13 @@ function MenuPageContent() {
         console.warn('[LocalStorage] Save last order error:', storageErr);
       }
     } catch (err: any) {
-      const msg = (err.message || '').toUpperCase().includes('PERMISSION')
-        ? 'There was a connection issue completing your order confirmation. If money was debited, please contact the restaurant.'
-        : (err.message || 'Payment processing failed. Please try again or pay on collection.');
+      const isServerError = (err.message || '').includes('Server error') || (err.message || '').includes('Connection error');
+      const isPermError = (err.message || '').toUpperCase().includes('PERMISSION');
+      const msg = isPermError
+        ? `Connection issue completing your order. If money was debited, please call ${activeLocation.phone || 'the restaurant'}.`
+        : isServerError
+        ? err.message
+        : (err.message || `Payment failed. Please try again or call ${activeLocation.phone || 'the restaurant'}.`);
       sendPaymentFailureAlert({
         branchName: activeLocation.name,
         branchId: activeLocation.id,

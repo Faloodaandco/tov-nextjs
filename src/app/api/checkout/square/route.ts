@@ -789,12 +789,17 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (err: any) {
-    console.error('[Square] Unexpected checkout error:', err);
+    console.error('[Square] Unexpected checkout error:', {
+      message: err.message,
+      stack: err.stack,
+      name: err.name,
+      cause: err.cause,
+    });
     sendPaymentFailureAlertServer({
       orderId: undefined,
       branchName: 'Unknown',
       branchId: 'unknown',
-      errorMessage: err.message || 'Unexpected checkout error',
+      errorMessage: `${err.name || 'Error'}: ${err.message || 'Unexpected checkout error'}`,
       errorSource: 'unexpected',
     });
     return NextResponse.json(
