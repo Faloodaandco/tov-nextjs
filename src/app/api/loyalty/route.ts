@@ -170,7 +170,131 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+    if (action === 'program') {
+      // Return the loyalty program details including reward tiers
+      const programRes = await fetch(`${squareBaseUrl}/v2/loyalty/programs/main`, {
+        headers: squareHeaders,
+      });
+
+      if (!programRes.ok) {
+        return NextResponse.json({ error: 'Loyalty program not found' }, { status: 404 });
+      }
+
+      const programData = await programRes.json();
+      const program = programData.program;
+
+      if (!program) {
+        return NextResponse.json({ error: 'No active loyalty program' }, { status: 404 });
+      }
+
+      // Extract reward tiers with human-readable info
+      const rewardTiers = (program.reward_tiers || []).map((tier: any) => ({
+        id: tier.id,
+        name: tier.name,
+        points: tier.points,
+        discount: tier.definition?.discount_type === 'FIXED_AMOUNT'
+          ? { type: 'fixed', amount: tier.definition.fixed_discount_money?.amount || 0, currency: 'GBP' }
+          : tier.definition?.discount_type === 'FIXED_PERCENTAGE'
+            ? { type: 'percentage', percentage: tier.definition.percentage_discount || '0' }
+            : null,
+        scope: tier.definition?.scope || 'ORDER',
+      }));
+
+      return NextResponse.json({
+        programId: program.id,
+        programName: program.terminology?.one || 'Point',
+        programNamePlural: program.terminology?.other || 'Points',
+        rewardTiers,
+        accrualRules: program.accrual_rules,
+      });
+    }
+
+    if (action === 'create_reward') {
+      // Create a loyalty reward linked to an order.
+      // This locks the points and attaches the reward discount to the order.
+      // Called AFTER order creation, BEFORE payment.
+      const { loyaltyAccountId, rewardTierId, orderId } = body;
+
+      if (!loyaltyAccountId || !rewardTierId || !orderId) {
+        return NextResponse.json(
+          { error: 'loyaltyAccountId, rewardTierId, and orderId are required' },
+          { status: 400 },
+        );
+      }
+
+      const createRewardRes = await fetch(`${squareBaseUrl}/v2/loyalty/rewards`, {
+        method: 'POST',
+        headers: squareHeaders,
+        body: JSON.stringify({
+          idempotency_key: crypto.randomUUID(),
+          reward: {
+            loyalty_account_id: loyaltyAccountId,
+            reward_tier_id: rewardTierId,
+            order_id: orderId,
+          },
+        }),
+      });
+
+      if (!createRewardRes.ok) {
+        const err = await createRewardRes.json().catch(() => ({}));
+        const errMsg = (err as any).errors?.[0]?.detail || 'Failed to create loyalty reward';
+        console.error('[Loyalty] Create reward error:', err);
+        return NextResponse.json({ error: errMsg }, { status: 400 });
+      }
+
+      const rewardData = await createRewardRes.json();
+      const reward = rewardData.reward;
+
+      console.info(`[Loyalty] Reward created: ${reward.id} (${reward.points} pts locked for order ${orderId})`);
+
+      return NextResponse.json({
+        status: 'reward_created',
+        rewardId: reward.id,
+        pointsLocked: reward.points,
+        orderId: reward.order_id,
+      });
+    }
+
+    if (action === 'redeem_reward') {
+      // Finalize the reward redemption after payment.
+      // This permanently deducts the locked points.
+      // Note: Square auto-redeems when using Orders API + Payments API,
+      // but we call this explicitly as a safety net.
+      const { rewardId, locationId } = body;
+
+      if (!rewardId || !locationId) {
+        return NextResponse.json(
+          { error: 'rewardId and locationId are required' },
+          { status: 400 },
+        );
+      }
+
+      const redeemRes = await fetch(`${squareBaseUrl}/v2/loyalty/rewards/${rewardId}/redeem`, {
+        method: 'POST',
+        headers: squareHeaders,
+        body: JSON.stringify({
+          idempotency_key: crypto.randomUUID(),
+          location_id: locationId,
+        }),
+      });
+
+      if (!redeemRes.ok) {
+        const err = await redeemRes.json().catch(() => ({}));
+        console.error('[Loyalty] Redeem error:', err);
+        // Don't fail — Square may have auto-redeemed already
+        return NextResponse.json({ status: 'redeem_attempted', error: 'May have been auto-redeemed by Square' });
+      }
+
+      const redeemData = await redeemRes.json();
+      console.info(`[Loyalty] Reward ${rewardId} redeemed successfully`);
+
+      return NextResponse.json({
+        status: 'redeemed',
+        event: redeemData.event,
+      });
+    }
+
+    return NextResponse.json({ error: 'Invalid action. Valid actions: check, enroll, program, create_reward, redeem_reward' }, { status: 400 });
   } catch (err: any) {
     console.error('[Loyalty API]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
