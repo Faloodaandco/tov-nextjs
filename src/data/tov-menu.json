@@ -16,7 +16,9 @@
     "name": "Muttar Paneer",
     "description": "",
     "price": 7.49,
-    "allergens": [],
+    "allergens": [
+      "milk"
+    ],
     "originalPrice": 7.49,
     "category": "desi_handi",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -40,7 +42,9 @@
     "name": "Saag Paneer",
     "description": "",
     "price": 7.49,
-    "allergens": [],
+    "allergens": [
+      "milk"
+    ],
     "originalPrice": 7.49,
     "category": "desi_handi",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -100,7 +104,10 @@
     "name": "Daal Makhni",
     "description": "",
     "price": 7.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts"
+    ],
     "originalPrice": 7.49,
     "category": "desi_handi",
     "image": "/assets/menu/daal_makhni.webp",
@@ -112,7 +119,10 @@
     "name": "Kadhi Pakoda",
     "description": "",
     "price": 6.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 6.99,
     "category": "desi_handi",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -124,7 +134,9 @@
     "name": "Paneer Tikka Masala",
     "description": "",
     "price": 8.49,
-    "allergens": [],
+    "allergens": [
+      "milk"
+    ],
     "originalPrice": 8.49,
     "category": "desi_handi",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -136,7 +148,10 @@
     "name": "Lamb Nihari",
     "description": "Slow-cooked tender beef in a rich, aromatic gravy infused with traditional Pakistani spices, ginger, and herbs.",
     "price": 11.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "nuts"
+    ],
     "originalPrice": 11.49,
     "category": "curries_salan_se",
     "image": "/assets/menu/nihari_dish.webp",
@@ -148,7 +163,10 @@
     "name": "Lamb Haleem",
     "description": "",
     "price": 9.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "nuts"
+    ],
     "originalPrice": 9.49,
     "category": "curries_salan_se",
     "image": "/assets/menu/haleem_dish.webp",
@@ -160,7 +178,9 @@
     "name": "Lamb Paya",
     "description": "",
     "price": 9.49,
-    "allergens": [],
+    "allergens": [
+      "cereals"
+    ],
     "originalPrice": 9.49,
     "category": "curries_salan_se",
     "image": "/assets/menu/lamb_paya.webp",
@@ -172,7 +192,9 @@
     "name": "Lamb Curry",
     "description": "",
     "price": 9.99,
-    "allergens": [],
+    "allergens": [
+      "mustard"
+    ],
     "originalPrice": 9.99,
     "category": "curries_salan_se",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -184,7 +206,9 @@
     "name": "Lamb Qeema",
     "description": "",
     "price": 8.99,
-    "allergens": [],
+    "allergens": [
+      "mustard"
+    ],
     "originalPrice": 8.99,
     "category": "curries_salan_se",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -196,7 +220,9 @@
     "name": "Daal Gosht",
     "description": "",
     "price": 9.49,
-    "allergens": [],
+    "allergens": [
+      "mustard"
+    ],
     "originalPrice": 9.49,
     "category": "curries_salan_se",
     "image": "/assets/deliveroo/daal_makhni.webp",
@@ -208,7 +234,9 @@
     "name": "Saag Gosht",
     "description": "",
     "price": 9.49,
-    "allergens": [],
+    "allergens": [
+      "milk"
+    ],
     "originalPrice": 9.49,
     "category": "curries_salan_se",
     "image": "/assets/menu/saag_gosht.webp",
@@ -220,7 +248,9 @@
     "name": "Chicken Curry (Boneless)",
     "description": "",
     "price": 8.49,
-    "allergens": [],
+    "allergens": [
+      "mustard"
+    ],
     "originalPrice": 8.49,
     "category": "curries_salan_se",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -232,7 +262,9 @@
     "name": "Chana Chicken",
     "description": "",
     "price": 8.49,
-    "allergens": [],
+    "allergens": [
+      "mustard"
+    ],
     "originalPrice": 8.49,
     "category": "curries_salan_se",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -244,7 +276,10 @@
     "name": "Chilli Chicken",
     "description": "",
     "price": 8.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "soybeans"
+    ],
     "originalPrice": 8.49,
     "category": "curries_salan_se",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -256,7 +291,9 @@
     "name": "Saag Chicken",
     "description": "",
     "price": 8.49,
-    "allergens": [],
+    "allergens": [
+      "milk"
+    ],
     "originalPrice": 8.49,
     "category": "curries_salan_se",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -268,7 +305,10 @@
     "name": "Butter Chicken",
     "description": "",
     "price": 8.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts"
+    ],
     "originalPrice": 8.49,
     "category": "curries_salan_se",
     "image": "/assets/chicken_karahi_hero.webp",
@@ -280,7 +320,10 @@
     "name": "Chicken Tikka Masala",
     "description": "",
     "price": 9.99,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts"
+    ],
     "originalPrice": 9.99,
     "category": "curries_salan_se",
     "image": "/assets/menu/chicken_tikka.webp",
@@ -292,7 +335,9 @@
     "name": "Achari Chicken",
     "description": "",
     "price": 8.99,
-    "allergens": [],
+    "allergens": [
+      "mustard"
+    ],
     "originalPrice": 8.99,
     "category": "curries_salan_se",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -304,7 +349,9 @@
     "name": "Chicken Jalfrezi",
     "description": "",
     "price": 8.99,
-    "allergens": [],
+    "allergens": [
+      "mustard"
+    ],
     "originalPrice": 8.99,
     "category": "curries_salan_se",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -316,7 +363,9 @@
     "name": "Mushroom Karahi",
     "description": "",
     "price": 7.99,
-    "allergens": [],
+    "allergens": [
+      "mustard"
+    ],
     "originalPrice": 7.99,
     "category": "desi_handi",
     "image": "/assets/deliveroo/lamb_karahi.webp",
@@ -328,7 +377,9 @@
     "name": "Lamb Karahi (On The Bone)",
     "description": "",
     "price": 9.49,
-    "allergens": [],
+    "allergens": [
+      "mustard"
+    ],
     "originalPrice": 9.49,
     "category": "curries_salan_se",
     "image": "/assets/menu/lamb_karahi.webp",
@@ -340,7 +391,9 @@
     "name": "Chicken Karahi",
     "description": "",
     "price": 8.49,
-    "allergens": [],
+    "allergens": [
+      "mustard"
+    ],
     "originalPrice": 8.49,
     "category": "curries_salan_se",
     "image": "/assets/menu/chicken_karahi.webp",
@@ -352,7 +405,10 @@
     "name": "Kebab Masala",
     "description": "",
     "price": 14.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "mustard"
+    ],
     "originalPrice": 14.99,
     "category": "karahi_e_khaas",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -364,7 +420,10 @@
     "name": "Tawa Fish Karahi",
     "description": "",
     "price": 14.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "fish"
+    ],
     "originalPrice": 14.99,
     "category": "karahi_e_khaas",
     "image": "/assets/deliveroo/lamb_karahi.webp",
@@ -376,7 +435,11 @@
     "name": "Chicken Pulao",
     "description": "",
     "price": 7.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts",
+      "sulphites"
+    ],
     "originalPrice": 7.49,
     "category": "weekend_special",
     "image": "/assets/menu/afghani_pulao.webp",
@@ -388,7 +451,10 @@
     "name": "Halwa Puri",
     "description": "",
     "price": 7.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 7.49,
     "category": "weekend_special",
     "image": "/assets/menu/halwa_puri.webp",
@@ -400,7 +466,10 @@
     "name": "Cholay Bhaturay",
     "description": "",
     "price": 7.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 7.99,
     "category": "weekend_special",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -412,7 +481,10 @@
     "name": "Chaplii Kebab Chicken",
     "description": "",
     "price": 4.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "mustard"
+    ],
     "originalPrice": 4.99,
     "category": "talaa_hua_zaiqah",
     "image": "/assets/menu/chicken_shish_kebab.webp",
@@ -424,7 +496,10 @@
     "name": "Chaplii Kebab Lamb",
     "description": "",
     "price": 6.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "mustard"
+    ],
     "originalPrice": 6.49,
     "category": "talaa_hua_zaiqah",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -436,7 +511,10 @@
     "name": "Roti",
     "description": "",
     "price": 0.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 0.99,
     "category": "naan_n_roti",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -448,7 +526,10 @@
     "name": "Naan",
     "description": "",
     "price": 0.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 0.99,
     "category": "naan_n_roti",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -460,7 +541,10 @@
     "name": "Ajwain Naan",
     "description": "",
     "price": 1.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 1.99,
     "category": "naan_n_roti",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -472,7 +556,10 @@
     "name": "Zeera Naan",
     "description": "",
     "price": 1.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 1.99,
     "category": "naan_n_roti",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -484,7 +571,10 @@
     "name": "Garlic",
     "description": "",
     "price": 1.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 1.99,
     "category": "naan_n_roti",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -496,7 +586,10 @@
     "name": "Garlic And Chilli Naan",
     "description": "",
     "price": 2.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 2.49,
     "category": "naan_n_roti",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -508,7 +601,10 @@
     "name": "Cheese Garlic Naan",
     "description": "",
     "price": 2.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 2.99,
     "category": "naan_n_roti",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -520,7 +616,10 @@
     "name": "Cheese Naan",
     "description": "",
     "price": 3.79,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 3.79,
     "category": "naan_n_roti",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -532,7 +631,10 @@
     "name": "Qeema Naan",
     "description": "",
     "price": 4.79,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 4.79,
     "category": "naan_n_roti",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -544,7 +646,10 @@
     "name": "Chilli Naan",
     "description": "",
     "price": 1.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 1.99,
     "category": "naan_n_roti",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -556,7 +661,10 @@
     "name": "Plain Kulcha",
     "description": "",
     "price": 2.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 2.49,
     "category": "lahori_kulchas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -568,7 +676,10 @@
     "name": "Onion Kulcha",
     "description": "",
     "price": 3.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 3.49,
     "category": "lahori_kulchas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -580,7 +691,10 @@
     "name": "Paneer Kulcha",
     "description": "",
     "price": 3.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 3.99,
     "category": "lahori_kulchas",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -592,7 +706,10 @@
     "name": "Aalo Kulcha",
     "description": "",
     "price": 3.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 3.49,
     "category": "lahori_kulchas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -604,7 +721,10 @@
     "name": "Gobi Kulcha",
     "description": "",
     "price": 3.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 3.49,
     "category": "lahori_kulchas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -616,7 +736,10 @@
     "name": "Mix Kulcha",
     "description": "",
     "price": 3.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 3.99,
     "category": "lahori_kulchas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -628,7 +751,10 @@
     "name": "Lachha Paratha",
     "description": "",
     "price": 2.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 2.49,
     "category": "parathas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -640,7 +766,10 @@
     "name": "Tandoori Paratha",
     "description": "",
     "price": 2.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 2.49,
     "category": "parathas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -652,7 +781,10 @@
     "name": "Aloo Stuffed Paratha",
     "description": "",
     "price": 3.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 3.49,
     "category": "parathas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -664,7 +796,10 @@
     "name": "Gobi Stuffed Paratha",
     "description": "",
     "price": 3.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 3.49,
     "category": "parathas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -676,7 +811,10 @@
     "name": "Paneer Paratha",
     "description": "",
     "price": 3.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 3.99,
     "category": "parathas",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -688,7 +826,10 @@
     "name": "Mooli Stuffed Paratha",
     "description": "",
     "price": 3.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 3.99,
     "category": "parathas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -700,7 +841,10 @@
     "name": "Mixed Paratha",
     "description": "",
     "price": 3.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 3.99,
     "category": "parathas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -712,7 +856,10 @@
     "name": "Cheese Stuffed Paratha",
     "description": "",
     "price": 3.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 3.99,
     "category": "parathas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -724,7 +871,10 @@
     "name": "Chicken Cheese Paratha",
     "description": "",
     "price": 4.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 4.99,
     "category": "parathas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -736,7 +886,10 @@
     "name": "Anda Paratha",
     "description": "",
     "price": 4.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 4.99,
     "category": "parathas",
     "image": "/assets/deliveroo/tandoori_naan.webp",
@@ -748,7 +901,12 @@
     "name": "Village Special Platter (Serves 2)",
     "description": "1 Chicken Biryani, 2 Pcs Kebab (Lamb), 2 Naan, Raita, Salad, Chana Daal",
     "price": 19.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk",
+      "mustard",
+      "nuts"
+    ],
     "originalPrice": 19.99,
     "category": "village_special_platters",
     "image": "/assets/menu/bbq_platter.webp",
@@ -760,7 +918,12 @@
     "name": "Village Special Platter (Serves 4)",
     "description": "Veg Pulao, Chicken Karahi, 2 Kulcha, 2 Roti, Raita, Salad, 1.5L Drink, 2 Kheer",
     "price": 29.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk",
+      "mustard",
+      "nuts"
+    ],
     "originalPrice": 29.99,
     "category": "village_special_platters",
     "image": "/assets/menu/bbq_platter.webp",
@@ -772,7 +935,12 @@
     "name": "Rice Platter (Serves 2)",
     "description": "Pilau Rice, 4pc Kebab, 1 Skewer Chicken Tikka, 1 Chapal Kebab, Mint Sauce, Chilli Sauce, Sweet Sauce, Salad, 2 Can Drinks",
     "price": 24.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk",
+      "mustard",
+      "nuts"
+    ],
     "originalPrice": 24.99,
     "category": "village_special_platters",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -784,7 +952,12 @@
     "name": "Village Rice Brunch Offer",
     "description": "(From 12PM to 3PM) Pilau Rice, 2 Shami Kebab, Can Drink",
     "price": 7.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk",
+      "mustard",
+      "nuts"
+    ],
     "originalPrice": 7.99,
     "category": "village_brunch_special",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -796,7 +969,12 @@
     "name": "Village Brunch Special",
     "description": "(Mon-Thu) Pilau Rice, 4pc Kebab, 1 Skewer Chicken Tikka, 1 Chapal Kebab, Mint Sauce, Chilli Sauce, Sweet Sauce, Salad, 2 Can Drinks",
     "price": 19.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk",
+      "mustard",
+      "nuts"
+    ],
     "originalPrice": 19.99,
     "category": "village_brunch_special",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -808,7 +986,12 @@
     "name": "Weekend Brunch",
     "description": "(Fri-Sun 10am-2pm) 2 Puri, Halwa, Chana Masala, Aloo Gobi or Tarka Dal, 2 Naan, 1 Can, 1 Lassi, Salad & Raita. Serves 2-3 Persons",
     "price": 19.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk",
+      "mustard",
+      "nuts"
+    ],
     "originalPrice": 19.99,
     "category": "village_brunch_special",
     "image": "/assets/menu/halwa_puri.webp",
@@ -820,7 +1003,12 @@
     "name": "Mughlai Khaas",
     "description": "🍗 Mughlai chicken tikka, 4pc kebab, 4pc lamb chops, lamb tikka, 4pc haryali tikka, malai tikka, chicken wings.\n🥗 Served with 3 naan, fresh salad, mint sauce & chilli sauce.\n🥤 Includes 1.5L drink.",
     "price": 59.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk",
+      "mustard",
+      "nuts"
+    ],
     "originalPrice": 59.49,
     "category": "bbq_platter",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -832,7 +1020,12 @@
     "name": "Murgh Nashist",
     "description": "🍗 1 Chicken tikka, 2pc kebab, lamb tikka, 2pc lamb chops.\n🥗 Served with fresh salad, mint sauce & chilli sauce.\n🥤 Includes 1.5L drink.",
     "price": 29.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk",
+      "mustard",
+      "nuts"
+    ],
     "originalPrice": 29.49,
     "category": "bbq_platter",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -872,7 +1065,12 @@
     "name": "Tandoor E Khaas (Serves 2)",
     "description": "🍗 1 Chicken tikka, 2pc kebab, lamb tikka, 2pc lamb chops.\n🥗 Served with fresh salad, mint sauce & chilli sauce.\n🥤 Includes 1.5L drink.",
     "price": 18.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk",
+      "mustard",
+      "nuts"
+    ],
     "originalPrice": 18.49,
     "category": "bbq_platter",
     "image": "/assets/menu/bbq_platter.webp",
@@ -912,7 +1110,10 @@
     "name": "Gajar Halwa With (2 PCS) Gulab Jamun",
     "description": "",
     "price": 5.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts"
+    ],
     "originalPrice": 5.49,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -924,7 +1125,10 @@
     "name": "Rasmalai (2 PCS)",
     "description": "",
     "price": 3.99,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts"
+    ],
     "originalPrice": 3.99,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -936,7 +1140,10 @@
     "name": "Kheer (250g)",
     "description": "",
     "price": 2.99,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts"
+    ],
     "originalPrice": 2.99,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -948,7 +1155,11 @@
     "name": "Gulab Jamun (2 PCS) With Kulfi",
     "description": "(Pistachio or Mango Ice Cream)",
     "price": 3.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk",
+      "nuts"
+    ],
     "originalPrice": 3.99,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -996,7 +1207,11 @@
     "name": "Sooji Halwa (Weekend Only)",
     "description": "",
     "price": 3.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk",
+      "nuts"
+    ],
     "originalPrice": 3.99,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1008,7 +1223,10 @@
     "name": "Gajar Halwa With Rabri",
     "description": "",
     "price": 5.99,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts"
+    ],
     "originalPrice": 5.99,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1020,7 +1238,10 @@
     "name": "Lamb Seekh Kebab (4PC)",
     "description": "Served with fresh salad & signature sauce.",
     "price": 6.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "mustard"
+    ],
     "originalPrice": 6.49,
     "category": "bbq_tandoor_se",
     "image": "/assets/menu/lamb_seekh_kebab.webp",
@@ -1032,7 +1253,10 @@
     "name": "Lamb Tikka (1 Skewer)",
     "description": "Served with fresh salad & signature sauce.",
     "price": 7.99,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "mustard"
+    ],
     "originalPrice": 7.99,
     "category": "bbq_tandoor_se",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1044,7 +1268,10 @@
     "name": "Lamb Chops (4PC)",
     "description": "Served with fresh salad & signature sauce.",
     "price": 7.99,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "mustard"
+    ],
     "originalPrice": 7.99,
     "category": "bbq_tandoor_se",
     "image": "/assets/menu/lamb_chops_4pc.webp",
@@ -1056,7 +1283,9 @@
     "name": "Chilli Paneer",
     "description": "Served with fresh salad & signature sauce.",
     "price": 7.49,
-    "allergens": [],
+    "allergens": [
+      "milk"
+    ],
     "originalPrice": 7.49,
     "category": "bbq_tandoor_se",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1068,7 +1297,10 @@
     "name": "Chicken Wings (5PC)",
     "description": "Served with fresh salad & signature sauce.",
     "price": 6.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "mustard"
+    ],
     "originalPrice": 6.99,
     "category": "bbq_tandoor_se",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1080,7 +1312,10 @@
     "name": "Chicken Tikka",
     "description": "Served with fresh salad & signature sauce.",
     "price": 7.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "mustard"
+    ],
     "originalPrice": 7.49,
     "category": "bbq_tandoor_se",
     "image": "/assets/menu/chicken_tikka.webp",
@@ -1092,7 +1327,10 @@
     "name": "Malai Tikka",
     "description": "Served with fresh salad & signature sauce.",
     "price": 7.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts"
+    ],
     "originalPrice": 7.49,
     "category": "bbq_tandoor_se",
     "image": "/assets/menu/malai_boti.webp",
@@ -1104,7 +1342,9 @@
     "name": "Paneer Tikka (1 Skewer)",
     "description": "Served with fresh salad & signature sauce.",
     "price": 6.99,
-    "allergens": [],
+    "allergens": [
+      "milk"
+    ],
     "originalPrice": 6.99,
     "category": "bbq_tandoor_se",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1116,7 +1356,10 @@
     "name": "Haryali Tikka",
     "description": "Served with fresh salad & signature sauce.",
     "price": 7.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "mustard"
+    ],
     "originalPrice": 7.49,
     "category": "bbq_tandoor_se",
     "image": "/assets/menu/haryali_boti.webp",
@@ -1128,7 +1371,12 @@
     "name": "Make it a deal for extra",
     "description": "",
     "price": 2.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "eggs",
+      "milk",
+      "sesame"
+    ],
     "originalPrice": 2.99,
     "category": "burgers",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1140,7 +1388,12 @@
     "name": "Desi Noodle Burger",
     "description": "Aloo Tikki, Paneer Tikki, Veg Noodles, Salad & Sauces",
     "price": 5.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "eggs",
+      "milk",
+      "sesame"
+    ],
     "originalPrice": 5.49,
     "category": "burgers",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1152,7 +1405,9 @@
     "name": "Aloo Tikki Burger",
     "description": "Bun, aloo tikki, salad & sauces",
     "price": 4.99,
-    "allergens": [],
+    "allergens": [
+      "cereals"
+    ],
     "originalPrice": 4.99,
     "category": "burgers",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1164,7 +1419,9 @@
     "name": "Paneer Tikki Burger",
     "description": "Bun, paneer tikki, salad & sauces",
     "price": 4.99,
-    "allergens": [],
+    "allergens": [
+      "milk"
+    ],
     "originalPrice": 4.99,
     "category": "burgers",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1176,7 +1433,12 @@
     "name": "Veggie Noodles",
     "description": "Desi styled noodles stir fried with veggies & Sauces",
     "price": 6.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "eggs",
+      "milk",
+      "sesame"
+    ],
     "originalPrice": 6.49,
     "category": "burgers",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1188,7 +1450,12 @@
     "name": "Chicken Noodles",
     "description": "Desi styled noodles stir fried with veggies chicken & sauces",
     "price": 7.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "eggs",
+      "milk",
+      "sesame"
+    ],
     "originalPrice": 7.49,
     "category": "burgers",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1200,7 +1467,10 @@
     "name": "Kebab Roll",
     "description": "A flavourful roll filled with juicy kebab, crunchy veggies, and tangy sauce, perfect for a quick bite",
     "price": 6.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "mustard"
+    ],
     "originalPrice": 6.49,
     "category": "rolls",
     "image": "/assets/menu/chicken_shish_kebab.webp",
@@ -1340,7 +1610,10 @@
     "name": "Lamb Tikka Roll",
     "description": "A flavourful roll filled with juicy lamb tikka roll, crunchy veggies, and tangy sauce, perfect for a quick bite",
     "price": 8.99,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "mustard"
+    ],
     "originalPrice": 8.99,
     "category": "rolls",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1480,7 +1753,10 @@
     "name": "Mixed Roll",
     "description": "A flavourful roll filled with juicy mixed meat roll, crunchy veggies, and tangy sauce, perfect for a quick bite",
     "price": 9.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 9.99,
     "category": "rolls",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1620,7 +1896,10 @@
     "name": "Chicken Tikka Roll",
     "description": "A flavourful roll filled with juicy chicken tikka, crunchy veggies and tangy sauce, perfect for a quick bite",
     "price": 8.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "mustard"
+    ],
     "originalPrice": 8.49,
     "category": "rolls",
     "image": "/assets/menu/chicken_tikka.webp",
@@ -1760,7 +2039,9 @@
     "name": "Paneer Tikka Roll",
     "description": "A flavourful roll filled with juicy paneer tikka roll, crunchy veggies and tangy sauce, perfect for a quick bite",
     "price": 7.49,
-    "allergens": [],
+    "allergens": [
+      "milk"
+    ],
     "originalPrice": 7.49,
     "category": "rolls",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1900,7 +2181,11 @@
     "name": "Plain Rice",
     "description": "",
     "price": 4.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts",
+      "sulphites"
+    ],
     "originalPrice": 4.49,
     "category": "biryani_and_rice",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1912,7 +2197,11 @@
     "name": "Vegetable Rice",
     "description": "",
     "price": 4.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts",
+      "sulphites"
+    ],
     "originalPrice": 4.49,
     "category": "biryani_and_rice",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1924,7 +2213,11 @@
     "name": "Chicken Biryani",
     "description": "",
     "price": 6.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts",
+      "sulphites"
+    ],
     "originalPrice": 6.49,
     "category": "biryani_and_rice",
     "image": "/assets/menu/chicken_biryani.webp",
@@ -1936,7 +2229,11 @@
     "name": "Lamb Biryani",
     "description": "",
     "price": 7.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts",
+      "sulphites"
+    ],
     "originalPrice": 7.49,
     "category": "biryani_and_rice",
     "image": "/assets/deliveroo/lamb_biryani.webp",
@@ -1948,7 +2245,11 @@
     "name": "Vegetable Biryani",
     "description": "",
     "price": 6.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts",
+      "sulphites"
+    ],
     "originalPrice": 6.49,
     "category": "biryani_and_rice",
     "image": "/assets/deliveroo/biryani_platter.webp",
@@ -1960,7 +2261,10 @@
     "name": "Chicken Tikka Biryani",
     "description": "",
     "price": 8.99,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "mustard"
+    ],
     "originalPrice": 8.99,
     "category": "biryani_and_rice",
     "image": "/assets/menu/chicken_biryani.webp",
@@ -1972,7 +2276,11 @@
     "name": "Fried Rice",
     "description": "",
     "price": 5.99,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts",
+      "sulphites"
+    ],
     "originalPrice": 5.99,
     "category": "biryani_and_rice",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1984,7 +2292,11 @@
     "name": "Chicken Fried Rice",
     "description": "",
     "price": 7.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts",
+      "sulphites"
+    ],
     "originalPrice": 7.49,
     "category": "biryani_and_rice",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -1996,7 +2308,10 @@
     "name": "Gajar Halwa (Carrot Halwa)",
     "description": "",
     "price": 5.99,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts"
+    ],
     "originalPrice": 5.99,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2008,7 +2323,11 @@
     "name": "Gulab Jamun (3 PCS)",
     "description": "",
     "price": 3.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk",
+      "nuts"
+    ],
     "originalPrice": 3.49,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2043,7 +2362,9 @@
     "name": "Fruit Chaat",
     "description": "",
     "price": 5.99,
-    "allergens": [],
+    "allergens": [
+      "milk"
+    ],
     "originalPrice": 5.99,
     "category": "weekend_special",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2071,7 +2392,10 @@
     "name": "Sev Puri",
     "description": "",
     "price": 4.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 4.99,
     "category": "chatkara_junction",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2143,7 +2467,9 @@
     "name": "Gol Gappe",
     "description": "",
     "price": 4.99,
-    "allergens": [],
+    "allergens": [
+      "cereals"
+    ],
     "originalPrice": 4.99,
     "category": "chatkara_junction",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2215,7 +2541,10 @@
     "name": "Dahi Bhalla Chaat",
     "description": "",
     "price": 4.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 4.99,
     "category": "chatkara_junction",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2271,7 +2600,10 @@
     "name": "Papri Chaat",
     "description": "",
     "price": 4.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 4.99,
     "category": "chatkara_junction",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2327,7 +2659,9 @@
     "name": "Aloo Tikki Chaat",
     "description": "",
     "price": 4.99,
-    "allergens": [],
+    "allergens": [
+      "cereals"
+    ],
     "originalPrice": 4.99,
     "category": "chatkara_junction",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2383,7 +2717,10 @@
     "name": "Mixed Chaat",
     "description": "",
     "price": 5.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk"
+    ],
     "originalPrice": 5.49,
     "category": "chatkara_junction",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2439,7 +2776,9 @@
     "name": "Samosa Chaat",
     "description": "",
     "price": 4.99,
-    "allergens": [],
+    "allergens": [
+      "cereals"
+    ],
     "originalPrice": 4.99,
     "category": "chatkara_junction",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2495,7 +2834,11 @@
     "name": "Chicken Pulao (Weekend Only)",
     "description": "",
     "price": 6.49,
-    "allergens": [],
+    "allergens": [
+      "milk",
+      "nuts",
+      "sulphites"
+    ],
     "originalPrice": 6.49,
     "category": "biryani_and_rice",
     "image": "/assets/menu/afghani_pulao.webp",
@@ -2507,7 +2850,9 @@
     "name": "Shinwari Chicken",
     "description": "",
     "price": 19.99,
-    "allergens": [],
+    "allergens": [
+      "mustard"
+    ],
     "originalPrice": 19.99,
     "category": "karahi_e_khaas",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2531,7 +2876,9 @@
     "name": "Lamb Charsi Karahi",
     "description": "",
     "price": 24.99,
-    "allergens": [],
+    "allergens": [
+      "mustard"
+    ],
     "originalPrice": 24.99,
     "category": "karahi_e_khaas",
     "image": "/assets/menu/lamb_karahi.webp",
@@ -2555,7 +2902,9 @@
     "name": "White Chicken Karahi",
     "description": "",
     "price": 19.99,
-    "allergens": [],
+    "allergens": [
+      "mustard"
+    ],
     "originalPrice": 19.99,
     "category": "karahi_e_khaas",
     "image": "/assets/menu/chicken_karahi.webp",
@@ -2579,7 +2928,10 @@
     "name": "Talii Hui Machli",
     "description": "",
     "price": 8.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "fish"
+    ],
     "originalPrice": 8.49,
     "category": "talaa_hua_zaiqah",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2598,7 +2950,9 @@
     "name": "Aloo Tikki",
     "description": "",
     "price": 4.49,
-    "allergens": [],
+    "allergens": [
+      "cereals"
+    ],
     "originalPrice": 4.49,
     "category": "talaa_hua_zaiqah",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2617,7 +2971,9 @@
     "name": "Sam-O-Say",
     "description": "",
     "price": 4.49,
-    "allergens": [],
+    "allergens": [
+      "cereals"
+    ],
     "originalPrice": 4.49,
     "category": "talaa_hua_zaiqah",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2636,7 +2992,9 @@
     "name": "Chicken Pakoras",
     "description": "",
     "price": 9.49,
-    "allergens": [],
+    "allergens": [
+      "cereals"
+    ],
     "originalPrice": 9.49,
     "category": "talaa_hua_zaiqah",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2660,7 +3018,10 @@
     "name": "Talii Fish Pakora",
     "description": "",
     "price": 5.49,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "fish"
+    ],
     "originalPrice": 5.49,
     "category": "talaa_hua_zaiqah",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2689,7 +3050,11 @@
     "name": "Gulab Jamun (3 PCS) With Rabri",
     "description": "",
     "price": 5.99,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "milk",
+      "nuts"
+    ],
     "originalPrice": 5.99,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
@@ -2701,7 +3066,10 @@
     "name": "Kebab",
     "description": "Served with fresh salad & signature sauce.",
     "price": 2,
-    "allergens": [],
+    "allergens": [
+      "cereals",
+      "mustard"
+    ],
     "originalPrice": 2,
     "category": "bbq_tandoor_se",
     "image": "/assets/menu/chicken_shish_kebab.webp",
