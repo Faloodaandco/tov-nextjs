@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, RotateCcw, Minus, Plus, Ticket, MapPin, CreditCard, Clock, CheckCircle2, MessageCircle, AlertCircle, Printer, Bell, Truck, Store } from 'lucide-react';
+import { X, RotateCcw, Minus, Plus, Ticket, MapPin, CreditCard, Clock, CheckCircle2, MessageCircle, AlertCircle, Printer, Bell, Truck, Store, Info } from 'lucide-react';
 import { SquarePaymentForm } from '@/components/SquarePaymentForm';
 
 import { getDeliveryTier, ACTIVE_PROMO } from '@/config/shopConfig';
@@ -898,18 +898,24 @@ export function CartDrawer(p: any) {
                         )
                       )}
                       
-                      <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-xs text-amber-800">
-                        <p className="font-bold mb-1">⚠️ Food Allergy &amp; Intolerance Notice</p>
-                        <p>Our dishes may contain one or more of the 14 major allergens (celery, cereals containing gluten, crustaceans, eggs, fish, lupin, milk, molluscs, mustard, nuts, peanuts, sesame, soybeans, and sulphites). If you have a food allergy or intolerance, please call us before ordering: <a href={`tel:${activeLocation.phone}`} className="font-bold underline">{activeLocation.phone}</a></p>
-                        <label className="flex items-start gap-2.5 mt-3 cursor-pointer select-none group">
+                      <div className="bg-white/80 border border-pine/10 rounded-2xl p-3.5 mb-4 text-xs text-pine/70 shadow-sm">
+                        <div className="flex items-center gap-2 font-semibold text-pine mb-1">
+                          <Info size={14} className="text-terracotta/80 shrink-0" />
+                          <span>Food Allergy &amp; Dietary Notice</span>
+                        </div>
+                        <p className="leading-relaxed text-[11px]">
+                          Our kitchen prepares dishes that may contain allergens. If you or someone you are ordering for has a food allergy or intolerance, please speak with us on{' '}
+                          <a href={`tel:${activeLocation.phone}`} className="font-semibold text-pine underline decoration-terracotta/40 hover:text-terracotta transition-colors">{activeLocation.phone}</a>.
+                        </p>
+                        <label className="flex items-start gap-2.5 mt-2.5 pt-2 border-t border-pine/10 cursor-pointer select-none group">
                           <input
                             type="checkbox"
                             checked={p.allergenAcknowledged ?? false}
                             onChange={(e) => p.setAllergenAcknowledged?.(e.target.checked)}
-                            className="mt-0.5 w-4 h-4 rounded border-amber-400 text-terracotta focus:ring-terracotta/30 accent-terracotta shrink-0"
+                            className="mt-0.5 w-3.5 h-3.5 rounded border-pine/30 text-terracotta focus:ring-terracotta/20 accent-terracotta shrink-0"
                           />
-                          <span className="text-[11px] leading-snug font-semibold text-amber-900 group-hover:text-amber-700 transition-colors">
-                            I acknowledge the allergen information above and confirm I have made the restaurant aware of any food allergies or intolerances.
+                          <span className="text-[10px] leading-snug font-medium text-pine/80 group-hover:text-pine transition-colors">
+                            I acknowledge the allergen information and confirm I have made the restaurant aware of any dietary requirements.
                           </span>
                         </label>
                       </div>

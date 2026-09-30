@@ -6,7 +6,7 @@ import { generateId } from '@/utils/generateId';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useStore } from '@/context/StoreContext';
-import { Plus, Minus, ShoppingBag, X, CheckCircle2, MessageCircle, Phone, MapPin, Search, ChevronRight, CreditCard, Store, Clock, Bell, Ticket, Printer, Zap, AlertCircle, Star, RotateCcw, Truck } from 'lucide-react';
+import { Plus, Minus, ShoppingBag, X, CheckCircle2, MessageCircle, Phone, MapPin, Search, ChevronRight, CreditCard, Store, Clock, Bell, Ticket, Printer, Zap, AlertCircle, Star, RotateCcw, Truck, Info } from 'lucide-react';
 import { getMenuItems } from '@/services/menuService';
 import { MenuItem } from '@/types';
 import { buildWhatsAppLink, buildOrderWhatsAppMessage, SHOP_CONFIG, LOCATIONS, ACTIVE_PROMO, calculatePromoDiscount, isBreakfastPromoTime, isPostcodeInDeliveryZone, getDeliveryTier, HAYES_DELIVERY_TIERS, SLOUGH_DELIVERY_TIERS } from '@/config/shopConfig';
@@ -1005,13 +1005,12 @@ function MenuPageContent() {
       />
 
       {/* UK FSA Food Allergy Notice — Natasha's Law (2021) Compliance */}
-      <div className="max-w-7xl mx-auto px-4 pt-4">
-        <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-amber-50 border border-amber-200/60 text-amber-900 text-xs leading-relaxed">
-          <span className="shrink-0 mt-0.5 text-base" aria-hidden="true">⚠️</span>
-          <p>
-            <strong>Food Allergy Notice:</strong> If you or someone you are ordering for has a food allergy or intolerance,
-            please call the restaurant directly at{' '}
-            <a href={`tel:${activeLocation.phone}`} className="font-bold underline decoration-amber-400 underline-offset-2 hover:text-amber-700 transition-colors">
+      <div className="max-w-7xl mx-auto px-4 pt-3">
+        <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/60 backdrop-blur-sm border border-pine/10 text-pine/70 text-xs leading-relaxed">
+          <Info size={15} className="text-terracotta/80 shrink-0" aria-hidden="true" />
+          <p className="flex-1">
+            <strong className="text-pine font-medium">Food Allergies &amp; Dietary Requirements:</strong> If you or someone you are ordering for has a food allergy or intolerance, please speak with our team directly on{' '}
+            <a href={`tel:${activeLocation.phone}`} className="font-semibold text-pine underline decoration-terracotta/40 underline-offset-2 hover:text-terracotta transition-colors">
               {activeLocation.phone}
             </a>{' '}
             before placing your order. All our meat is 100% Halal certified.
