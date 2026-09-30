@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Taste of Village Hayes - Official Takeaway & Restaurant Menu</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@page {
+    size: A4 portrait;
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: #1A3C34;
+    background: #E8E5DF;
+    line-height: 1.25;
+}
+
+.page {
+    width: 210mm;
+    height: 297mm;
+    max-height: 297mm;
+    page-break-after: always;
+    break-after: page;
+    background-color: #FDFBF7;
+    position: relative;
+    overflow: hidden;
+    padding: 10mm 12mm 9mm 12mm;
+    display: flex;
+    flex-direction: column;
+}
+
+.page:last-child {
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+/* Top Architectural Motif Frieze */
+.frieze-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6mm;
+    background-color: #1A3C34;
+    border-bottom: 1.2px solid #C49A45;
+    background-image: repeating-linear-gradient(45deg, rgba(196,154,69,0.18) 0, rgba(196,154,69,0.18) 2px, transparent 2px, transparent 8px);
+}
+
+.frieze-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 5mm;
+    background-color: #1A3C34;
+    border-top: 1.2px solid #C49A45;
+}
+
+/* Header Styling */
+.header-hero {
+    border: 1.5px solid #1A3C34;
+    border-radius: 4px;
+    padding: 7px 14px 6px 14px;
+    background: #FAF7F2;
+    margin-bottom: 7px;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(26,60,52,0.06);
+}
+
+.header-hero::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border: 0.5px solid #C49A45;
+    pointer-events: none;
+    border-radius: 2px;
+}
+
+.header-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand-seal {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-tree-box {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+.brand-title-wrap h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 20pt;
+    font-weight: 800;
+    color: #1A3C34;
+    letter-spacing: 0.14em;
+    line-height: 1;
+}
+
+.brand-title-wrap .subtag {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 7.2pt;
+    font-weight: 800;
+    color: #8A3D2A;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-top: 3px;
+}
+
+.header-meta-box {
+    text-align: right;
+    font-size: 7.2pt;
+    color: #1A3C34;
+    line-height: 1.35;
+}
+
+.meta-address {
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.meta-phone {
+    font-size: 8.5pt;
+    font-weight: 800;
+    color: #8A3D2A;
+    letter-spacing: 0.08em;
+}
+
+.meta-badges {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.meta-badge-pill {
+    background: #1A3C34;
+    color: #FDFBF7;
+    font-size: 6.2pt;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    padding: 1.5px 5px;
+    border-radius: 2px;
+    text-transform: uppercase;
+}
+
+.meta-badge-gold {
+    background: #C49A45;
+    color: #1A3C34;
+}
+
+.header-banner-strip {
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 0.5px dashed rgba(26,60,52,0.25);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 6.8pt;
+    font-weight: 700;
+    color: #1A3C34;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* Running Page Header */
+.running-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 4px;
+    margin-bottom: 7px;
+    border-bottom: 1px solid #1A3C34;
+    font-size: 7.2pt;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #1A3C34;
+}
+
+.running-header .branch-tag {
+    color: #8A3D2A;
+}
+
+.running-header .page-num {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    color: #C49A45;
+}
+
+/* Two Column Page Grid */
+.page-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    flex: 1;
+    align-content: start;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    gap: 6.5px;
+}
+
+/* Menu Sections */
+.menu-section {
+    background: #FFFFFF;
+    border: 0.8px solid #E6E0D4;
+    border-radius: 4px;
+    padding: 6px 8px 6px 8px;
+    position: relative;
+}
+
+.menu-section.hero-accent {
+    background: #FAF7F2;
+    border: 1px solid #1A3C34;
+}
+
+.section-header {
+    margin-bottom: 4px;
+    padding-bottom: 3px;
+    border-bottom: 0.8px solid rgba(138, 61, 42, 0.35);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 8.8pt;
+    font-weight: 800;
+    color: #1A3C34;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.section-subtitle {
+    font-size: 6pt;
+    font-weight: 600;
+    color: #8A3D2A;
+    letter-spacing: 0.05em;
+    font-style: italic;
+    text-align: right;
+}
+
+/* Section items grid */
+.section-items-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5px;
+}
+
+.section-items-grid.cols-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.5px 8px;
+}
+
+/* Menu Item */
+.menu-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.item-name {
+    font-size: 7.2pt;
+    font-weight: 700;
+    color: #1A3C34;
+    letter-spacing: 0.03em;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+    max-width: 82%;
+}
+
+.item-dots {
+    flex: 1;
+    border-bottom: 0.8px dotted rgba(26,60,52,0.3);
+    margin: 0 4px;
+    min-width: 6px;
+    height: 1px;
+    align-self: center;
+}
+
+.item-price {
+    font-family: 'Cinzel', serif;
+    font-size: 7.6pt;
+    font-weight: 800;
+    color: #8A3D2A;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+}
+
+.item-desc {
+    font-size: 5.8pt;
+    color: #4A5A54;
+    line-height: 1.25;
+    margin-top: 1px;
+    font-weight: 500;
+}
+
+.badge {
+    font-size: 5pt;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    padding: 0.5px 2.5px;
+    border-radius: 2px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.badge-veg {
+    background: #E8F3EE;
+    color: #1A5E3C;
+    border: 0.3px solid #85B99F;
+}
+
+.badge-vegan {
+    background: #E8F5E9;
+    color: #2E7D32;
+    border: 0.3px solid #A5D6A7;
+}
+
+.badge-spicy {
+    background: #FDF0ED;
+    color: #C24124;
+    border: 0.3px solid #F1A490;
+}
+
+/* Platter Special Box */
+.platter-card {
+    background: #FAF5EB;
+    border: 1px solid #C49A45;
+    border-radius: 4px;
+    padding: 5px 8px;
+    margin-bottom: 4px;
+}
+
+.platter-card .platter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.platter-card .platter-name {
+    font-family: 'Cinzel', serif;
+    font-size: 8.2pt;
+    font-weight: 800;
+    color: #8A3D2A;
+    letter-spacing: 0.08em;
+}
+
+.platter-card .platter-price {
+    font-family: 'Cinzel', serif;
+    font-size: 9pt;
+    font-weight: 800;
+    color: #1A3C34;
+}
+
+.platter-card .platter-desc {
+    font-size: 6pt;
+    color: #33443E;
+    line-height: 1.25;
+    margin-top: 1.5px;
+}
+
+/* Heritage Callout Card */
+.heritage-card {
+    background: #1A3C34;
+    color: #FDFBF7;
+    border: 1px solid #C49A45;
+    border-radius: 4px;
+    padding: 7px 10px;
+    margin-top: 2px;
+}
+
+.heritage-card h4 {
+    font-family: 'Cinzel', serif;
+    font-size: 7.8pt;
+    font-weight: 800;
+    color: #C49A45;
+    letter-spacing: 0.12em;
+    margin-bottom: 2px;
+}
+
+.heritage-card p {
+    font-size: 6.2pt;
+    line-height: 1.35;
+    color: #E2DFD8;
+}
+
+/* Bottom Page Footer */
+.page-footer {
+    margin-top: auto;
+    padding-top: 5px;
+    border-top: 0.8px solid rgba(26,60,52,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 6.5pt;
+    font-weight: 700;
+    color: #1A3C34;
+    letter-spacing: 0.06em;
+}
+
+.page-footer .footer-center {
+    color: #8A3D2A;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+/* Final Page Information Box */
+.final-info-box {
+    background: #1A3C34;
+    color: #FDFBF7;
+    border-radius: 4px;
+    padding: 8px 12px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    margin-top: 6px;
+    border: 1px solid #C49A45;
+}
+
+.final-info-left h4 {
+    font-family: 'Cinzel', serif;
+    font-size: 9.5pt;
+    font-weight: 800;
+    color: #C49A45;
+    letter-spacing: 0.14em;
+    margin-bottom: 2px;
+}
+
+.final-info-left p {
+    font-size: 6.5pt;
+    line-height: 1.3;
+    color: #E2DFD8;
+    margin-bottom: 3px;
+}
+
+.final-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 3px;
+    font-size: 6.5pt;
+}
+
+.final-info-item strong {
+    color: #C49A45;
+    display: block;
+    font-size: 6.2pt;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.final-info-qr {
+    text-align: center;
+    background: #FAF7F2;
+    padding: 5px 7px;
+    border-radius: 4px;
+    color: #1A3C34;
+}
+
+.final-info-qr img {
+    width: 64px;
+    height: 64px;
+    display: block;
+    margin: 0 auto;
+}
+
+.final-info-qr span {
+    display: block;
+    font-size: 5.5pt;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+    text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     PAGE 1: STARTERS, STREET FOOD, CHARCOAL TANDOOR & ROYAL PLATTERS
+     ════════════════════════════════════════════════════════════════════ -->
+<div class="page page-1">
+    <div class="frieze-bar"></div>
+
+    <!-- Master Header -->
+    <div class="header-hero">
+        <div class="header-top-row">
+            <div class="brand-seal">
+                <div class="brand-tree-box"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="100%" height="100%">
+  <!-- Taste of Village Official Brand Tree Emblem - Flawless Symmetrical Vector -->
+  <g fill="#8A3D2A">
+    <path d="M 488.6,910.0 L 488.6,689.7 L 489.6,636.9 L 491.6,588.1 L 490.9,581.1 L 488.1,568.3 L 486.9,565.6 L 463.2,529.6 L 454.4,518.2 L 445.9,505.6 L 439.5,498.2 L 433.1,493.6 L 427.3,491.9 L 413.9,490.6 L 400.2,486.3 L 385.8,485.0 L 374.1,480.6 L 361.3,479.3 L 348.7,474.8 L 335.1,472.9 L 326.3,469.1 L 316.1,467.4 L 306.6,463.4 L 295.0,461.1 L 286.7,457.4 L 275.9,455.5 L 266.8,451.6 L 255.8,449.5 L 246.5,445.6 L 238.5,444.0 L 228.2,439.6 L 219.7,437.7 L 210.6,433.6 L 202.6,432.0 L 193.3,427.4 L 190.3,425.2 L 189.8,424.2 L 190.4,423.1 L 192.2,422.1 L 200.3,420.0 L 210.4,416.1 L 222.5,414.6 L 236.4,410.1 L 249.6,409.1 L 267.3,405.0 L 277.4,403.9 L 310.2,403.7 L 318.2,404.3 L 335.8,408.6 L 349.8,410.4 L 359.6,414.3 L 367.7,416.3 L 381.9,423.0 L 394.0,429.6 L 417.6,447.7 L 425.9,455.5 L 448.6,479.1 L 468.8,503.2 L 484.3,519.5 L 492.6,529.3 L 495.0,530.4 L 497.5,529.3 L 499.2,526.0 L 499.8,520.6 L 501.0,438.5 L 505.3,367.9 L 506.1,334.2 L 506.6,265.3 L 506.0,250.9 L 505.3,246.4 L 501.6,239.5 L 499.2,232.0 L 495.9,225.6 L 494.8,222.1 L 493.2,201.6 L 493.0,190.5 L 494.7,172.8 L 495.7,167.4 L 498.9,159.0 L 501.5,150.3 L 506.8,137.1 L 508.8,133.5 L 512.0,130.0 L 515.2,133.5 L 517.2,137.1 L 522.5,150.3 L 525.1,159.0 L 528.3,167.4 L 529.3,172.8 L 531.0,190.5 L 530.8,201.6 L 529.2,222.1 L 528.1,225.6 L 524.8,232.0 L 522.4,239.5 L 518.7,246.4 L 518.0,250.9 L 517.4,265.3 L 517.9,334.2 L 518.7,367.9 L 523.0,438.5 L 524.2,520.6 L 524.8,526.0 L 526.5,529.3 L 529.0,530.4 L 531.4,529.3 L 539.7,519.5 L 555.2,503.2 L 575.4,479.1 L 598.1,455.5 L 606.4,447.7 L 630.0,429.6 L 642.1,423.0 L 656.3,416.3 L 664.4,414.3 L 674.2,410.4 L 688.2,408.6 L 705.8,404.3 L 713.8,403.7 L 746.6,403.9 L 756.7,405.0 L 774.4,409.1 L 787.6,410.1 L 801.5,414.6 L 813.6,416.1 L 823.7,420.0 L 832.0,422.2 L 833.7,423.2 L 834.2,424.3 L 831.2,427.1 L 823.1,431.3 L 813.4,433.6 L 802.8,438.2 L 795.8,439.6 L 786.6,443.6 L 777.5,445.6 L 767.4,449.8 L 756.9,451.7 L 748.4,455.5 L 737.3,457.4 L 728.4,461.3 L 717.4,463.4 L 708.2,467.3 L 697.4,469.2 L 688.9,472.9 L 675.3,474.8 L 662.7,479.3 L 649.9,480.6 L 637.9,485.1 L 624.1,486.3 L 609.8,490.7 L 597.0,491.9 L 592.3,493.0 L 587.3,495.8 L 581.7,501.1 L 577.3,506.5 L 569.4,518.4 L 564.3,524.6 L 536.6,566.4 L 532.5,585.4 L 534.4,637.8 L 535.4,690.0 L 535.4,910.0 L 488.6,910.0 Z" />
+    <path d="M 430.2,195.1 L 431.0,190.4 L 433.0,188.8 L 439.1,192.9 L 444.8,194.4 L 456.4,203.9 L 463.0,206.7 L 468.8,211.6 L 475.4,218.8 L 481.1,226.0 L 483.9,231.9 L 487.5,236.2 L 489.5,243.5 L 493.6,250.4 L 494.3,253.7 L 494.9,267.8 L 493.1,272.3 L 492.2,272.7 L 490.8,272.3 L 486.5,269.7 L 481.3,267.4 L 474.4,262.7 L 464.3,253.4 L 460.0,248.4 L 452.9,237.4 L 443.2,225.2 L 441.3,219.3 L 436.7,213.1 L 435.6,207.6 L 431.8,200.8 L 430.2,195.2 Z" />
+    <path d="M 379.7,235.9 L 381.8,234.4 L 384.5,233.7 L 398.2,234.4 L 408.7,239.1 L 415.5,240.5 L 421.5,244.6 L 427.5,246.5 L 432.5,250.5 L 437.7,253.2 L 445.3,258.5 L 469.4,282.3 L 471.4,285.0 L 476.9,295.1 L 481.6,301.0 L 483.5,307.1 L 487.5,314.1 L 490.0,324.0 L 492.9,331.0 L 493.9,336.1 L 494.4,351.0 L 494.2,353.6 L 493.3,355.3 L 491.5,356.6 L 488.7,356.4 L 485.3,354.6 L 479.7,350.6 L 431.1,302.0 L 415.2,283.8 L 406.4,272.0 L 396.0,260.7 L 388.2,248.6 L 379.6,237.9 L 379.6,236.1 Z" />
+    <path d="M 296.7,247.4 L 298.5,246.7 L 300.0,246.9 L 305.5,249.9 L 314.0,253.0 L 320.9,256.7 L 326.8,258.4 L 333.8,262.7 L 339.7,264.2 L 344.5,267.6 L 351.8,270.3 L 356.4,273.4 L 363.2,276.2 L 369.0,280.2 L 374.5,282.3 L 385.1,290.2 L 391.8,293.5 L 405.8,305.6 L 414.5,312.0 L 418.7,315.8 L 443.3,344.1 L 446.6,348.6 L 449.2,354.2 L 453.1,359.9 L 457.6,368.0 L 460.8,376.7 L 464.6,384.1 L 466.3,389.7 L 469.9,398.0 L 472.0,410.6 L 475.4,420.0 L 476.5,425.5 L 477.2,444.2 L 478.9,461.2 L 478.4,464.1 L 476.9,466.3 L 474.3,467.0 L 470.9,465.9 L 456.6,454.4 L 450.6,448.8 L 427.0,422.5 L 401.2,394.9 L 387.8,376.9 L 371.7,359.4 L 360.0,343.2 L 348.9,330.7 L 341.4,318.7 L 332.5,308.4 L 324.7,296.0 L 315.7,285.0 L 312.2,278.0 L 306.9,271.0 L 301.4,261.2 L 296.3,254.2 L 295.2,250.1 L 296.5,247.6 Z" />
+    <path d="M 211.7,335.7 L 216.4,333.7 L 229.9,333.0 L 246.3,329.1 L 254.0,328.3 L 279.4,328.6 L 293.1,332.6 L 304.6,333.7 L 309.1,334.9 L 315.3,338.7 L 321.9,340.1 L 327.8,345.0 L 338.8,351.0 L 351.9,363.7 L 358.5,371.0 L 361.8,377.7 L 370.5,389.1 L 371.6,394.0 L 371.1,395.5 L 370.0,396.6 L 367.7,397.5 L 364.3,397.4 L 351.9,392.6 L 340.4,391.3 L 332.1,387.1 L 320.7,385.6 L 311.3,381.1 L 303.5,379.8 L 294.8,375.4 L 286.8,373.7 L 280.5,369.8 L 271.3,367.4 L 264.3,363.5 L 257.6,361.4 L 252.2,357.6 L 245.9,355.9 L 240.0,351.8 L 233.7,350.1 L 228.6,346.2 L 221.8,343.9 L 217.0,340.1 L 211.5,337.1 L 211.1,336.5 L 211.5,335.8 Z" />
+    <path d="M 182.4,546.0 L 186.9,540.7 L 194.4,533.3 L 210.5,518.7 L 223.1,508.9 L 234.1,502.5 L 239.5,498.1 L 245.8,496.7 L 252.7,492.4 L 262.2,490.5 L 272.3,486.3 L 278.4,485.7 L 315.8,486.1 L 326.2,490.8 L 334.1,492.1 L 341.5,496.0 L 349.0,498.9 L 350.2,500.1 L 350.6,501.6 L 349.0,505.8 L 346.0,508.3 L 338.8,509.7 L 331.6,513.9 L 322.4,515.6 L 314.9,519.8 L 304.6,521.8 L 297.9,525.7 L 287.2,527.5 L 277.5,531.9 L 266.1,533.3 L 256.3,537.7 L 244.4,538.9 L 231.3,543.7 L 216.1,544.8 L 205.6,548.9 L 201.4,549.8 L 186.6,549.7 L 182.6,548.0 L 182.0,547.1 L 182.3,546.1 Z" />
+    <path d="M 199.6,592.0 L 201.3,588.5 L 203.8,586.3 L 210.7,584.1 L 216.8,580.0 L 222.9,578.6 L 229.8,574.5 L 238.4,572.5 L 245.3,568.6 L 254.1,566.6 L 262.5,562.5 L 269.7,561.1 L 278.9,556.6 L 288.4,555.1 L 298.4,550.7 L 308.7,549.1 L 316.5,545.1 L 326.9,543.5 L 335.5,539.4 L 347.2,537.6 L 358.6,533.0 L 371.8,531.7 L 383.0,527.3 L 397.5,525.8 L 411.7,521.3 L 417.6,520.8 L 424.9,521.0 L 428.0,522.3 L 428.6,524.4 L 425.3,529.7 L 422.1,536.3 L 413.6,546.8 L 410.0,552.5 L 400.3,563.8 L 394.6,569.2 L 385.5,575.4 L 373.2,585.4 L 353.4,595.6 L 350.4,596.6 L 344.9,597.4 L 335.5,602.1 L 321.3,603.2 L 308.9,607.0 L 300.0,608.3 L 255.5,608.4 L 246.6,607.2 L 234.9,603.3 L 220.9,602.1 L 211.5,597.6 L 201.7,595.4 L 199.8,594.1 L 199.5,592.3 Z" />
+    <path d="M 593.8,195.2 L 592.2,200.8 L 588.4,207.6 L 587.3,213.1 L 582.7,219.3 L 580.8,225.2 L 571.1,237.4 L 564.0,248.4 L 559.7,253.4 L 549.6,262.7 L 542.7,267.4 L 537.5,269.7 L 533.2,272.3 L 531.8,272.7 L 530.9,272.3 L 529.1,267.8 L 529.7,253.7 L 530.4,250.4 L 534.5,243.5 L 536.5,236.2 L 540.1,231.9 L 542.9,226.0 L 548.6,218.8 L 555.2,211.6 L 561.0,206.7 L 567.6,203.9 L 579.2,194.4 L 584.9,192.9 L 591.0,188.8 L 593.0,190.4 L 593.8,195.1 Z" />
+    <path d="M 644.4,236.1 L 644.4,237.9 L 635.8,248.6 L 628.0,260.7 L 617.6,272.0 L 608.8,283.8 L 592.9,302.0 L 544.3,350.6 L 538.7,354.6 L 535.3,356.4 L 532.5,356.6 L 530.7,355.3 L 529.8,353.6 L 529.6,351.0 L 530.1,336.1 L 531.1,331.0 L 534.0,324.0 L 536.5,314.1 L 540.5,307.1 L 542.4,301.0 L 547.1,295.1 L 552.6,285.0 L 554.6,282.3 L 578.7,258.5 L 586.3,253.2 L 591.5,250.5 L 596.5,246.5 L 602.5,244.6 L 608.5,240.5 L 615.3,239.1 L 625.8,234.4 L 639.5,233.7 L 642.2,234.4 L 644.3,235.9 Z" />
+    <path d="M 727.5,247.6 L 728.8,250.1 L 727.7,254.2 L 722.6,261.2 L 717.1,271.0 L 711.8,278.0 L 708.3,285.0 L 699.3,296.0 L 691.5,308.4 L 682.6,318.7 L 675.1,330.7 L 664.0,343.2 L 652.3,359.4 L 636.2,376.9 L 622.8,394.9 L 597.0,422.5 L 573.4,448.8 L 567.4,454.4 L 553.1,465.9 L 549.7,467.0 L 547.1,466.3 L 545.6,464.1 L 545.1,461.2 L 546.8,444.2 L 547.5,425.5 L 548.6,420.0 L 552.0,410.6 L 554.1,398.0 L 557.7,389.7 L 559.4,384.1 L 563.2,376.7 L 566.4,368.0 L 570.9,359.9 L 574.8,354.2 L 577.4,348.6 L 580.7,344.1 L 605.3,315.8 L 609.5,312.0 L 618.2,305.6 L 632.2,293.5 L 638.9,290.2 L 649.5,282.3 L 655.0,280.2 L 660.8,276.2 L 667.6,273.4 L 672.2,270.3 L 679.5,267.6 L 684.3,264.2 L 690.2,262.7 L 697.2,258.4 L 703.1,256.7 L 710.0,253.0 L 718.5,249.9 L 724.0,246.9 L 725.5,246.7 L 727.3,247.4 Z" />
+    <path d="M 812.5,335.8 L 812.9,336.4 L 812.5,337.1 L 807.0,340.1 L 802.2,343.9 L 795.4,346.2 L 790.3,350.1 L 784.0,351.8 L 778.1,355.9 L 771.8,357.6 L 766.4,361.4 L 759.7,363.5 L 752.7,367.4 L 743.5,369.8 L 737.2,373.7 L 729.2,375.4 L 720.5,379.8 L 712.7,381.1 L 703.3,385.6 L 691.9,387.1 L 683.6,391.3 L 672.1,392.6 L 659.7,397.4 L 656.3,397.5 L 654.0,396.6 L 652.9,395.5 L 652.4,394.0 L 653.5,389.1 L 662.2,377.7 L 665.5,371.0 L 672.1,363.7 L 685.2,351.0 L 696.2,345.0 L 702.1,340.1 L 708.7,338.7 L 714.9,334.9 L 719.4,333.7 L 730.9,332.6 L 744.6,328.6 L 770.0,328.3 L 777.7,329.1 L 794.1,333.0 L 807.6,333.7 L 812.3,335.7 Z" />
+    <path d="M 841.7,546.1 L 842.0,547.1 L 841.4,548.0 L 837.4,549.7 L 822.6,549.8 L 818.4,548.9 L 807.9,544.8 L 792.7,543.7 L 779.6,538.9 L 767.7,537.7 L 757.9,533.3 L 746.5,531.9 L 736.8,527.5 L 726.1,525.7 L 719.4,521.8 L 709.1,519.8 L 701.6,515.6 L 692.4,513.9 L 685.2,509.7 L 678.0,508.3 L 675.0,505.8 L 673.4,501.6 L 673.8,500.1 L 675.0,498.9 L 682.5,496.0 L 689.9,492.1 L 697.8,490.8 L 708.2,486.1 L 745.6,485.7 L 751.7,486.3 L 761.8,490.5 L 771.3,492.4 L 778.2,496.7 L 784.5,498.1 L 789.9,502.5 L 800.9,508.9 L 813.5,518.7 L 829.6,533.3 L 837.1,540.7 L 841.6,546.0 Z" />
+    <path d="M 824.5,592.3 L 824.2,594.1 L 822.3,595.4 L 812.5,597.6 L 803.1,602.1 L 789.1,603.3 L 777.4,607.2 L 768.5,608.4 L 724.0,608.3 L 715.1,607.0 L 702.7,603.2 L 688.5,602.1 L 679.1,597.4 L 673.6,596.6 L 670.6,595.6 L 650.8,585.4 L 638.5,575.4 L 629.4,569.2 L 623.7,563.8 L 614.0,552.5 L 610.4,546.8 L 601.9,536.3 L 598.7,529.7 L 595.4,524.4 L 596.0,522.3 L 599.1,521.0 L 606.4,520.8 L 612.3,521.3 L 626.5,525.8 L 641.0,527.3 L 652.2,531.7 L 665.4,533.0 L 676.8,537.6 L 688.5,539.4 L 697.1,543.5 L 707.5,545.1 L 715.3,549.1 L 725.6,550.7 L 735.6,555.1 L 745.1,556.6 L 754.3,561.1 L 761.5,562.5 L 769.9,566.6 L 778.7,568.6 L 785.6,572.5 L 794.2,574.5 L 801.1,578.6 L 807.2,580.0 L 813.3,584.1 L 820.2,586.3 L 822.7,588.5 L 824.4,592.0 Z" />
+  </g>
+</svg>
+</div>
+                <div class="brand-title-wrap">
+                    <h1>TASTE OF VILLAGE</h1>
+                    <div class="subtag">HAYES • RESTAURANT & TAKEAWAY • EST. 2012</div>
+                </div>
+            </div>
+            <div class="header-meta-box">
+                <div class="meta-address">766B Uxbridge Rd, Hayes, UB4 0RU</div>
+                <div class="meta-phone">TEL: 020 3409 3786</div>
+                <div class="meta-badges">
+                    <span class="meta-badge-pill">🌙 100% Halal</span>
+                    <span class="meta-badge-pill meta-badge-gold">⭐ 4.8 Rating</span>
+                    <span class="meta-badge-pill">FHRS Rated</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-banner-strip">
+            <span>🔥 Authentic Punjabi & Mughal Cooking</span>
+            <span>• Charcoal Tandoor & Earthen Clay Handis •</span>
+            <span>🌐 tasteofvillagerestaurants.co.uk/hayes</span>
+        </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="page-grid-2">
+        <!-- Col 1 -->
+        <div class="col">
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Tala'a Hua Zaiqah</h3>
+                <div class="section-subtitle">Crispy Starters & Savouries</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chaplii Kebab Chicken </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chaplii Kebab Lamb </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£6.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Talii Hui Machli </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Aloo Tikki <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Sam-O-Say </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Pakoras </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£9.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Talii Fish Pakora </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.49</span>
+            </div>
+            
+        </div>
+        
+            </div>
+        </div>
+        
+
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Chatkara Street Food</h3>
+                <div class="section-subtitle">Tangy & Savoury Chaats</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Sev Puri <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Gol Gappe <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Dahi Bhalla Chaat <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Papri Chaat <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Aloo Tikki Chaat <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Mixed Chaat <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Samosa Chaat <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.99</span>
+            </div>
+            
+        </div>
+        
+            </div>
+        </div>
+        
+        </div>
+
+        <!-- Col 2 -->
+        <div class="col">
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Charcoal BBQ & Tandoor</h3>
+                <div class="section-subtitle">Roasted Over Glowing Coals</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Lamb Seekh Kebab (4PC) </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£6.49</span>
+            </div>
+            <div class="item-desc">Served with fresh salad & signature sauce.</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Lamb Tikka (1 Skewer) </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.99</span>
+            </div>
+            <div class="item-desc">Served with fresh salad & signature sauce.</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Lamb Chops (4PC) </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.99</span>
+            </div>
+            <div class="item-desc">Served with fresh salad & signature sauce.</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chilli Paneer <span class="badge badge-veg">🌱 VEG</span><span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            <div class="item-desc">Served with fresh salad & signature sauce.</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Wings (5PC) </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£6.99</span>
+            </div>
+            <div class="item-desc">Served with fresh salad & signature sauce.</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Tikka </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            <div class="item-desc">Served with fresh salad & signature sauce.</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Malai Tikka </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            <div class="item-desc">Served with fresh salad & signature sauce.</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Paneer Tikka (1 Skewer) <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£6.99</span>
+            </div>
+            <div class="item-desc">Served with fresh salad & signature sauce.</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Haryali Tikka </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            <div class="item-desc">Served with fresh salad & signature sauce.</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Kebab </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£2.00</span>
+            </div>
+            <div class="item-desc">Served with fresh salad & signature sauce.</div>
+        </div>
+        
+            </div>
+        </div>
+        
+
+            <!-- BBQ Platters Card -->
+            <div class="menu-section hero-accent">
+                <div class="section-header">
+                    <h3 class="section-title">BBQ Sharing Platters</h3>
+                    <div class="section-subtitle">Royal Sizzling Feasts</div>
+                </div>
+                <div class="section-items-grid">
+                    
+                    <div class="platter-card">
+                        <div class="platter-header">
+                            <span class="platter-name">Mughlai Khaas</span>
+                            <span class="platter-price">£59.49</span>
+                        </div>
+                        <div class="platter-desc">🍗 Mughlai chicken tikka, 4pc kebab, 4pc lamb chops, lamb tikka, 4pc haryali tikka, malai tikka, chicken wings.
+🥗 Served with 3 naan, fresh salad, mint sauce & chilli sauce.
+🥤 Includes 1.5L drink.</div>
+                    </div>
+                    
+                    <div class="platter-card">
+                        <div class="platter-header">
+                            <span class="platter-name">Murgh Nashist</span>
+                            <span class="platter-price">£29.49</span>
+                        </div>
+                        <div class="platter-desc">🍗 1 Chicken tikka, 2pc kebab, lamb tikka, 2pc lamb chops.
+🥗 Served with fresh salad, mint sauce & chilli sauce.
+🥤 Includes 1.5L drink.</div>
+                    </div>
+                    
+                    <div class="platter-card">
+                        <div class="platter-header">
+                            <span class="platter-name">Tandoor E Khaas (Serves 2)</span>
+                            <span class="platter-price">£18.49</span>
+                        </div>
+                        <div class="platter-desc">🍗 1 Chicken tikka, 2pc kebab, lamb tikka, 2pc lamb chops.
+🥗 Served with fresh salad, mint sauce & chilli sauce.
+🥤 Includes 1.5L drink.</div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <span>Taste of Village Hayes • 766B Uxbridge Rd, UB4 0RU</span>
+        <span class="footer-center">Live Flame Charcoal Grill & Fresh Breads</span>
+        <span>Page 1 of 4</span>
+    </div>
+    <div class="frieze-bottom"></div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════
+     PAGE 2: CLAY POT HANDI, KARAHI E KHAAS & VILLAGE CURRIES
+     ════════════════════════════════════════════════════════════════════ -->
+<div class="page page-2">
+    <div class="frieze-bar"></div>
+
+    <div class="running-header">
+        <span><span class="branch-tag">Taste of Village Hayes</span> • Traditional Mains & Slow-Cooked Handis</span>
+        <span class="page-num">Page 02</span>
+    </div>
+
+    <div class="page-grid-2">
+        <!-- Col 1 -->
+        <div class="col">
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Desi Clay Pot Handi</h3>
+                <div class="section-subtitle">Slow-Simmered in Earthenware</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chana Masala <span class="badge badge-veg">🌱 VEG</span><span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Muttar Paneer <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Aloo Gobi <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.00</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Saag Paneer <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Tadka Daal <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.00</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chana Daal <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.00</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Kidney Beans (Rajma) <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.00</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Bhindi <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Daal Makhni <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Kadhi Pakoda <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£6.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Paneer Tikka Masala <span class="badge badge-veg">🌱 VEG</span><span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Mushroom Karahi <span class="badge badge-veg">🌱 VEG</span><span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.99</span>
+            </div>
+            
+        </div>
+        
+            </div>
+        </div>
+        
+
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Karahi E Khaas</h3>
+                <div class="section-subtitle">Wok-Fried with Fresh Ginger & Chillies</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Kebab Masala <span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£14.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Tawa Fish Karahi <span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£14.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Shinwari Chicken <span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£19.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Lamb Charsi Karahi <span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£24.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">White Chicken Karahi <span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£19.99</span>
+            </div>
+            
+        </div>
+        
+            </div>
+        </div>
+        
+
+            <div class="heritage-card">
+                <h4>THE CLAY POT & KARAHI TRADITION</h4>
+                <p>Our Handis are simmered slowly in unglazed earthenware to capture deep, earthy aromas and retain moisture. Our Karahis are wok-fried over ferocious flame in hand-seasoned black iron with fresh ginger juliennes, green chillies, and scorched spices.</p>
+            </div>
+        </div>
+
+        <!-- Col 2 -->
+        <div class="col">
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Saalan Se (Village Curries)</h3>
+                <div class="section-subtitle">Traditional Rich Gravies & Nihari</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Lamb Nihari </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£11.49</span>
+            </div>
+            <div class="item-desc">Slow-cooked tender beef in a rich, aromatic gravy infused with traditional Pakistani spices, ginger, and herbs.</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Lamb Haleem </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£9.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Lamb Paya </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£9.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Lamb Curry </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£9.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Lamb Qeema </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Daal Gosht </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£9.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Saag Gosht </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£9.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Curry (Boneless) </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chana Chicken </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chilli Chicken <span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Saag Chicken </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Butter Chicken </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Tikka Masala <span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£9.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Achari Chicken <span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Jalfrezi <span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Lamb Karahi (On The Bone) <span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£9.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Karahi <span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.49</span>
+            </div>
+            
+        </div>
+        
+            </div>
+        </div>
+        
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <span>Order Takeaway & Delivery: 020 3409 3786</span>
+        <span class="footer-center">Clay Pot Cooking • Zero Shortcuts</span>
+        <span>Page 2 of 4</span>
+    </div>
+    <div class="frieze-bottom"></div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════
+     PAGE 3: BIRYANI, ROLLS, BURGERS & TANDOORI BREADS
+     ════════════════════════════════════════════════════════════════════ -->
+<div class="page page-3">
+    <div class="frieze-bar"></div>
+
+    <div class="running-header">
+        <span><span class="branch-tag">Taste of Village Hayes</span> • Biryani, Rolls, Burgers & Tandoori Breads</span>
+        <span class="page-num">Page 03</span>
+    </div>
+
+    <div class="page-grid-2">
+        <!-- Col 1 -->
+        <div class="col">
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Pulao aur Biryani</h3>
+                <div class="section-subtitle">Aromatic Basmati & Dum Biryani</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Plain Rice </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Vegetable Rice <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Biryani </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£6.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Lamb Biryani </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Vegetable Biryani <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£6.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Tikka Biryani </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Fried Rice </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Fried Rice </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Pulao (Weekend Only) </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£6.49</span>
+            </div>
+            
+        </div>
+        
+            </div>
+        </div>
+        
+
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Flavourful Rolls</h3>
+                <div class="section-subtitle">Tandoori Bread Freshly Wrapped</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Kebab Roll </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£6.49</span>
+            </div>
+            <div class="item-desc">A flavourful roll filled with juicy kebab, crunchy veggies, and tangy sauce, perfect for a quick bite</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Lamb Tikka Roll </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.99</span>
+            </div>
+            <div class="item-desc">A flavourful roll filled with juicy lamb tikka roll, crunchy veggies, and tangy sauce, perfect for a quick bite</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Mixed Roll </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£9.99</span>
+            </div>
+            <div class="item-desc">A flavourful roll filled with juicy mixed meat roll, crunchy veggies, and tangy sauce, perfect for a quick bite</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Tikka Roll </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£8.49</span>
+            </div>
+            <div class="item-desc">A flavourful roll filled with juicy chicken tikka, crunchy veggies and tangy sauce, perfect for a quick bite</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Paneer Tikka Roll </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            <div class="item-desc">A flavourful roll filled with juicy paneer tikka roll, crunchy veggies and tangy sauce, perfect for a quick bite</div>
+        </div>
+        
+            </div>
+        </div>
+        
+
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Desi Burgers & Street Treats</h3>
+                <div class="section-subtitle">Aloo Tikki & Noodle Burgers</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Make it a deal for extra </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£2.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Desi Noodle Burger </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.49</span>
+            </div>
+            <div class="item-desc">Aloo Tikki, Paneer Tikki, Veg Noodles, Salad & Sauces</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Aloo Tikki Burger <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.99</span>
+            </div>
+            <div class="item-desc">Bun, aloo tikki, salad & sauces</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Paneer Tikki Burger <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.99</span>
+            </div>
+            <div class="item-desc">Bun, paneer tikki, salad & sauces</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Veggie Noodles </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£6.49</span>
+            </div>
+            <div class="item-desc">Desi styled noodles stir fried with veggies & Sauces</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Noodles </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            <div class="item-desc">Desi styled noodles stir fried with veggies chicken & sauces</div>
+        </div>
+        
+            </div>
+        </div>
+        
+        </div>
+
+        <!-- Col 2 -->
+        <div class="col">
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Tandoori Breads & Naan</h3>
+                <div class="section-subtitle">Fresh From The Clay Oven</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Roti </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£0.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Naan </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£0.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Ajwain Naan </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£1.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Zeera Naan </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£1.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Garlic </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£1.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Garlic And Chilli Naan <span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£2.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Cheese Garlic Naan </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£2.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Cheese Naan </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.79</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Qeema Naan </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.79</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Chilli Naan <span class="badge badge-spicy">🌶️ SPICY</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£1.99</span>
+            </div>
+            
+        </div>
+        
+            </div>
+        </div>
+        
+
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Lahori Kulchas</h3>
+                <div class="section-subtitle">Fluffy Hand-Pressed Kulchas</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Plain Kulcha </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£2.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Onion Kulcha </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Paneer Kulcha <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Aalo Kulcha </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Gobi Kulcha <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Mix Kulcha </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.99</span>
+            </div>
+            
+        </div>
+        
+            </div>
+        </div>
+        
+
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Stuffed Tandoori Parathas</h3>
+                <div class="section-subtitle">Crispy Layered Desi Parathas</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Lachha Paratha </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£2.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Tandoori Paratha </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£2.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Aloo Stuffed Paratha <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Gobi Stuffed Paratha <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Paneer Paratha <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Mooli Stuffed Paratha <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Mixed Paratha </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Cheese Stuffed Paratha </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Chicken Cheese Paratha </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item compact">
+            <div class="item-header">
+                <span class="item-name">Anda Paratha </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£4.99</span>
+            </div>
+            
+        </div>
+        
+            </div>
+        </div>
+        
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <span>Tandoori Breads Baked Fresh To Order in 400°C Clay Ovens</span>
+        <span class="footer-center">Fluffy Naans & Crisp Parathas</span>
+        <span>Page 3 of 4</span>
+    </div>
+    <div class="frieze-bottom"></div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════════
+     PAGE 4: SHARING FEASTS, DESSERTS & GUEST SERVICES
+     ════════════════════════════════════════════════════════════════════ -->
+<div class="page page-4">
+    <div class="frieze-bar"></div>
+
+    <div class="running-header">
+        <span><span class="branch-tag">Taste of Village Hayes</span> • Sharing Feasts, Desserts & Guest Information</span>
+        <span class="page-num">Page 04</span>
+    </div>
+
+    <div class="page-grid-2">
+        <!-- Col 1 -->
+        <div class="col">
+            <!-- Village Signature Platters -->
+            <div class="menu-section hero-accent">
+                <div class="section-header">
+                    <h3 class="section-title">Village Signature Feasts</h3>
+                    <div class="section-subtitle">Grand Sharing Platters</div>
+                </div>
+                <div class="section-items-grid">
+                    
+                    <div class="platter-card">
+                        <div class="platter-header">
+                            <span class="platter-name">Village Special Platter (Serves 2)</span>
+                            <span class="platter-price">£19.99</span>
+                        </div>
+                        <div class="platter-desc">1 Chicken Biryani, 2 Pcs Kebab (Lamb), 2 Naan, Raita, Salad, Chana Daal</div>
+                    </div>
+                    
+                    <div class="platter-card">
+                        <div class="platter-header">
+                            <span class="platter-name">Village Special Platter (Serves 4)</span>
+                            <span class="platter-price">£29.99</span>
+                        </div>
+                        <div class="platter-desc">Veg Pulao, Chicken Karahi, 2 Kulcha, 2 Roti, Raita, Salad, 1.5L Drink, 2 Kheer</div>
+                    </div>
+                    
+                    <div class="platter-card">
+                        <div class="platter-header">
+                            <span class="platter-name">Rice Platter (Serves 2)</span>
+                            <span class="platter-price">£24.99</span>
+                        </div>
+                        <div class="platter-desc">Pilau Rice, 4pc Kebab, 1 Skewer Chicken Tikka, 1 Chapal Kebab, Mint Sauce, Chilli Sauce, Sweet Sauce, Salad, 2 Can Drinks</div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Weekend Desi Nashta & Brunch -->
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Weekend Desi Nashta</h3>
+                <div class="section-subtitle">Halwa Puri & Cholay Bhaturay</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Chicken Pulao </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Halwa Puri </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Cholay Bhaturay </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Fruit Chaat <span class="badge badge-veg">🌱 VEG</span></span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Village Rice Brunch Offer </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£7.99</span>
+            </div>
+            <div class="item-desc">(From 12PM to 3PM) Pilau Rice, 2 Shami Kebab, Can Drink</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Village Brunch Special </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£19.99</span>
+            </div>
+            <div class="item-desc">(Mon-Thu) Pilau Rice, 4pc Kebab, 1 Skewer Chicken Tikka, 1 Chapal Kebab, Mint Sauce, Chilli Sauce, Sweet Sauce, Salad, 2 Can Drinks</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Weekend Brunch </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£19.99</span>
+            </div>
+            <div class="item-desc">(Fri-Sun 10am-2pm) 2 Puri, Halwa, Chana Masala, Aloo Gobi or Tarka Dal, 2 Naan, 1 Can, 1 Lassi, Salad & Raita. Serves 2-3 Persons</div>
+        </div>
+        
+            </div>
+        </div>
+        
+        </div>
+
+        <!-- Col 2 -->
+        <div class="col">
+            <!-- Desserts -->
+            
+        <div class="menu-section cols-1">
+            <div class="section-header">
+                <h3 class="section-title">Sweet Indulgence (Mithai)</h3>
+                <div class="section-subtitle">Traditional Sweets & Kulfis</div>
+            </div>
+            <div class="section-items-grid cols-1">
+                
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Gajar Halwa With (2 PCS) Gulab Jamun </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Rasmalai (2 PCS) </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Kheer (250g) </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£2.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Gulab Jamun (2 PCS) With Kulfi </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.99</span>
+            </div>
+            <div class="item-desc">(Pistachio or Mango Ice Cream)</div>
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Sooji Halwa (Weekend Only) </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Gajar Halwa With Rabri </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Gajar Halwa (Carrot Halwa) </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.99</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Gulab Jamun (3 PCS) </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£3.49</span>
+            </div>
+            
+        </div>
+        
+        <div class="menu-item ">
+            <div class="item-header">
+                <span class="item-name">Gulab Jamun (3 PCS) With Rabri </span>
+                <span class="item-dots"></span>
+                <span class="item-price">£5.99</span>
+            </div>
+            
+        </div>
+        
+            </div>
+        </div>
+        
+
+            <!-- Traditional Drinks & Lassi -->
+            <div class="menu-section">
+                <div class="section-header">
+                    <h3 class="section-title">Traditional Beverages & Lassi</h3>
+                    <div class="section-subtitle">Chilled & Refreshing</div>
+                </div>
+                <div class="section-items-grid">
+                    <div class="menu-item compact">
+                        <div class="item-header">
+                            <span class="item-name">Mango Lassi <span class="badge badge-veg">🌱 VEG</span></span>
+                            <span class="item-dots"></span>
+                            <span class="item-price">£3.99</span>
+                        </div>
+                    </div>
+                    <div class="menu-item compact">
+                        <div class="item-header">
+                            <span class="item-name">Sweet / Salted Lassi <span class="badge badge-veg">🌱 VEG</span></span>
+                            <span class="item-dots"></span>
+                            <span class="item-price">£3.49</span>
+                        </div>
+                    </div>
+                    <div class="menu-item compact">
+                        <div class="item-header">
+                            <span class="item-name">Desi Karak Chai (Spiced Milk Tea)</span>
+                            <span class="item-dots"></span>
+                            <span class="item-price">£2.49</span>
+                        </div>
+                    </div>
+                    <div class="menu-item compact">
+                        <div class="item-header">
+                            <span class="item-name">Soft Drinks & Rubicon Juices</span>
+                            <span class="item-dots"></span>
+                            <span class="item-price">£1.99</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dietary & Allergens Guide Card -->
+            <div class="menu-section" style="background: #FAF7F2; border-color: #C49A45;">
+                <div class="section-header">
+                    <h3 class="section-title" style="color: #8A3D2A;">Dietary & Allergen Key</h3>
+                </div>
+                <div style="font-size: 6.2pt; color: #2B3D37; line-height: 1.35;">
+                    <p style="margin-bottom: 1.5px;">🌱 <strong>Vegetarian:</strong> Authentic plant and dairy curries prepared separately.</p>
+                    <p style="margin-bottom: 1.5px;">🌿 <strong>Vegan:</strong> Pure plant-based preparations with cold-pressed oils.</p>
+                    <p style="margin-bottom: 1.5px;">🌶️ <strong>Spicy:</strong> Karahis and curries spiced with authentic green chillies.</p>
+                    <p style="margin-bottom: 1.5px;">🌙 <strong>100% Halal:</strong> All poultry, lamb and beef are certified HMC / Halal.</p>
+                    <p style="font-size: 5.6pt; color: #6E5A48; margin-top: 2px;"><em>Allergy Notice: Please notify our team of any severe allergies before ordering. Nuts, dairy, gluten, and mustard are handled in our kitchen.</em></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Guest Service & Digital Order Bar -->
+    <div class="final-info-box">
+        <div class="final-info-left">
+            <h4>TASTE OF VILLAGE • HAYES BRANCH</h4>
+            <p>Experience the authentic taste of Punjab and the Mughal culinary empire. Every dish is seasoned with our family spice blends, prepared over natural wood charcoal, and cooked in seasoned cast-iron karahis.</p>
+            <div class="final-info-grid">
+                <div class="final-info-item">
+                    <strong>LOCATION & PARKING</strong>
+                    766B Uxbridge Road, Hayes, UB4 0RU<br>
+                    Convenient street & bay parking available
+                </div>
+                <div class="final-info-item">
+                    <strong>HOURS OF SERVICE</strong>
+                    Mon – Sun: 12:00 PM – 11:00 PM<br>
+                    Weekend Desi Nashta: From 10:00 AM
+                </div>
+                <div class="final-info-item">
+                    <strong>TELEPHONE ORDERS</strong>
+                    020 3409 3786 / 07474 888806<br>
+                    Collection & Doorstep Delivery Fleet
+                </div>
+                <div class="final-info-item">
+                    <strong>CATERING & CELEBRATIONS</strong>
+                    Live Tandoor & Karahi Event Catering<br>
+                    Email: sales@faloodaandco.co.uk
+                </div>
+            </div>
+        </div>
+        <div class="final-info-qr">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAAFeCAIAAABCSeBNAAAHEklEQVR4nO3dTWpjRwBGUTn0NrSUDLLyDLIULcIDY8g4ncvD4qlUVdI5swT8J7kvz/BR9fH99XkB+K8/fvtvAGkAmqcGIEgDEKQBCNIABGkAgjQAQRqA8Oty6PrXn5fXcvv7n8tujt+FMz/Rju/v8c/rtXrUK+mpAQjSAARpAII0AEEagCANQJAGIEgDEKQBuH8NueOycMeF36yfd81l4ZnPPOt38vZy/xY8NQBBGoAgDUCQBiBIAxCkAQjSAARpAII0AI9eQ85aJY5bno1b6Y0z67sa9/6O23fOct3w34KnBiBIAxCkAQjSAARpAII0AEEagCANQJAG4LlrSB61szxzguMZVqfvzFMDEKQBCNIABGkAgjQAQRqAIA1AkAYgSAMQrCGX2DvO2krOuu3aznJ9nhqAIA1AkAYgSAMQpAEI0gAEaQCCNABBGoDnriHXvLP4jDOnMK55B/esReOs5egstyW/q2OeGoAgDUCQBiBIAxCkAQjSAARpAII0AEEagEevIcfd0bymcSu9NT/22I6rxFknZe7IUwMQpAEI0gAEaQCCNABBGoAgDUCQBiBIAxA+vr8+6/+/qTObtjXPdzy242Zxx59oR54agCANQJAGIEgDEKQBCNIABGkAgjQAQRqA+9eQs84dHGfcWu7dzh1cc/255jmaO74LnhqAIA1AkAYgSAMQpAEI0gAEaQCCNABBGoBH35R9bNy2bM1l4bhd2rstOI+/7ri94zi3STvLM6+GpwYgSAMQpAEI0gAEaQCCNABBGoAgDUCQBuD+NeS4PdyaS7sz1tzhrbm0O/NdzTob8tiaZ1Ke+Yk8NQBBGoAgDUCQBiBIAxCkAQjSAARpAII0AM+9KXvN7eCaW7o1b3DeccG55sr2uuEt254agCANQJAGIEgDEKQBCNIABGkAgjQAQRqAR9+U/XrrsTVXa8d2XHAeW/NcyWOvt0n11AAEaQCCNABBGoAgDUCQBiBIAxCkAQjSADx6DXlszft/d7Tmbdc7nsK45vrzOmzfeczZkMDd/EEBBGkAgjQAQRqAIA1AkAYgSAMQpAG4fw05a9F4/JlnneC45gpz1q3iZ7zeKnHNd/DMZ/bUAARpAII0AEEagCANQJAGIEgDEKQBCNIAhI/vr8/Lbnu4M17v7MBZn3nH7eCav8/XJc9J9dQABGkAgjQAQRqAIA1AkAYgSAMQpAEI0gA896bscWbt8NY8lXDHreSa28FZ29DbpNM93ZQN3M0fFECQBiBIAxCkAQjSAARpAII0AEEagJXWkK+3Hnu9O7h3XHCOc520wpzFUwMQpAEI0gAEaQCCNABBGgBpAH7GUwMQpAF49Bpyx9MBX+8nmrW0m7VJPbbjkvK25KmTnhqAIA1AkAYgSAMQpAEI0gAEaQCCNABBGoBHryHXvEn5zNcdtx1c8/y/ca/VrI3mmq/zjutPTw1AkAYgSAMQpAEI0gAEaQCCNABBGoAgDcBKN2XP2juuudE8Nms7OO579pl/btZvrKcGIEgDEKQBCNIABGkAgjQAQRqAIA1AkAYgfHx/fV5mbK3OmPVd7fhqHHu9VeKa39UZs14NTw1AkAYgSAMQpAEI0gAEaQCCNABBGoAgDcBz15BrrsfOmHX786xzJV9v4TfruzrD2ZDAQvxBAQRpAII0AEEagCANQJAGIEgDEKQBWGkNOc6se7R35DzL57wa1w23kp4agCANQJAGIEgDEKQBCNIABGkAgjQAQRqA8OsyzKxl4ZorzGNr7izHncK45o3VO/7mjPvMnhqAIA1AkAYgSAMQpAEI0gAEaQCCNABBGoD7z4Z8NzueHPluy8Jx78KON4Of4WxI4G7+oACCNABBGoAgDUCQBiBIAxCkAQjSANx/NuSaZxaOW4CNu3f4mM/881dj1u/kddi7P46zIYEH8wcFEKQBCNIABGkAgjQAQRqAIA1AkAbg0Tdlr7kAO7OWG/exs84dPPOxZ5ajZ77umm5LvoPj9rueGoAgDUCQBiBIAxCkAQjSAARpAII0AEEagEevIY/NuuF3lnH3Ha/5Sq55F/aZj11zo3mbdI+2pwYgSAMQpAEI0gAEaQCCNABBGoAgDUCQBuC5a0hWWHCe2f+Nu1X8jDW/7rE1d5bHPDUAQRqAIA1AkAYgSAMQpAEI0gAEaQCCNADBGnKJHd64pd2sDd+sn2jWuZI7/uYc89QABGkAgjQAQRqAIA1AkAYgSAMQpAEI0gA8dw255n3Wx8Zt6c4Yd7LgmkvKWVvJM26TVpjWkMBT+YMCCNIABGkAgjQAQRqAIA1AkAYgSAMQPr6/Pi+vdcPvu92zvObpj2t+zzu+R7O+rqcGIEgDEKQBCNIABGkAgjQAQRqAIA1AkAbg/jUk8J48NQBBGoAgDUCQBiBIAxCkAQjSAARpAII0AJf/+xcs+fijXpNOGgAAAABJRU5ErkJggg==" alt="Order Online QR">
+            <span>SCAN TO ORDER ONLINE</span>
+            <span style="font-size: 5pt; color: #8A3D2A;">DIRECT MENU & TRACKING</span>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <span>Sister Branch: 260 Farnham Road, Slough, SL1 4XQ • Tel: 01753 326341</span>
+        <span class="footer-center">Taste of Village • Authentic Village Heritage</span>
+        <span>Page 4 of 4</span>
+    </div>
+    <div class="frieze-bottom"></div>
+</div>
+
+</body>
+</html>

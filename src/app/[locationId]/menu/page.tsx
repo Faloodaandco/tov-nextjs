@@ -403,10 +403,47 @@ function MenuPageContent() {
   // Server-validated voucher discount — set by CartDrawer after calling /api/vouchers/validate.
   // NEVER calculated client-side from prefix matching.
   const [voucherDiscountPercent, setVoucherDiscountPercent] = useState<number>(0);
+  const [voucherFixedDiscount, setVoucherFixedDiscount] = useState<number>(0);
+  const [promoBannerVisible, setPromoBannerVisible] = useState(false);
+  const [promoBannerMessage, setPromoBannerMessage] = useState('');
+
+  useEffect(() => {
+    const promoQuery = searchParams.get('promo');
+    if (promoQuery && !appliedVoucher && cartTotal >= 0) {
+      const validatePromo = async () => {
+        try {
+          const res = await fetch('/api/promos/validate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: promoQuery, branchId: routeLocationId, subtotalPence: cartTotal * 100 })
+          });
+          const data = await res.json();
+          if (data.valid) {
+            setAppliedVoucher(promoQuery.toUpperCase());
+            if (data.discountType === 'PERCENTAGE') {
+              setVoucherDiscountPercent(data.discountPercent);
+            } else if (data.discountType === 'FIXED_AMOUNT') {
+              setVoucherFixedDiscount(data.fixedAmountPence / 100);
+            }
+            setPromoBannerMessage(data.reason || 'Promo applied!');
+            setPromoBannerVisible(true);
+            setTimeout(() => setPromoBannerVisible(false), 5000);
+          }
+        } catch (err) {
+          console.error('Failed to validate promo', err);
+        }
+      };
+      const timer = setTimeout(validatePromo, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, appliedVoucher, routeLocationId, cartTotal, setAppliedVoucher]);
+
   const voucherDiscountAmount = useMemo(() => {
-    if (!appliedVoucher || voucherDiscountPercent <= 0) return 0;
-    return Math.round(cartTotal * (voucherDiscountPercent / 100) * 100) / 100;
-  }, [appliedVoucher, voucherDiscountPercent, cartTotal]);
+    if (!appliedVoucher) return 0;
+    if (voucherFixedDiscount > 0) return voucherFixedDiscount;
+    if (voucherDiscountPercent > 0) return Math.round(cartTotal * (voucherDiscountPercent / 100) * 100) / 100;
+    return 0;
+  }, [appliedVoucher, voucherDiscountPercent, voucherFixedDiscount, cartTotal]);
 
   // Anti-stacking: voucher wins over breakfast promo
   const promoDiscount = voucherDiscountAmount > 0 ? voucherDiscountAmount : autoPromoDiscount;
@@ -884,6 +921,20 @@ function MenuPageContent() {
 
   return (
     <div className="min-h-screen bg-bg-sand pb-20">
+
+      <AnimatePresence>
+        {promoBannerVisible && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-terracotta text-white font-bold text-center py-3 px-4 shadow-md text-sm flex items-center justify-center gap-2 overflow-hidden sticky top-0 z-50"
+          >
+            <Ticket size={18} />
+            {promoBannerMessage}
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* Cinematic Premium Hero Header */}
       <div className="relative w-full h-[45vh] min-h-[360px] overflow-hidden bg-pine">
