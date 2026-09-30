@@ -317,22 +317,23 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
           ))}
 
           {/* ─── Allergen Information ─────────────────────── */}
+          {/* ─── Allergens ───────────────────────────────── */}
           {hasAllergens && (
-            <div className="mb-6 p-4 rounded-[20px] bg-amber-50 border border-amber-200">
-              <div className="flex items-center gap-2 mb-3">
-                <AlertTriangle size={16} className="text-amber-600 flex-shrink-0" />
-                <p className="text-xs font-black text-amber-800 uppercase tracking-widest">Allergen Information</p>
+            <div className="mb-6 p-4 rounded-2xl bg-white/70 backdrop-blur-sm border border-pine/10 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+              <div className="flex items-center gap-2 mb-2.5">
+                <Info size={15} className="text-terracotta/80 flex-shrink-0" />
+                <p className="text-xs font-semibold text-pine tracking-wide">Allergen &amp; Dietary Information</p>
               </div>
 
               {contains.length > 0 && (
-                <div className="mb-3">
-                  <p className="text-[10px] font-bold text-amber-700 uppercase tracking-wider mb-2">Contains:</p>
+                <div className="mb-2.5">
+                  <p className="text-[10px] font-semibold text-pine/60 uppercase tracking-wider mb-1.5">Contains:</p>
                   <div className="flex flex-wrap gap-1.5">
                     {contains.map(a => {
                       const cfg = ALLERGEN_CONFIG[a.allergen];
                       if (!cfg) return null;
                       return (
-                        <span key={a.allergen} className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border ${cfg.colour}`}>
+                        <span key={a.allergen} className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium border ${cfg.colour}`}>
                           <span>{cfg.emoji}</span> {cfg.label}
                         </span>
                       );
@@ -343,7 +344,7 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
 
               {mayContain.length > 0 && (
                 <div>
-                  <p className="text-[10px] font-bold text-amber-700 uppercase tracking-wider mb-2">May Contain:</p>
+                  <p className="text-[10px] font-semibold text-pine/60 uppercase tracking-wider mb-1.5">May Contain:</p>
                   <div className="flex flex-wrap gap-1.5">
                     {mayContain.map(a => {
                       const cfg = ALLERGEN_CONFIG[a.allergen];
@@ -358,7 +359,7 @@ export const CustomisationModal: React.FC<CustomisationModalProps> = ({ item, on
                 </div>
               )}
 
-              <p className="text-[10px] text-amber-700 mt-3 leading-relaxed">
+              <p className="text-[11px] text-pine/60 mt-3 pt-2.5 border-t border-pine/10 leading-relaxed">
                 If you have a food allergy or intolerance, please speak to a member of staff before ordering.
               </p>
             </div>
