@@ -269,37 +269,8 @@ function MenuPageContent() {
           item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
           item.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-        // Robust Dietary Classification
-        let itemDietary = [...(item.dietary || [])];
-        if (!item.dietary || item.dietary.length === 0) {
-          const text = (item.name + ' ' + item.description + ' ' + item.category).toLowerCase();
-          const isMeat = text.includes('chicken') || text.includes('lamb') || text.includes('beef') || 
-                         text.includes('steak') || text.includes('ribeye') || text.includes('chargha') || 
-                         text.includes('gosht') || text.includes('keema') || text.includes('tikka') || 
-                         text.includes('kebab') || text.includes('chops') || text.includes('wings') || 
-                         text.includes('nihari') || text.includes('haleem') || text.includes('paya') || 
-                         text.includes('fish') || text.includes('seabass') || text.includes('brisket');
-
-          if (!isMeat) {
-            if (text.includes('paneer') || text.includes('vegetarian') || text.includes('veg main') || item.category.includes('vegetarian')) {
-              itemDietary.push('vegetarian');
-            }
-            if (text.includes('vegan') || text.includes('chana') || text.includes('daal') || text.includes('tarka') || text.includes('saag')) {
-              itemDietary.push('vegan', 'vegetarian');
-            }
-          }
-
-          if (isMeat || text.includes('halal')) {
-            itemDietary.push('halal');
-          }
-
-          if (text.includes('spicy') || text.includes('chilli') || text.includes('karahi') || text.includes('charshi') || text.includes('masala')) {
-            itemDietary.push('spicy');
-          }
-
-          itemDietary = Array.from(new Set(itemDietary));
-          item.dietary = itemDietary as any;
-        }
+        // Dietary Classification
+        const itemDietary = item.dietary || [];
 
         const matchDietary = activeDietaryFilters.length === 0 || 
           activeDietaryFilters.every(filter => itemDietary.includes(filter as any));
@@ -1122,6 +1093,20 @@ function MenuPageContent() {
           </div>
         )}
 
+        {groupedMenu.length === 0 && (searchQuery || activeDietaryFilters.length > 0) && (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <p className="font-sans text-pine/60 text-sm font-bold uppercase tracking-[0.15em] mb-4">
+              No dishes match your search
+            </p>
+            <button
+              onClick={() => { setSearchQuery(''); setActiveDietaryFilters([]); }}
+              className="text-terracotta font-bold text-xs uppercase tracking-[0.2em] hover:underline"
+            >
+              Reset Filters
+            </button>
+          </div>
+        )}
+
         {/* Render Each Category as a ScrollSpy Section */}
         {!isLoading && groupedMenu.map((group) => (
           <section key={group.id} id={`category-${group.id}`} data-category={group.id} className="mb-24 scroll-mt-48">
@@ -1143,7 +1128,7 @@ function MenuPageContent() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {group.items.map((item, i) => {
-                const itemQuantity = cart.filter(ci => ci.id === item.id).reduce((sum, ci) => sum + ci.quantity, 0);
+                const itemQuantity = cart.filter(ci => ci.id === item.id || ci.id.startsWith(`${item.id}_`)).reduce((sum, ci) => sum + ci.quantity, 0);
                 
                 return (
                   <MenuItemCard

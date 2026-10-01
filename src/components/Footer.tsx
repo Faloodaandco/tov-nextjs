@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { MapPin, Phone, MessageCircle, Clock } from 'lucide-react';
+import { MapPin, Phone, MessageCircle } from 'lucide-react';
 
 const Instagram = ({ size = 20, ...props }: { size?: number; [key: string]: any }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
@@ -9,7 +9,7 @@ const Instagram = ({ size = 20, ...props }: { size?: number; [key: string]: any 
 const Facebook = ({ size = 20, ...props }: { size?: number; [key: string]: any }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
 );
-import { SHOP_CONFIG, LOCATIONS, buildWhatsAppLink } from '@/config/shopConfig';
+import { SHOP_CONFIG, LOCATIONS } from '@/config/shopConfig';
 import { useLocationConfig } from '@/hooks/useLocationConfig';
 
 export const Footer = () => {
@@ -56,10 +56,10 @@ export const Footer = () => {
               <a aria-label="Facebook" href={SHOP_CONFIG.facebook} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg">
                 <Facebook size={20} />
               </a>
-              <a aria-label="WhatsApp" href="https://wa.me/442034093786" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Hayes">
+              <a aria-label="WhatsApp Hayes" href="https://wa.me/442034093786" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Hayes">
                 <MessageCircle size={20} />
               </a>
-              <a aria-label="WhatsApp" href="https://wa.me/441753326341" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Slough">
+              <a aria-label="WhatsApp Slough" href="https://wa.me/441753326341" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Slough">
                 <MessageCircle size={20} />
               </a>
             </div>
@@ -106,7 +106,7 @@ export const Footer = () => {
                     <span className="text-bg-sand/70 font-medium text-sm tracking-widest">{branch.phone}</span>
                   </div>
                   <div>
-                    <a aria-label="Google Maps Directions" 
+                    <a aria-label={`Get directions to ${branch.name}`} 
                       href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(branch.address + ', ' + branch.postcode)}`}
                       target="_blank" 
                       rel="noopener noreferrer"
@@ -123,19 +123,6 @@ export const Footer = () => {
             </div>
           </div>
 
-        </div>
-
-        {/* #3 SEO Footer — Keyword-Rich Description for Google */}
-        <div className="border-t border-bg-sand/10 pt-12 mb-8 flex justify-center text-center">
-          <p className="text-bg-sand/20 text-[10px] leading-relaxed font-medium normal-case max-w-5xl tracking-widest text-justify md:text-center">
-            {SHOP_CONFIG.name} is a halal Pakistani restaurant and takeaway located at {SHOP_CONFIG.address}, {SHOP_CONFIG.postcode}. 
-            We specialise in authentic Lahori and Gujranwala cuisine including Chicken Karahi, Lamb Karahi, Haleem, Nihari, 
-            Samosa Chaat, Dahi Bhalla, Biryani, BBQ platters, Seekh Kebab, Chapli Kebab, fresh Naan, Roti and Paratha. 
-            Our chefs prepare every dish with traditional slow-cooking methods using fresh ingredients — no shortcuts, no tinned 
-            chickpeas, no store-bought papdi. Whether you're looking for a halal restaurant near {SHOP_CONFIG.name.replace('Taste Of Village ', '')}, 
-            Pakistani food in {SHOP_CONFIG.postcode.split(' ')[0]}, or the best Karahi in the area, {SHOP_CONFIG.name} delivers the real taste of the village to your plate. 
-            Open Monday to Sunday, 12 PM – 11 PM. Order online for collection or dine in with us.
-          </p>
         </div>
 
         {/* #4 FSA Food Hygiene Rating Badge — Official Trust Signal */}
@@ -178,9 +165,9 @@ export const Footer = () => {
 
       {/* Massive Structural Anchor Typography */}
       <div className="w-full overflow-hidden flex justify-center mt-8 mb-[-2vw] opacity-[0.03] pointer-events-none select-none relative z-0">
-        <h1 className="font-display text-[22vw] leading-[0.8] whitespace-nowrap text-bg-sand tracking-tighter mix-blend-overlay">
+        <span aria-hidden="true" className="font-display text-[22vw] leading-[0.8] whitespace-nowrap text-bg-sand tracking-tighter mix-blend-overlay">
           {SHOP_CONFIG.name.replace('Taste Of Village ', '').toUpperCase()}
-        </h1>
+        </span>
       </div>
     </footer>
   );

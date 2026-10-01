@@ -34,17 +34,23 @@ def generate_pdf():
 
     # Robust dietary badge classification
     def get_dietary_badges(item):
+        import re
         name = item.get('name', '').lower()
         desc = (item.get('description') or '').lower()
         cat = (item.get('category') or '').lower()
+        combined = f'{name} {desc}'
         
         meat_keywords = [
             'chicken', 'lamb', 'meat', 'kebab', 'fish', 'keema', 'qeema', 'chargha', 'paya',
             'nihari', 'haleem', 'wings', 'chops', 'boti', 'seekh', 'murgh', 'gosht',
             'machli', 'anda', 'egg', 'prawn', 'tandoor e khaas', 'murgh nashist', 'mughlai khaas',
-            'mixed roll', 'chapli', 'chaplii'
+            'mixed roll', 'chapli', 'chaplii', 'beef', 'mutton', 'steak', 'tikka',
         ]
-        is_meat = any(k in name or k in desc for k in meat_keywords)
+        # Use word boundaries to prevent 'egg' matching 'veggie', 'anda' matching 'standard'
+        is_meat = any(re.search(r'\b' + re.escape(k) + r'\b', combined) for k in meat_keywords)
+        # Exception: 'paneer tikka' is vegetarian despite containing 'tikka'
+        if is_meat and 'paneer' in name and 'tikka' in name:
+            is_meat = False
         
         badges = []
         # Plain breads don't need a veg badge to avoid clutter
@@ -59,14 +65,15 @@ def generate_pdf():
             if is_bread_cat:
                 if 'paneer' in name or 'aloo' in name or 'gobi' in name or 'mooli' in name:
                     badges.append('<span class="badge badge-veg">🌱 VEG</span>')
-            elif any(k in name for k in veg_keywords) or 'desi_handi' in cat or 'chatkara' in cat:
+            elif any(re.search(r'\b' + re.escape(k) + r'\b', name) for k in veg_keywords):
+                # Only badge items with explicit veg keywords — no blanket category assignment
                 if 'vegan' in (item.get('dietary') or []):
                     badges.append('<span class="badge badge-vegan">🌿 VEGAN</span>')
                 else:
                     badges.append('<span class="badge badge-veg">🌱 VEG</span>')
         
         spicy_keywords = ['spicy', 'chilli', 'karahi', 'shinwari', 'jalfrezi', 'achari', 'masala', 'charsi', 'desi murgh']
-        if any(k in name for k in spicy_keywords):
+        if any(re.search(r'\b' + re.escape(k) + r'\b', name) for k in spicy_keywords):
             badges.append('<span class="badge badge-spicy">🌶️ SPICY</span>')
             
         return ''.join(badges)
@@ -990,7 +997,9 @@ body {{
 </html>'''
 
     # Save HTML to file
-    html_file = 'scripts/tov_hayes_menu.html'
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(script_dir)
+    html_file = os.path.join(script_dir, 'tov_hayes_menu.html')
     with open(html_file, 'w', encoding='utf-8') as f:
         f.write(html)
     print(f"HTML template written to {html_file}")
@@ -1000,60 +1009,77 @@ body {{
     options = Options()
     options.add_argument('--headless=new')
     options.add_argument('--disable-gpu')
-    options.add_argument('--no-sandbox')
-    driver = webdriver.Chrome(options=options)
+    driver = None
+    try:
+        driver = webdriver.Chrome(options=options)
 
-    # Load file via file:/// URL
-    abs_html = os.path.abspath(html_file).replace('\\', '/')
-    file_url = f'file:///{abs_html}'
-    driver.get(file_url)
+        # Load file via file:/// URL
+        abs_html = os.path.abspath(html_file).replace('\\', '/')
+        file_url = f'file:///{abs_html}'
+        driver.get(file_url)
 
-    # Execute CDP Page.printToPDF
-    print("Printing PDF via CDP Page.printToPDF...")
-    result = driver.execute_cdp_cmd('Page.printToPDF', {
-        'paperWidth': 8.27, # A4 width in inches
-        'paperHeight': 11.69, # A4 height in inches
-        'marginTop': 0,
-        'marginBottom': 0,
-        'marginLeft': 0,
-        'marginRight': 0,
-        'printBackground': True,
-        'preferCSSPageSize': True
-    })
-    driver.quit()
+        # Wait for web fonts to load before printing
+        driver.execute_script("return document.fonts.ready.then(() => true);")
+
+        # Execute CDP Page.printToPDF
+        print("Printing PDF via CDP Page.printToPDF...")
+        result = driver.execute_cdp_cmd('Page.printToPDF', {
+            'paperWidth': 8.27, # A4 width in inches
+            'paperHeight': 11.69, # A4 height in inches
+            'marginTop': 0,
+            'marginBottom': 0,
+            'marginLeft': 0,
+            'marginRight': 0,
+            'printBackground': True,
+            'preferCSSPageSize': True
+        })
+    finally:
+        if driver:
+            driver.quit()
 
     pdf_bytes = base64.b64decode(result['data'])
 
     # Save to public assets
-    out_pdf_public = 'public/assets/tov-hayes-menu.pdf'
+    out_pdf_public = os.path.join(project_root, 'public', 'assets', 'tov-hayes-menu.pdf')
+    os.makedirs(os.path.dirname(out_pdf_public), exist_ok=True)
     with open(out_pdf_public, 'wb') as f:
         f.write(pdf_bytes)
     print(f"Saved public PDF to {out_pdf_public}")
 
-    # Save to brain artifact dir
-    artifact_dir = r'C:\Users\user\.gemini\antigravity\brain\6da165d9-d3c1-4a73-b168-f0821470649f'
-    out_pdf_artifact = os.path.join(artifact_dir, 'tov-hayes-menu.pdf')
-    with open(out_pdf_artifact, 'wb') as f:
-        f.write(pdf_bytes)
-    print(f"Saved artifact PDF to {out_pdf_artifact}")
+    # Optionally save to artifact directory (set ARTIFACT_DIR env var)
+    artifact_dir = os.environ.get('ARTIFACT_DIR')
+    if artifact_dir:
+        os.makedirs(artifact_dir, exist_ok=True)
+        out_pdf_artifact = os.path.join(artifact_dir, 'tov-hayes-menu.pdf')
+        with open(out_pdf_artifact, 'wb') as f:
+            f.write(pdf_bytes)
+        print(f"Saved artifact PDF to {out_pdf_artifact}")
 
     # Render PNG pages with PyMuPDF
     doc = pymupdf.open(stream=pdf_bytes, filetype='pdf')
     print(f"Total pages rendered in PDF: {len(doc)}")
     
+    # Clean up stale page PNGs from previous runs
+    assets_dir = os.path.join(project_root, 'public', 'assets')
+    for old_png in [f for f in os.listdir(assets_dir) if f.startswith('tov-hayes-menu-page-') and f.endswith('.png')]:
+        os.remove(os.path.join(assets_dir, old_png))
+
     png_paths = []
     for i, page in enumerate(doc):
         pix = page.get_pixmap(dpi=200) # High-res 200 DPI
         png_name = f'tov-hayes-menu-page-{i+1}.png'
-        png_public = os.path.join('public/assets', png_name)
-        png_artifact = os.path.join(artifact_dir, png_name)
+        png_public = os.path.join(assets_dir, png_name)
         pix.save(png_public)
-        pix.save(png_artifact)
-        png_paths.append(png_artifact)
-        print(f"Rendered Page {i+1} to {png_artifact} ({pix.width}x{pix.height})")
+        if artifact_dir:
+            png_artifact = os.path.join(artifact_dir, png_name)
+            pix.save(png_artifact)
+            png_paths.append(png_artifact)
+        else:
+            png_paths.append(png_public)
+        print(f"Rendered Page {i+1} to {png_public} ({pix.width}x{pix.height})")
 
     print("PDF generation completed successfully!")
-    return len(doc), out_pdf_artifact, png_paths
+    return len(doc), out_pdf_public, png_paths
 
 if __name__ == '__main__':
     generate_pdf()

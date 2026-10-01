@@ -42,7 +42,7 @@ export const MobileOrderDock = () => {
       )}
       <div className="flex items-center gap-3 p-4 bg-white shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)]">
         {/* TODO: Update WhatsApp number if TOV gets a distinct one. Using Falooda's for now. */}
-        <a aria-label="WhatsApp" 
+        <a aria-label="Chat on WhatsApp (opens in new tab)" 
           href="https://wa.me/447387755853?text=Hi%20Taste%20of%20Village,%20I%20have%20a%20question"
           target="_blank"
           rel="noopener noreferrer"
@@ -52,14 +52,14 @@ export const MobileOrderDock = () => {
         </a>
         
         {cartCount === 0 ? (
-          <button aria-label="Button" 
+          <button 
             onClick={() => setIsCartOpen(true)}
             className="flex-1 h-12 rounded-xl bg-pine text-white font-medium flex items-center justify-center shadow-sm"
           >
             Order Online
           </button>
         ) : (
-          <button aria-label="Button" 
+          <button 
             onClick={() => setIsCartOpen(true)}
             className="flex-1 h-12 rounded-xl bg-terracotta text-white font-medium flex items-center justify-between px-4 shadow-sm"
           >

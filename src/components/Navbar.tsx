@@ -85,7 +85,9 @@ export const Navbar = () => {
           <div className="flex flex-row items-center gap-2 sm:gap-3 pointer-events-auto">
             <button 
               onClick={() => setIsOpen(!isOpen)}
-              className={`p-2.5 sm:p-3.5 transition-all focus:outline-none duration-300 rounded-full hover:-translate-y-0.5 ${pillClasses}`}
+              aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={isOpen}
+              className={`p-2.5 sm:p-3.5 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/50 duration-300 rounded-full hover:-translate-y-0.5 ${pillClasses}`}
             >
               {isOpen ? <X size={20} className="sm:w-6 sm:h-6" /> : <MenuIcon size={20} className="sm:w-6 sm:h-6" />}
             </button>
@@ -112,19 +114,21 @@ export const Navbar = () => {
           <div className="flex flex-row items-center gap-2 sm:gap-3 pointer-events-auto">
             <button 
               onClick={() => setShowLocationModal(true)}
-              className={`sm:hidden flex items-center justify-center p-2.5 transition-all focus:outline-none duration-300 rounded-full hover:-translate-y-0.5 ${pillClasses}`}
+              aria-label="Select store location"
+              className={`sm:hidden flex items-center justify-center p-2.5 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta/50 duration-300 rounded-full hover:-translate-y-0.5 ${pillClasses}`}
             >
               <MapPin size={20} />
             </button>
 
             {/* Profile Icon */}
             {isLoggedIn ? (
-              <Link href="/rewards" className={`flex items-center justify-center p-2.5 sm:p-3.5 transition-all duration-300 rounded-full hover:-translate-y-0.5 ${pillClasses}`}>
+              <Link href="/rewards" aria-label="Your rewards and account" className={`flex items-center justify-center p-2.5 sm:p-3.5 transition-all duration-300 rounded-full hover:-translate-y-0.5 ${pillClasses}`}>
                 <UserCircle2 size={20} className="sm:w-6 sm:h-6" />
               </Link>
             ) : (
               <button  
                 onClick={() => { setAuthTab('login'); setShowAuth(true); }}
+                aria-label="Sign in to your account"
                 className={`flex items-center justify-center p-2.5 sm:p-3.5 transition-all duration-300 rounded-full hover:-translate-y-0.5 ${pillClasses}`}
               >
                 <UserCircle2 size={20} className="sm:w-6 sm:h-6" />
@@ -177,7 +181,7 @@ export const Navbar = () => {
              {/* Header */}
              <div className="px-8 py-6 flex justify-between items-center border-b border-pine/10">
                <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="Taste of Village" className="h-10 object-contain drop-shadow-sm" />
-               <button  onClick={() => setIsOpen(false)} className="p-2 rounded-full border border-pine/20 text-pine hover:bg-pine hover:text-bg-sand transition-all">
+               <button  onClick={() => setIsOpen(false)} aria-label="Close navigation menu" className="p-2 rounded-full border border-pine/20 text-pine hover:bg-pine hover:text-bg-sand transition-all">
                  <X size={20} strokeWidth={1.5} />
                </button>
              </div>
@@ -218,7 +222,7 @@ export const Navbar = () => {
                   </button>
 
                   <div className="flex items-center justify-between mt-2 px-2">
-                    <a aria-label="Phone" href={`tel:${SHOP_CONFIG.phoneNumberRaw}`} className="text-xs font-bold tracking-widest uppercase text-pine hover:text-terracotta flex items-center gap-2 transition-colors">
+                    <a href={`tel:${SHOP_CONFIG.phoneNumberRaw}`} className="text-xs font-bold tracking-widest uppercase text-pine hover:text-terracotta flex items-center gap-2 transition-colors">
                       <Phone size={16} /> Call Us
                     </a>
                     <div className="w-px h-4 bg-pine/20"></div>
