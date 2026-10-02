@@ -5,10 +5,12 @@ import { usePathname } from 'next/navigation';
 import { MessageCircle } from 'lucide-react';
 import { useStore } from '@/context/StoreContext';
 import { formatCurrency } from '@/utils/formatters';
-import { LOCATIONS } from '@/config/shopConfig';
+import { buildWhatsAppLink } from '@/config/shopConfig';
+import { useLocationConfig } from '@/hooks/useLocationConfig';
 
 export const MobileOrderDock = () => {
   const { cartTotal, cartCount, isCartOpen, setIsCartOpen } = useStore();
+  const { activeLocation } = useLocationConfig();
   const pathname = usePathname();
 
   // Hide on certain routes and when cart is open
@@ -16,7 +18,7 @@ export const MobileOrderDock = () => {
     return null;
   }
 
-  const minOrder = LOCATIONS.hayes.delivery.minOrder || 15;
+  const minOrder = activeLocation.delivery.minOrder;
   const progressPercent = Math.min(100, (cartTotal / minOrder) * 100);
   const remaining = Math.max(0, minOrder - cartTotal);
 
@@ -41,9 +43,8 @@ export const MobileOrderDock = () => {
         </div>
       )}
       <div className="flex items-center gap-3 p-4 bg-white shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)]">
-        {/* TODO: Update WhatsApp number if TOV gets a distinct one. Using Falooda's for now. */}
-        <a aria-label="Chat on WhatsApp (opens in new tab)" 
-          href="https://wa.me/447387755853?text=Hi%20Taste%20of%20Village,%20I%20have%20a%20question"
+        <a aria-label={`Chat with ${activeLocation.city} branch on WhatsApp (opens in new tab)`} 
+          href={buildWhatsAppLink(`Hi Taste of Village ${activeLocation.city}, I have a question`)}
           target="_blank"
           rel="noopener noreferrer"
           className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-[#25D366] text-white shadow-sm"

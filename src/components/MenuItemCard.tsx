@@ -128,7 +128,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, quantityInCart
           </p>
         )}
         
-        <div className="mt-auto pt-2 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="mt-auto pt-2 flex justify-between items-center md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500">
           <div className="flex items-center gap-2">
             <Link
               href={dishUrl}

@@ -47,7 +47,7 @@ export const Footer = () => {
               <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="Taste of Village" className="h-14 w-auto object-contain brightness-0 invert opacity-90 group-hover:scale-105 transition-transform duration-500" />
             </Link>
             <p className="text-bg-sand/60 text-sm leading-relaxed mb-8 font-medium normal-case tracking-wide">
-              Bringing the authentic Desi taste of Lahore and Gujranwala straight to {SHOP_CONFIG.name.replace('Taste Of Village ', '')}. Curries, Karahis, and Grills crafted with passion and zero shortcuts.
+              Bringing the authentic Desi taste of Lahore and Gujranwala straight to Hayes &amp; Slough. Curries, Karahis, and Grills crafted with passion and zero shortcuts.
             </p>
             <div className="flex gap-4">
               <a aria-label="Instagram" href={SHOP_CONFIG.instagram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg">
