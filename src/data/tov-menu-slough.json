@@ -208,7 +208,7 @@
     "originalPrice": 14.99,
     "dineInPrice": 14.99,
     "category": "sunday_roast",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "image": "/assets/menu/sunday-roast/sunday_roast_beef.webp",
     "allergens": [
       "Gluten",
       "Dairy",
@@ -238,7 +238,7 @@
     "originalPrice": 16.99,
     "dineInPrice": 16.99,
     "category": "sunday_roast",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "image": "/assets/menu/sunday-roast/sunday_roast_lamb_shank.webp",
     "allergens": [
       "Gluten",
       "Dairy",

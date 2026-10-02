@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { MapPin, Clock } from 'lucide-react';
 import type { Metadata } from 'next';
 
@@ -21,9 +22,9 @@ export const metadata: Metadata = {
 };
 
 const ROAST_MAINS = [
-  { name: 'Beef Roast', price: '14.99', desc: 'Succulent slow-roasted British beef, served with your choice of roast or creamy mashed potatoes, seasonal vegetables, rich gravy & Yorkshire pudding.' },
-  { name: 'Half Chicken Roast', price: '15.99', desc: 'Golden-roasted half chicken, tender and juicy, served with all the traditional trimmings.' },
-  { name: 'Lamb Shank Roast', price: '16.99', desc: 'Slow-cooked lamb shank falling off the bone, served with roast or mashed potatoes, seasonal veg, gravy & Yorkshire pudding.' },
+  { name: 'Beef Roast', price: '14.99', desc: 'Succulent slow-roasted British beef, served with your choice of roast or creamy mashed potatoes, seasonal vegetables, rich gravy & Yorkshire pudding.', image: '/assets/menu/sunday-roast/sunday_roast_beef.webp' },
+  { name: 'Half Chicken Roast', price: '15.99', desc: 'Golden-roasted half chicken, tender and juicy, served with all the traditional trimmings.', image: null },
+  { name: 'Lamb Shank Roast', price: '16.99', desc: 'Slow-cooked lamb shank falling off the bone, served with roast or mashed potatoes, seasonal veg, gravy & Yorkshire pudding.', image: '/assets/menu/sunday-roast/sunday_roast_lamb_shank.webp' },
 ];
 
 const EXTRAS = [
@@ -160,13 +161,24 @@ export default function SloughSundayRoastPage() {
       />
 
       <div className="max-w-4xl mx-auto px-6">
-        {/* Hero */}
-        <div className="text-center mb-16">
-          <span className="text-terracotta font-bold tracking-widest uppercase text-xs mb-4 block">Every Sunday · 12:00 PM – 5:00 PM</span>
-          <h1 className="font-serif text-5xl md:text-6xl text-pine mb-6">Sunday Roast in Slough</h1>
-          <p className="text-lg text-pine leading-relaxed max-w-2xl mx-auto">
-            A proper British Sunday Roast, made with care and served with all the trimmings. Available exclusively every Sunday at our Farnham Road restaurant.
-          </p>
+        {/* Hero Image Banner */}
+        <div className="relative rounded-[2rem] overflow-hidden mb-16 -mx-2 sm:mx-0">
+          <Image
+            src="/assets/menu/sunday-roast/sunday_roast_hero.webp"
+            alt="Sunday Roast spread at Taste of Village — beef, lamb shank, Yorkshire pudding, roasted vegetables and rich gravy"
+            width={1400}
+            height={900}
+            className="w-full h-[280px] sm:h-[360px] md:h-[440px] object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-pine/90 via-pine/40 to-transparent" />
+          <div className="absolute inset-0 flex flex-col items-center justify-end pb-8 sm:pb-12 px-6 text-center">
+            <span className="text-amber-300 font-bold tracking-widest uppercase text-[10px] sm:text-xs mb-3 block">Every Sunday · 12:00 PM – 5:00 PM</span>
+            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl text-white mb-4 drop-shadow-lg">Sunday Roast in Slough</h1>
+            <p className="text-white/80 text-sm sm:text-base leading-relaxed max-w-xl mx-auto">
+              A proper British Sunday Roast, made with care and served with all the trimmings at our Farnham Road restaurant.
+            </p>
+          </div>
         </div>
 
         {/* Availability Notice */}
@@ -197,12 +209,23 @@ export default function SloughSundayRoastPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {ROAST_MAINS.map((item) => (
-              <div key={item.name} className="bg-white p-8 rounded-[2rem] border border-pine/8 hover:border-terracotta/30 transition-colors">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="font-serif text-xl text-pine font-bold">{item.name}</h3>
-                  <span className="text-terracotta font-black text-lg shrink-0 ml-3">£{item.price}</span>
+              <div key={item.name} className="bg-white rounded-[2rem] border border-pine/8 hover:border-terracotta/30 transition-colors overflow-hidden">
+                {item.image && (
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    width={400}
+                    height={300}
+                    className="w-full h-48 sm:h-56 object-cover"
+                  />
+                )}
+                <div className="p-6 sm:p-8">
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="font-serif text-xl text-pine font-bold">{item.name}</h3>
+                    <span className="text-terracotta font-black text-lg shrink-0 ml-3">£{item.price}</span>
+                  </div>
+                  <p className="text-pine/70 text-sm leading-relaxed">{item.desc}</p>
                 </div>
-                <p className="text-pine/70 text-sm leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
