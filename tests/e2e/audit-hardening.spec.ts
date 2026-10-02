@@ -67,9 +67,9 @@ test.describe('Delivery Zone Validation', () => {
     expect(body.minOrder).toBe(15);
   });
 
-  test('returns delivery quote for in-range Slough postcode (SL1 4XQ)', async ({ request }) => {
+  test('returns delivery quote for in-range Slough postcode (SL1 4XL)', async ({ request }) => {
     const res = await request.post(`${BASE}/api/delivery/quote`, {
-      data: { postcode: 'SL1 4XQ', branchId: 'slough', subtotal: 25 },
+      data: { postcode: 'SL1 4XL', branchId: 'slough', subtotal: 25 },
     });
     expect(res.ok()).toBeTruthy();
     const body = await res.json();
@@ -204,7 +204,7 @@ test.describe('JSON-LD Structured Data', () => {
     
     if (slough) {
       expect(slough.telephone).toContain('1753326341');
-      expect(slough.address?.postalCode).toBe('SL1 4XQ');
+      expect(slough.address?.postalCode).toBe('SL1 4XL');
       expect(slough.geo?.latitude).toBeCloseTo(51.5273, 3);
       expect(slough.geo?.longitude).toBeCloseTo(-0.6128, 3);
     }

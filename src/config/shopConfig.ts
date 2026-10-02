@@ -40,7 +40,7 @@ export const LOCATIONS = {
     name: 'Taste Of Village Slough',
     tenant_id: SLOUGH_TENANT,
     address: '260 Farnham Road',
-    postcode: 'SL1 4XQ',
+    postcode: 'SL1 4XL',
     city: 'Slough',
     phone: '01753 326341',
     w3w: '///taste.village.slough',

@@ -696,7 +696,7 @@ export function CartDrawer(p: any) {
                                   setPostcodeError(res.isValid ? null : (res.reason || 'Invalid delivery postcode'));
                                 }
                               }}
-                              placeholder={activeLocation.id === 'hayes' ? 'e.g. UB4 0RU' : 'e.g. SL1 4XQ'}
+                              placeholder={activeLocation.id === 'hayes' ? 'e.g. UB4 0RU' : 'e.g. SL1 4XL'}
                               className={`w-full p-3.5 bg-white border rounded-xl text-base sm:text-sm uppercase font-bold outline-none ${
                                 postcodeError
                                   ? 'border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-200 text-red-700'

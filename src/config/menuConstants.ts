@@ -27,6 +27,11 @@ export const MENU_CATEGORIES: MenuCategoryDef[] = [
   { id: 'cold_drinks', label: 'Cold Drinks', emoji: '🧊' },
   { id: 'desserts', label: 'Desserts', emoji: '🍰' },
   { id: 'deals', label: 'Deals', emoji: '🎁' },
+  { id: 'sunday_roast', label: 'Sunday Roast', emoji: '🍖' },
+  { id: 'weekend_specials', label: 'Weekend Specials', emoji: '⭐' },
+  { id: 'vegetarian_mains', label: 'Vegetarian Mains', emoji: '🥬' },
+  { id: 'soft_drinks', label: 'Soft Drinks & Water', emoji: '🥤' },
+  { id: 'mocktails_n_lassi', label: 'Mocktails & Lassi', emoji: '🍹' },
 ];
 
 export const DIETARY_TAGS = ['halal', 'vegetarian', 'vegan', 'gluten-free', 'spicy'] as const;

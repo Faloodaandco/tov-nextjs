@@ -66,7 +66,7 @@ export default function SeoPage() {
                 <Clock size={20} className="text-terracotta" /> Open until midnight, 7 days a week
               </div>
               <div className="flex items-center gap-3 text-pine font-bold">
-                <MapPin size={20} className="text-terracotta" /> 260 Farnham Road, Slough SL1 4XQ
+                <MapPin size={20} className="text-terracotta" /> 260 Farnham Road, Slough SL1 4XL
               </div>
             </div>
           </div>

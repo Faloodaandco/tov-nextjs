@@ -1,1030 +1,1725 @@
 [
   {
-    "id": "tov_slough_lambskewers",
-    "name": "Lamb Skewers (4 pcs)",
-    "description": "Tender lamb pieces marinated in aromatic spices and flame-grilled over charcoal for a rich, smoky flavour.",
-    "price": 8.99,
+    "id": "tov_slough_special_nihari",
+    "name": "Special Nihari",
+    "description": "Slow-cooked tender lamb in a rich, aromatic gravy infused with traditional Pakistani spices, ginger, and herbs.",
+    "price": 10.99,
+    "originalPrice": 10.99,
+    "dineInPrice": 10.99,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/menu/nihari_dish.webp",
     "allergens": [
-      "cereals",
-      "mustard"
-    ],
+      "Gluten"
+    ]
+  },
+  {
+    "id": "tov_slough_lamb_paya",
+    "name": "Lamb Paya",
+    "description": "Traditional lamb trotters simmered for hours in a flavourful broth with fragrant spices.",
+    "price": 10.99,
+    "originalPrice": 10.99,
+    "dineInPrice": 10.99,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/menu/lamb_paya.webp",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_haleem",
+    "name": "Haleem",
+    "description": "A hearty blend of slow-cooked meat, lentils, and wheat, garnished with fried onions, fresh coriander and ginger.",
+    "price": 10.99,
+    "originalPrice": 10.99,
+    "dineInPrice": 10.99,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/menu/haleem_dish.webp",
+    "allergens": [
+      "Gluten"
+    ]
+  },
+  {
+    "id": "tov_slough_lahori_chana_masala",
+    "name": "Lahori Chana Masala",
+    "description": "Authentic Lahori-style chickpeas cooked in a rich, tangy masala sauce bursting with traditional street-food flavours.",
+    "price": 7.49,
+    "originalPrice": 7.49,
+    "dineInPrice": 7.49,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_aloo_paratha",
+    "name": "Aloo Paratha (served with mint sauce or saag)",
+    "description": "Aloo Paratha served with mint sauce or saag.",
+    "price": 3.99,
+    "originalPrice": 3.99,
+    "dineInPrice": 3.99,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_cheesy_chicken_paratha",
+    "name": "Cheesy Chicken Paratha",
+    "description": "Cheesy Chicken Paratha.",
+    "price": 4.99,
+    "originalPrice": 4.99,
+    "dineInPrice": 4.99,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_keema_paratha",
+    "name": "Keema Paratha",
+    "description": "Keema Paratha.",
+    "price": 5.49,
+    "originalPrice": 5.49,
+    "dineInPrice": 5.49,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_plain_fresh_tawa_paratha",
+    "name": "Plain Fresh Tawa Paratha",
+    "description": "Plain Fresh Tawa Paratha.",
+    "price": 2.99,
+    "originalPrice": 2.99,
+    "dineInPrice": 2.99,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_tandoori_paratha",
+    "name": "Tandoori Paratha",
+    "description": "Tandoori Paratha.",
+    "price": 3.49,
+    "originalPrice": 3.49,
+    "dineInPrice": 3.49,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_breakfast_special_platter",
+    "name": "Breakfast Special Platter (Serves 2–3)",
+    "description": "2 Puri with halwa, 2 bhaturas with chana masala. Choice of any 1 main course – Nihari / Paya / Haleem.",
+    "price": 24.99,
+    "originalPrice": 24.99,
+    "dineInPrice": 24.99,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_special_halwa_puri",
+    "name": "Special Halwa Puri",
+    "description": "Served with 3 freshly fried puris, sweet semolina halwa, flavourful Lahori chana and chai / lassi.",
+    "price": 8.49,
+    "originalPrice": 8.49,
+    "dineInPrice": 8.49,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/menu/halwa_puri.webp",
+    "allergens": [
+      "Gluten",
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_additional_puri",
+    "name": "Additional Puri",
+    "description": "Additional Puri.",
+    "price": 1.49,
+    "originalPrice": 1.49,
+    "dineInPrice": 1.49,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten"
+    ]
+  },
+  {
+    "id": "tov_slough_family_platter",
+    "name": "Family Platter (Serves 4–5)",
+    "description": "4 Puri with halwa, 4 bhaturas with chana masala, nihari, paya, 4 naans, jug of lassi.",
+    "price": 64.99,
+    "originalPrice": 64.99,
+    "dineInPrice": 64.99,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_bhatura",
+    "name": "Bhatura",
+    "description": "Served with 2 fluffy bhaturas, lahori chana masala, and traditional mixed pickles.",
+    "price": 8.49,
+    "originalPrice": 8.49,
+    "dineInPrice": 8.49,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_additional_bhatura",
+    "name": "Additional Bhatura",
+    "description": "Additional Bhatura.",
+    "price": 1.99,
+    "originalPrice": 1.99,
+    "dineInPrice": 1.99,
+    "category": "breakfast___desi_nashta",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_beef_roast",
+    "name": "Beef Roast",
+    "description": "Succulent British-style beef, served with roast or mashed potatoes, seasonal vegetables, gravy & yorkshire pudding.",
+    "price": 14.99,
+    "originalPrice": 14.99,
+    "dineInPrice": 14.99,
+    "category": "sunday_roast",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_half_chicken_roast",
+    "name": "Half Chicken Roast",
+    "description": "Roast half chicken, served with roast or mashed potatoes, seasonal vegetables, gravy & yorkshire pudding.",
+    "price": 15.99,
+    "originalPrice": 15.99,
+    "dineInPrice": 15.99,
+    "category": "sunday_roast",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_lamb_shank_roast",
+    "name": "Lamb Shank Roast",
+    "description": "Slow-cooked lamb shank, served with roast or mashed potatoes, seasonal vegetables, gravy & yorkshire pudding.",
+    "price": 16.99,
+    "originalPrice": 16.99,
+    "dineInPrice": 16.99,
+    "category": "sunday_roast",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_special_homemade_cheesecake",
+    "name": "Special Homemade Cheesecake",
+    "description": "Special Homemade Cheesecake.",
+    "price": 4.99,
+    "originalPrice": 4.99,
+    "dineInPrice": 4.99,
+    "category": "sunday_roast",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_eton_mess",
+    "name": "Eton Mess",
+    "description": "Eton Mess.",
+    "price": 5.49,
+    "originalPrice": 5.49,
+    "dineInPrice": 5.49,
+    "category": "sunday_roast",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_apple_crumble",
+    "name": "Apple Crumble (served with custard or ice cream)",
+    "description": "Apple Crumble served with custard or ice cream.",
+    "price": 6.49,
+    "originalPrice": 6.49,
+    "dineInPrice": 6.49,
+    "category": "sunday_roast",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_creamy_mashed_potatoes",
+    "name": "Creamy Mashed Potatoes",
+    "description": "Creamy Mashed Potatoes.",
+    "price": 3.49,
+    "originalPrice": 3.49,
+    "dineInPrice": 3.49,
+    "category": "sunday_roast",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_seasonal_vegetables_with_roasted_brussels",
+    "name": "Seasonal Vegetables with Roasted Brussels",
+    "description": "Seasonal Vegetables with Roasted Brussels.",
+    "price": 2.49,
+    "originalPrice": 2.49,
+    "dineInPrice": 2.49,
+    "category": "sunday_roast",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_rich_gravy",
+    "name": "Rich Gravy",
+    "description": "Rich Gravy.",
+    "price": 1.49,
+    "originalPrice": 1.49,
+    "dineInPrice": 1.49,
+    "category": "sunday_roast",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Celery"
+    ]
+  },
+  {
+    "id": "tov_slough_yorkshire_pudding",
+    "name": "Yorkshire Pudding",
+    "description": "Yorkshire Pudding.",
+    "price": 1.49,
+    "originalPrice": 1.49,
+    "dineInPrice": 1.49,
+    "category": "sunday_roast",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_peppercorn_sauce",
+    "name": "Peppercorn Sauce",
+    "description": "Peppercorn Sauce.",
+    "price": 1.99,
+    "originalPrice": 1.99,
+    "dineInPrice": 1.99,
+    "category": "sunday_roast",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_garlic_mushroom_sauce",
+    "name": "Garlic Mushroom Sauce",
+    "description": "Garlic Mushroom Sauce.",
+    "price": 1.99,
+    "originalPrice": 1.99,
+    "dineInPrice": 1.99,
+    "category": "sunday_roast",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_roast_potatoes",
+    "name": "Roast Potatoes",
+    "description": "Roast Potatoes.",
+    "price": 2.49,
+    "originalPrice": 2.49,
+    "dineInPrice": 2.49,
+    "category": "sunday_roast",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_lamb_skewers",
+    "name": "Lamb Skewers",
+    "description": "Tender lamb pieces marinated in aromatic spices and flame-grilled over charcoal for a rich, smoky finish.",
+    "price": 8.99,
     "originalPrice": 8.99,
+    "dineInPrice": 8.99,
     "category": "starters_n_charcoal_grill",
     "image": "/assets/menu/lamb_seekh_kebab.webp",
-    "popular": false,
-    "dineInPrice": 8.99
+    "allergens": []
   },
   {
-    "id": "tov_slough_chickenskewers",
-    "name": "Chicken Skewers (5 pcs)",
+    "id": "tov_slough_chicken_skewers",
+    "name": "Chicken Skewers",
     "description": "Juicy chicken marinated in traditional spices and grilled to perfection.",
     "price": 7.99,
-    "allergens": [
-      "cereals",
-      "mustard"
-    ],
     "originalPrice": 7.99,
+    "dineInPrice": 7.99,
     "category": "starters_n_charcoal_grill",
     "image": "/assets/menu/chicken_skewers.webp",
-    "popular": false,
-    "dineInPrice": 7.99
+    "allergens": []
   },
   {
-    "id": "tov_slough_malaiboti",
+    "id": "tov_slough_malai_boti",
     "name": "Malai Boti",
     "description": "Creamy, melt-in-the-mouth chicken marinated with cream, cheese, and mild spices.",
     "price": 8.49,
-    "allergens": [
-      "milk",
-      "nuts"
-    ],
     "originalPrice": 8.49,
+    "dineInPrice": 8.49,
     "category": "starters_n_charcoal_grill",
     "image": "/assets/menu/malai_boti.webp",
-    "popular": false,
-    "dineInPrice": 8.49
-  },
-  {
-    "id": "tov_slough_chickenlollipop",
-    "name": "Chicken Lollipop",
-    "description": "Creamy, melt-in-the-mouth chicken marinated with cream, cheese, and mild spices.",
-    "price": 7.99,
     "allergens": [
-      "cereals",
-      "eggs",
-      "soybeans"
-    ],
-    "originalPrice": 7.99,
-    "category": "starters_n_charcoal_grill",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 7.99
+      "Dairy"
+    ]
   },
   {
-    "id": "tov_slough_chickenwings5pcs",
+    "id": "tov_slough_chicken_wings",
     "name": "Chicken Wings (5 pcs)",
     "description": "Spiced and charcoal-grilled wings, served hot and juicy.",
     "price": 7.99,
-    "allergens": [
-      "cereals",
-      "mustard"
-    ],
     "originalPrice": 7.99,
+    "dineInPrice": 7.99,
     "category": "starters_n_charcoal_grill",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 7.99
+    "allergens": []
   },
   {
-    "id": "tov_slough_lambchops4pcs",
-    "name": "Lamb Chops (4 pcs)",
+    "id": "tov_slough_lamb_chops",
+    "name": "Lamb Chops (5 pcs)",
     "description": "Succulent lamb chops marinated overnight and grilled for a bold, charred flavour.",
     "price": 12.99,
-    "allergens": [
-      "milk",
-      "mustard"
-    ],
     "originalPrice": 12.99,
+    "dineInPrice": 12.99,
     "category": "starters_n_charcoal_grill",
     "image": "/assets/menu/lamb_chops_4pc.webp",
-    "popular": false,
-    "dineInPrice": 12.99
+    "allergens": []
   },
   {
-    "id": "tov_slough_lambshishkebab",
-    "name": "Lamb Shish Kebab",
+    "id": "tov_slough_lamb_shish_kebab",
+    "name": "Lamb Shish Kebab (4 pcs)",
     "description": "Minced lamb blended with herbs and spices, skewered and flame-grilled.",
-    "price": 8.49,
-    "allergens": [
-      "cereals",
-      "mustard"
-    ],
-    "originalPrice": 8.49,
+    "price": 7.99,
+    "originalPrice": 7.99,
+    "dineInPrice": 7.99,
     "category": "starters_n_charcoal_grill",
     "image": "/assets/menu/lamb_seekh_kebab.webp",
-    "popular": false,
-    "dineInPrice": 8.49
+    "allergens": []
   },
   {
-    "id": "tov_slough_mixedgrillplatter",
-    "name": "Mixed Grill Platter",
-    "description": "(Serves 2-3) A generous selection of kebabs, wings, and chops-perfect for sharing.",
-    "price": 22.99,
-    "allergens": [
-      "cereals",
-      "milk",
-      "mustard",
-      "nuts"
-    ],
-    "originalPrice": 22.99,
+    "id": "tov_slough_haryali_tikka",
+    "name": "Haryali Tikka (5 pcs)",
+    "description": "Tender chicken marinated in fresh coriander, mint, and green chillies, then cooked till it's juicy and packed with that signature herby, vibrant flavor.",
+    "price": 8.49,
+    "originalPrice": 8.49,
+    "dineInPrice": 8.49,
     "category": "starters_n_charcoal_grill",
-    "image": "/assets/menu/bbq_platter.webp",
-    "popular": false,
-    "dineInPrice": 22.99
+    "image": "/assets/menu/haryali_boti.webp",
+    "allergens": [
+      "Dairy"
+    ]
   },
   {
-    "id": "tov_slough_chickenshishkebab",
-    "name": "Chicken Shish Kebab",
+    "id": "tov_slough_chicken_shish_kebab",
+    "name": "Chicken Shish Kebab (4 pcs)",
     "description": "Lightly spiced minced chicken kebabs, grilled for a juicy bite.",
-    "price": 7.99,
-    "allergens": [
-      "cereals",
-      "mustard"
-    ],
-    "originalPrice": 7.99,
+    "price": 6.49,
+    "originalPrice": 6.49,
+    "dineInPrice": 6.49,
     "category": "starters_n_charcoal_grill",
     "image": "/assets/menu/chicken_shish_kebab.webp",
-    "popular": false,
-    "dineInPrice": 7.99
+    "allergens": []
   },
   {
-    "id": "tov_slough_chickengolakebab",
-    "name": "Chicken Gola Kebab",
-    "description": "Soft, flavourful chicken kebabs with a gentle spicy kick.",
-    "price": 7.49,
-    "allergens": [
-      "cereals",
-      "mustard"
-    ],
-    "originalPrice": 7.49,
-    "category": "starters_n_charcoal_grill",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 7.49
-  },
-  {
-    "id": "tov_slough_sizzlerpaneer",
+    "id": "tov_slough_sizzler_paneer",
     "name": "Sizzler Paneer",
     "description": "Marinated paneer cubes grilled and served sizzling hot.",
     "price": 9.99,
-    "allergens": [
-      "milk"
-    ],
     "originalPrice": 9.99,
+    "dineInPrice": 9.99,
     "category": "starters_n_charcoal_grill",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 9.99
+    "allergens": [
+      "Dairy"
+    ]
   },
   {
-    "id": "tov_slough_specialmasalafish",
+    "id": "tov_slough_special_masala_fish",
     "name": "Special Masala Fish",
-    "description": "Fresh fish coated in a rich spiced masala, grilled to perfection and served with apricot sauce",
+    "description": "Fresh fish coated in a rich spiced masala, grilled to perfection and served with apricot sauce.",
     "price": 10.99,
-    "allergens": [
-      "cereals",
-      "fish"
-    ],
     "originalPrice": 10.99,
+    "dineInPrice": 10.99,
     "category": "starters_n_charcoal_grill",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 10.99
-  },
-  {
-    "id": "tov_slough_signaturechaplikebab",
-    "name": "Signature Chapli Kebab",
-    "description": "Authentic Peshawari-style minced meat kebab, pan-fried with herbs, spices, and a hint of pomegranate.",
-    "price": 7.99,
     "allergens": [
-      "cereals",
-      "mustard"
-    ],
-    "originalPrice": 7.99,
-    "category": "starters_n_charcoal_grill",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 7.99
+      "Fish"
+    ]
   },
   {
-    "id": "tov_slough_chillichicken",
-    "name": "Chilli Chicken",
+    "id": "tov_slough_chilli_chicken",
+    "name": "Chilli Chicken (5 pcs)",
     "description": "Crispy chicken tossed with peppers and onions in a spicy chilli sauce.",
     "price": 7.49,
-    "allergens": [
-      "cereals",
-      "soybeans"
-    ],
     "originalPrice": 7.49,
+    "dineInPrice": 7.49,
     "category": "starters_n_charcoal_grill",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 7.49
-  },
-  {
-    "id": "tov_slough_chickennuggetsfries",
-    "name": "Chicken Nuggets & Fries",
-    "description": "Crispy, golden chicken nuggets served with fries-simple and kid-friendly.",
-    "price": 5.99,
     "allergens": [
-      "cereals",
-      "eggs",
-      "milk"
-    ],
-    "originalPrice": 5.99,
-    "category": "kids_meal",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 5.99
+      "Soya",
+      "Gluten"
+    ]
   },
   {
-    "id": "tov_slough_chickenstripsfries",
-    "name": "Chicken Strips & Fries",
-    "description": "Tender, crispy chicken strips served with fries-simple and kid-friendly.",
-    "price": 5.99,
+    "id": "tov_slough_lamb_ribs",
+    "name": "Lamb Ribs (4 pcs)",
+    "description": "Tender lamb ribs marinated in aromatic spices and grilled to perfection for a rich, smoky flavour.",
+    "price": 10.99,
+    "originalPrice": 10.99,
+    "dineInPrice": 10.99,
+    "category": "starters_n_charcoal_grill",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_grilled_seabass_fillet",
+    "name": "Grilled Seabass Fillet",
+    "description": "Fresh seabass served with salad or rice.",
+    "price": 14.99,
+    "originalPrice": 14.99,
+    "dineInPrice": 14.99,
+    "category": "starters_n_charcoal_grill",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
     "allergens": [
-      "cereals",
-      "eggs",
-      "milk"
+      "Fish"
     ],
-    "originalPrice": 5.99,
-    "category": "kids_meal",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 5.99
+    "modifierGroups": [
+      {
+        "id": "tov_slough_grilled_seabass_fillet_sauce",
+        "name": "Add sauce",
+        "required": false,
+        "maxSelections": 1,
+        "options": [
+          {
+            "id": "tov_slough_grilled_seabass_fillet_sauce_teriyaki",
+            "name": "Teriyaki",
+            "price": 1.99
+          }
+        ]
+      }
+    ]
   },
   {
-    "id": "tov_slough_charsikarahichicken",
-    "name": "Charsi Karahi Chicken",
+    "id": "tov_slough_mix_grill",
+    "name": "Mix Grill (Serves 5–6)",
+    "description": "Lamb Skewers (1 Skewer), Chicken Skewer (1 Skewer), Malai Boti (1 Skewer), Chicken Wing (5 pcs), Lamb chops (3), Lamb Shish Kebab (2pc), Chicken Shish Kebab (2pc)",
+    "price": 49.99,
+    "originalPrice": 49.99,
+    "dineInPrice": 49.99,
+    "category": "starters_n_charcoal_grill",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_chicken_charsi_karahi",
+    "name": "Chicken Charsi Karahi",
     "description": "Traditional street-style karahi cooked with tomatoes, green chillies, and minimal spices for an authentic taste.",
-    "price": 13.99,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 13.99,
+    "price": 15.99,
+    "originalPrice": 15.99,
+    "dineInPrice": 15.99,
     "category": "mains___village_classics",
     "image": "/assets/menu/chicken_karahi.webp",
-    "popular": false,
-    "dineInPrice": 13.99,
+    "allergens": [],
     "sizes": [
       {
-        "name": "Half Kg",
+        "name": "0.5 Kg",
+        "price": 15.99,
+        "originalPrice": 15.99,
+        "dineInPrice": 15.99
+      },
+      {
+        "name": "1 Kg",
+        "price": 24.99,
+        "originalPrice": 24.99,
+        "dineInPrice": 24.99
+      }
+    ]
+  },
+  {
+    "id": "tov_slough_lamb_charsi_karahi",
+    "name": "Lamb Charsi Karahi",
+    "description": "Traditional street-style karahi cooked with tomatoes, green chillies, and minimal spices for an authentic taste.",
+    "price": 18.99,
+    "originalPrice": 18.99,
+    "dineInPrice": 18.99,
+    "category": "mains___village_classics",
+    "image": "/assets/menu/lamb_karahi.webp",
+    "allergens": [],
+    "sizes": [
+      {
+        "name": "0.5 Kg",
+        "price": 18.99,
+        "originalPrice": 18.99,
+        "dineInPrice": 18.99
+      },
+      {
+        "name": "1 Kg",
+        "price": 29.99,
+        "originalPrice": 29.99,
+        "dineInPrice": 29.99
+      }
+    ]
+  },
+  {
+    "id": "tov_slough_chicken_curry_boneless",
+    "name": "Chicken Curry Boneless",
+    "description": "Delicious boneless chicken curry.",
+    "price": 10.99,
+    "originalPrice": 10.99,
+    "dineInPrice": 10.99,
+    "category": "mains___village_classics",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_chicken_karahi_with_bone",
+    "name": "Chicken Karahi with Bone",
+    "description": "Juicy chicken cooked wok-hot in its own juices with tomatoes, ginger, garlic, and bold spices.",
+    "price": 9.99,
+    "originalPrice": 9.99,
+    "dineInPrice": 9.99,
+    "category": "mains___village_classics",
+    "image": "/assets/menu/chicken_karahi.webp",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_lamb_karahi_with_bone",
+    "name": "Lamb Karahi with Bone",
+    "description": "Slow-cooked lamb in a rich, traditional karahi sauce.",
+    "price": 11.49,
+    "originalPrice": 11.49,
+    "dineInPrice": 11.49,
+    "category": "mains___village_classics",
+    "image": "/assets/menu/lamb_karahi.webp",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_butter_chicken",
+    "name": "Butter Chicken",
+    "description": "Tender chicken in a smooth, buttery tomato sauce with mild spices.",
+    "price": 10.49,
+    "originalPrice": 10.49,
+    "dineInPrice": 10.49,
+    "category": "mains___village_classics",
+    "image": "/assets/chicken_karahi_hero.webp",
+    "allergens": [
+      "Dairy",
+      "Nuts"
+    ]
+  },
+  {
+    "id": "tov_slough_chicken_tikka_masala",
+    "name": "Chicken Tikka Masala",
+    "description": "Grilled chicken tikka in a rich, spiced masala sauce.",
+    "price": 11.99,
+    "originalPrice": 11.99,
+    "dineInPrice": 11.99,
+    "category": "mains___village_classics",
+    "image": "/assets/menu/chicken_tikka.webp",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_saag_gosht",
+    "name": "Saag Gosht (On the Bone or Boneless)",
+    "description": "Tender lamb cooked in a traditional spinach-based curry with herbs and spices. Available on the bone or boneless.",
+    "price": 11.99,
+    "originalPrice": 11.99,
+    "dineInPrice": 11.99,
+    "category": "mains___village_classics",
+    "image": "/assets/menu/saag_gosht.webp",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_mutter_qeema_aloo_qeema",
+    "name": "Mutter Qeema / Aloo Qeema",
+    "description": "Tender minced meat slow-cooked with aromatic spices and onions till every bite is rich, juicy, and full of homestyle flavor.",
+    "price": 10.99,
+    "originalPrice": 10.99,
+    "dineInPrice": 10.99,
+    "category": "mains___village_classics",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_kebab_handi",
+    "name": "Kebab Handi",
+    "description": "Grilled kebabs simmered in a creamy, spiced gravy.",
+    "price": 11.49,
+    "originalPrice": 11.49,
+    "dineInPrice": 11.49,
+    "category": "mains___village_classics",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_fish_curry",
+    "name": "Fish Curry (Spicy or Mild)",
+    "description": "Fried fish with gravy served hot. Spice level: Spicy or Mild",
+    "price": 14.99,
+    "originalPrice": 14.99,
+    "dineInPrice": 14.99,
+    "category": "mains___village_classics",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Fish"
+    ]
+  },
+  {
+    "id": "tov_slough_chicken_chana",
+    "name": "Chicken Chana (On the Bone or Boneless)",
+    "description": "Available on the bone or boneless.",
+    "price": 9.99,
+    "originalPrice": 9.99,
+    "dineInPrice": 9.99,
+    "category": "mains___village_classics",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_charsi_karahi_keema",
+    "name": "Charsi Karahi Keema",
+    "description": "Traditional minced chicken keema cooked in true Charsi style with fresh tomatoes, green chillies, and light spices.",
+    "price": 13.99,
+    "originalPrice": 13.99,
+    "dineInPrice": 13.99,
+    "category": "weekend_specials",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [],
+    "sizes": [
+      {
+        "name": "0.5 Kg",
         "price": 13.99,
+        "originalPrice": 13.99,
         "dineInPrice": 13.99
       },
       {
-        "name": "Full Kg",
+        "name": "1 Kg",
         "price": 22.99,
+        "originalPrice": 22.99,
         "dineInPrice": 22.99
       }
     ]
   },
   {
-    "id": "tov_slough_charsikarahilamb",
-    "name": "Charsi Karahi Lamb",
-    "description": "Tender lamb cooked in a rustic karahi with fresh tomatoes and bold flavours.",
-    "price": 16.99,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 16.99,
-    "category": "mains___village_classics",
-    "image": "/assets/menu/lamb_karahi.webp",
-    "popular": false,
-    "dineInPrice": 16.99,
+    "id": "tov_slough_special_magaz_karahi",
+    "name": "Special Magaz Karahi",
+    "description": "A rich and spicy karahi cooked with tender lamb, creamy magaz (melon seeds), tomatoes, onions, and aromatic spices for a bold, indulgent flavour.",
+    "price": 14.99,
+    "originalPrice": 14.99,
+    "dineInPrice": 14.99,
+    "category": "weekend_specials",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [],
     "sizes": [
       {
-        "name": "Half Kg",
-        "price": 16.99,
-        "dineInPrice": 16.99
+        "name": "0.5 Kg",
+        "price": 14.99,
+        "originalPrice": 14.99,
+        "dineInPrice": 14.99
       },
       {
-        "name": "Full Kg",
-        "price": 27.99,
-        "dineInPrice": 27.99
+        "name": "1 Kg",
+        "price": 24.99,
+        "originalPrice": 24.99,
+        "dineInPrice": 24.99
       }
     ]
   },
   {
-    "id": "tov_slough_chickenkarahi",
-    "name": "Chicken Karahi",
-    "description": "Classic chicken curry cooked with fresh herbs, spices, and tomatoes.",
-    "price": 10.99,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 10.99,
-    "category": "mains___village_classics",
-    "image": "/assets/menu/chicken_karahi.webp",
-    "popular": false,
-    "dineInPrice": 10.99
-  },
-  {
-    "id": "tov_slough_lambkarahi",
-    "name": "Lamb Karahi",
-    "description": "Slow-cooked lamb in a rich, traditional karahi sauce.",
-    "price": 11.99,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 11.99,
-    "category": "mains___village_classics",
-    "image": "/assets/menu/lamb_karahi.webp",
-    "popular": false,
-    "dineInPrice": 11.99
-  },
-  {
-    "id": "tov_slough_kebabhandi",
-    "name": "Kebab Handi",
-    "description": "Grilled kebabs simmered in a creamy, spiced gravy.",
-    "price": 12.99,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 12.99,
-    "category": "mains___village_classics",
+    "id": "tov_slough_seabass_fillet",
+    "name": "Seabass Fillet",
+    "description": "Fresh seabass fillet.",
+    "price": 18.99,
+    "originalPrice": 18.99,
+    "dineInPrice": 18.99,
+    "category": "signature_dishes",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 12.99
-  },
-  {
-    "id": "tov_slough_butterchicken",
-    "name": "Butter Chicken",
-    "description": "Tender chicken in a smooth, buttery tomato sauce with mild spices",
-    "price": 11.49,
     "allergens": [
-      "milk"
-    ],
-    "originalPrice": 11.49,
-    "category": "mains___village_classics",
-    "image": "/assets/chicken_karahi_hero.webp",
-    "popular": false,
-    "dineInPrice": 11.49
+      "Fish"
+    ]
   },
   {
-    "id": "tov_slough_chickentikkamasala",
-    "name": "Chicken Tikka Masala",
-    "description": "Grilled chicken tikka in a rich and flavourful masala sauce.",
-    "price": 12.49,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 12.49,
-    "category": "mains___village_classics",
-    "image": "/assets/menu/chicken_tikka.webp",
-    "popular": false,
-    "dineInPrice": 12.49
-  },
-  {
-    "id": "tov_slough_chickenqorma",
-    "name": "Chicken Qorma",
-    "description": "A mild, creamy curry made with yoghurt, nuts, and aromatic spices.",
-    "price": 10.99,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 10.99,
-    "category": "mains___village_classics",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 10.99
-  },
-  {
-    "id": "tov_slough_lambqorma",
-    "name": "Lamb Qorma",
-    "description": "Slow-cooked lamb in a rich, creamy sauce infused with traditional spices.",
-    "price": 12.99,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 12.99,
-    "category": "mains___village_classics",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 12.99
-  },
-  {
-    "id": "tov_slough_paneertikkamasala",
-    "name": "Paneer Tikka Masala",
-    "description": "Paneer cubes cooked in a creamy tomato gravy with peppers, onions, and a hint of sweetness.",
-    "price": 10.99,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 10.99,
-    "category": "mains___village_classics",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 10.99
-  },
-  {
-    "id": "tov_slough_afghanipulao",
-    "name": "Afghani Pulao",
-    "description": "Fragrant rice with tender meat, carrots, and raisins-sweet and savoury.",
-    "price": 13.99,
-    "allergens": [
-      "milk",
-      "nuts",
-      "sulphites"
-    ],
-    "originalPrice": 13.99,
-    "category": "rice_specials",
-    "image": "/assets/menu/afghani_pulao.webp",
-    "popular": false,
-    "dineInPrice": 13.99
-  },
-  {
-    "id": "tov_slough_yakhnipulaowithshamikebab",
-    "name": "Yakhni Pulao with Shami Kebab",
-    "description": "Aromatic rice cooked in rich meat stock with delicate spices, served with a shami kebab.",
-    "price": 11.99,
-    "allergens": [
-      "cereals",
-      "mustard"
-    ],
-    "originalPrice": 11.99,
-    "category": "rice_specials",
-    "image": "/assets/deliveroo/biryani_platter.webp",
-    "popular": false,
-    "dineInPrice": 11.99
-  },
-  {
-    "id": "tov_slough_chickendumbiryani",
-    "name": "Chicken Dum Biryani",
-    "description": "Layered basmati rice and spiced chicken, slow-cooked for deep flavour.",
-    "price": 8.49,
-    "allergens": [
-      "milk",
-      "nuts",
-      "sulphites"
-    ],
-    "originalPrice": 8.49,
-    "category": "rice_specials",
-    "image": "/assets/menu/chicken_biryani.webp",
-    "popular": false,
-    "dineInPrice": 8.49
-  },
-  {
-    "id": "tov_slough_jeerarice",
-    "name": "Jeera Rice",
-    "description": "Steamed basmati rice tempered with cumin seeds.",
-    "price": 4.49,
-    "allergens": [],
-    "originalPrice": 4.49,
-    "category": "rice_specials",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 4.49
-  },
-  {
-    "id": "tov_slough_eggfriedrice",
-    "name": "Egg Fried Rice",
-    "description": "Fluffy fried rice tossed with egg and light seasoning.",
-    "price": 5.49,
-    "allergens": [
-      "eggs",
-      "soybeans"
-    ],
-    "originalPrice": 5.49,
-    "category": "rice_specials",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 5.49
-  },
-  {
-    "id": "tov_slough_beefbriskettrufflefries",
-    "name": "Beef Brisket & Truffle Fries",
+    "id": "tov_slough_brisket_truffle_fries",
+    "name": "Brisket & Truffle Fries",
     "description": "Slow-cooked, tender brisket served with crispy fries and homemade truffle sauce or fresh salad.",
     "price": 15.99,
-    "allergens": [
-      "cereals",
-      "mustard",
-      "sulphites"
-    ],
     "originalPrice": 15.99,
+    "dineInPrice": 15.99,
     "category": "signature_dishes",
     "image": "/assets/menu/beef_brisket.webp",
-    "popular": false,
-    "dineInPrice": 15.99
+    "allergens": [
+      "Gluten"
+    ]
   },
   {
-    "id": "tov_slough_turkeyroast",
-    "name": "Turkey Roast",
-    "description": "Juicy roasted turkey infused with herbs and spices.",
-    "price": 13.99,
-    "allergens": [
-      "cereals",
-      "milk"
-    ],
-    "originalPrice": 13.99,
+    "id": "tov_slough_ribeye_steak",
+    "name": "Ribeye Steak",
+    "description": "Premium ribeye grilled to your liking.",
+    "price": 24.99,
+    "originalPrice": 24.99,
+    "dineInPrice": 24.99,
     "category": "signature_dishes",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 13.99
-  },
-  {
-    "id": "tov_slough_grilledseabassfillet",
-    "name": "Grilled Seabass Fillet",
-    "description": "Fresh seabass served with salad or rice. Add sauce: Teriyaki (£3.99)",
-    "price": 14.99,
-    "allergens": [
-      "cereals",
-      "fish"
-    ],
-    "originalPrice": 14.99,
-    "category": "signature_dishes",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 14.99,
+    "image": "/assets/menu/ribeye_steak.webp",
+    "allergens": [],
     "modifierGroups": [
       {
+        "id": "tov_slough_ribeye_steak_sauce",
         "name": "Add sauce",
         "required": false,
+        "maxSelections": 1,
         "options": [
           {
-            "name": "Teriyaki",
-            "price": 3.99,
-            "dineInPrice": 3.99
+            "id": "tov_slough_ribeye_steak_sauce_peppercorn",
+            "name": "Peppercorn",
+            "price": 1.99
+          },
+          {
+            "id": "tov_slough_ribeye_steak_sauce_garlic_mushroom",
+            "name": "Garlic Mushroom",
+            "price": 1.99
           }
         ]
       }
     ]
   },
   {
-    "id": "tov_slough_properdumchargha",
+    "id": "tov_slough_proper_dum_chargha",
     "name": "Proper Dum Chargha",
     "description": "Chicken marinated, steamed, and fried to create a crispy, flavourful finish.",
     "price": 8.99,
-    "allergens": [
-      "cereals",
-      "eggs",
-      "milk"
-    ],
     "originalPrice": 8.99,
+    "dineInPrice": 8.99,
     "category": "signature_dishes",
     "image": "/assets/menu/grilled_chicken.webp",
-    "popular": false,
-    "dineInPrice": 8.99,
+    "allergens": [],
     "sizes": [
       {
         "name": "Half",
         "price": 8.99,
+        "originalPrice": 8.99,
         "dineInPrice": 8.99
       },
       {
         "name": "Full",
         "price": 16.99,
+        "originalPrice": 16.99,
         "dineInPrice": 16.99
       }
     ]
   },
   {
-    "id": "tov_slough_ribeyesteak",
-    "name": "Ribeye Steak",
-    "description": "Premium ribeye grilled to your liking, served with grilled vegetables and rice. Add sauce: Teriyaki (£3.99)",
+    "id": "tov_slough_partner_grill_feast",
+    "name": "Partner Grill Feast (Serves 2)",
+    "description": "Partner Grill Feast.",
     "price": 24.99,
-    "allergens": [
-      "milk",
-      "mustard"
-    ],
     "originalPrice": 24.99,
-    "category": "signature_dishes",
-    "image": "/assets/menu/ribeye_steak.webp",
-    "popular": false,
     "dineInPrice": 24.99,
+    "category": "family_platters",
+    "image": "/assets/menu/bbq_platter.webp",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_family_grill_feast",
+    "name": "Family Grill Feast (Serves 3–4)",
+    "description": "Family Grill Feast.",
+    "price": 44.99,
+    "originalPrice": 44.99,
+    "dineInPrice": 44.99,
+    "category": "family_platters",
+    "image": "/assets/menu/bbq_platter.webp",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_sharing_village_feast",
+    "name": "Sharing Village Feast (Serves 5–6)",
+    "description": "Sharing Village Feast.",
+    "price": 74.99,
+    "originalPrice": 74.99,
+    "dineInPrice": 74.99,
+    "category": "family_platters",
+    "image": "/assets/menu/bbq_platter.webp",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_garden_salad",
+    "name": "Garden Salad",
+    "description": "Fresh Garden Salad.",
+    "price": 3.49,
+    "originalPrice": 3.49,
+    "dineInPrice": 3.49,
+    "category": "salads",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_russian_salad",
+    "name": "Russian Salad",
+    "description": "Creamy Russian Salad.",
+    "price": 4.49,
+    "originalPrice": 4.49,
+    "dineInPrice": 4.49,
+    "category": "salads",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_grilled_chicken_salad",
+    "name": "Grilled Chicken Salad",
+    "description": "Fresh salad with grilled chicken.",
+    "price": 8.99,
+    "originalPrice": 8.99,
+    "dineInPrice": 8.99,
+    "category": "salads",
+    "image": "/assets/menu/grilled_chicken.webp",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_mint_sauce",
+    "name": "Mint Sauce",
+    "description": "Mint Sauce.",
+    "price": 1.99,
+    "originalPrice": 1.99,
+    "dineInPrice": 1.99,
+    "category": "sides_n_sauces",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_raita",
+    "name": "Raita",
+    "description": "Raita.",
+    "price": 3.49,
+    "originalPrice": 3.49,
+    "dineInPrice": 3.49,
+    "category": "sides_n_sauces",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_fries",
+    "name": "Fries",
+    "description": "Crispy fries.",
+    "price": 3.49,
+    "originalPrice": 3.49,
+    "dineInPrice": 3.49,
+    "category": "sides_n_sauces",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_mango_chutney",
+    "name": "Mango Chutney",
+    "description": "Sweet mango chutney.",
+    "price": 1.99,
+    "originalPrice": 1.99,
+    "dineInPrice": 1.99,
+    "category": "sides_n_sauces",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_papadum",
+    "name": "Papadum",
+    "description": "Crispy papadum.",
+    "price": 1.49,
+    "originalPrice": 1.49,
+    "dineInPrice": 1.49,
+    "category": "sides_n_sauces",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_plum_chutney",
+    "name": "Plum Chutney",
+    "description": "Plum Chutney.",
+    "price": 4.99,
+    "originalPrice": 4.99,
+    "dineInPrice": 4.99,
+    "category": "sides_n_sauces",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_chicken_nuggets_fries",
+    "name": "Chicken Nuggets & Fries",
+    "description": "Chicken Nuggets & Fries.",
+    "price": 5.99,
+    "originalPrice": 5.99,
+    "dineInPrice": 5.99,
+    "category": "kids_meal",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten"
+    ]
+  },
+  {
+    "id": "tov_slough_chicken_strips_fries",
+    "name": "Chicken Strips & Fries",
+    "description": "Chicken Strips & Fries.",
+    "price": 5.99,
+    "originalPrice": 5.99,
+    "dineInPrice": 5.99,
+    "category": "kids_meal",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Gluten"
+    ]
+  },
+  {
+    "id": "tov_slough_daal_makhni",
+    "name": "Daal Makhni",
+    "description": "Creamy Daal Makhni.",
+    "price": 8.49,
+    "originalPrice": 8.49,
+    "dineInPrice": 8.49,
+    "category": "vegetarian_mains",
+    "image": "/assets/menu/daal_makhni.webp",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_daal_mash",
+    "name": "Daal Mash",
+    "description": "White lentils cooked with spices.",
+    "price": 7.49,
+    "originalPrice": 7.49,
+    "dineInPrice": 7.49,
+    "category": "vegetarian_mains",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_tarka_daal",
+    "name": "Tarka Daal",
+    "description": "Yellow lentils with tempered spices.",
+    "price": 7.49,
+    "originalPrice": 7.49,
+    "dineInPrice": 7.49,
+    "category": "vegetarian_mains",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_paneer_tikka_masala",
+    "name": "Paneer Tikka Masala",
+    "description": "Paneer Tikka Masala.",
+    "price": 10.99,
+    "originalPrice": 10.99,
+    "dineInPrice": 10.99,
+    "category": "vegetarian_mains",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_chana_masala",
+    "name": "Chana Masala",
+    "description": "Chana Masala.",
+    "price": 7.49,
+    "originalPrice": 7.49,
+    "dineInPrice": 7.49,
+    "category": "vegetarian_mains",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_saag",
+    "name": "Saag",
+    "description": "Traditional mustard greens and spinach.",
+    "price": 6.49,
+    "originalPrice": 6.49,
+    "dineInPrice": 6.49,
+    "category": "vegetarian_mains",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_plain_roti",
+    "name": "Plain Roti",
+    "description": "Plain Roti.",
+    "price": 1.49,
+    "originalPrice": 1.49,
+    "dineInPrice": 1.49,
+    "category": "naan_n_bread",
+    "image": "/assets/deliveroo/tandoori_naan.webp",
+    "allergens": [
+      "Gluten"
+    ]
+  },
+  {
+    "id": "tov_slough_plain_naan",
+    "name": "Plain Naan",
+    "description": "Plain Naan.",
+    "price": 1.49,
+    "originalPrice": 1.49,
+    "dineInPrice": 1.49,
+    "category": "naan_n_bread",
+    "image": "/assets/deliveroo/tandoori_naan.webp",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_butter_roti",
+    "name": "Butter Roti",
+    "description": "Butter Roti.",
+    "price": 1.79,
+    "originalPrice": 1.79,
+    "dineInPrice": 1.79,
+    "category": "naan_n_bread",
+    "image": "/assets/deliveroo/tandoori_naan.webp",
+    "allergens": [
+      "Gluten",
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_butter_naan",
+    "name": "Butter Naan",
+    "description": "Butter Naan.",
+    "price": 1.99,
+    "originalPrice": 1.99,
+    "dineInPrice": 1.99,
+    "category": "naan_n_bread",
+    "image": "/assets/deliveroo/tandoori_naan.webp",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_garlic_naan",
+    "name": "Garlic Naan",
+    "description": "Garlic Naan.",
+    "price": 2.49,
+    "originalPrice": 2.49,
+    "dineInPrice": 2.49,
+    "category": "naan_n_bread",
+    "image": "/assets/deliveroo/tandoori_naan.webp",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_chilli_naan",
+    "name": "Chilli Naan",
+    "description": "Chilli Naan.",
+    "price": 2.49,
+    "originalPrice": 2.49,
+    "dineInPrice": 2.49,
+    "category": "naan_n_bread",
+    "image": "/assets/deliveroo/tandoori_naan.webp",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_chilli_garlic_naan",
+    "name": "Chilli Garlic Naan",
+    "description": "Chilli Garlic Naan.",
+    "price": 3.49,
+    "originalPrice": 3.49,
+    "dineInPrice": 3.49,
+    "category": "naan_n_bread",
+    "image": "/assets/deliveroo/tandoori_naan.webp",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_cheese_naan",
+    "name": "Cheese Naan",
+    "description": "Cheese Naan.",
+    "price": 3.49,
+    "originalPrice": 3.49,
+    "dineInPrice": 3.49,
+    "category": "naan_n_bread",
+    "image": "/assets/deliveroo/tandoori_naan.webp",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_cheese_and_garlic_naan",
+    "name": "Cheese and Garlic Naan",
+    "description": "Cheese and Garlic Naan.",
+    "price": 4.99,
+    "originalPrice": 4.99,
+    "dineInPrice": 4.99,
+    "category": "naan_n_bread",
+    "image": "/assets/deliveroo/tandoori_naan.webp",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_keema_naan",
+    "name": "Keema Naan",
+    "description": "Keema Naan.",
+    "price": 5.49,
+    "originalPrice": 5.49,
+    "dineInPrice": 5.49,
+    "category": "naan_n_bread",
+    "image": "/assets/deliveroo/tandoori_naan.webp",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_aloo_naan",
+    "name": "Aloo Naan",
+    "description": "Aloo Naan.",
+    "price": 3.49,
+    "originalPrice": 3.49,
+    "dineInPrice": 3.49,
+    "category": "naan_n_bread",
+    "image": "/assets/deliveroo/tandoori_naan.webp",
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_afghani_pulao",
+    "name": "Afghani Pulao",
+    "description": "Afghani Pulao.",
+    "price": 13.99,
+    "originalPrice": 13.99,
+    "dineInPrice": 13.99,
+    "category": "rice_specials",
+    "image": "/assets/menu/afghani_pulao.webp",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_chicken_dum_biryani",
+    "name": "Chicken Dum Biryani",
+    "description": "Chicken Dum Biryani.",
+    "price": 8.49,
+    "originalPrice": 8.49,
+    "dineInPrice": 8.49,
+    "category": "rice_specials",
+    "image": "/assets/menu/chicken_biryani.webp",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_lamb_biryani",
+    "name": "Lamb Biryani",
+    "description": "Lamb Biryani.",
+    "price": 9.49,
+    "originalPrice": 9.49,
+    "dineInPrice": 9.49,
+    "category": "rice_specials",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy"
+    ]
+  },
+  {
+    "id": "tov_slough_chicken_pulao",
+    "name": "Chicken Pulao (with Shami Kebab & Raita, weekends only)",
+    "description": "Chicken Pulao with Shami Kebab & Raita.",
+    "price": 11.99,
+    "originalPrice": 11.99,
+    "dineInPrice": 11.99,
+    "category": "rice_specials",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy",
+      "Eggs"
+    ]
+  },
+  {
+    "id": "tov_slough_jeera_rice",
+    "name": "Jeera Rice",
+    "description": "Jeera Rice.",
+    "price": 5.49,
+    "originalPrice": 5.49,
+    "dineInPrice": 5.49,
+    "category": "rice_specials",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_plain_rice",
+    "name": "Plain Rice",
+    "description": "Plain Rice.",
+    "price": 4.49,
+    "originalPrice": 4.49,
+    "dineInPrice": 4.49,
+    "category": "rice_specials",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_egg_fried_rice",
+    "name": "Egg Fried Rice",
+    "description": "Egg Fried Rice.",
+    "price": 6.49,
+    "originalPrice": 6.49,
+    "dineInPrice": 6.49,
+    "category": "rice_specials",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Eggs",
+      "Soya"
+    ]
+  },
+  {
+    "id": "tov_slough_gajar_halwa",
+    "name": "Gajar Halwa",
+    "description": "Gajar Halwa.",
+    "price": 6.99,
+    "originalPrice": 6.99,
+    "dineInPrice": 6.99,
+    "category": "desserts",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy",
+      "Nuts"
+    ]
+  },
+  {
+    "id": "tov_slough_matka_kheer",
+    "name": "Matka Kheer",
+    "description": "Matka Kheer.",
+    "price": 4.99,
+    "originalPrice": 4.99,
+    "dineInPrice": 4.99,
+    "category": "desserts",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy",
+      "Nuts"
+    ]
+  },
+  {
+    "id": "tov_slough_sheer_khurma",
+    "name": "Sheer Khurma",
+    "description": "Sheer Khurma.",
+    "price": 5.99,
+    "originalPrice": 5.99,
+    "dineInPrice": 5.99,
+    "category": "desserts",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy",
+      "Nuts",
+      "Gluten"
+    ]
+  },
+  {
+    "id": "tov_slough_gulab_jamun",
+    "name": "Gulab Jamun (3 pcs with ice cream)",
+    "description": "Gulab Jamun (3 pcs with ice cream).",
+    "price": 5.99,
+    "originalPrice": 5.99,
+    "dineInPrice": 5.99,
+    "category": "desserts",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy",
+      "Gluten"
+    ],
     "modifierGroups": [
       {
-        "name": "Add sauce",
+        "id": "tov_slough_gulab_jamun_modifier",
+        "name": "Extras",
         "required": false,
+        "maxSelections": 1,
         "options": [
           {
-            "name": "Teriyaki",
-            "price": 3.99,
-            "dineInPrice": 3.99
+            "id": "tov_slough_gulab_jamun_rabri",
+            "name": "Add Rabri",
+            "price": 2.99
           }
         ]
       }
     ]
   },
   {
-    "id": "tov_slough_familygrillfeast",
-    "name": "Family Grill Feast",
-    "description": "(Serves 4-5) A large mixed grill selection-perfect for sharing.",
-    "price": 44.99,
-    "allergens": [
-      "cereals",
-      "milk",
-      "mustard",
-      "nuts"
-    ],
-    "originalPrice": 44.99,
-    "category": "family_platters",
-    "image": "/assets/menu/bbq_platter.webp",
-    "popular": false,
-    "dineInPrice": 44.99
-  },
-  {
-    "id": "tov_slough_villagefeast",
-    "name": "Village Feast",
-    "description": "(Serves 5-6) A complete spread of grills, curries, rice, and bread.",
-    "price": 64.99,
-    "allergens": [
-      "cereals",
-      "milk",
-      "mustard",
-      "nuts"
-    ],
-    "originalPrice": 64.99,
-    "category": "family_platters",
-    "image": "/assets/menu/bbq_platter.webp",
-    "popular": false,
-    "dineInPrice": 64.99
-  },
-  {
-    "id": "tov_slough_nihari",
-    "name": "Nihari",
-    "description": "Slow-cooked beef stew with rich spices.",
-    "price": 12.49,
-    "allergens": [
-      "cereals",
-      "nuts"
-    ],
-    "originalPrice": 12.49,
-    "category": "breakfast___desi_nashta",
-    "image": "/assets/menu/nihari_dish.webp",
-    "popular": false,
-    "dineInPrice": 12.49
-  },
-  {
-    "id": "tov_slough_lambpaya",
-    "name": "Lamb Paya",
-    "description": "Tender lamb trotters in a flavourful gravy.",
-    "price": 9.99,
-    "allergens": [
-      "cereals"
-    ],
-    "originalPrice": 9.99,
-    "category": "breakfast___desi_nashta",
-    "image": "/assets/menu/lamb_paya.webp",
-    "popular": false,
-    "dineInPrice": 9.99
-  },
-  {
-    "id": "tov_slough_haleem",
-    "name": "Haleem",
-    "description": "Slow-cooked lentils with tender meat and spices.",
-    "price": 12.49,
-    "allergens": [
-      "cereals",
-      "nuts"
-    ],
-    "originalPrice": 12.49,
-    "category": "breakfast___desi_nashta",
-    "image": "/assets/menu/haleem_dish.webp",
-    "popular": false,
-    "dineInPrice": 12.49
-  },
-  {
-    "id": "tov_slough_halwapuri",
-    "name": "Halwa Puri",
-    "description": "Puri served with sweet semolina halwa and chickpea curry.",
-    "price": 8.99,
-    "allergens": [
-      "cereals",
-      "milk"
-    ],
-    "originalPrice": 8.99,
-    "category": "breakfast___desi_nashta",
-    "image": "/assets/menu/halwa_puri.webp",
-    "popular": false,
-    "dineInPrice": 8.99
-  },
-  {
-    "id": "tov_slough_pathorachanna",
-    "name": "Pathora Channa",
-    "description": "Spiced chickpeas with fluffy fried bread.",
-    "price": 9.99,
-    "allergens": [
-      "cereals",
-      "milk"
-    ],
-    "originalPrice": 9.99,
-    "category": "breakfast___desi_nashta",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 9.99
-  },
-  {
-    "id": "tov_slough_channaparatha",
-    "name": "Channa Paratha",
-    "description": "Stuffed paratha served with chickpea curry.",
-    "price": 8.49,
-    "allergens": [
-      "cereals",
-      "milk"
-    ],
-    "originalPrice": 8.49,
-    "category": "breakfast___desi_nashta",
-    "image": "/assets/deliveroo/tandoori_naan.webp",
-    "popular": false,
-    "dineInPrice": 8.49
-  },
-  {
-    "id": "tov_slough_salads",
-    "name": "Garden Salad",
-    "description": "Fresh seasonal vegetables with light dressing.",
-    "price": 3.99,
-    "allergens": [],
-    "originalPrice": 3.99,
-    "category": "salads",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 3.99
-  },
-  {
-    "id": "tov_slough_grilledchickensalad",
-    "name": "Grilled Chicken Salad",
-    "description": "Grilled chicken on crisp salad with dressing.",
-    "price": 8.99,
-    "allergens": [
-      "mustard"
-    ],
-    "originalPrice": 8.99,
-    "category": "salads",
-    "image": "/assets/menu/grilled_chicken.webp",
-    "popular": false,
-    "dineInPrice": 8.99
-  },
-  {
-    "id": "tov_slough_russiansalad",
-    "name": "Russian Salad",
-    "description": "Creamy mixed vegetable salad with a hint of sweetness.",
-    "price": 5.99,
-    "allergens": [
-      "eggs",
-      "milk",
-      "mustard"
-    ],
-    "originalPrice": 5.99,
-    "category": "salads",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 5.99
-  },
-  {
-    "id": "tov_slough_drinks",
-    "name": "Piña Colada (Non-Alcoholic)",
-    "description": "A tropical blend of pineapple and coconut.",
-    "price": 8.99,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 8.99,
-    "category": "drinks",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 8.99
-  },
-  {
-    "id": "tov_slough_mangolassi",
-    "name": "Mango Lassi",
-    "description": "Sweet yogurt drink with ripe mango.",
-    "price": 4.49,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 4.49,
-    "category": "drinks",
-    "image": "/assets/menu/mango_lassi.webp",
-    "popular": false,
-    "dineInPrice": 4.49
-  },
-  {
-    "id": "tov_slough_mintmargarita",
-    "name": "Mint Margarita",
-    "description": "",
-    "price": 5.99,
-    "allergens": [],
-    "originalPrice": 5.99,
-    "category": "drinks",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 5.99
-  },
-  {
-    "id": "tov_slough_sweetlassi",
-    "name": "Sweet Lassi",
-    "description": "",
-    "price": 3.49,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 3.49,
-    "category": "drinks",
-    "image": "/assets/menu/sweet_lassi.webp",
-    "popular": false,
-    "dineInPrice": 3.49
-  },
-  {
-    "id": "tov_slough_softdrinks",
-    "name": "Soft Drinks",
-    "description": "",
-    "price": 1.99,
-    "allergens": [],
-    "originalPrice": 1.99,
-    "category": "drinks",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 1.99
-  },
-  {
-    "id": "tov_slough_mintsauce",
-    "name": "Mint Sauce",
-    "description": "",
-    "price": 2.99,
-    "allergens": [],
-    "originalPrice": 2.99,
-    "category": "sides_n_sauces",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 2.99
-  },
-  {
-    "id": "tov_slough_raita",
-    "name": "Raita",
-    "description": "",
-    "price": 3.99,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 3.99,
-    "category": "sides_n_sauces",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 3.99
-  },
-  {
-    "id": "tov_slough_apricotchutney",
-    "name": "Apricot Chutney",
-    "description": "",
-    "price": 4.59,
-    "allergens": [
-      "sulphites"
-    ],
-    "originalPrice": 4.59,
-    "category": "sides_n_sauces",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 4.59
-  },
-  {
-    "id": "tov_slough_mangochutney",
-    "name": "Mango Chutney",
-    "description": "",
-    "price": 2.99,
-    "allergens": [
-      "sulphites"
-    ],
-    "originalPrice": 2.99,
-    "category": "sides_n_sauces",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 2.99
-  },
-  {
-    "id": "tov_slough_papadum",
-    "name": "Papadum",
-    "description": "",
-    "price": 1.99,
-    "allergens": [],
-    "originalPrice": 1.99,
-    "category": "sides_n_sauces",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 1.99
-  },
-  {
-    "id": "tov_slough_naan",
-    "name": "Naan",
-    "description": "",
-    "price": 1.8,
-    "allergens": [
-      "cereals",
-      "milk"
-    ],
-    "originalPrice": 1.8,
-    "category": "naan_n_bread",
-    "image": "/assets/deliveroo/tandoori_naan.webp",
-    "popular": false,
-    "dineInPrice": 1.8
-  },
-  {
-    "id": "tov_slough_roti",
-    "name": "Roti",
-    "description": "",
-    "price": 1.5,
-    "allergens": [
-      "cereals",
-      "milk"
-    ],
-    "originalPrice": 1.5,
-    "category": "naan_n_bread",
-    "image": "/assets/deliveroo/tandoori_naan.webp",
-    "popular": false,
-    "dineInPrice": 1.5
-  },
-  {
-    "id": "tov_slough_keemanaan",
-    "name": "Keema Naan",
-    "description": "",
-    "price": 3.99,
-    "allergens": [
-      "cereals",
-      "milk"
-    ],
-    "originalPrice": 3.99,
-    "category": "naan_n_bread",
-    "image": "/assets/deliveroo/tandoori_naan.webp",
-    "popular": false,
-    "dineInPrice": 3.99
-  },
-  {
-    "id": "tov_slough_aloonaan",
-    "name": "Aloo Naan",
-    "description": "",
-    "price": 3.49,
-    "allergens": [
-      "cereals",
-      "milk"
-    ],
-    "originalPrice": 3.49,
-    "category": "naan_n_bread",
-    "image": "/assets/deliveroo/tandoori_naan.webp",
-    "popular": false,
-    "dineInPrice": 3.49
-  },
-  {
-    "id": "tov_slough_paratha",
-    "name": "Paratha",
-    "description": "",
-    "price": 2.49,
-    "allergens": [
-      "cereals",
-      "milk"
-    ],
-    "originalPrice": 2.49,
-    "category": "naan_n_bread",
-    "image": "/assets/deliveroo/tandoori_naan.webp",
-    "popular": false,
-    "dineInPrice": 2.49
-  },
-  {
-    "id": "tov_slough_desserts",
-    "name": "Gajar Halwa (Carrot Halwa)",
-    "description": "Traditional carrot dessert with milk and nuts.",
-    "price": 5.99,
-    "allergens": [
-      "milk",
-      "nuts"
-    ],
-    "originalPrice": 5.99,
+    "id": "tov_slough_matka_kulfi",
+    "name": "Matka Kulfi",
+    "description": "Matka Kulfi.",
+    "price": 6.49,
+    "originalPrice": 6.49,
+    "dineInPrice": 6.49,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 5.99
-  },
-  {
-    "id": "tov_slough_homemadekheer",
-    "name": "Homemade Kheer",
-    "description": "Creamy rice pudding with cardamom.",
-    "price": 5.99,
     "allergens": [
-      "milk",
-      "nuts"
-    ],
-    "originalPrice": 5.99,
-    "category": "desserts",
-    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 5.99
+      "Dairy",
+      "Nuts"
+    ]
   },
   {
-    "id": "tov_slough_fruitcustard",
+    "id": "tov_slough_fruit_custard",
     "name": "Fruit Custard",
-    "description": "Fresh fruits in smooth custard.",
-    "price": 7.99,
-    "allergens": [
-      "milk"
-    ],
-    "originalPrice": 7.99,
+    "description": "Fruit Custard.",
+    "price": 5.49,
+    "originalPrice": 5.49,
+    "dineInPrice": 5.49,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 7.99
+    "allergens": [
+      "Dairy"
+    ]
   },
   {
-    "id": "tov_slough_shahikhurma",
-    "name": "Shahi Kheer / Sheer Khurma",
-    "description": "Rich dessert with milk, vermicelli, nuts, and dates.",
-    "price": 6.99,
-    "allergens": [
-      "milk",
-      "nuts"
-    ],
-    "originalPrice": 6.99,
-    "category": "desserts",
+    "id": "tov_slough_canned_soft_drinks",
+    "name": "Canned Soft Drinks (Coke, Diet Coke, Sprite, Fanta)",
+    "description": "Canned Soft Drinks.",
+    "price": 2.49,
+    "originalPrice": 2.49,
+    "dineInPrice": 2.49,
+    "category": "soft_drinks",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
-    "popular": false,
-    "dineInPrice": 6.99
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_glass_bottle_soft_drink",
+    "name": "Glass Bottle Soft Drink",
+    "description": "Glass Bottle Soft Drink.",
+    "price": 3.49,
+    "originalPrice": 3.49,
+    "dineInPrice": 3.49,
+    "category": "soft_drinks",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_red_bull",
+    "name": "Red Bull (Can)",
+    "description": "Red Bull.",
+    "price": 2.99,
+    "originalPrice": 2.99,
+    "dineInPrice": 2.99,
+    "category": "soft_drinks",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_fresh_orange_juice",
+    "name": "Fresh Orange Juice",
+    "description": "Fresh Orange Juice.",
+    "price": 4.99,
+    "originalPrice": 4.99,
+    "dineInPrice": 4.99,
+    "category": "soft_drinks",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_fresh_pineapple_juice",
+    "name": "Fresh Pineapple Juice",
+    "description": "Fresh Pineapple Juice.",
+    "price": 5.99,
+    "originalPrice": 5.99,
+    "dineInPrice": 5.99,
+    "category": "soft_drinks",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_fresh_apple_juice",
+    "name": "Fresh Apple Juice",
+    "description": "Fresh Apple Juice.",
+    "price": 5.49,
+    "originalPrice": 5.49,
+    "dineInPrice": 5.49,
+    "category": "soft_drinks",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_j20",
+    "name": "J20 (Mango/Orange)",
+    "description": "J20.",
+    "price": 3.49,
+    "originalPrice": 3.49,
+    "dineInPrice": 3.49,
+    "category": "soft_drinks",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_appletiser",
+    "name": "Appletiser",
+    "description": "Appletiser.",
+    "price": 3.49,
+    "originalPrice": 3.49,
+    "dineInPrice": 3.49,
+    "category": "soft_drinks",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_mineral_water_small",
+    "name": "Mineral Water Small 500ml",
+    "description": "Mineral Water Small 500ml.",
+    "price": 1.99,
+    "originalPrice": 1.99,
+    "dineInPrice": 1.99,
+    "category": "soft_drinks",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_mineral_water_large",
+    "name": "Mineral Water Large 1 Litre",
+    "description": "Mineral Water Large 1 Litre.",
+    "price": 3.49,
+    "originalPrice": 3.49,
+    "dineInPrice": 3.49,
+    "category": "soft_drinks",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": []
+  },
+  {
+    "id": "tov_slough_mint_margarita",
+    "name": "Mint Margarita",
+    "description": "Mint Margarita.",
+    "price": 5.99,
+    "originalPrice": 5.99,
+    "dineInPrice": 5.99,
+    "category": "mocktails_n_lassi",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [],
+    "sizes": [
+      {
+        "name": "Glass",
+        "price": 5.99,
+        "originalPrice": 5.99,
+        "dineInPrice": 5.99
+      },
+      {
+        "name": "Jug",
+        "price": 13.99,
+        "originalPrice": 13.99,
+        "dineInPrice": 13.99
+      }
+    ]
+  },
+  {
+    "id": "tov_slough_strawberry_lemonade",
+    "name": "Strawberry Lemonade",
+    "description": "Strawberry Lemonade.",
+    "price": 6.49,
+    "originalPrice": 6.49,
+    "dineInPrice": 6.49,
+    "category": "mocktails_n_lassi",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [],
+    "sizes": [
+      {
+        "name": "Glass",
+        "price": 6.49,
+        "originalPrice": 6.49,
+        "dineInPrice": 6.49
+      },
+      {
+        "name": "Jug",
+        "price": 15.49,
+        "originalPrice": 15.49,
+        "dineInPrice": 15.49
+      }
+    ]
+  },
+  {
+    "id": "tov_slough_pina_colada",
+    "name": "Pina Colada",
+    "description": "Pina Colada.",
+    "price": 6.49,
+    "originalPrice": 6.49,
+    "dineInPrice": 6.49,
+    "category": "mocktails_n_lassi",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy"
+    ],
+    "sizes": [
+      {
+        "name": "Glass",
+        "price": 6.49,
+        "originalPrice": 6.49,
+        "dineInPrice": 6.49
+      },
+      {
+        "name": "Jug",
+        "price": 14.99,
+        "originalPrice": 14.99,
+        "dineInPrice": 14.99
+      }
+    ]
+  },
+  {
+    "id": "tov_slough_blue_lagoon",
+    "name": "Blue Lagoon",
+    "description": "Blue Lagoon.",
+    "price": 5.99,
+    "originalPrice": 5.99,
+    "dineInPrice": 5.99,
+    "category": "mocktails_n_lassi",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [],
+    "sizes": [
+      {
+        "name": "Glass",
+        "price": 5.99,
+        "originalPrice": 5.99,
+        "dineInPrice": 5.99
+      },
+      {
+        "name": "Jug",
+        "price": 14.99,
+        "originalPrice": 14.99,
+        "dineInPrice": 14.99
+      }
+    ]
+  },
+  {
+    "id": "tov_slough_mango_lassi",
+    "name": "Mango Lassi",
+    "description": "Mango Lassi.",
+    "price": 3.99,
+    "originalPrice": 3.99,
+    "dineInPrice": 3.99,
+    "category": "mocktails_n_lassi",
+    "image": "/assets/menu/mango_lassi.webp",
+    "allergens": [
+      "Dairy"
+    ],
+    "sizes": [
+      {
+        "name": "Glass",
+        "price": 3.99,
+        "originalPrice": 3.99,
+        "dineInPrice": 3.99
+      },
+      {
+        "name": "Jug",
+        "price": 11.99,
+        "originalPrice": 11.99,
+        "dineInPrice": 11.99
+      }
+    ]
+  },
+  {
+    "id": "tov_slough_sweet_salty_lassi",
+    "name": "Sweet or Salty Lassi",
+    "description": "Sweet or Salty Lassi.",
+    "price": 3.49,
+    "originalPrice": 3.49,
+    "dineInPrice": 3.49,
+    "category": "mocktails_n_lassi",
+    "image": "/assets/tov-logo-tree-terracotta-alpha.png",
+    "allergens": [
+      "Dairy"
+    ],
+    "sizes": [
+      {
+        "name": "Glass",
+        "price": 3.49,
+        "originalPrice": 3.49,
+        "dineInPrice": 3.49
+      },
+      {
+        "name": "Jug",
+        "price": 10.49,
+        "originalPrice": 10.49,
+        "dineInPrice": 10.49
+      }
+    ]
   }
 ]

@@ -223,13 +223,22 @@ function MenuPageContent() {
     { id: 'brunch_offers', label: 'VILLAGE BRUNCH OFFERS' },
     { id: 'specials', label: 'WEEKEND DESI NASHTA' },
 
-    // 7. SALADS
+    // 6b. SUNDAY ROAST (Sundays 12:00 PM – 5:00 PM only)
+    { id: 'sunday_roast', label: 'SUNDAY ROAST' },
+
+    // 6c. WEEKEND SPECIALS
+    { id: 'weekend_specials', label: 'WEEKEND SPECIALS' },
+
+    // 7. VEGETARIAN MAINS
+    { id: 'vegetarian_mains', label: 'VEGETARIAN MAINS' },
+
+    // 8. SALADS
     { id: 'salads', label: 'SALADS' },
 
-    // 8. SIDES & SAUCES
+    // 9. SIDES & SAUCES
     { id: 'sides_n_sauces', label: 'SIDES & SAUCES' },
 
-    // 9. NAAN & BREAD
+    // 10. NAAN & BREAD
     { id: 'naan_n_bread', label: 'NAAN & BREAD' },
     { id: 'naan_n_roti', label: 'TANDOORI BREADS' },
     { id: 'lahori_kulchas', label: 'LAHORI KULCHAS' },
@@ -237,14 +246,38 @@ function MenuPageContent() {
     { id: 'breads', label: 'TANDOORI BREADS' },
     { id: 'kulchas', label: 'LAHORI KULCHAS' },
 
-    // 10. DRINKS
+    // 11. DRINKS
     { id: 'drinks', label: 'DRINKS' },
+    { id: 'soft_drinks', label: 'SOFT DRINKS & WATER' },
+    { id: 'mocktails_n_lassi', label: 'MOCKTAILS & LASSI' },
 
-    // 11. DESSERTS
+    // 12. DESSERTS
     { id: 'desserts', label: 'DESSERTS' }
   ];
 
   const isWeekend = [0, 5, 6].includes(new Date().getDay());
+
+  // Sunday Roast availability: Sunday only, 12:00-17:00 UK time
+  const isSundayRoastAvailable = useMemo(() => {
+    try {
+      const nowInUK = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/London' }));
+      const day = nowInUK.getDay(); // 0 = Sunday
+      const hour = nowInUK.getHours();
+      return day === 0 && hour >= 12 && hour < 17;
+    } catch {
+      const now = new Date();
+      return now.getDay() === 0 && now.getHours() >= 12 && now.getHours() < 17;
+    }
+  }, []);
+
+  const isSunday = useMemo(() => {
+    try {
+      const nowInUK = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/London' }));
+      return nowInUK.getDay() === 0;
+    } catch {
+      return new Date().getDay() === 0;
+    }
+  }, []);
 
   const groupedMenu = useMemo(() => {
     const allCatIds = Array.from(new Set(menuItems.map(item => item.category)));
@@ -277,19 +310,23 @@ function MenuPageContent() {
 
         return item.category === cat.id && item.showOnWebsite !== false && matchSearch && matchDietary;
       }).map(item => {
-        const isWeekendItem = item.category === 'specials' || item.name.toLowerCase().includes('weekend only');
+        const isWeekendItem = item.category === 'specials' || item.category === 'weekend_specials' || item.name.toLowerCase().includes('weekend only');
         const isTimeGated = isWeekendItem && !isWeekend;
+
+        // Sunday Roast: only available Sunday 12:00-17:00
+        const isSundayRoastItem = item.category === 'sunday_roast';
+        const isSundayRoastGated = isSundayRoastItem && !isSundayRoastAvailable;
 
         return {
           ...item,
           price: tableParam ? (item.dineInPrice ?? item.price) : (item.onlinePrice ?? item.price),
           originalPrice: tableParam ? (item.dineInPrice ?? item.originalPrice ?? item.price) : (item.onlinePrice ?? item.originalPrice ?? item.price),
-          is86d: item.is86d || isTimeGated,
-          name: isTimeGated && !item.name.includes('Fri-Sun') ? `${item.name} (Available Fri-Sun)` : item.name
+          is86d: item.is86d || isTimeGated || isSundayRoastGated,
+          name: isTimeGated && !item.name.includes('Fri-Sun') ? `${item.name} (Available Fri-Sun)` : isSundayRoastGated && !item.name.includes('Sunday') ? `${item.name} (Sunday Only)` : item.name
         };
       })
     })).filter(group => group.items.length > 0);
-  }, [menuItems, tableParam, searchQuery, activeDietaryFilters]);
+  }, [menuItems, tableParam, searchQuery, activeDietaryFilters, isSundayRoastAvailable]);
 
   // ScrollSpy Logic
   useEffect(() => {
@@ -1122,6 +1159,29 @@ function MenuPageContent() {
                 <strong className="font-sans text-terracotta tracking-[0.2em] uppercase text-xs md:text-sm block mb-3">{CATEGORY_DESCRIPTIONS[group.id].title}</strong>
                 <p className="text-pine font-medium leading-loose text-sm tracking-wide">
                   {CATEGORY_DESCRIPTIONS[group.id].text}
+                </p>
+              </div>
+            )}
+
+            {/* Sunday Roast Availability Notice */}
+            {group.id === 'sunday_roast' && (
+              <div className={`mb-8 mx-auto max-w-2xl px-4 py-5 rounded-2xl border text-center ${
+                isSundayRoastAvailable
+                  ? 'bg-emerald-50/80 border-emerald-200/60 text-emerald-900'
+                  : 'bg-amber-50/80 border-amber-200/60 text-amber-900'
+              }`}>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Clock size={16} className={isSundayRoastAvailable ? 'text-emerald-600' : 'text-amber-600'} />
+                  <span className="font-display font-bold text-sm tracking-wider uppercase">
+                    {isSundayRoastAvailable ? 'Available Now' : 'Sunday Only · 12:00 PM – 5:00 PM'}
+                  </span>
+                </div>
+                <p className="text-xs leading-relaxed font-medium max-w-lg mx-auto">
+                  {isSundayRoastAvailable
+                    ? 'Our Sunday Roast is available right now. Order for collection or dine-in before 5:00 PM.'
+                    : isSunday
+                      ? 'Our Sunday Roast is served between 12:00 PM and 5:00 PM. Please check back during serving hours or pre-order for next Sunday.'
+                      : 'Our Sunday Roast is exclusively available every Sunday from 12:00 PM to 5:00 PM. To pre-order, please select your items and choose a Sunday collection time at checkout.'}
                 </p>
               </div>
             )}

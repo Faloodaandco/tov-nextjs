@@ -183,7 +183,7 @@ export default function RootLayout({
                     streetAddress: "260 Farnham Road",
                     addressLocality: "Slough",
                     addressRegion: "Berkshire",
-                    postalCode: "SL1 4XQ",
+                    postalCode: "SL1 4XL",
                     addressCountry: "GB",
                   },
                   geo: { "@type": "GeoCoordinates", latitude: 51.5273, longitude: -0.6128 },

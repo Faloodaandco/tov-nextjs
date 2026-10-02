@@ -5,14 +5,14 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Authentic Halal Desserts & Kulfi in Slough | Taste of Village',
-  description: 'Enjoy authentic Pakistani desserts on Farnham Road, Slough. Shahi Kulfi Falooda, Hot Gajar Ka Halwa, Rasmalai, and Karak Chai at Taste of Village (SL1 4XQ).',
+  description: 'Enjoy authentic Pakistani desserts on Farnham Road, Slough. Shahi Kulfi Falooda, Hot Gajar Ka Halwa, Rasmalai, and Karak Chai at Taste of Village (SL1 4XL).',
   alternates: {
     canonical: '/slough-desserts'
   },
   openGraph: {
     type: 'website',
     title: 'Authentic Halal Desserts & Kulfi in Slough | Taste of Village',
-    description: 'Enjoy authentic Pakistani desserts on Farnham Road, Slough. Shahi Kulfi Falooda, Hot Gajar Ka Halwa, Rasmalai, and Karak Chai at Taste of Village (SL1 4XQ).',
+    description: 'Enjoy authentic Pakistani desserts on Farnham Road, Slough. Shahi Kulfi Falooda, Hot Gajar Ka Halwa, Rasmalai, and Karak Chai at Taste of Village (SL1 4XL).',
     url: 'https://tasteofvillagerestaurants.co.uk/slough-desserts',
     siteName: 'Taste of Village',
     locale: 'en_GB',
@@ -35,7 +35,7 @@ export default function SloughDessertsPage() {
           "streetAddress": "260 Farnham Road",
           "addressLocality": "Slough",
           "addressRegion": "Berkshire",
-          "postalCode": "SL1 4XQ",
+          "postalCode": "SL1 4XL",
           "addressCountry": "GB"
         },
         "geo": { "@type": "GeoCoordinates", "latitude": 51.5273, "longitude": -0.6128 },
@@ -129,7 +129,7 @@ export default function SloughDessertsPage() {
 
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-10">
             <div className="flex items-center gap-2 text-pine font-bold">
-              <MapPin className="text-terracotta" /> 260 Farnham Road, Slough SL1 4XQ
+              <MapPin className="text-terracotta" /> 260 Farnham Road, Slough SL1 4XL
             </div>
             <div className="flex items-center gap-2 text-pine font-bold">
               <Clock className="text-terracotta" /> Open 7 Days: 10:00 AM – 2:00 AM

@@ -192,5 +192,35 @@ export const CATEGORY_DESCRIPTIONS: Record<string, { title: string; text: string
   desserts: {
     title: 'Dessert (میٹھا)',
     text: 'Authentic South Asian desserts made in-house. From deeply caramelized Gajar Halwa to warm, syrupy Gulab Jamun—the perfect conclusion to a spicy meal.'
+  },
+
+  // Sunday Roast (Slough)
+  sunday_roast: {
+    title: 'Sunday Roast',
+    text: 'A classic British Sunday Roast, available every Sunday from 12:00 PM to 5:00 PM. Succulent roast meats served with all the traditional trimmings. Pre-order only — this special is exclusively for Sunday collection or dine-in.'
+  },
+
+  // Weekend Specials (Slough)
+  weekend_specials: {
+    title: 'Weekend Specials',
+    text: 'Signature weekend-only dishes prepared in limited quantities. Rich Charsi-style keema and indulgent Magaz karahi — available Friday to Sunday only.'
+  },
+
+  // Vegetarian Mains (Slough)
+  vegetarian_mains: {
+    title: 'Sabzi Mandi (سبزی منڈی)',
+    text: 'Hearty vegetarian mains showcasing the best of traditional Punjabi dal and paneer dishes. Rich, creamy, and deeply satisfying — no meat required.'
+  },
+
+  // Soft Drinks (Slough)
+  soft_drinks: {
+    title: 'Drinks',
+    text: 'Chilled soft drinks, fresh juices, and bottled water to complement your meal.'
+  },
+
+  // Mocktails & Lassi (Slough)
+  mocktails_n_lassi: {
+    title: 'Mocktails & Lassi (موک ٹیل اور لسّی)',
+    text: 'Handcrafted mocktails and traditional lassis — refreshing, non-alcoholic coolers perfect for any time of day.'
   }
 };

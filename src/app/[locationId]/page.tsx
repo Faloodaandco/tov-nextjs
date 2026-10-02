@@ -48,7 +48,7 @@ export default function TOVHome() {
       setNearestBranch({
         id: 'slough',
         name: 'Taste of Village Slough',
-        address: '260 Farnham Road, Slough SL1 4XQ',
+        address: '260 Farnham Road, Slough SL1 4XL',
         time: 'Ready for Collection in ~20 mins'
       });
     } else {
@@ -201,7 +201,7 @@ export default function TOVHome() {
             </a>
             <a aria-label="Google Maps Directions"
               href={isSlough 
-                ? 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+260+Farnham+Road+Slough+SL1+4XQ'
+                ? 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+260+Farnham+Road+Slough+SL1+4XL'
                 : 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+766B+Uxbridge+Rd+Hayes+UB4+0RU'}
               target="_blank"
               rel="noopener noreferrer"
@@ -532,7 +532,7 @@ export default function TOVHome() {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="text-amber-300 text-xs font-black uppercase tracking-[0.25em] block mb-2">
-              {isSlough ? 'Farnham Road Flagship • SL1 4XQ' : 'Uxbridge Road Flagship • UB4 0RU'}
+              {isSlough ? 'Farnham Road Flagship • SL1 4XL' : 'Uxbridge Road Flagship • UB4 0RU'}
             </span>
             <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl text-white uppercase tracking-wider mb-4">
               {isSlough ? 'Visit Taste of Village Slough' : 'Visit Taste of Village Hayes'}
@@ -565,7 +565,7 @@ export default function TOVHome() {
               </div>
               <a aria-label="Google Maps Directions" 
                 href={isSlough 
-                  ? 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+260+Farnham+Road+Slough+SL1+4XQ'
+                  ? 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+260+Farnham+Road+Slough+SL1+4XL'
                   : 'https://www.google.com/maps/search/?api=1&query=Taste+of+Village+766B+Uxbridge+Rd+Hayes+UB4+0RU'}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -902,7 +902,7 @@ export default function TOVHome() {
               },
               {
                 q: `Where is Taste of Village located and is there parking?`,
-                a: `${isSlough ? 'Our Slough branch is at 260 Farnham Road (SL1 4XQ) with convenient street and local bay parking.' : 'Our Hayes branch is at 766B Uxbridge Road (UB4 0RU) with nearby customer and street parking along the parade.'}`
+                a: `${isSlough ? 'Our Slough branch is at 260 Farnham Road (SL1 4XL) with convenient street and local bay parking.' : 'Our Hayes branch is at 766B Uxbridge Road (UB4 0RU) with nearby customer and street parking along the parade.'}`
               },
               {
                 q: "Can I book a table for large family parties or catering?",
