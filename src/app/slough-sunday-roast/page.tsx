@@ -141,7 +141,7 @@ export default function SloughSundayRoastPage() {
   };
 
   return (
-    <div className="bg-sand min-h-screen pt-20 pb-20 font-sans">
+    <div className="bg-sand min-h-screen font-sans">
       {/* JSON-LD Schema for SEO/AEO */}
       <script
         type="application/ld+json"
@@ -160,150 +160,241 @@ export default function SloughSundayRoastPage() {
         }) }}
       />
 
-      <div className="max-w-4xl mx-auto px-6">
-        {/* Hero Image Banner */}
-        <div className="relative rounded-[2rem] overflow-hidden mb-16 -mx-2 sm:mx-0">
-          <Image
-            src="/assets/menu/sunday-roast/sunday_roast_hero.webp"
-            alt="Sunday Roast spread at Taste of Village — beef, lamb shank, Yorkshire pudding, roasted vegetables and rich gravy"
-            width={1400}
-            height={900}
-            className="w-full h-[280px] sm:h-[360px] md:h-[440px] object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-pine/90 via-pine/40 to-transparent" />
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-8 sm:pb-12 px-6 text-center">
-            <span className="text-amber-300 font-bold tracking-widest uppercase text-[10px] sm:text-xs mb-3 block">Every Sunday · 12:00 PM – 5:00 PM</span>
-            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl text-white mb-4 drop-shadow-lg">Sunday Roast in Slough</h1>
-            <p className="text-white/80 text-sm sm:text-base leading-relaxed max-w-xl mx-auto">
-              A proper British Sunday Roast, made with care and served with all the trimmings at our Farnham Road restaurant.
-            </p>
-          </div>
-        </div>
-
-        {/* Availability Notice */}
-        <div className="bg-pine text-white p-6 sm:p-8 rounded-[2rem] shadow-lg mb-12 text-center">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <Clock size={20} className="text-amber-300" />
-            <span className="font-black text-sm uppercase tracking-widest text-amber-300">Sunday Only · 12:00 PM – 5:00 PM</span>
-          </div>
-          <p className="text-white/80 text-sm max-w-lg mx-auto leading-relaxed mb-6">
-            Our Sunday Roast is freshly prepared each week and available for dine-in, collection, or delivery every Sunday between 12:00 PM and 5:00 PM.
-            Pre-order any day of the week to guarantee your roast.
+      {/* ── HERO ── Full-bleed cinematic banner */}
+      <div className="relative w-full h-[420px] sm:h-[520px] md:h-[600px] overflow-hidden">
+        <Image
+          src="/assets/menu/sunday-roast/sunday_roast_hero.webp"
+          alt="Sunday Roast spread at Taste of Village — beef, lamb shank, Yorkshire pudding, roasted vegetables and rich gravy"
+          fill
+          className="object-cover object-center"
+          priority
+          sizes="100vw"
+        />
+        {/* Cinematic gradient: dark bottom for text, subtle vignette top */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30" />
+        
+        <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 sm:pb-20 px-6 text-center">
+          <span className="inline-block bg-terracotta/90 backdrop-blur-sm text-white text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-5">
+            Every Sunday · 12 – 5 PM
+          </span>
+          <h1 className="font-serif text-[2.5rem] sm:text-6xl md:text-7xl text-white mb-4 leading-[1.05] drop-shadow-2xl">
+            Sunday Roast
+          </h1>
+          <p className="text-white/70 text-sm sm:text-base leading-relaxed max-w-md mx-auto mb-8">
+            Slow-roasted. Halal certified. Served with all the trimmings every Sunday at Farnham Road.
           </p>
           <Link
             href="/slough/menu#sunday_roast"
-            className="inline-block px-8 py-3.5 bg-terracotta text-white rounded-full font-black text-xs uppercase tracking-wider hover:bg-terracotta/90 transition-all shadow-md active:scale-95"
+            className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-pine rounded-full font-black text-xs uppercase tracking-wider hover:bg-terracotta hover:text-white transition-all duration-300 shadow-xl active:scale-95"
           >
-            View Sunday Roast Menu
+            Order Now
+            <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+          </Link>
+        </div>
+      </div>
+
+      {/* ── AVAILABILITY PILL ── Floats between hero and content */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-8 relative z-10 mb-16">
+        <div className="bg-pine text-white p-5 sm:p-6 rounded-2xl shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0">
+              <Clock size={18} className="text-amber-300" />
+            </div>
+            <div>
+              <span className="font-black text-xs uppercase tracking-widest text-amber-300 block">Sunday Only</span>
+              <span className="text-white/70 text-xs">12:00 PM – 5:00 PM · Pre-order any day</span>
+            </div>
+          </div>
+          <Link
+            href="/slough/menu#sunday_roast"
+            className="px-6 py-2.5 bg-terracotta text-white rounded-full font-black text-[11px] uppercase tracking-wider hover:bg-terracotta/80 transition-all active:scale-95 shrink-0"
+          >
+            View Menu
+          </Link>
+        </div>
+      </div>
+
+      {/* ── EDITORIAL MAINS ── Alternating image+text layout */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mb-20">
+        <div className="text-center mb-12">
+          <span className="text-terracotta font-bold tracking-widest uppercase text-[10px] block mb-3">Choose Your Roast</span>
+          <h2 className="font-serif text-4xl sm:text-5xl text-pine">The Mains</h2>
+        </div>
+
+        {/* Beef Roast — Image Left */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-8 items-center mb-8 md:mb-14">
+          <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden">
+            <Image
+              src="/assets/menu/sunday-roast/sunday_roast_beef.webp"
+              alt="Beef Roast with Yorkshire pudding, mashed potatoes and seasonal vegetables"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+          </div>
+          <div className="p-6 sm:p-8 md:p-0">
+            <div className="flex items-baseline justify-between mb-2">
+              <h3 className="font-serif text-3xl text-pine">Beef Roast</h3>
+              <span className="text-terracotta font-black text-2xl">£14.99</span>
+            </div>
+            <div className="w-12 h-0.5 bg-terracotta/40 mb-4" />
+            <p className="text-pine/70 leading-relaxed mb-6">
+              Succulent slow-roasted British beef, carved thick and served with your choice of roast or creamy mashed potatoes, seasonal vegetables, rich gravy &amp; a golden Yorkshire pudding.
+            </p>
+            <Link href="/slough/menu#sunday_roast" className="text-terracotta font-bold text-sm hover:underline inline-flex items-center gap-1">
+              Add to order →
+            </Link>
+          </div>
+        </div>
+
+        {/* Half Chicken — Text Only, Centered */}
+        <div className="bg-pine rounded-[2rem] p-8 sm:p-12 text-center mb-8 md:mb-14">
+          <div className="flex items-baseline justify-center gap-4 mb-3">
+            <h3 className="font-serif text-3xl text-white">Half Chicken Roast</h3>
+            <span className="text-amber-300 font-black text-2xl">£15.99</span>
+          </div>
+          <div className="w-12 h-0.5 bg-terracotta/60 mx-auto mb-4" />
+          <p className="text-white/70 leading-relaxed max-w-lg mx-auto mb-6">
+            Golden-roasted half chicken, tender and juicy, served with roast potatoes, seasonal veg, rich gravy and a freshly baked Yorkshire pudding. The classic done right.
+          </p>
+          <Link href="/slough/menu#sunday_roast" className="text-amber-300 font-bold text-sm hover:underline inline-flex items-center gap-1">
+            Add to order →
           </Link>
         </div>
 
-        {/* Roast Mains */}
-        <div className="mb-16">
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="flex-1 h-px bg-terracotta/30 max-w-[60px]" />
-            <h2 className="font-serif text-3xl text-pine text-center">Roast Mains</h2>
-            <div className="flex-1 h-px bg-terracotta/30 max-w-[60px]" />
+        {/* Lamb Shank — Image Right */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-8 items-center">
+          <div className="order-2 md:order-1 p-6 sm:p-8 md:p-0">
+            <div className="flex items-baseline justify-between mb-2">
+              <h3 className="font-serif text-3xl text-pine">Lamb Shank Roast</h3>
+              <span className="text-terracotta font-black text-2xl">£16.99</span>
+            </div>
+            <div className="w-12 h-0.5 bg-terracotta/40 mb-4" />
+            <p className="text-pine/70 leading-relaxed mb-6">
+              Slow-cooked lamb shank, falling off the bone in its own rich juices. Served with creamy mash or roast potatoes, seasonal veg, gravy &amp; Yorkshire pudding.
+            </p>
+            <Link href="/slough/menu#sunday_roast" className="text-terracotta font-bold text-sm hover:underline inline-flex items-center gap-1">
+              Add to order →
+            </Link>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {ROAST_MAINS.map((item) => (
-              <div key={item.name} className="bg-white rounded-[2rem] border border-pine/8 hover:border-terracotta/30 transition-colors overflow-hidden">
-                {item.image && (
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    width={400}
-                    height={300}
-                    className="w-full h-48 sm:h-56 object-cover"
-                  />
-                )}
-                <div className="p-6 sm:p-8">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-serif text-xl text-pine font-bold">{item.name}</h3>
-                    <span className="text-terracotta font-black text-lg shrink-0 ml-3">£{item.price}</span>
-                  </div>
-                  <p className="text-pine/70 text-sm leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            ))}
+          <div className="order-1 md:order-2 relative aspect-[4/3] rounded-[2rem] overflow-hidden">
+            <Image
+              src="/assets/menu/sunday-roast/sunday_roast_lamb_shank.webp"
+              alt="Lamb Shank Roast with vine tomatoes, Yorkshire pudding, mash and roasted vegetables"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
           </div>
         </div>
+      </div>
 
-        {/* Desserts & Extras */}
-        <div className="mb-16">
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="flex-1 h-px bg-terracotta/30 max-w-[60px]" />
-            <h2 className="font-serif text-3xl text-pine text-center">Desserts & Extras</h2>
-            <div className="flex-1 h-px bg-terracotta/30 max-w-[60px]" />
-          </div>
+      {/* ── FULL-WIDTH DIVIDER IMAGE ── Overhead lamb shot */}
+      <div className="relative w-full h-[200px] sm:h-[280px] overflow-hidden my-4">
+        <Image
+          src="/assets/menu/sunday-roast/sunday_roast_lamb_overhead.webp"
+          alt="Overhead view of Lamb Shank with vine tomatoes, Yorkshire pudding and seasonal vegetables"
+          fill
+          className="object-cover object-center"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-sand via-transparent to-sand" />
+      </div>
 
-          <div className="bg-white p-8 rounded-[2rem] border border-pine/8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
-              {EXTRAS.map((item) => (
+      {/* ── EXTRAS ── Desserts & Sides */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-20">
+        <div className="text-center mb-10">
+          <span className="text-terracotta font-bold tracking-widest uppercase text-[10px] block mb-3">Complete Your Roast</span>
+          <h2 className="font-serif text-4xl sm:text-5xl text-pine">Extras & Desserts</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Desserts Column */}
+          <div className="bg-white rounded-[2rem] p-6 sm:p-8 border border-pine/8">
+            <h3 className="font-serif text-xl text-pine mb-5 flex items-center gap-2">
+              <span className="text-2xl">🍰</span> Desserts
+            </h3>
+            <div className="space-y-3">
+              {EXTRAS.slice(0, 3).map((item) => (
                 <div key={item.name} className="flex items-center justify-between py-2 border-b border-pine/5 last:border-0">
                   <div>
                     <span className="text-pine font-semibold text-sm">{item.name}</span>
-                    {item.note && <span className="text-pine/50 text-xs block">{item.note}</span>}
+                    {item.note && <span className="text-pine/40 text-xs block">{item.note}</span>}
                   </div>
-                  <span className="text-terracotta font-bold text-sm shrink-0 ml-4">£{item.price}</span>
+                  <span className="text-terracotta font-black text-sm shrink-0 ml-4">£{item.price}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Sides & Sauces Column */}
+          <div className="bg-white rounded-[2rem] p-6 sm:p-8 border border-pine/8">
+            <h3 className="font-serif text-xl text-pine mb-5 flex items-center gap-2">
+              <span className="text-2xl">🥘</span> Sides & Sauces
+            </h3>
+            <div className="space-y-3">
+              {EXTRAS.slice(3).map((item) => (
+                <div key={item.name} className="flex items-center justify-between py-2 border-b border-pine/5 last:border-0">
+                  <div>
+                    <span className="text-pine font-semibold text-sm">{item.name}</span>
+                  </div>
+                  <span className="text-terracotta font-black text-sm shrink-0 ml-4">£{item.price}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
+      </div>
 
-        {/* FAQ / AEO Block */}
-        <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-pine/5 mb-16">
-          <h2 className="font-serif text-2xl mb-6 text-pine">Frequently Asked Questions</h2>
-          <div className="space-y-5 text-pine/80">
-            <div>
-              <strong className="text-pine block mb-1">Does Taste of Village do Sunday Roast in Slough?</strong>
-              Yes. Taste of Village at 260 Farnham Road, Slough serves a classic British Sunday Roast every Sunday from 12:00 PM to 5:00 PM. Choose from Beef Roast (£14.99), Half Chicken Roast (£15.99), or Lamb Shank Roast (£16.99), all served with traditional trimmings.
-            </div>
-            <div>
-              <strong className="text-pine block mb-1">What time is the Sunday Roast available?</strong>
-              Our Sunday Roast is served exclusively on Sundays between 12:00 PM and 5:00 PM. We recommend pre-ordering online to guarantee your meal.
-            </div>
-            <div>
-              <strong className="text-pine block mb-1">Can I pre-order the Sunday Roast?</strong>
-              Yes. You can pre-order your Sunday Roast through our website any day of the week. Simply select your items from the Sunday Roast section on our menu and choose a Sunday collection time at checkout.
-            </div>
-            <div>
-              <strong className="text-pine block mb-1">Is the Sunday Roast Halal?</strong>
-              Yes. Our entire menu, including all Sunday Roast dishes, is 100% Halal. All meat is sourced from trusted Halal suppliers.
-            </div>
-            <div>
-              <strong className="text-pine block mb-1">What comes with the Sunday Roast?</strong>
-              Each roast main is served with your choice of roast or creamy mashed potatoes, seasonal vegetables with roasted Brussels sprouts, rich gravy, and a Yorkshire pudding. Additional sides and sauces are available separately.
-            </div>
-          </div>
+      {/* ── FAQ / AEO ── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mb-20">
+        <div className="text-center mb-10">
+          <h2 className="font-serif text-3xl text-pine">Frequently Asked Questions</h2>
         </div>
+        <div className="space-y-6">
+          {[
+            { q: 'Does Taste of Village do Sunday Roast in Slough?', a: 'Yes. Taste of Village at 260 Farnham Road, Slough serves a classic British Sunday Roast every Sunday from 12:00 PM to 5:00 PM. Choose from Beef Roast (£14.99), Half Chicken Roast (£15.99), or Lamb Shank Roast (£16.99), all served with traditional trimmings.' },
+            { q: 'What time is the Sunday Roast available?', a: 'Our Sunday Roast is served exclusively on Sundays between 12:00 PM and 5:00 PM. We recommend pre-ordering online to guarantee your meal.' },
+            { q: 'Can I pre-order the Sunday Roast?', a: 'Yes. You can pre-order your Sunday Roast through our website any day of the week. Simply select your items from the Sunday Roast section on our menu and choose a Sunday collection time at checkout.' },
+            { q: 'Is the Sunday Roast Halal?', a: 'Yes. Our entire menu, including all Sunday Roast dishes, is 100% Halal. All meat is sourced from trusted Halal suppliers.' },
+            { q: 'What comes with the Sunday Roast?', a: 'Each roast main is served with your choice of roast or creamy mashed potatoes, seasonal vegetables with roasted Brussels sprouts, rich gravy, and a Yorkshire pudding. Additional sides and sauces are available separately.' },
+          ].map((faq) => (
+            <div key={faq.q} className="border-l-2 border-terracotta/30 pl-5 sm:pl-6">
+              <strong className="text-pine block mb-1.5 text-[15px]">{faq.q}</strong>
+              <p className="text-pine/65 text-sm leading-relaxed">{faq.a}</p>
+            </div>
+          ))}
+        </div>
+      </div>
 
-        {/* CTA Footer */}
-        <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-pine/5 text-center">
-          <h2 className="font-serif text-4xl mb-4 text-pine">Your Sunday Sorted</h2>
-          <p className="text-pine leading-relaxed max-w-xl mx-auto mb-8">
-            Gather the family, skip the cooking, and enjoy a proper roast. Pre-order online for a guaranteed table or collection slot.
+      {/* ── CTA FOOTER ── Dark editorial block */}
+      <div className="bg-pine text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-24 text-center">
+          <span className="text-terracotta font-bold tracking-widest uppercase text-[10px] block mb-4">260 Farnham Road, Slough</span>
+          <h2 className="font-serif text-4xl sm:text-5xl mb-5">Your Sunday Sorted</h2>
+          <p className="text-white/60 leading-relaxed max-w-md mx-auto mb-10">
+            Gather the family, skip the cooking, and let us handle a proper roast. Pre-order online or book a table.
           </p>
 
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-10">
-            <div className="flex items-center gap-2 text-pine font-bold">
-              <MapPin className="text-terracotta" /> 260 Farnham Road, SL1 4XL
-            </div>
-            <div className="flex items-center gap-2 text-pine font-bold">
-              <Clock className="text-terracotta" /> Sundays 12:00 PM – 5:00 PM
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/slough/menu#sunday_roast" className="px-8 py-4 bg-terracotta text-white rounded-full font-bold hover:shadow-lg transition-all active:scale-95">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-12">
+            <Link href="/slough/menu#sunday_roast" className="w-full sm:w-auto px-10 py-4 bg-terracotta text-white rounded-full font-black text-xs uppercase tracking-wider hover:bg-terracotta/80 transition-all shadow-lg active:scale-95 text-center">
               Order Sunday Roast
             </Link>
-            <Link href="/book" className="px-8 py-4 bg-pine text-white rounded-full font-bold hover:shadow-lg transition-all active:scale-95">
+            <Link href="/book" className="w-full sm:w-auto px-10 py-4 bg-white/10 backdrop-blur-sm text-white rounded-full font-black text-xs uppercase tracking-wider hover:bg-white/20 transition-all border border-white/20 active:scale-95 text-center">
               Book a Table
             </Link>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-white/50 text-xs">
+            <div className="flex items-center gap-2">
+              <MapPin size={14} className="text-terracotta" /> SL1 4XL
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock size={14} className="text-terracotta" /> Sundays 12 – 5 PM
+            </div>
+            <div className="flex items-center gap-2">
+              📞 01753 326341
+            </div>
           </div>
         </div>
       </div>
