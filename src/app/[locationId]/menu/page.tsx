@@ -1347,6 +1347,8 @@ function MenuPageContent() {
       SHOP_CONFIG={SHOP_CONFIG}
       activePromo={activePromo}
       desktopOrderSummary={desktopOrderSummary}
+      setVoucherDiscountPercent={setVoucherDiscountPercent}
+      setVoucherFixedDiscount={setVoucherFixedDiscount}
       tableSession={tableSession ?? undefined}
       allergenAcknowledged={allergenAcknowledged}
       setAllergenAcknowledged={setAllergenAcknowledged}

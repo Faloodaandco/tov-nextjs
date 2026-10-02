@@ -11,7 +11,7 @@ import { formatCurrency } from '@/utils/formatters';
 const LiveOrderTracker = (p: any) => <div />;
 export function CartDrawer(p: any) {
   const {
-    isCartOpen, setIsCartOpen, checkoutStep, setCheckoutStep, cart, clearCart, lastOrder, handleReorderLastMeal, removeFromCart, updateQuantity, addToCart, upsellSuggestions, SIZE_CATEGORIES, setSizePickerItem, tableParam, setFulfillmentType, fulfillmentType, activeDeliveryTier, discountedSubtotal, activeLocation, deliveryFee, isDeliveryOrder, postcodeError, setPostcodeError, customVoucher, setCustomVoucher, setVoucherError, appliedVoucher, setAppliedVoucher, voucherError, cartTotal, promoDiscount, ACTIVE_PROMO, isPromoTimeValid, serviceFee, finalCartTotal, isKitchenClosed, isBelowMinOrder, minOrder, minOrderRemaining, minOrderProgress, handleProceedToDetails, customerInfo, setCustomerInfo, phoneError, setPhoneError, getPhoneError, deliveryAddress, setDeliveryAddress, setIsLocationModalOpen, isPostcodeInDeliveryZone, marketingOptIn, setMarketingOptIn, submitOrder, isSubmitting, paymentMethod, setPaymentMethod, completedOrder, setCompletedOrder, handleSquarePaymentSuccess, getWhatsAppOrderLink, pushAlertActive, setPushAlertActive, requestPushPermission, SHOP_CONFIG, activePromo, desktopOrderSummary, tableSession
+    isCartOpen, setIsCartOpen, checkoutStep, setCheckoutStep, cart, clearCart, lastOrder, handleReorderLastMeal, removeFromCart, updateQuantity, addToCart, upsellSuggestions, SIZE_CATEGORIES, setSizePickerItem, tableParam, setFulfillmentType, fulfillmentType, activeDeliveryTier, discountedSubtotal, activeLocation, deliveryFee, isDeliveryOrder, postcodeError, setPostcodeError, customVoucher, setCustomVoucher, setVoucherError, appliedVoucher, setAppliedVoucher, voucherError, cartTotal, promoDiscount, ACTIVE_PROMO, isPromoTimeValid, serviceFee, finalCartTotal, isKitchenClosed, isBelowMinOrder, minOrder, minOrderRemaining, minOrderProgress, handleProceedToDetails, customerInfo, setCustomerInfo, phoneError, setPhoneError, getPhoneError, deliveryAddress, setDeliveryAddress, setIsLocationModalOpen, isPostcodeInDeliveryZone, marketingOptIn, setMarketingOptIn, submitOrder, isSubmitting, paymentMethod, setPaymentMethod, completedOrder, setCompletedOrder, handleSquarePaymentSuccess, getWhatsAppOrderLink, pushAlertActive, setPushAlertActive, requestPushPermission, SHOP_CONFIG, activePromo, desktopOrderSummary, setVoucherDiscountPercent, setVoucherFixedDiscount, tableSession
   } = p;
 
   React.useEffect(() => {
@@ -390,6 +390,14 @@ export function CartDrawer(p: any) {
                           if (promoResult.valid) {
                             setAppliedVoucher(code);
                             setVoucherError('');
+                            // Store discount values so the cart total reflects the actual discount
+                            if (promoResult.discountType === 'PERCENTAGE' && promoResult.discountPercent > 0) {
+                              setVoucherDiscountPercent(promoResult.discountPercent);
+                              setVoucherFixedDiscount(0);
+                            } else if (promoResult.discountType === 'FIXED_AMOUNT' && promoResult.fixedAmountPence > 0) {
+                              setVoucherFixedDiscount(promoResult.fixedAmountPence / 100);
+                              setVoucherDiscountPercent(0);
+                            }
                           } else {
                             setVoucherError(promoResult.reason || result.reason || 'Invalid code');
                             setAppliedVoucher(null);
@@ -409,9 +417,9 @@ export function CartDrawer(p: any) {
                 {appliedVoucher && (
                   <div className="flex items-center justify-between text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100 mt-2">
                     <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5">
-                      <CheckCircle2 size={12} /> {appliedVoucher} Applied
+                      <CheckCircle2 size={12} /> {appliedVoucher} Applied{promoDiscount > 0 && <> (-{formatCurrency(promoDiscount)})</>}
                     </span>
-                    <button aria-label="Remove voucher" onClick={() => { setAppliedVoucher(null); setCustomVoucher(''); }} className="text-emerald-700/50 hover:text-emerald-700">
+                    <button aria-label="Remove voucher" onClick={() => { setAppliedVoucher(null); setCustomVoucher(''); setVoucherDiscountPercent(0); setVoucherFixedDiscount(0); }} className="text-emerald-700/50 hover:text-emerald-700">
                       <X size={14} />
                     </button>
                   </div>
