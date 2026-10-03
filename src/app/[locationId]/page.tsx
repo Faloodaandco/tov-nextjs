@@ -295,6 +295,19 @@ export default function TOVHome() {
         {/* Subtle Ambient Background Glows */}
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-terracotta/20 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
+        {/* CNC Diamond Pattern — opacity 0.35 (photos are hero) */}
+        <div
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          aria-hidden="true"
+          style={{
+            backgroundImage: "url('/assets/tov-pattern-light.svg')",
+            backgroundRepeat: 'repeat',
+            backgroundSize: '80px 80px',
+            opacity: 0.35,
+            WebkitMaskImage: 'radial-gradient(ellipse at center, transparent 10%, black 60%)',
+            maskImage: 'radial-gradient(ellipse at center, transparent 10%, black 60%)',
+          }}
+        />
         
         <div className="max-w-7xl mx-auto relative z-10">
           {/* Header */}
@@ -321,7 +334,7 @@ export default function TOVHome() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="group bg-[#231A15] border-2 border-pine/40 hover:border-terracotta transition-all duration-500 flex flex-col overflow-hidden shadow-2xl"
+              className="group bg-[#231A15] border-2 border-pine/40 hover:border-terracotta transition-all duration-500 flex flex-col overflow-hidden shadow-2xl rounded-2xl"
             >
               {/* Image Frame */}
               <div className="relative overflow-hidden aspect-[4/5] sm:aspect-[16/11] lg:aspect-[4/5]">
@@ -376,7 +389,7 @@ export default function TOVHome() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="group bg-[#231A15] border-2 border-pine/40 hover:border-terracotta transition-all duration-500 flex flex-col overflow-hidden shadow-2xl"
+              className="group bg-[#231A15] border-2 border-pine/40 hover:border-terracotta transition-all duration-500 flex flex-col overflow-hidden shadow-2xl rounded-2xl"
             >
               {/* Image Frame */}
               <div className="relative overflow-hidden aspect-[4/5] sm:aspect-[16/11] lg:aspect-[4/5]">
@@ -436,7 +449,7 @@ export default function TOVHome() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="group bg-[#231A15] border border-white/10 hover:border-terracotta/60 transition-all duration-300 overflow-hidden flex flex-col"
+              className="group bg-[#231A15] border border-white/10 hover:border-terracotta/60 transition-all duration-300 overflow-hidden flex flex-col rounded-2xl"
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <img 
@@ -467,7 +480,7 @@ export default function TOVHome() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="group bg-[#231A15] border border-white/10 hover:border-terracotta/60 transition-all duration-300 overflow-hidden flex flex-col"
+              className="group bg-[#231A15] border border-white/10 hover:border-terracotta/60 transition-all duration-300 overflow-hidden flex flex-col rounded-2xl"
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <img 
@@ -498,7 +511,7 @@ export default function TOVHome() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="group bg-[#231A15] border border-white/10 hover:border-terracotta/60 transition-all duration-300 overflow-hidden flex flex-col"
+              className="group bg-[#231A15] border border-white/10 hover:border-terracotta/60 transition-all duration-300 overflow-hidden flex flex-col rounded-2xl"
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <img 
@@ -529,6 +542,19 @@ export default function TOVHome() {
 
       {/* ─── LOCAL FLAGSHIP VISITOR & LOCAL HUB ─── */}
       <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-pine text-bg-sand border-b-4 border-terracotta relative overflow-hidden">
+        {/* CNC Diamond Pattern — opacity 0.3 (text-heavy, needs clarity) */}
+        <div
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          aria-hidden="true"
+          style={{
+            backgroundImage: "url('/assets/tov-pattern-light.svg')",
+            backgroundRepeat: 'repeat',
+            backgroundSize: '80px 80px',
+            opacity: 0.3,
+            WebkitMaskImage: 'radial-gradient(ellipse at center, transparent 10%, black 60%)',
+            maskImage: 'radial-gradient(ellipse at center, transparent 10%, black 60%)',
+          }}
+        />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="text-amber-300 text-xs font-black uppercase tracking-[0.25em] block mb-2">
@@ -652,46 +678,73 @@ export default function TOVHome() {
         </div>
       </section>
 
-      {/* Brand Story Section */}
+      {/* Brand Story Section — Premium Editorial */}
       <motion.section 
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="py-32 px-6 bg-bg-sand text-pine relative tov-feature-wall"
+        className="py-24 md:py-36 px-6 bg-bg-sand text-pine relative overflow-hidden"
       >
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-20 items-center">
-          <div className="space-y-8 pr-8">
-            <div className="flex flex-col items-start gap-4">
-              <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="" className="h-16 md:h-20 w-auto object-contain opacity-90 drop-shadow-[0_4px_12px_rgba(138,61,42,0.15)]" />
-              <h2 className="font-display text-4xl md:text-5xl font-black tracking-[0.15em] text-pine">OUR HERITAGE</h2>
+        {/* Subtle warm ambient glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-terracotta/[0.04] rounded-full blur-[120px] pointer-events-none" />
+        
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 md:gap-16 lg:gap-24 items-center relative z-10">
+          {/* Text Column */}
+          <div className="space-y-6 md:space-y-8">
+            <div className="flex items-center gap-4">
+              <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="" className="h-12 md:h-14 w-auto object-contain opacity-80" />
+              <div className="w-px h-10 bg-pine/15" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-terracotta/70">Est. 2017</span>
             </div>
-            <div className="tov-frieze w-32"></div>
-            <p className="text-xl leading-relaxed text-pine/80 font-medium normal-case">
-              Our journey began in 2017 with <strong>"Hayes Paan and Snacks Corner"</strong>. Driven by a relentless passion for the rich, authentic flavours of Pakistani Punjab—specifically Lahore, the region's food capital, and Gujranwala, its culinary haven—we evolved.
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-black tracking-[0.08em] text-pine leading-[1.1]">OUR HERITAGE</h2>
+            <div className="w-20 h-[3px] bg-terracotta/40 rounded-full" />
+            <p className="text-base md:text-lg leading-[1.8] text-pine/75 font-medium normal-case">
+              Our journey began in 2017 with <strong className="text-pine">&ldquo;Hayes Paan and Snacks Corner&rdquo;</strong>. Driven by a relentless passion for the rich, authentic flavours of Pakistani Punjab — specifically Lahore, the region&apos;s food capital, and Gujranwala, its culinary haven — we evolved.
             </p>
-            <p className="text-xl leading-relaxed text-pine/80 font-medium normal-case">
+            <p className="text-base md:text-lg leading-[1.8] text-pine/75 font-medium normal-case">
               In 2022, we rebranded as <strong className="text-terracotta">Taste of Village</strong> to reflect our true calling: bringing the warmth, spice, and uncompromising quality of traditional, village-style Desi cooking to London.
             </p>
-            <blockquote className="text-2xl leading-relaxed text-terracotta font-serif italic border-l-4 border-terracotta pl-8 normal-case mt-8">
-              "Authentic Flavours. Charcoal Perfection. We don't just cook food; we share our culture, our home, and our history on every plate."
-            </blockquote>
-          </div>
-          <div className="relative h-[600px] w-full overflow-hidden border-8 border-bg-sand shadow-[16px_16px_0px_rgba(20,40,29,1)] bibi-hover-container group rounded-none">
-            <motion.div 
-              whileHover={{ scale: 1.05 }} 
-              transition={{ duration: 0.8 }}
-              className="absolute inset-0 w-full h-full"
+            
+            {/* Premium Blockquote */}
+            <div className="relative pl-8 py-4 mt-4">
+              <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-terracotta via-terracotta/60 to-transparent rounded-full" />
+              <span className="absolute -left-1 -top-2 text-5xl text-terracotta/20 font-serif leading-none select-none" aria-hidden="true">&ldquo;</span>
+              <blockquote className="text-lg md:text-xl leading-relaxed text-pine/60 font-serif italic normal-case">
+                Authentic Flavours. Charcoal Perfection. We don&apos;t just cook food; we share our culture, our home, and our history on every plate.
+              </blockquote>
+            </div>
+
+            {/* Subtle CTA */}
+            <Link
+              href={`/${branchLoc.id}/menu`}
+              className="inline-flex items-center gap-3 text-xs font-black uppercase tracking-[0.2em] text-terracotta hover:text-pine transition-colors group mt-2"
             >
-              <img 
-                src="/assets/lamb_karahi_hero.webp" 
-                alt="Authentic Lamb Karahi sizzling over open fire" 
-                className="w-full h-full object-cover bibi-hover-image"
-              />
-            </motion.div>
-            {/* Geometric Architectural Corner Accents */}
-            <div className="absolute top-4 left-4 w-8 h-8 border-t-4 border-l-4 border-bg-sand z-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div className="absolute bottom-4 right-4 w-8 h-8 border-b-4 border-r-4 border-bg-sand z-10 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+              <span>Explore Our Menu</span>
+              <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+            </Link>
+          </div>
+
+          {/* Image Column — Warm, organic frame */}
+          <div className="relative">
+            <div className="relative overflow-hidden rounded-3xl shadow-[0_24px_64px_-16px_rgba(26,60,52,0.20)] group">
+              <motion.div 
+                whileHover={{ scale: 1.04 }} 
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="w-full aspect-[3/4] md:aspect-[4/5]"
+              >
+                <img 
+                  src="/assets/lamb_karahi_hero.webp" 
+                  alt="Authentic Lamb Karahi sizzling over open fire" 
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+              {/* Warm bottom fade for depth */}
+              <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+            </div>
+            {/* Floating accent detail */}
+            <div className="absolute -bottom-4 -right-4 w-24 h-24 border-2 border-terracotta/15 rounded-2xl pointer-events-none" />
+            <div className="absolute -top-4 -left-4 w-16 h-16 border-2 border-pine/10 rounded-xl pointer-events-none" />
           </div>
         </div>
       </motion.section>
@@ -707,7 +760,20 @@ export default function TOVHome() {
         transition={{ duration: 0.8 }}
         className="py-32 px-6 bg-pine text-bg-sand border-t-[12px] border-terracotta relative tov-pattern-light overflow-hidden"
       >
-        <div className="max-w-7xl mx-auto text-center">
+        {/* CNC Diamond Pattern — opacity 0.4 (decorative section) */}
+        <div
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          aria-hidden="true"
+          style={{
+            backgroundImage: "url('/assets/tov-pattern-light.svg')",
+            backgroundRepeat: 'repeat',
+            backgroundSize: '80px 80px',
+            opacity: 0.4,
+            WebkitMaskImage: 'radial-gradient(ellipse at center, transparent 10%, black 60%)',
+            maskImage: 'radial-gradient(ellipse at center, transparent 10%, black 60%)',
+          }}
+        />
+        <div className="max-w-7xl mx-auto text-center relative z-10">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -727,12 +793,12 @@ export default function TOVHome() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="p-10 bg-white/5 border-2 border-white/10 hover:border-terracotta/60 hover:bg-white/10 transition-all duration-300 group cursor-pointer relative overflow-hidden shadow-[8px_8px_0px_rgba(20,40,29,1)] hover:shadow-[16px_16px_0px_rgba(20,40,29,1)] hover:-translate-y-2 hover:-translate-x-2 flex flex-col items-center text-center rounded-none"
+              className="p-10 bg-white/5 border-2 border-white/10 hover:border-terracotta/60 hover:bg-white/10 transition-all duration-300 group cursor-pointer relative overflow-hidden shadow-xl hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center rounded-2xl"
               onClick={() => handleCategoryClick(isSlough ? 'mains___village_classics' : 'curries_salan_se')}
             >
-              <div className="absolute inset-0 border-2 border-white/5 pointer-events-none rounded-none"></div>
+              <div className="absolute inset-0 border-2 border-white/5 pointer-events-none rounded-2xl"></div>
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-terracotta to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="p-4 rounded-none border-2 border-white/10 bg-white/5 mb-8 group-hover:bg-terracotta/20 transition-colors duration-500">
+              <div className="p-4 rounded-xl border-2 border-white/10 bg-white/5 mb-8 group-hover:bg-terracotta/20 transition-colors duration-500">
                 <UtensilsCrossed className="w-10 h-10 text-bg-sand group-hover:text-terracotta-light group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 drop-shadow-md" />
               </div>
               <h3 className="font-display text-2xl font-bold mb-4 tracking-[0.1em] text-white">AUTHENTIC KARAHI</h3>
@@ -748,12 +814,12 @@ export default function TOVHome() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="p-10 bg-white/5 border-2 border-white/10 hover:border-terracotta/60 hover:bg-white/10 transition-all duration-300 group cursor-pointer relative overflow-hidden shadow-[8px_8px_0px_rgba(20,40,29,1)] hover:shadow-[16px_16px_0px_rgba(20,40,29,1)] hover:-translate-y-2 hover:-translate-x-2 flex flex-col items-center text-center rounded-none"
+              className="p-10 bg-white/5 border-2 border-white/10 hover:border-terracotta/60 hover:bg-white/10 transition-all duration-300 group cursor-pointer relative overflow-hidden shadow-xl hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center rounded-2xl"
               onClick={() => handleCategoryClick(isSlough ? 'breakfast___desi_nashta' : 'curries_salan_se')}
             >
-              <div className="absolute inset-0 border-2 border-white/5 pointer-events-none rounded-none"></div>
+              <div className="absolute inset-0 border-2 border-white/5 pointer-events-none rounded-2xl"></div>
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-terracotta to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"></div>
-              <div className="p-4 rounded-none border-2 border-white/10 bg-white/5 mb-8 group-hover:bg-terracotta/20 transition-colors duration-500">
+              <div className="p-4 rounded-xl border-2 border-white/10 bg-white/5 mb-8 group-hover:bg-terracotta/20 transition-colors duration-500">
                 <ChefHat className="w-10 h-10 text-bg-sand group-hover:text-terracotta-light group-hover:scale-110 group-hover:-rotate-12 transition-all duration-500 drop-shadow-md" />
               </div>
               <h3 className="font-display text-2xl font-bold mb-4 tracking-[0.1em] text-white">HALEEM & NIHARI</h3>
@@ -769,12 +835,12 @@ export default function TOVHome() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="p-10 bg-white/5 border-2 border-white/10 hover:border-terracotta/60 hover:bg-white/10 transition-all duration-300 group cursor-pointer relative overflow-hidden shadow-[8px_8px_0px_rgba(20,40,29,1)] hover:shadow-[16px_16px_0px_rgba(20,40,29,1)] hover:-translate-y-2 hover:-translate-x-2 flex flex-col items-center text-center rounded-none"
+              className="p-10 bg-white/5 border-2 border-white/10 hover:border-terracotta/60 hover:bg-white/10 transition-all duration-300 group cursor-pointer relative overflow-hidden shadow-xl hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center rounded-2xl"
               onClick={() => handleCategoryClick(isSlough ? 'starters_n_charcoal_grill' : 'bbq_platter')}
             >
-              <div className="absolute inset-0 border-2 border-white/5 pointer-events-none rounded-none"></div>
+              <div className="absolute inset-0 border-2 border-white/5 pointer-events-none rounded-2xl"></div>
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-terracotta to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200"></div>
-              <div className="p-4 rounded-none border-2 border-white/10 bg-white/5 mb-8 group-hover:bg-terracotta/20 transition-colors duration-500">
+              <div className="p-4 rounded-xl border-2 border-white/10 bg-white/5 mb-8 group-hover:bg-terracotta/20 transition-colors duration-500">
                 <Flame className="w-10 h-10 text-bg-sand group-hover:text-terracotta-light group-hover:scale-110 transition-all duration-500 drop-shadow-md" />
               </div>
               <h3 className="font-display text-2xl font-bold mb-4 tracking-[0.1em] text-white">SIZZLING MIX GRILLS</h3>
@@ -959,7 +1025,7 @@ export default function TOVHome() {
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-around items-center gap-12 text-bg-sand relative z-10">
           <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-6 group cursor-pointer">
-            <div className="p-4 bg-bg-sand/10 rounded-none border-2 border-bg-sand/30 group-hover:bg-bg-sand/20 transition-colors">
+            <div className="p-4 bg-bg-sand/10 rounded-xl border-2 border-bg-sand/30 group-hover:bg-bg-sand/20 transition-colors">
               <Clock className="w-8 h-8" />
             </div>
             <div>
@@ -973,7 +1039,7 @@ export default function TOVHome() {
             className="flex items-center gap-6 group cursor-pointer" 
             onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(branchLoc.address + ' ' + branchLoc.postcode)}`, '_blank')}
           >
-            <div className="p-4 bg-bg-sand/10 rounded-none border-2 border-bg-sand/30 group-hover:bg-bg-sand/20 transition-colors bg-pine">
+            <div className="p-4 bg-bg-sand/10 rounded-xl border-2 border-bg-sand/30 group-hover:bg-bg-sand/20 transition-colors bg-pine">
               <MapPin className="w-8 h-8 text-white" />
             </div>
             <div>

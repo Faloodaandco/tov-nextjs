@@ -19,15 +19,17 @@ export const Footer = () => {
 
   return (
     <footer className="relative bg-pine text-bg-sand pt-24 pb-12 mt-20 overflow-hidden">
-      {/* Full-bleed Motif Pattern Background */}
+      {/* CNC Diamond Pattern — IMPROVEMENT: radial mask fades center for readability */}
       <div
         className="absolute inset-0 w-full h-full pointer-events-none"
         aria-hidden="true"
         style={{
-          backgroundImage: "url('/assets/tov-pattern.svg')",
+          backgroundImage: "url('/assets/tov-pattern-light.svg')",
           backgroundRepeat: 'repeat',
-          backgroundSize: '90px 90px',
-          opacity: 0.05,
+          backgroundSize: '80px 80px',
+          opacity: 0.5,
+          WebkitMaskImage: 'radial-gradient(ellipse at center, transparent 15%, black 65%)',
+          maskImage: 'radial-gradient(ellipse at center, transparent 15%, black 65%)',
         }}
       />
       {/* Gradient fade from page background into footer */}
