@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, RotateCcw, Minus, Plus, Ticket, MapPin, CreditCard, Clock, CheckCircle2, MessageCircle, AlertCircle, Printer, Bell, Truck, Store, Info } from 'lucide-react';
+import { X, RotateCcw, Loader2, Minus, Plus, Ticket, MapPin, CreditCard, Clock, CheckCircle2, MessageCircle, AlertCircle, Printer, Bell, Truck, Store, Info } from 'lucide-react';
 import { SquarePaymentForm } from '@/components/SquarePaymentForm';
 
 import { getDeliveryTier, ACTIVE_PROMO } from '@/config/shopConfig';
@@ -907,6 +907,102 @@ export function CartDrawer(p: any) {
                         )
                       )}
                       
+                      {/* Voucher Code Input */}
+              <div className="mb-4 bg-white p-3 rounded-xl border border-pine/10 shadow-sm">
+                <div className="flex gap-2">
+                  <div className="flex-1 flex items-center bg-[#F7F2E7] rounded-lg border border-transparent focus-within:ring-2 focus-within:ring-terracotta/20 focus-within:border-terracotta/30 transition-all">
+                    <Ticket size={14} className="text-pine/30 ml-3 shrink-0" />
+                    <input
+                      type="text"
+                      placeholder="Enter discount code"
+                      value={customVoucher}
+                      onChange={(e) => {
+                        setCustomVoucher(e.target.value.toUpperCase());
+                        setVoucherError('');
+                      }}
+                      className="flex-1 bg-transparent px-2.5 py-2 text-base sm:text-sm font-bold text-pine uppercase focus:outline-none placeholder:text-pine/30 placeholder:normal-case"
+                    />
+                  </div>
+                  <button
+                    onClick={async () => {
+                      const code = customVoucher.trim();
+                      if (!code) return;
+
+                      // BREAKFAST40 is handled locally (standard promo)
+                      if (code.toUpperCase() === 'BREAKFAST40') {
+                        setAppliedVoucher(null);
+                        setVoucherError('');
+                        // Breakfast promo is applied via activePromo in StoreContext
+                        return;
+                      }
+
+                      // All other codes: try vouchers first, then promos as fallback
+                      try {
+                        setVoucherError('');
+                        const res = await fetch('/api/vouchers/validate', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            code,
+                            phone: customerInfo?.phone || '',
+                            branchId: activeLocation.id,
+                            subtotalPence: Math.round(cartTotal * 100),
+                          }),
+                        });
+                        const result = await res.json();
+                        if (result.valid) {
+                          setAppliedVoucher(code);
+                          setVoucherError('');
+                        } else {
+                          // Voucher not found — try promos collection as fallback
+                          const promoRes = await fetch('/api/promos/validate', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              code,
+                              branchId: activeLocation.id,
+                              subtotalPence: Math.round(cartTotal * 100),
+                            }),
+                          });
+                          const promoResult = await promoRes.json();
+                          if (promoResult.valid) {
+                            setAppliedVoucher(code);
+                            setVoucherError('');
+                            // Store discount values so the cart total reflects the actual discount
+                            if (promoResult.discountType === 'PERCENTAGE' && promoResult.discountPercent > 0) {
+                              setVoucherDiscountPercent(promoResult.discountPercent);
+                              setVoucherFixedDiscount(0);
+                            } else if (promoResult.discountType === 'FIXED_AMOUNT' && promoResult.fixedAmountPence > 0) {
+                              setVoucherFixedDiscount(promoResult.fixedAmountPence / 100);
+                              setVoucherDiscountPercent(0);
+                            }
+                          } else {
+                            setVoucherError(promoResult.reason || result.reason || 'Invalid code');
+                            setAppliedVoucher(null);
+                          }
+                        }
+                      } catch {
+                        setVoucherError('Could not validate code. Please try again.');
+                        setAppliedVoucher(null);
+                      }
+                    }}
+                    className="bg-pine text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-terracotta transition-colors"
+                  >
+                    Apply
+                  </button>
+                </div>
+                {voucherError && <p className="text-red-500 text-[10px] mt-1.5 font-bold uppercase tracking-wider px-1">{voucherError}</p>}
+                {appliedVoucher && (
+                  <div className="flex items-center justify-between text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100 mt-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5">
+                      <CheckCircle2 size={12} /> {appliedVoucher} Applied{promoDiscount > 0 && <> (-{formatCurrency(promoDiscount)})</>}
+                    </span>
+                    <button aria-label="Remove voucher" onClick={() => { setAppliedVoucher(null); setCustomVoucher(''); setVoucherDiscountPercent(0); setVoucherFixedDiscount(0); }} className="text-emerald-700/50 hover:text-emerald-700">
+                      <X size={14} />
+                    </button>
+                  </div>
+                )}
+              </div>
                       <div className="bg-white/80 border border-pine/10 rounded-2xl p-3.5 mb-4 text-xs text-pine shadow-sm">
                         <div className="flex items-center gap-2 font-semibold text-pine mb-1">
                           <Info size={14} className="text-terracotta shrink-0" />
@@ -930,13 +1026,29 @@ export function CartDrawer(p: any) {
                       </div>
 
                       {(activeLocation as any).square?.enabled && (activeLocation as any).square?.appId && (activeLocation as any).square?.locationId ? (
-                        <div className="relative">
-                          {!(p.allergenAcknowledged) && (
-                            <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-[2px] rounded-xl flex items-center justify-center">
-                              <p className="text-xs font-bold text-amber-800 text-center px-4">☝️ Please tick the allergen acknowledgement above to unlock payment</p>
-                            </div>
-                          )}
-                        <SquarePaymentForm
+                        finalCartTotal <= 0 ? (
+                          <div className="relative">
+                            {!(p.allergenAcknowledged) && (
+                              <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-[2px] rounded-xl flex items-center justify-center">
+                                <p className="text-xs font-bold text-amber-800 text-center px-4">⚠️ Please tick the allergen acknowledgement above to unlock payment</p>
+                              </div>
+                            )}
+                            <button
+                              onClick={(e) => submitOrder(e, 'collection')}
+                              disabled={isSubmitting || !p.allergenAcknowledged}
+                              className="w-full py-4 px-6 bg-pine text-white font-black hover:bg-terracotta active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed uppercase tracking-[0.2em] shadow-xl hover:shadow-2xl relative overflow-hidden group rounded-xl flex items-center justify-center gap-3"
+                            >
+                              {isSubmitting ? <span className="flex items-center gap-2"><Loader2 className="animate-spin" size={20} /> Processing...</span> : 'Complete Free Order'}
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="relative">
+                            {!(p.allergenAcknowledged) && (
+                              <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-[2px] rounded-xl flex items-center justify-center">
+                                <p className="text-xs font-bold text-amber-800 text-center px-4">⚠️ Please tick the allergen acknowledgement above to unlock payment</p>
+                              </div>
+                            )}
+                            <SquarePaymentForm
                           total={finalCartTotal}
                           branchName={activeLocation.name}
                           appId={(activeLocation as any).square.appId}
@@ -982,6 +1094,7 @@ export function CartDrawer(p: any) {
                           isSubmittingOrder={isSubmitting}
                         />
                         </div>
+                      )
                       ) : null}
                     </div>
                   </div>

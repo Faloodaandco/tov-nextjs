@@ -71,7 +71,7 @@ test.describe('Discount & Pricing', () => {
   test('checkout API resolves sized item IDs (_large and _regular)', async ({ request }) => {
     const res = await request.post(`${BASE}/api/checkout/square`, {
       data: {
-        cart: [{ id: 'tov_slough_nihari_large', quantity: 1, price: 12.98 }],
+        cart: [{ id: 'tov_slough_special_nihari_large', quantity: 1, price: 12.98 }],
         customer: { name: 'Test Sized', phone: '07000000000' },
         sourceId: 'cnon:card-nonce-ok',
         branch: 'slough',

@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3002',
+    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3011',
     trace: 'on-first-retry',
   },
   projects: [
@@ -16,8 +16,8 @@ export default defineConfig({
     { name: 'mobile', use: { ...devices['Pixel 7'] } },
   ],
   webServer: {
-    command: 'npx next start -p 3002',
-    url: 'http://localhost:3002',
+    command: 'npx next start -p 3011 -p 3011',
+    url: 'http://localhost:3011',
     reuseExistingServer: true,
     timeout: 120_000,
   },

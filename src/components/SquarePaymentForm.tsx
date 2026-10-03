@@ -94,12 +94,28 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
   const applePayRef = useRef<any>(null);
   const googlePayRef = useRef<any>(null);
   const paymentsRef = useRef<any>(null);
+  const reqRef = useRef<any>(null);
   const totalRef = useRef(total);
   const customerDetailsRef = useRef(customerDetails);
 
   useEffect(() => {
     totalRef.current = total;
   }, [total]);
+
+  useEffect(() => {
+    if (reqRef.current && total !== undefined) {
+      try {
+        reqRef.current.update({
+          total: {
+            amount: Math.max(0.50, total || 0.50).toFixed(2),
+            label: branchName || 'Taste of Village',
+          }
+        });
+      } catch (err) {
+        console.error('[SquarePaymentForm] Failed to update payment request total:', err);
+      }
+    }
+  }, [total, branchName]);
 
   useEffect(() => {
     customerDetailsRef.current = customerDetails;
@@ -200,6 +216,7 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
             label: branchName || 'Taste of Village',
           },
         });
+        reqRef.current = req;
 
         // 3. Concurrently Initialize Apple Pay
         (async () => {
@@ -289,9 +306,12 @@ export const SquarePaymentForm: React.FC<SquarePaymentFormProps> = ({
       }
     };
 
-    initializeSquare();
+    const timer = setTimeout(() => {
+      if (isMounted) initializeSquare();
+    }, 400);
 
     return () => {
+      clearTimeout(timer);
       isMounted = false;
       setCardReady(false);
       if (cardRef.current) {
