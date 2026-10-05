@@ -12,6 +12,16 @@ const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
 
 function isRateLimited(ip: string, maxRequests: number): boolean {
   const now = Date.now();
+
+  // Periodic eviction to prevent unbounded memory growth in long-running instances
+  if (rateLimitMap.size > 1000) {
+    for (const [key, value] of rateLimitMap.entries()) {
+      if (now > value.resetAt) {
+        rateLimitMap.delete(key);
+      }
+    }
+  }
+
   const entry = rateLimitMap.get(ip);
 
   if (!entry || now > entry.resetAt) {
@@ -62,7 +72,6 @@ export const config = {
     '/api/loyalty/:path*',
     '/api/checkout/:path*',
     '/api/delivery/:path*',
-    '/api/webhooks/:path*'
   ],
 };
 

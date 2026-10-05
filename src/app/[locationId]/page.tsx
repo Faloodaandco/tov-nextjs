@@ -89,7 +89,7 @@ export default function TOVHome() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-bg-sand text-brand-text font-sans uppercase">
+    <div className="min-h-screen bg-bg-sand text-brand-text font-sans">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getRestaurantSchema(branchLoc.id)) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(getFaqSchema(branchLoc.id)) }} />
 
@@ -126,7 +126,7 @@ export default function TOVHome() {
             className="flex flex-col items-center mb-6"
           >
             <img 
-              src="/assets/tov-logo-full-terracotta-alpha.png"
+              src="/assets/tov-logo-full-terracotta-alpha.png" 
               alt="Taste of Village"
               className="w-56 sm:w-72 md:w-88 h-auto object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)] brightness-0 invert"
             />
@@ -155,9 +155,10 @@ export default function TOVHome() {
               <span>Order {branchLoc.id === 'hayes' ? 'Hayes' : 'Slough'} Menu</span>
               <ArrowRight size={16} />
             </Link>
-            <button aria-label="Button" 
+            <button 
+              aria-label={`Switch branch location from ${branchLoc.name}`}
               onClick={() => setIsLocationModalOpen(true)}
-              className="w-full sm:w-auto bg-white/10 backdrop-blur-md text-bg-sand py-3.5 px-6 font-sans uppercase font-bold text-xs sm:text-sm hover:bg-white/20 hover:-translate-y-0.5 active:scale-[0.98] transition-all shadow-md tracking-[0.15em] rounded-full border border-white/20 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto bg-white/10 backdrop-blur-md text-bg-sand py-3.5 px-6 font-sans uppercase font-bold text-xs sm:text-sm hover:bg-white/20 hover:-translate-y-0.5 active:scale-[0.98] transition-all shadow-md tracking-[0.15em] rounded-full border border-white/20 flex items-center justify-center gap-2 cursor-pointer"
             >
               <MapPin size={15} className="text-amber-300" />
               <span>Switch Branch</span>
@@ -171,16 +172,16 @@ export default function TOVHome() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[11px] sm:text-xs font-bold text-bg-sand/90"
           >
-            <span className="px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center gap-1.5 text-amber-300">
-              <span>⭐</span>
+            <span className="px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center gap-2 text-amber-300">
+              <Sparkles size={13} className="text-amber-300 shrink-0" />
               <span>{isSlough ? 'Food Hygiene Rating 5 (Very Good)' : 'Food Hygiene Rating 4 (Good)'}</span>
             </span>
-            <span className="px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center gap-1.5 text-emerald-300">
-              <span>✓</span>
+            <span className="px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center gap-2 text-emerald-300">
+              <CheckCircle size={13} className="text-emerald-400 shrink-0" />
               <span>100% Halal Certified</span>
             </span>
-            <span className="px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center gap-1.5 text-bg-sand">
-              <MapPin size={12} className="text-terracotta" />
+            <span className="px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center gap-2 text-bg-sand">
+              <MapPin size={13} className="text-terracotta shrink-0" />
               <span>{branchLoc.address}</span>
             </span>
           </motion.div>
@@ -192,7 +193,8 @@ export default function TOVHome() {
             transition={{ duration: 0.8, delay: 0.7 }}
             className="mt-4 flex flex-wrap items-center justify-center gap-3"
           >
-            <a aria-label="Phone"
+            <a 
+              aria-label={`Call Taste of Village ${branchLoc.name}`}
               href={`tel:${branchLoc.phone.replace(/\s+/g, '')}`}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 hover:bg-black/60 text-white text-xs font-bold tracking-wider uppercase border border-white/20 transition-all hover:scale-105"
             >

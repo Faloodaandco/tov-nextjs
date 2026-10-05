@@ -18,7 +18,7 @@ export default function HomeSelector() {
   const navigateTo = (e: React.MouseEvent, path: string, branchId: string, branchName: string) => {
     e.stopPropagation();
     handleBranchSelect(branchId, branchName);
-    window.location.href = path;
+    router.push(path);
   };
 
   return (
@@ -39,7 +39,7 @@ export default function HomeSelector() {
         <div className="flex-1 flex justify-start">
           <nav className="hidden md:flex items-center gap-8 text-[10px] tracking-[0.25em] font-medium text-pine/80 uppercase">
             <button aria-label="Scroll to branch selector" onClick={() => document.getElementById('branch-selector')?.scrollIntoView({ behavior: 'smooth', block: 'center' })} className="cursor-pointer hover:text-terracotta transition-colors duration-300 uppercase tracking-[0.25em]">Explore</button>
-            <button aria-label="View Hayes menu" onClick={() => { window.location.href = '/hayes/menu'; }} className="cursor-pointer hover:text-terracotta transition-colors duration-300 uppercase tracking-[0.25em]">Menus</button>
+            <button aria-label="View Hayes menu" onClick={() => router.push('/hayes/menu')} className="cursor-pointer hover:text-terracotta transition-colors duration-300 uppercase tracking-[0.25em]">Menus</button>
             <button aria-label="Catering enquiry" onClick={() => { window.location.href = 'mailto:info@tasteofvillagerestaurants.co.uk?subject=Catering%20Inquiry'; }} className="cursor-pointer hover:text-terracotta transition-colors duration-300 uppercase tracking-[0.25em]">Catering</button>
           </nav>
         </div>
@@ -151,41 +151,39 @@ export default function HomeSelector() {
         </div>
       </main>
 
-      {/* FHRS Badge Footer — Enlarged badges for visibility */}
-      <footer className="w-full relative py-12 mt-auto overflow-hidden bg-[#F4F1EA] border-t-[0.5px] border-pine/10">
-        <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: "url('/assets/tov-motif-green.svg')", backgroundSize: '90px 90px', backgroundRepeat: 'repeat', backgroundPosition: 'center top' }} />
+      {/* Unified Editorial Footer */}
+      <footer className="w-full bg-[#0B140F] text-[#889B8D] mt-auto relative overflow-hidden border-t border-pine/30">
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: "url('/assets/tov-pattern.svg')", backgroundSize: '80px 80px', backgroundRepeat: 'repeat' }} />
 
-        <div className="relative z-10 max-w-4xl mx-auto px-6 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-24">
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-pine/60 text-[8px] uppercase tracking-[0.3em] font-bold">Hayes Branch</span>
-            <img src="/assets/fhrs-badge-4-horizontal.svg" alt="Hayes Food Hygiene Rating 4" className="h-8 w-auto opacity-70 hover:opacity-100 transition-opacity duration-300 object-cover" loading="lazy" />
-          </div>
-
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-pine/60 text-[8px] uppercase tracking-[0.3em] font-bold">Slough Branch</span>
-            <img src="/assets/fhrs-badge-5-horizontal.svg" alt="Slough Food Hygiene Rating 5" className="h-8 w-auto opacity-70 hover:opacity-100 transition-opacity duration-300 object-cover" loading="lazy" />
+        {/* FHRS Official Food Hygiene Badges Tier */}
+        <div className="relative z-10 border-b border-white/10 py-8 px-6">
+          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-20">
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-[#889B8D] text-[9px] uppercase tracking-[0.25em] font-medium">Hayes Branch</span>
+              <img src="/assets/fhrs-badge-4-horizontal.svg" alt="Hayes Food Hygiene Rating 4 - Good" className="h-7 w-auto opacity-80 hover:opacity-100 transition-opacity duration-300" loading="lazy" />
+            </div>
+            <div className="hidden sm:block w-px h-8 bg-white/10" aria-hidden="true" />
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-[#889B8D] text-[9px] uppercase tracking-[0.25em] font-medium">Slough Branch</span>
+              <img src="/assets/fhrs-badge-5-horizontal.svg" alt="Slough Food Hygiene Rating 5 - Very Good" className="h-7 w-auto opacity-80 hover:opacity-100 transition-opacity duration-300" loading="lazy" />
+            </div>
           </div>
         </div>
-      </footer>
 
-      {/* Dark Footer */}
-      <footer className="w-full bg-[#0B140F] py-10 px-8 md:px-16 border-t border-[#0B140F] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "url('/assets/tov-pattern.svg')", backgroundSize: '80px 80px', backgroundRepeat: 'repeat' }} />
-
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 md:gap-0 relative z-10">
-
-          <div className="flex flex-col gap-2 items-center md:items-start text-center md:text-left">
-            <span className="font-display text-terracotta text-[11px] md:text-xs tracking-[0.3em] uppercase font-semibold">Taste of Village</span>
-            <span className="text-[#889B8D] text-[8px] md:text-[9px] tracking-[0.2em] uppercase font-sans">
-              &copy; {new Date().getFullYear()} Taste of Village | Hayes &amp; Slough
+        {/* Brand Copyright & Nav Tier */}
+        <div className="max-w-7xl mx-auto py-8 px-8 md:px-16 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 relative z-10">
+          <div className="flex flex-col gap-1.5 items-center md:items-start text-center md:text-left">
+            <span className="font-display text-terracotta text-xs tracking-[0.3em] uppercase font-semibold">Taste of Village</span>
+            <span className="text-[#889B8D] text-[9px] tracking-[0.2em] uppercase font-sans">
+              &copy; {new Date().getFullYear()} Taste of Village | Authentic Pakistani Cuisine
             </span>
           </div>
 
-          <div className="flex gap-8 text-[#889B8D] text-[9px] tracking-[0.25em] uppercase font-sans">
+          <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-[#889B8D] text-[9px] tracking-[0.25em] uppercase font-sans">
+            <button aria-label="View menus" onClick={() => router.push('/hayes/menu')} className="hover:text-terracotta cursor-pointer transition-colors duration-300 uppercase tracking-[0.25em]">Menu</button>
             <button aria-label="Make a reservation" onClick={() => router.push('/book')} className="hover:text-terracotta cursor-pointer transition-colors duration-300 uppercase tracking-[0.25em]">Reservations</button>
             <button aria-label="Contact us" onClick={() => window.location.href='mailto:info@tasteofvillagerestaurants.co.uk'} className="hover:text-terracotta cursor-pointer transition-colors duration-300 uppercase tracking-[0.25em]">Contact</button>
           </div>
-
         </div>
       </footer>
     </div>

@@ -7,6 +7,7 @@ Taste of Village is an authentic Pakistani restaurant brand operating two flagsh
 
 ## Architectural Seams
 - **Framework:** Next.js (App Router), Tailwind CSS.
+- **Canonical Production Domain:** `https://tasteofvillagerestaurants.co.uk/`
 - **Hosting:** Vercel (Auto-deploy from `master` on `Faloodaandco/tov-nextjs`).
 - **Database & Auth:** Firebase Firestore & Firebase Auth (`taste-of-village-21052`).
 - **Payments & Checkout:** Square Web Payments SDK (client) + Next.js API route `/api/checkout/square` (server-side order creation via Square REST API).

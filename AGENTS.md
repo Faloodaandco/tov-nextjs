@@ -8,6 +8,7 @@ Guidance and configuration for automated agents working on the Taste of Village 
 2. **Anti-Slop Guardrails:** No generic filler. Active voice. Strict zero generative AI food imagery (`generate_image` BAN). No cut-and-paste 2D composite graphics.
 3. **No Hallucinations:** Verify APIs, route contracts, and Square/Firebase integrations against source code and official specs.
 4. **Elite Design Standard:** ALWAYS apply the following design skills automatically for ANY UI/UX work without being asked: `design-taste-frontend`, `beautiful-web-ui-design`, `ui-ux-pro-max`, `owl-ui-design-mastery`, `owl-visual-critique`, `antigravity-design-expert`. UI must be clean, editorial, transparent, fast, and highly refined (no generic boxed cards or cheap drop shadows).
+5. **Canonical Domain Invariant:** The ONLY valid domain for Taste of Village is `https://tasteofvillagerestaurants.co.uk/`. NEVER assume, generate, or use placeholders like `tasteofvillage.co.uk`. All URLs, examples, Apple Pay domain verifications, webhooks, and tracking links MUST use `tasteofvillagerestaurants.co.uk`.
 
 ## Agent Skills
 

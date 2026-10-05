@@ -35,24 +35,18 @@ service cloud.firestore {
       allow write: if hasModule('menu') || hasModule('itembuilder');
     }
 
-    // Orders - Staff read only (PII protection), public create (web checkout)
+    // Orders - Staff read only (PII protection)
     // Customer order tracking via server-side API route, NOT direct Firestore reads
     match /orders/{document=**} {
       allow read: if isStaff();
       allow create: if false;
-      allow update: if isStaff() || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['needsPrinting', 'printed', 'printStatus']));
+      allow update: if isStaff();
       allow delete: if isStaff();
     }
 
-    // Mail queue - Public can create (order alerts) with strict validation, only Admin can read/update
+    // Mail queue - Server-side only via Admin SDK (queued via Next.js route handlers)
     match /mail/{document=**} {
-      allow create: if true
-        && request.resource.data.keys().hasOnly(['to', 'replyTo', 'message', 'orderId', 'timestamp', 'status'])
-        && request.resource.data.to is list
-        && request.resource.data.message is map
-        && request.resource.data.orderId is string
-        && request.resource.data.orderId.size() < 50;
-      allow read, update, delete: if isAdmin();
+      allow create, read, update, delete: if isAdmin();
     }
 
     // Bookings - Public can create (book table), only Staff can read or update

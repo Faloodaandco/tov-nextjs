@@ -93,10 +93,38 @@ export default function TrackOrder() {
       setLoading(false);
       return;
     }
+
+    // Stop polling if order has reached terminal status
+    if (order?.status === 'completed' || order?.status === 'cancelled') {
+      return;
+    }
+
     fetchOrder(); // Initial fetch
-    const interval = setInterval(fetchOrder, 5000); // Poll every 5s
-    return () => clearInterval(interval);
-  }, [orderId, fetchOrder]);
+
+    let intervalId: NodeJS.Timeout;
+
+    const startPolling = () => {
+      // 5s in active foreground, 20s in background
+      const intervalMs = document.hidden ? 20000 : 5000;
+      clearInterval(intervalId);
+      intervalId = setInterval(fetchOrder, intervalMs);
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchOrder(); // Immediate fetch on tab focus
+      }
+      startPolling();
+    };
+
+    startPolling();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [orderId, fetchOrder, order?.status]);
 
   useEffect(() => {
     if (!order) return;

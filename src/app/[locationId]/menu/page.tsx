@@ -660,24 +660,53 @@ function MenuPageContent() {
       }
 
       if (!res || !res.ok) {
-        let errMsg = 'Payment processing failed. Please try again or call us.';
-        try {
-          const responseText = await res!.text();
-          try {
-            const errData = JSON.parse(responseText);
-            errMsg = errData.error || errMsg;
-          } catch {
-            // Non-JSON response (Vercel HTML error page / cold start crash)
-            if (res!.status >= 500) {
-              errMsg = `Server error (${res!.status}). Your card was NOT charged. Please try again or call ${activeLocation.phone || 'the restaurant'}.`;
+        let isSuccessFromPolling = false;
+
+        // Webhook-Gap Polling Fallback: If Vercel times out (504) or crashes, 
+        // Square might have still processed the payment and fired the webhook.
+        if (res && res.status >= 500) {
+          console.warn('[Checkout] Backend error/timeout. Polling Firestore to see if webhook captured it...', res.status);
+          for (let poll = 0; poll < 5; poll++) {
+            await new Promise(r => setTimeout(r, 3000));
+            try {
+              const verifyRes = await fetch(`/api/orders/${orderId}`);
+              if (verifyRes.ok) {
+                const verifyData = await verifyRes.json();
+                if (verifyData.status === 'paid' || verifyData.status === 'CONFIRMED' || verifyData.status === 'pending' || verifyData.isPaid) {
+                  isSuccessFromPolling = true;
+                  break;
+                }
+              }
+            } catch (e) {
+              console.warn('[Checkout Polling] Error:', e);
             }
           }
-        } catch {
-          errMsg = `Connection error. Please check your internet and try again, or call ${activeLocation.phone || 'the restaurant'}.`;
         }
-        throw new Error(errMsg);
-      }
 
+        if (!isSuccessFromPolling) {
+          let errMsg = 'Payment processing failed. Please try again or call us.';
+          try {
+            const responseText = await res!.text();
+            try {
+              const errData = JSON.parse(responseText);
+              errMsg = errData.error || errMsg;
+            } catch {
+              if (res!.status >= 500) {
+                errMsg = `Server error (${res!.status}). Your card was NOT charged. Please try again or call ${activeLocation.phone || 'the restaurant'}.`;
+              }
+            }
+          } catch {
+            errMsg = `Connection error. Please check your internet and try again, or call ${activeLocation.phone || 'the restaurant'}.`;
+          }
+          throw new Error(errMsg);
+        } else {
+          // Polling succeeded! Mock the response so the UI succeeds.
+          res = new Response(JSON.stringify({ success: true, orderId: orderId }), { 
+            status: 200, 
+            headers: { 'Content-Type': 'application/json' } 
+          });
+        }
+      }
       const data = await res.json();
       const finalOrderId = data.orderId || orderId;
 

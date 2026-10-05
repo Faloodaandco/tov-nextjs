@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, RotateCcw, Loader2, Minus, Plus, Ticket, MapPin, CreditCard, Clock, CheckCircle2, MessageCircle, AlertCircle, Printer, Bell, Truck, Store, Info } from 'lucide-react';
 import { SquarePaymentForm } from '@/components/SquarePaymentForm';
+import { CartItemRow, CartFulfillmentToggle, CartVoucherSection, CartOrderSummary } from '@/components/cart';
 
 import { getDeliveryTier, ACTIVE_PROMO } from '@/config/shopConfig';
 import { isValidUKMobile } from '@/lib/validation';
@@ -133,27 +134,15 @@ export function CartDrawer(p: any) {
                   )}
                 </div>
               ) : (
-                cart.map((item: any, index: any) => {
-                  const isFallback = !item.image || item.image.includes('tov-logo-tree');
-                  return (
-                  <div key={item.id} className="flex items-center gap-4 animate-fade-in-up group" style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'both' }}>
-                    <div className="relative w-20 h-20 rounded-2xl shadow-sm border border-pine/10 overflow-hidden flex-shrink-0 bg-white">
-                      <img src={item.image} alt="" onError={(e: any) => { e.target.onerror = null; e.target.src = '/assets/tov-logo-tree-terracotta-alpha.png'; e.target.className = 'w-full h-full object-contain p-3 opacity-40 transition-transform duration-700 group-hover:scale-110'; }} className={`w-full h-full transition-transform duration-700 group-hover:scale-110 ${isFallback ? 'object-contain p-3 opacity-40' : 'object-cover'}`} />
-                      <div className="absolute inset-0 bg-pine/5 group-hover:bg-transparent transition-colors"></div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-display font-bold text-base md:text-lg tracking-wider text-pine leading-tight truncate">{item.name}</h4>
-                      {item.modifiers && <p className="text-[10px] text-pine/60 mt-0.5 uppercase tracking-widest">{item.modifiers.size}</p>}
-                      <p className="text-terracotta text-sm font-black mt-0.5 tabular-nums">{formatCurrency((item.price * item.quantity))}{item.quantity > 1 && <span className="text-pine/40 text-xs font-semibold ml-1.5">({item.quantity} × {formatCurrency(item.price)})</span>}</p>
-                    </div>
-                    <div className="flex items-center gap-3 bg-white border border-pine/20 px-3 py-1.5 rounded-full shadow-sm shrink-0">
-                      <button aria-label="Decrease quantity" className="text-pine/60 hover:text-terracotta transition-colors font-black" title="Decrease quantity" onClick={() => updateQuantity(item._cartKey || item.id, item.quantity - 1)}><Minus size={16} strokeWidth={3} /></button>
-                      <span className="font-black text-sm text-pine w-4 text-center tabular-nums">{item.quantity}</span>
-                      <button aria-label="Increase quantity" className="text-pine/60 hover:text-terracotta transition-colors font-black" title="Increase quantity" onClick={() => addToCart(item)}><Plus size={16} strokeWidth={3} /></button>
-                    </div>
-                  </div>
-                  );
-                })
+                cart.map((item: any, index: any) => (
+                  <CartItemRow
+                    key={item._cartKey || item.id}
+                    item={item}
+                    index={index}
+                    onUpdateQuantity={updateQuantity}
+                    onAddToCart={addToCart}
+                  />
+                ))
               )}
               </div>
 
@@ -186,311 +175,55 @@ export function CartDrawer(p: any) {
 
               {/* ─── Fulfillment Selector (Delivery First, Collection Second) ─── */}
               {!tableParam && (
-                <div className="mb-6">
-                  <label className="block text-xs font-bold text-pine mb-2 uppercase tracking-wider">
-                    Order Type
-                  </label>
-                  <div className="grid grid-cols-2 gap-0 p-1 bg-pine/5 border border-pine/10 rounded-2xl">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFulfillmentType('delivery');
-                      }}
-                      className={`py-3.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex flex-col items-center gap-1.5 transition-all duration-200 relative ${
-                        fulfillmentType === 'delivery'
-                          ? 'bg-terracotta text-white shadow-md'
-                          : 'text-pine/60 hover:text-pine hover:bg-white/50'
-                      }`}
-                    >
-                      <span className="flex items-center gap-2 text-sm">
-                        <Truck size={16} strokeWidth={2.5} className={fulfillmentType === 'delivery' ? 'text-white' : 'text-pine/80'} />
-                        <span>Delivery</span>
-                      </span>
-                      <span className="text-[10px] opacity-90 normal-case font-medium">
-                        {activeDeliveryTier?.tier && discountedSubtotal >= activeDeliveryTier.tier.freeDeliveryThreshold
-                          ? 'FREE Delivery'
-                          : (activeLocation.id === 'slough' ? 'From £3.50 · Est. ~35-45m' : 'From £2.99 · Est. ~30-45m')}
-                      </span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFulfillmentType('collection');
-                        setPostcodeError(null);
-                      }}
-                      className={`py-3.5 px-4 rounded-xl font-bold text-xs uppercase tracking-wider flex flex-col items-center gap-1.5 transition-all duration-200 ${
-                        fulfillmentType === 'collection'
-                          ? 'bg-pine text-white shadow-md'
-                          : 'text-pine/60 hover:text-pine hover:bg-white/50'
-                      }`}
-                    >
-                      <span className="flex items-center gap-2 text-sm">
-                        <Store size={16} strokeWidth={2.5} className={fulfillmentType === 'collection' ? 'text-white' : 'text-pine/80'} />
-                        <span>Collection</span>
-                      </span>
-                      <span className="text-[10px] opacity-80 normal-case font-medium">Free · Ready ~20-25m</span>
-                    </button>
-                  </div>
-
-                  {fulfillmentType === 'delivery' && (
-                    <div className="mt-2.5 px-3.5 py-3 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2 text-[11px] text-emerald-900 font-medium">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                          <Truck size={13} className="text-emerald-700" />
-                          <span className="font-bold">{activeLocation.id === 'hayes' ? 'Hayes Fleet' : 'Slough Delivery'}</span>
-                          <span className="text-emerald-700">{activeLocation.id === 'hayes' ? 'UB3, UB4, UB7, UB8, UB10' : 'SL1, SL2, SL3, SL4'}</span>
-                        </div>
-                        <span className="font-bold bg-emerald-200/80 text-emerald-900 px-2 py-0.5 rounded text-[10px]">
-                          {activeDeliveryTier?.isValid && activeDeliveryTier.tier
-                            ? (discountedSubtotal >= activeDeliveryTier.tier.freeDeliveryThreshold ? 'FREE DELIVERY' : `${formatCurrency(activeDeliveryTier.tier.fee)} Fee`)
-                            : (activeLocation.id === 'slough' ? 'From £3.50' : 'From £2.99')}
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] text-emerald-700 leading-relaxed">
-                        {activeLocation.id === 'hayes'
-                          ? <>
-                              <span>UB4 <strong>£2.99</strong></span>
-                              <span className="text-emerald-400">·</span>
-                              <span>UB3 <strong>£3.99</strong></span>
-                              <span className="text-emerald-400">·</span>
-                              <span>UB10 <strong>£4.99</strong></span>
-                              <span className="text-emerald-400">·</span>
-                              <span>UB8 <strong>£5.99</strong></span>
-                              <span className="text-emerald-400">·</span>
-                              <span>UB7 <strong>£6.99</strong></span>
-                            </>
-                          : <>
-                              <span>SL1 <strong>£3.50</strong></span>
-                              <span className="text-emerald-400">·</span>
-                              <span>SL2 <strong>£3.99</strong></span>
-                              <span className="text-emerald-400">·</span>
-                              <span>SL3 <strong>£4.99</strong></span>
-                              <span className="text-emerald-400">·</span>
-                              <span>SL4 <strong>£5.99</strong></span>
-                            </>
-                        }
-                      </div>
-                      {/* ─── Early Delivery Zone Check ─── */}
-                      <div className="mt-2.5">
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            placeholder="Enter your postcode (e.g. UB4 8HY)"
-                            value={deliveryAddress.postcode}
-                            onChange={(e) => {
-                              const val = e.target.value.toUpperCase();
-                              setDeliveryAddress((prev: any) => ({ ...prev, postcode: val }));
-                              setPostcodeError(null);
-                            }}
-                            className="flex-1 px-3 py-2 text-base sm:text-sm font-bold text-pine bg-white rounded-lg border border-emerald-200 focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400 placeholder:text-pine/30 placeholder:font-normal uppercase"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const pc = deliveryAddress.postcode.trim();
-                              if (!pc) { setPostcodeError('Please enter a postcode'); return; }
-                              const check = isPostcodeInDeliveryZone(pc, activeLocation.id);
-                              if (!check.isValid) {
-                                setPostcodeError(check.reason || 'Sorry, we don\'t deliver to your area.');
-                              } else {
-                                setPostcodeError(null);
-                              }
-                            }}
-                            className="px-3 py-2 bg-emerald-600 text-white font-bold text-xs rounded-lg hover:bg-emerald-700 active:scale-95 transition-all uppercase tracking-wider shrink-0"
-                          >
-                            Check
-                          </button>
-                        </div>
-                        {postcodeError && (
-                          <div className="mt-2 p-2.5 bg-red-50 border border-red-200 rounded-lg text-xs text-red-800 font-medium">
-                            <p>{postcodeError}</p>
-                            <button
-                              type="button"
-                              onClick={() => { setFulfillmentType('collection'); setPostcodeError(null); }}
-                              className="mt-1.5 text-[10px] font-bold text-pine underline underline-offset-2 hover:text-terracotta transition-colors"
-                            >
-                              Switch to Collection instead →
-                            </button>
-                          </div>
-                        )}
-                        {deliveryAddress.postcode.trim() && !postcodeError && activeDeliveryTier?.isValid && activeDeliveryTier.tier && (
-                          <p className="mt-1.5 text-[10px] text-emerald-700 font-bold">
-                            ✓ We deliver to {deliveryAddress.postcode}
-                            {discountedSubtotal >= activeDeliveryTier.tier.freeDeliveryThreshold
-                              ? ' — FREE delivery!'
-                              : ` — ${formatCurrency(activeDeliveryTier.tier.fee)} delivery fee (free over £${activeDeliveryTier.tier.freeDeliveryThreshold})`
-                            }
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <CartFulfillmentToggle
+                  fulfillmentType={fulfillmentType}
+                  setFulfillmentType={setFulfillmentType}
+                  activeLocation={activeLocation}
+                  activeDeliveryTier={activeDeliveryTier}
+                  discountedSubtotal={discountedSubtotal}
+                  deliveryAddress={deliveryAddress}
+                  setDeliveryAddress={setDeliveryAddress}
+                  postcodeError={postcodeError}
+                  setPostcodeError={setPostcodeError}
+                  isPostcodeInDeliveryZone={isPostcodeInDeliveryZone}
+                />
               )}
 
               {/* Voucher Code Input */}
-              <div className="mb-4 bg-white p-3 rounded-xl border border-pine/10 shadow-sm">
-                <div className="flex gap-2">
-                  <div className="flex-1 flex items-center bg-[#F7F2E7] rounded-lg border border-transparent focus-within:ring-2 focus-within:ring-terracotta/20 focus-within:border-terracotta/30 transition-all">
-                    <Ticket size={14} className="text-pine/30 ml-3 shrink-0" />
-                    <input
-                      type="text"
-                      placeholder="Enter discount code"
-                      value={customVoucher}
-                      onChange={(e) => {
-                        setCustomVoucher(e.target.value.toUpperCase());
-                        setVoucherError('');
-                      }}
-                      className="flex-1 bg-transparent px-2.5 py-2 text-base sm:text-sm font-bold text-pine uppercase focus:outline-none placeholder:text-pine/30 placeholder:normal-case"
-                    />
-                  </div>
-                  <button
-                    onClick={async () => {
-                      const code = customVoucher.trim();
-                      if (!code) return;
+              <CartVoucherSection
+                customVoucher={customVoucher}
+                setCustomVoucher={setCustomVoucher}
+                appliedVoucher={appliedVoucher}
+                setAppliedVoucher={setAppliedVoucher}
+                voucherError={voucherError}
+                setVoucherError={setVoucherError}
+                customerPhone={customerInfo?.phone}
+                branchId={activeLocation.id}
+                cartTotal={cartTotal}
+                promoDiscount={promoDiscount}
+                setVoucherDiscountPercent={setVoucherDiscountPercent}
+                setVoucherFixedDiscount={setVoucherFixedDiscount}
+              />
 
-                      // BREAKFAST40 is handled locally (standard promo)
-                      if (code.toUpperCase() === 'BREAKFAST40') {
-                        setAppliedVoucher(null);
-                        setVoucherError('');
-                        // Breakfast promo is applied via activePromo in StoreContext
-                        return;
-                      }
-
-                      // All other codes: try vouchers first, then promos as fallback
-                      try {
-                        setVoucherError('');
-                        const res = await fetch('/api/vouchers/validate', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            code,
-                            phone: customerInfo?.phone || '',
-                            branchId: activeLocation.id,
-                            subtotalPence: Math.round(cartTotal * 100),
-                          }),
-                        });
-                        const result = await res.json();
-                        if (result.valid) {
-                          setAppliedVoucher(code);
-                          setVoucherError('');
-                        } else {
-                          // Voucher not found — try promos collection as fallback
-                          const promoRes = await fetch('/api/promos/validate', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                              code,
-                              branchId: activeLocation.id,
-                              subtotalPence: Math.round(cartTotal * 100),
-                            }),
-                          });
-                          const promoResult = await promoRes.json();
-                          if (promoResult.valid) {
-                            setAppliedVoucher(code);
-                            setVoucherError('');
-                            // Store discount values so the cart total reflects the actual discount
-                            if (promoResult.discountType === 'PERCENTAGE' && promoResult.discountPercent > 0) {
-                              setVoucherDiscountPercent(promoResult.discountPercent);
-                              setVoucherFixedDiscount(0);
-                            } else if (promoResult.discountType === 'FIXED_AMOUNT' && promoResult.fixedAmountPence > 0) {
-                              setVoucherFixedDiscount(promoResult.fixedAmountPence / 100);
-                              setVoucherDiscountPercent(0);
-                            }
-                          } else {
-                            setVoucherError(promoResult.reason || result.reason || 'Invalid code');
-                            setAppliedVoucher(null);
-                          }
-                        }
-                      } catch {
-                        setVoucherError('Could not validate code. Please try again.');
-                        setAppliedVoucher(null);
-                      }
-                    }}
-                    className="bg-pine text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-terracotta transition-colors"
-                  >
-                    Apply
-                  </button>
-                </div>
-                {voucherError && <p className="text-red-500 text-[10px] mt-1.5 font-bold uppercase tracking-wider px-1">{voucherError}</p>}
-                {appliedVoucher && (
-                  <div className="flex items-center justify-between text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100 mt-2">
-                    <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5">
-                      <CheckCircle2 size={12} /> {appliedVoucher} Applied{promoDiscount > 0 && <> (-{formatCurrency(promoDiscount)})</>}
-                    </span>
-                    <button aria-label="Remove voucher" onClick={() => { setAppliedVoucher(null); setCustomVoucher(''); setVoucherDiscountPercent(0); setVoucherFixedDiscount(0); }} className="text-emerald-700/50 hover:text-emerald-700">
-                      <X size={14} />
-                    </button>
-                  </div>
-                )}
-              </div>
-              <div className="space-y-2.5 mb-6 text-pine pt-2 border-t border-pine/10">
-                <div className="flex justify-between items-center text-xs text-pine/60 font-semibold uppercase tracking-wider">
-                  <span>Subtotal</span>
-                  <span className="tabular-nums">{formatCurrency(cartTotal)}</span>
-                </div>
-                {promoDiscount > 0 && (
-                  <div className="flex justify-between items-center text-xs text-terracotta font-bold uppercase tracking-wider">
-                    <span className="flex items-center gap-1.5">
-                      <Ticket size={14} /> {appliedVoucher ? `${appliedVoucher} VOUCHER` : ACTIVE_PROMO.cartLabel}
-                    </span>
-                    <span className="tabular-nums">-{formatCurrency(promoDiscount)}</span>
-                  </div>
-                )}
-                {activePromo === 'BREAKFAST40' && promoDiscount === 0 && (
-                  <div className="text-[11px] text-pine/80 font-medium italic">
-                    {!isPromoTimeValid
-                      ? 'BREAKFAST40 is valid on Weekends (Sat & Sun) till 2:00 PM only.'
-                      : 'Add breakfast items to your cart to get 40% off.'}
-                  </div>
-                )}
-                {isDeliveryOrder && deliveryFee > 0 && (
-                  <div className="flex justify-between items-center text-xs text-pine/60 font-semibold uppercase tracking-wider">
-                    <span>Delivery Fee</span>
-                    <span className="tabular-nums">{deliveryFee === 0 ? 'FREE' : `${formatCurrency(deliveryFee)}`}</span>
-                  </div>
-                )}
-                {serviceFee > 0 && (
-                  <div className="flex justify-between items-center text-xs text-pine/60 font-semibold uppercase tracking-wider">
-                    <span>Service Fee (10%)</span>
-                    <span className="tabular-nums">{formatCurrency(serviceFee)}</span>
-                  </div>
-                )}
-                <div className="flex justify-between items-baseline pt-3 mt-1 border-t-2 border-pine/15">
-                  <span className="font-display text-xs uppercase tracking-[0.2em] font-bold text-pine">Total</span>
-                  <span className="font-display text-2xl font-bold tabular-nums text-pine">{formatCurrency(finalCartTotal)}</span>
-                </div>
-              </div>
-              
-              {isKitchenClosed && (
-                <div className="bg-amber-500/10 border border-amber-500/20 text-pine rounded-xl p-3 mb-4 text-center text-xs font-semibold flex items-center justify-center gap-2">
-                  <Clock size={14} className="text-amber-600 shrink-0" />
-                  <span><strong>Pre-Order:</strong> Kitchen opens at 10:00 AM. Place your order now to secure your slot!</span>
-                </div>
-              )}
-              {isBelowMinOrder && (
-                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                  <div className="flex justify-between text-xs font-bold text-amber-800 mb-2">
-                    <span>Minimum order for delivery: {formatCurrency(minOrder)}</span>
-                    <span className="tabular-nums">{formatCurrency(minOrderRemaining)} more</span>
-                  </div>
-                  <div className="w-full bg-amber-200 rounded-full h-2 overflow-hidden">
-                    <div className="bg-amber-600 h-full rounded-full transition-all duration-500" style={{ width: `${minOrderProgress}%` }} />
-                  </div>
-                </div>
-              )}
-              {isDeliveryOrder && !isBelowMinOrder && activeDeliveryTier?.tier?.freeDeliveryThreshold && discountedSubtotal < activeDeliveryTier.tier.freeDeliveryThreshold && (
-                <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
-                  <div className="flex justify-between text-xs font-bold text-emerald-800 mb-2">
-                    <span className="flex items-center gap-1"><Truck size={12} /> Free delivery at {formatCurrency(activeDeliveryTier.tier.freeDeliveryThreshold)}</span>
-                    <span className="tabular-nums">{formatCurrency((activeDeliveryTier.tier.freeDeliveryThreshold - discountedSubtotal))} more</span>
-                  </div>
-                  <div className="w-full bg-emerald-200 rounded-full h-2 overflow-hidden">
-                    <div className="bg-emerald-600 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, (discountedSubtotal / activeDeliveryTier.tier.freeDeliveryThreshold) * 100)}%` }} />
-                  </div>
-                </div>
-              )}
+              <CartOrderSummary
+                cartTotal={cartTotal}
+                promoDiscount={promoDiscount}
+                appliedVoucher={appliedVoucher}
+                promoCartLabel={ACTIVE_PROMO?.cartLabel || 'Promotion'}
+                activePromo={activePromo}
+                isPromoTimeValid={isPromoTimeValid}
+                isDeliveryOrder={isDeliveryOrder}
+                deliveryFee={deliveryFee}
+                serviceFee={serviceFee}
+                finalCartTotal={finalCartTotal}
+                isKitchenClosed={isKitchenClosed}
+                isBelowMinOrder={isBelowMinOrder}
+                minOrder={minOrder}
+                minOrderRemaining={minOrderRemaining}
+                minOrderProgress={minOrderProgress}
+                activeDeliveryTier={activeDeliveryTier}
+                discountedSubtotal={discountedSubtotal}
+              />
               <button
                 onClick={handleProceedToDetails}
                 disabled={cart.length === 0 || isBelowMinOrder}
@@ -908,101 +641,20 @@ export function CartDrawer(p: any) {
                       )}
                       
                       {/* Voucher Code Input */}
-              <div className="mb-4 bg-white p-3 rounded-xl border border-pine/10 shadow-sm">
-                <div className="flex gap-2">
-                  <div className="flex-1 flex items-center bg-[#F7F2E7] rounded-lg border border-transparent focus-within:ring-2 focus-within:ring-terracotta/20 focus-within:border-terracotta/30 transition-all">
-                    <Ticket size={14} className="text-pine/30 ml-3 shrink-0" />
-                    <input
-                      type="text"
-                      placeholder="Enter discount code"
-                      value={customVoucher}
-                      onChange={(e) => {
-                        setCustomVoucher(e.target.value.toUpperCase());
-                        setVoucherError('');
-                      }}
-                      className="flex-1 bg-transparent px-2.5 py-2 text-base sm:text-sm font-bold text-pine uppercase focus:outline-none placeholder:text-pine/30 placeholder:normal-case"
-                    />
-                  </div>
-                  <button
-                    onClick={async () => {
-                      const code = customVoucher.trim();
-                      if (!code) return;
-
-                      // BREAKFAST40 is handled locally (standard promo)
-                      if (code.toUpperCase() === 'BREAKFAST40') {
-                        setAppliedVoucher(null);
-                        setVoucherError('');
-                        // Breakfast promo is applied via activePromo in StoreContext
-                        return;
-                      }
-
-                      // All other codes: try vouchers first, then promos as fallback
-                      try {
-                        setVoucherError('');
-                        const res = await fetch('/api/vouchers/validate', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            code,
-                            phone: customerInfo?.phone || '',
-                            branchId: activeLocation.id,
-                            subtotalPence: Math.round(cartTotal * 100),
-                          }),
-                        });
-                        const result = await res.json();
-                        if (result.valid) {
-                          setAppliedVoucher(code);
-                          setVoucherError('');
-                        } else {
-                          // Voucher not found — try promos collection as fallback
-                          const promoRes = await fetch('/api/promos/validate', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                              code,
-                              branchId: activeLocation.id,
-                              subtotalPence: Math.round(cartTotal * 100),
-                            }),
-                          });
-                          const promoResult = await promoRes.json();
-                          if (promoResult.valid) {
-                            setAppliedVoucher(code);
-                            setVoucherError('');
-                            // Store discount values so the cart total reflects the actual discount
-                            if (promoResult.discountType === 'PERCENTAGE' && promoResult.discountPercent > 0) {
-                              setVoucherDiscountPercent(promoResult.discountPercent);
-                              setVoucherFixedDiscount(0);
-                            } else if (promoResult.discountType === 'FIXED_AMOUNT' && promoResult.fixedAmountPence > 0) {
-                              setVoucherFixedDiscount(promoResult.fixedAmountPence / 100);
-                              setVoucherDiscountPercent(0);
-                            }
-                          } else {
-                            setVoucherError(promoResult.reason || result.reason || 'Invalid code');
-                            setAppliedVoucher(null);
-                          }
-                        }
-                      } catch {
-                        setVoucherError('Could not validate code. Please try again.');
-                        setAppliedVoucher(null);
-                      }
-                    }}
-                    className="bg-pine text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-terracotta transition-colors"
-                  >
-                    Apply
-                  </button>
-                </div>
-                {voucherError && <p className="text-red-500 text-[10px] mt-1.5 font-bold uppercase tracking-wider px-1">{voucherError}</p>}
-                {appliedVoucher && (
-                  <div className="flex items-center justify-between text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-100 mt-2">
-                    <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5">
-                      <CheckCircle2 size={12} /> {appliedVoucher} Applied{promoDiscount > 0 && <> (-{formatCurrency(promoDiscount)})</>}
-                    </span>
-                    <button aria-label="Remove voucher" onClick={() => { setAppliedVoucher(null); setCustomVoucher(''); setVoucherDiscountPercent(0); setVoucherFixedDiscount(0); }} className="text-emerald-700/50 hover:text-emerald-700">
-                      <X size={14} />
-                    </button>
-                  </div>
-                )}
-              </div>
+                      <CartVoucherSection
+                        customVoucher={customVoucher}
+                        setCustomVoucher={setCustomVoucher}
+                        appliedVoucher={appliedVoucher}
+                        setAppliedVoucher={setAppliedVoucher}
+                        voucherError={voucherError}
+                        setVoucherError={setVoucherError}
+                        customerPhone={customerInfo?.phone}
+                        branchId={activeLocation.id}
+                        cartTotal={cartTotal}
+                        promoDiscount={promoDiscount}
+                        setVoucherDiscountPercent={setVoucherDiscountPercent}
+                        setVoucherFixedDiscount={setVoucherFixedDiscount}
+                      />
                       <div className="bg-white/80 border border-pine/10 rounded-2xl p-3.5 mb-4 text-xs text-pine shadow-sm">
                         <div className="flex items-center gap-2 font-semibold text-pine mb-1">
                           <Info size={14} className="text-terracotta shrink-0" />

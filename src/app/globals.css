@@ -59,7 +59,7 @@
 /* Base resets & theme application */
 @layer base {
   body {
-    @apply bg-bg-sand text-pine font-sans uppercase;
+    @apply bg-bg-sand text-pine font-sans;
     color-scheme: light;
     overscroll-behavior-y: none;
   }
@@ -69,13 +69,8 @@
     user-select: auto;
   }
 
-  /* Sharp corners enforcement */
-  * {
-    border-radius: 0;
-  }
-
   h1, h2, h3, h4, h5, h6 {
-    @apply font-sans font-bold tracking-wider;
+    @apply font-display font-bold tracking-wider;
     text-transform: uppercase;
   }
 }

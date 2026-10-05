@@ -43,13 +43,9 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, quantityInCart
               const fallback = e.currentTarget.parentElement?.querySelector('.ambient-fallback') as HTMLElement;
               if (fallback) fallback.classList.remove('hidden');
             }}
-            // CSS crop to hide baked-in Canva text at top/bottom of images
-            className="absolute inset-0 w-full h-full object-cover object-[50%_70%] scale-[1.3] transition-transform duration-1000 group-hover:scale-[1.35] z-0 origin-[50%_70%]"
+            className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105 z-0"
           />
         ) : null}
-
-        {/* Anti-Text Gradient Overlay to perfectly erase Canva text at the top */}
-        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#EAE0D5] via-[#EAE0D5]/90 to-transparent z-10 pointer-events-none"></div>
 
         {/* Ambient Culinary Backdrop for placeholder items or fallback */}
         <div 
@@ -123,7 +119,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, quantityInCart
         )}
 
         {item.description && (
-          <p className={`text-pine font-medium text-[13px] leading-relaxed mb-6 flex-1 ${['bbq_platters', 'platters'].includes(item.category) ? '' : 'line-clamp-2'}`}>
+          <p className={`text-pine/85 font-normal text-[13px] leading-relaxed mb-6 flex-1 normal-case ${['bbq_platters', 'platters'].includes(item.category) ? '' : 'line-clamp-2'}`}>
             {item.description}
           </p>
         )}

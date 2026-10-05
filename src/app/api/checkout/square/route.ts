@@ -4,7 +4,7 @@ import { getMenuItems } from '@/services/menuService';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { validateVoucher, redeemVoucher, issueFirstTimeBuyerPack, isFirstTimeBuyer, hasActiveVouchers } from '@/services/VoucherService';
 
-const DEVELOPER_ALERT_EMAILS = ['sales@tekrenewed.co.uk', 'sales@faloodaandco.co.uk'];
+const DEVELOPER_ALERT_EMAILS = ['sales@faloodaandco.co.uk'];
 
 /**
  * Sends a payment failure alert email to the developer via Firestore mail collection.

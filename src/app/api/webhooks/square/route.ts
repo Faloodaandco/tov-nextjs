@@ -115,7 +115,25 @@ export async function POST(req: NextRequest) {
         const payment = event?.data?.object?.payment;
         if (payment && payment.status === 'COMPLETED') {
           console.info(`[Square Webhook] Payment ${payment.id} COMPLETED: amount=${payment.amount_money?.amount}p, ref=${payment.reference_id}`);
-          // Future: update Firestore order status, trigger push notification
+          const orderRefId = payment.reference_id;
+          if (orderRefId) {
+            try {
+              const orderDocRef = adminDb.collection('orders').doc(orderRefId);
+              const orderSnap = await orderDocRef.get();
+              if (orderSnap.exists) {
+                await orderDocRef.update({
+                  paymentStatus: 'PAID',
+                  squarePaymentId: payment.id,
+                  paidAt: new Date().toISOString(),
+                  status: 'CONFIRMED',
+                  updatedAt: new Date().toISOString(),
+                });
+                console.info(`[Square Webhook] Order ${orderRefId} updated to CONFIRMED / PAID`);
+              }
+            } catch (updateErr) {
+              console.error(`[Square Webhook] Failed to update order ${orderRefId}:`, updateErr);
+            }
+          }
         }
         break;
       }
@@ -124,7 +142,6 @@ export async function POST(req: NextRequest) {
         const order = event?.data?.object?.order_updated;
         if (order) {
           console.info(`[Square Webhook] Order ${order.order_id}: state=${order.state}`);
-          // Future: sync order state to Firestore, update live-tracker
         }
         break;
       }
@@ -132,7 +149,49 @@ export async function POST(req: NextRequest) {
       case 'order.fulfillment.updated': {
         const fulfillmentUpdate = event?.data?.object?.order_fulfillment_updated;
         if (fulfillmentUpdate) {
-          console.info(`[Square Webhook] Fulfillment updated for order ${fulfillmentUpdate.order_id}: state=${fulfillmentUpdate.fulfillment_update?.[0]?.new_state}`);
+          const squareOrderId = fulfillmentUpdate.order_id;
+          const newState = fulfillmentUpdate.fulfillment_update?.[0]?.new_state;
+          console.info(`[Square Webhook] Fulfillment updated for order ${squareOrderId}: state=${newState}`);
+          if (squareOrderId && newState) {
+            try {
+              const q = await adminDb.collection('orders').where('squareOrderId', '==', squareOrderId).limit(1).get();
+              if (!q.empty) {
+                const docRef = q.docs[0].ref;
+                let mappedStatus = 'CONFIRMED';
+                if (newState === 'PREPARED') mappedStatus = 'READY';
+                else if (newState === 'COMPLETED') mappedStatus = 'COMPLETED';
+                else if (newState === 'CANCELED') mappedStatus = 'CANCELLED';
+                await docRef.update({
+                  fulfillmentState: newState,
+                  status: mappedStatus,
+                  updatedAt: new Date().toISOString(),
+                });
+                console.info(`[Square Webhook] Synced fulfillment state ${newState} -> status ${mappedStatus} for doc ${docRef.id}`);
+
+                // Queue 24H Automated Review Request Loop (SEO Dominance)
+                if (newState === 'COMPLETED') {
+                  const orderData = q.docs[0].data();
+                  if (orderData.customerEmail || orderData.customerPhone) {
+                    await adminDb.collection('review_queue').doc(docRef.id).set({
+                      orderId: docRef.id,
+                      squareOrderId: squareOrderId,
+                      branchId: orderData.branch || 'unknown',
+                      customerEmail: orderData.customerEmail || null,
+                      customerPhone: orderData.customerPhone || null,
+                      customerName: orderData.customerName || 'Customer',
+                      status: 'PENDING',
+                      // Schedule for 24 hours from now
+                      scheduledFor: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+                      createdAt: new Date().toISOString(),
+                    });
+                    console.info(`[Square Webhook] Queued order ${docRef.id} for 24H review request loop.`);
+                  }
+                }
+              }
+            } catch (syncErr) {
+              console.warn('[Square Webhook] Failed to sync fulfillment state:', syncErr);
+            }
+          }
         }
         break;
       }

@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "tasteofvillagerestaurants.co.uk",
       },
+      {
+        protocol: "https",
+        hostname: "www.tasteofvillagerestaurants.co.uk",
+      },
     ],
   },
 

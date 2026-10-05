@@ -47,3 +47,10 @@ next-env.d.ts
 
 # Service account keys
 secrets/
+
+# Working design assets & scratch archives
+*.pdf
+/menu images/
+/menu/
+/scripts/archive/
+service-account.json
