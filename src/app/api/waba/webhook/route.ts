@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { adminDb } from "@/lib/firebaseAdmin";
+import { sendWhatsAppMessage } from "@/lib/waba";
+import { createQuickPayFallback } from "@/lib/square";
 
 // ── TOV Hayes Menu Definitions ──
 const TOV_TOP_DISHES: Record<string, { title: string; pricePence: number; price: string; image: string; caption: string }> = {
@@ -95,17 +97,17 @@ export async function POST(request: NextRequest) {
           const from = message.from;
           const profileName = change.value?.contacts?.[0]?.profile?.name || from;
 
-          const { sendWhatsAppMessage } = require('@/lib/waba');
-          const { createQuickPayFallback } = require('@/lib/square');
+          
+          
 
           // ── 1. Text Message (Intent parsing & Welcome) ──
           if (message.type === 'text') {
             const rawText = message.text?.body || '';
             const now = new Date().toISOString();
             
-            await adminDb.collection('whatsapp_conversations').doc(from).set({
+            try { await adminDb.collection('whatsapp_conversations').doc(from).set({
               phone: from, name: profileName, lastMessage: rawText, timestamp: now, unreadCount: 1,
-            }, { merge: true });
+            }, { merge: true }); } catch (e) { console.error("Firestore Error:", e); }
 
             const lowerText = rawText.toLowerCase();
 
@@ -162,13 +164,13 @@ export async function POST(request: NextRequest) {
               
               if (dish) {
                 // Save this item to a temporary session cart for demo purposes
-                await adminDb.collection('whatsapp_conversations').doc(from).set({
+                try { await adminDb.collection('whatsapp_conversations').doc(from).set({
                   activeCart: {
                     items: [{ name: dish.title, quantity: 1, base_price_money: { amount: dish.pricePence, currency: 'GBP' } }],
                     basePence: dish.pricePence,
                     updatedAt: new Date().toISOString()
                   }
-                }, { merge: true });
+                }, { merge: true }); } catch (e) { console.error("Firestore Error:", e); }
 
                 await sendWhatsAppMessage(phoneId, from, {
                   type: 'interactive',
@@ -271,13 +273,13 @@ export async function POST(request: NextRequest) {
             });
 
             // Save the cart to Firestore session
-            await adminDb.collection('whatsapp_conversations').doc(from).set({
+            try { await adminDb.collection('whatsapp_conversations').doc(from).set({
               activeCart: {
                 items: orderItems,
                 basePence: Math.round(totalPence),
                 updatedAt: new Date().toISOString()
               }
-            }, { merge: true });
+            }, { merge: true }); } catch (e) { console.error("Firestore Error:", e); }
 
             await sendWhatsAppMessage(phoneId, from, {
               type: 'interactive',
