@@ -8,19 +8,35 @@ if (typeof window !== 'undefined') {
 let adminApp: App;
 
 if (!getApps().length) {
-  // ── Modern Authentication (WIF & ADC) ────────────────────────────
-  // We no longer use hardcoded Base64 Service Account keys.
-  // This relies on Google's standard auth chain:
-  // 1. Workload Identity Federation (WIF) via GOOGLE_APPLICATION_CREDENTIALS config in Vercel
-  // 2. Application Default Credentials (gcloud auth application-default login) for local dev
-  try {
+  // ── Credential Resolution ──────────────────────────────────────────
+  // Priority:
+  //   1. FIREBASE_SERVICE_ACCOUNT_BASE64 (Vercel production)
+  //   2. GOOGLE_APPLICATION_CREDENTIALS file path (local dev / GCE)
+  //   3. ADC fallback (gcloud auth application-default login)
+  const base64Key = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+
+  if (base64Key) {
+    // Vercel: decode base64-encoded service account JSON
+    try {
+      const serviceAccount = JSON.parse(
+        Buffer.from(base64Key, 'base64').toString('utf-8')
+      );
+      adminApp = initializeApp({
+        credential: cert(serviceAccount),
+        projectId: serviceAccount.project_id || 'taste-of-village-21052',
+      });
+    } catch (parseErr) {
+      console.error('[FirebaseAdmin] Failed to parse FIREBASE_SERVICE_ACCOUNT_BASE64:', parseErr);
+      // Fall through to ADC
+      adminApp = initializeApp({
+        projectId: 'taste-of-village-21052',
+      });
+    }
+  } else {
+    // Local dev: relies on GOOGLE_APPLICATION_CREDENTIALS or gcloud ADC
     adminApp = initializeApp({
       projectId: 'taste-of-village-21052',
     });
-    console.info('[FirebaseAdmin] Initialized using modern ADC / Workload Identity Federation');
-  } catch (error) {
-    console.error('[FirebaseAdmin] Failed to initialize:', error);
-    throw error;
   }
 } else {
   adminApp = getApps()[0];
