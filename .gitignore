@@ -54,3 +54,5 @@ secrets/
 /menu/
 /scripts/archive/
 service-account.json
+build.log
+tsc.log
