@@ -120,7 +120,7 @@ export async function createItemisedCheckoutLink(options: {
     }
 
     return {
-      url: data.payment_link?.url || null,
+      url: data.payment_link?.long_url || data.payment_link?.url || null,
       orderId: data.payment_link?.order_id || referenceId,
       referenceId,
     };

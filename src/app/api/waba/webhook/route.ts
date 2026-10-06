@@ -56,24 +56,48 @@ interface ConversationState {
 const BRANCH_ID = 'hayes' as const;
 const LOC = LOCATIONS[BRANCH_ID];
 
-// ── Firestore Helpers ────────────────────────────────────────────────
+// ── In-Memory Session Cache (Fast & Resilient even if Firestore credentials fail) ──
+const CONVERSATION_CACHE = new Map<string, { state: ConversationState; updatedAt: number }>();
+const CACHE_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
+
 async function getConversation(phone: string): Promise<ConversationState> {
+  const cached = CONVERSATION_CACHE.get(phone);
+  if (cached && (Date.now() - cached.updatedAt < CACHE_TTL_MS) && cached.state.activeCart?.items?.length) {
+    return cached.state;
+  }
+
   try {
     const snap = await adminDb.collection('whatsapp_conversations').doc(phone).get();
     const data = snap.data();
-    return {
-      state: data?.state || 'idle',
-      pendingDelivery: data?.pendingDelivery || undefined,
-      activeCart: data?.activeCart || undefined,
-      lastPaidOrderId: data?.lastPaidOrderId || undefined,
-      lastPaidAt: data?.lastPaidAt || undefined,
+    const state: ConversationState = {
+      state: data?.state || cached?.state?.state || 'idle',
+      pendingDelivery: data?.pendingDelivery || cached?.state?.pendingDelivery || undefined,
+      activeCart: data?.activeCart || cached?.state?.activeCart || undefined,
+      lastPaidOrderId: data?.lastPaidOrderId || cached?.state?.lastPaidOrderId || undefined,
+      lastPaidAt: data?.lastPaidAt || cached?.state?.lastPaidAt || undefined,
     };
-  } catch {
-    return { state: 'idle' };
+    CONVERSATION_CACHE.set(phone, { state, updatedAt: Date.now() });
+    return state;
+  } catch (err) {
+    console.warn('[TOV WABA] Firestore get failed, using in-memory session:', err);
+    return cached?.state || { state: 'idle' };
   }
 }
 
 async function updateConversation(phone: string, updates: Record<string, unknown>) {
+  // Update in-memory session immediately so cart and delivery details survive
+  const existing = CONVERSATION_CACHE.get(phone)?.state || { state: 'idle' };
+  const merged: ConversationState = {
+    ...existing,
+    ...(updates.state ? { state: updates.state as any } : {}),
+    ...(updates.pendingDelivery !== undefined ? { pendingDelivery: updates.pendingDelivery as any } : {}),
+    ...(updates.activeCart !== undefined ? { activeCart: updates.activeCart as any } : {}),
+    ...(updates.lastPaidOrderId ? { lastPaidOrderId: updates.lastPaidOrderId as any } : {}),
+    ...(updates.lastPaidAt ? { lastPaidAt: updates.lastPaidAt as any } : {}),
+  };
+  CONVERSATION_CACHE.set(phone, { state: merged, updatedAt: Date.now() });
+
+  // Asynchronously attempt to sync to Firestore
   try {
     await adminDb.collection('whatsapp_conversations').doc(phone).set(updates, { merge: true });
   } catch (e) {
