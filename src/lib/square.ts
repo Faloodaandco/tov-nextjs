@@ -16,9 +16,10 @@ export interface CheckoutLineItem {
   note?: string;
 }
 
-interface CheckoutResult {
+export interface CheckoutResult {
   url: string | null;
   orderId: string | null;
+  referenceId: string;
 }
 
 /**
@@ -33,8 +34,19 @@ export async function createItemisedCheckoutLink(options: {
   isDelivery: boolean;
   deliveryFeePence?: number;
   customerName?: string;
+  customerPhone?: string;
+  streetAddress?: string;
+  postcode?: string;
 }): Promise<CheckoutResult> {
-  const { branchId, items, isDelivery, deliveryFeePence = 0, customerName } = options;
+  const {
+    branchId,
+    items,
+    isDelivery,
+    deliveryFeePence = 0,
+    customerName,
+    streetAddress,
+    postcode,
+  } = options;
 
   const loc = LOCATIONS[branchId];
   const token = branchId === 'hayes'
@@ -44,7 +56,7 @@ export async function createItemisedCheckoutLink(options: {
 
   if (!token) {
     console.error(`[Square] Missing SQUARE_${branchId.toUpperCase()}_ACCESS_TOKEN`);
-    return { url: `https://tasteofvillagerestaurants.co.uk/${branchId}/menu`, orderId: null };
+    return { url: `https://tasteofvillagerestaurants.co.uk/${branchId}/menu`, orderId: null, referenceId: '' };
   }
 
   // ── Build line items ──────────────────────────────────────────────
@@ -65,11 +77,15 @@ export async function createItemisedCheckoutLink(options: {
 
   if (lineItems.length === 0) {
     console.error('[Square] Cannot create payment link with zero items');
-    return { url: null, orderId: null };
+    return { url: null, orderId: null, referenceId: '' };
   }
 
   const displayName = customerName || 'WhatsApp Customer';
   const referenceId = `TOV-WA-${Date.now()}`;
+
+  const ticketName = isDelivery && streetAddress
+    ? `DELIV: ${streetAddress}, ${postcode || ''} — WA ${displayName}`
+    : `${isDelivery ? 'DELIVERY' : 'Pickup'} — WA ${displayName}`;
 
   const payload = {
     idempotency_key: crypto.randomUUID(),
@@ -77,7 +93,7 @@ export async function createItemisedCheckoutLink(options: {
       location_id: locationId,
       reference_id: referenceId,
       line_items: lineItems,
-      ticket_name: `${isDelivery ? 'DELIVERY' : 'Pickup'} — WA ${displayName}`.slice(0, 100),
+      ticket_name: ticketName.slice(0, 100),
     },
     checkout_options: {
       ask_for_shipping_address: isDelivery,
@@ -100,15 +116,16 @@ export async function createItemisedCheckoutLink(options: {
 
     if (!res.ok) {
       console.error('[Square] Payment link error:', JSON.stringify(data.errors || data));
-      return { url: null, orderId: null };
+      return { url: null, orderId: null, referenceId };
     }
 
     return {
       url: data.payment_link?.url || null,
       orderId: data.payment_link?.order_id || referenceId,
+      referenceId,
     };
   } catch (error) {
     console.error('[Square] Fetch error:', error);
-    return { url: null, orderId: null };
+    return { url: null, orderId: null, referenceId };
   }
 }

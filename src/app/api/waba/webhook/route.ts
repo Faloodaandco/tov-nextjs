@@ -30,8 +30,23 @@ interface CartItem {
 }
 
 interface ConversationState {
-  state: 'idle' | 'awaiting_postcode';
-  activeCart?: { items: CartItem[]; basePence: number; updatedAt: string };
+  state: 'idle' | 'awaiting_postcode' | 'awaiting_address';
+  pendingDelivery?: {
+    postcode: string;
+    miles: number;
+    deliveryFeePence: number;
+  };
+  activeCart?: {
+    items: CartItem[];
+    basePence: number;
+    updatedAt: string;
+    checkoutLink?: string;
+    checkoutOrderId?: string;
+    checkoutReferenceId?: string;
+    checkoutAt?: string;
+  };
+  lastPaidOrderId?: string;
+  lastPaidAt?: string;
 }
 
 // ── Constants ────────────────────────────────────────────────────────
@@ -45,7 +60,10 @@ async function getConversation(phone: string): Promise<ConversationState> {
     const data = snap.data();
     return {
       state: data?.state || 'idle',
+      pendingDelivery: data?.pendingDelivery || undefined,
       activeCart: data?.activeCart || undefined,
+      lastPaidOrderId: data?.lastPaidOrderId || undefined,
+      lastPaidAt: data?.lastPaidAt || undefined,
     };
   } catch {
     return { state: 'idle' };
@@ -220,18 +238,100 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     return;
   }
 
+  // ── State: awaiting street address for delivery ─────────────────
+  if (conv.state === 'awaiting_address') {
+    await handleAddressInput(phoneId, from, name, rawText, conv);
+    return;
+  }
+
+  // ── Intent: Clear / Cancel / Reset ─────────────────────────────
+  if (/\b(clear|cancel|reset|start over)\b/.test(text)) {
+    await updateConversation(from, { activeCart: null, state: 'idle', pendingDelivery: null });
+    await sendWhatsAppMessage(phoneId, from, {
+      type: 'text',
+      text: { body: '🗑️ Basket cleared. Type *Menu* whenever you are ready to start fresh!' },
+    });
+    return;
+  }
+
+  // ── Intent: Check Cart / Basket / Active Payment Link ───────────
+  if (/\b(cart|basket|my order|checkout link|link|pay)\b/.test(text)) {
+    if (conv.activeCart?.items?.length) {
+      const total = conv.activeCart.basePence;
+      const checkoutLink = conv.activeCart.checkoutLink;
+      if (checkoutLink) {
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'text',
+          text: {
+            preview_url: false,
+            body: [
+              `🛒 *Your Active Order:*`,
+              cartSummaryText(conv.activeCart.items),
+              ``,
+              `*Total: ${formatPrice(total / 100)}*`,
+              ``,
+              `💳 Complete your payment here:`,
+              checkoutLink,
+              ``,
+              `_Type *Clear* to discard this order and start a new one._`,
+            ].join('\n'),
+          },
+        });
+        return;
+      }
+
+      await sendFulfillmentChoice(phoneId, from, conv.activeCart);
+      return;
+    } else {
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: { body: '🛒 Your basket is currently empty. Type *Menu* to browse dishes or view our catalog!' },
+      });
+      return;
+    }
+  }
+
+  // ── Intent: Halal certification query ──────────────────────────
+  if (/\b(halal|hmc)\b/.test(text)) {
+    await sendWhatsAppMessage(phoneId, from, {
+      type: 'text',
+      text: {
+        body: '✅ *100% Halal Certified*\n\nAll meats, poultry, and ingredients at Taste of Village are strictly 100% Halal certified and prepared under the highest hygiene standards.\n\nType *Menu* to browse our dishes!',
+      },
+    });
+    return;
+  }
+
   // ── Intent: menu / food / order ────────────────────────────────
   if (/\b(menu|food|order|browse|dishes|eat)\b/.test(text)) {
     await sendCategoryList(phoneId, from);
     return;
   }
 
-  // ── Intent: I paid ─────────────────────────────────────────────
-  if (/\b(i paid|payment done|just paid|paid already)\b/.test(text)) {
+  // ── Intent: I paid / Check Payment ─────────────────────────────
+  if (/\b(i paid|payment done|just paid|paid already|confirm payment)\b/.test(text)) {
+    const activeRef = conv.activeCart?.checkoutReferenceId || conv.activeCart?.checkoutOrderId;
+    if (activeRef) {
+      try {
+        const orderSnap = await adminDb.collection('whatsapp_orders').doc(activeRef).get();
+        if (orderSnap.exists && orderSnap.data()?.status === 'PAID') {
+          await sendWhatsAppMessage(phoneId, from, {
+            type: 'text',
+            text: {
+              body: `✅ *Payment Verified!* Your order #${activeRef} has been received and confirmed by the kitchen. Fresh food is being prepared right now! 👨‍🍳🔥`,
+            },
+          });
+          return;
+        }
+      } catch (err) {
+        console.warn('[TOV WABA] Error checking payment status:', err);
+      }
+    }
+
     await sendWhatsAppMessage(phoneId, from, {
       type: 'text',
       text: {
-        body: '✅ Thank you! If your payment is confirmed, your order will appear on our kitchen screen shortly.\n\nIf there are any issues, our team will contact you on this number.',
+        body: '⏳ Thank you! Square is confirming your transaction. Once completed, your receipt will automatically appear here and on our kitchen screen.\n\nIf you experienced any card issue, reply to this chat anytime.',
       },
     });
     return;
@@ -668,8 +768,73 @@ async function handlePostcodeInput(
   const isFree = subtotalPounds >= tier.freeThreshold;
   const deliveryFeePence = isFree ? 0 : Math.round(tier.fee * 100);
 
-  // Generate payment link with delivery fee (includes delivery details in the message)
-  await generateCheckoutLink(phoneId, from, name, cart, true, deliveryFeePence, geo.formatted);
+  // Store delivery quote and prompt for building/street address
+  await updateConversation(from, {
+    state: 'awaiting_address',
+    pendingDelivery: {
+      postcode: geo.formatted,
+      miles,
+      deliveryFeePence,
+    },
+  });
+
+  const feeDesc = deliveryFeePence === 0 ? '*FREE* 🎉' : formatPrice(deliveryFeePence / 100);
+  await sendWhatsAppMessage(phoneId, from, {
+    type: 'text',
+    text: {
+      body: [
+        `✅ *Postcode confirmed:* ${geo.formatted} (${miles.toFixed(1)} miles)`,
+        `🚗 Delivery: ${feeDesc} • Est. 35–45 mins`,
+        ``,
+        `🏠 *What is your street address?*`,
+        `Please send your building/flat number and street name:`,
+        `_(e.g., 14 High Street, Flat 2B)_`,
+      ].join('\n'),
+    },
+  });
+}
+
+async function handleAddressInput(
+  phoneId: string,
+  from: string,
+  name: string,
+  rawText: string,
+  conv: ConversationState
+) {
+  const streetAddress = rawText.trim();
+  const pending = conv.pendingDelivery;
+  const cart = conv.activeCart;
+
+  if (!cart?.items?.length) {
+    await updateConversation(from, { state: 'idle', pendingDelivery: null });
+    await sendWhatsAppMessage(phoneId, from, {
+      type: 'text',
+      text: { body: '🛒 Your basket is empty! Type *Menu* to browse dishes.' },
+    });
+    return;
+  }
+
+  if (streetAddress.length < 3) {
+    await sendWhatsAppMessage(phoneId, from, {
+      type: 'text',
+      text: { body: 'Please reply with your building/flat number and street name (e.g., *14 High Street*):' },
+    });
+    return;
+  }
+
+  const deliveryFeePence = pending?.deliveryFeePence || 0;
+  const postcode = pending?.postcode || '';
+
+  await generateCheckoutLink(
+    phoneId,
+    from,
+    name,
+    cart,
+    true,
+    deliveryFeePence,
+    postcode,
+    streetAddress
+  );
 }
 
 async function generateCheckoutLink(
@@ -679,7 +844,8 @@ async function generateCheckoutLink(
   cart: { items: CartItem[]; basePence: number },
   isDelivery: boolean,
   deliveryFeePence: number,
-  postcode?: string
+  postcode?: string,
+  streetAddress?: string
 ) {
   const items: CheckoutLineItem[] = cart.items.map(i => ({
     name: i.name,
@@ -687,31 +853,46 @@ async function generateCheckoutLink(
     pricePence: i.pricePence,
   }));
 
-  const { url: squareLink, orderId } = await createItemisedCheckoutLink({
+  const { url: squareLink, orderId, referenceId } = await createItemisedCheckoutLink({
     branchId: BRANCH_ID,
     items,
     isDelivery,
     deliveryFeePence,
     customerName: name,
+    customerPhone: from,
+    postcode,
+    streetAddress,
   });
 
+  const totalPence = cart.basePence + deliveryFeePence;
+
   // Store order-to-phone mapping for post-payment WhatsApp confirmation
-  if (orderId) {
-    try {
-      await adminDb.collection('whatsapp_orders').doc(orderId).set({
-        phone: from,
-        name,
-        items: cart.items,
-        fulfillmentType: isDelivery ? 'delivery' : 'collection',
-        status: 'payment_pending',
-        paymentLinkUrl: squareLink,
-        postcode: postcode || null,
-        createdAt: new Date().toISOString(),
-      });
-    } catch (e) {
-      // NEVER block payment link delivery — log and continue
-      console.error('[TOV WABA] Failed to save whatsapp_orders:', e);
+  const orderRecord = {
+    orderId: orderId || referenceId,
+    referenceId,
+    phone: from,
+    phoneId,
+    name,
+    items: cart.items,
+    fulfillmentType: isDelivery ? 'delivery' : 'collection',
+    status: 'payment_pending',
+    paymentLinkUrl: squareLink,
+    postcode: postcode || null,
+    streetAddress: streetAddress || null,
+    totalPence,
+    createdAt: new Date().toISOString(),
+  };
+
+  try {
+    if (referenceId) {
+      await adminDb.collection('whatsapp_orders').doc(referenceId).set(orderRecord);
     }
+    if (orderId && orderId !== referenceId) {
+      await adminDb.collection('whatsapp_orders').doc(orderId).set(orderRecord);
+    }
+  } catch (e) {
+    // NEVER block payment link delivery — log and continue
+    console.error('[TOV WABA] Failed to save whatsapp_orders:', e);
   }
 
   if (!squareLink) {
@@ -722,10 +903,18 @@ async function generateCheckoutLink(
     return;
   }
 
-  // Clear the cart after generating payment link
-  await updateConversation(from, { activeCart: null, state: 'idle' });
-
-  const totalPence = cart.basePence + deliveryFeePence;
+  // Preserve the active cart so it survives until payment is completed!
+  await updateConversation(from, {
+    state: 'idle',
+    pendingDelivery: null,
+    activeCart: {
+      ...cart,
+      checkoutLink: squareLink,
+      checkoutOrderId: orderId || referenceId,
+      checkoutReferenceId: referenceId,
+      checkoutAt: new Date().toISOString(),
+    },
+  });
 
   if (isDelivery) {
     const feeText = deliveryFeePence === 0 ? '*FREE* 🎉' : formatPrice(deliveryFeePence / 100);
@@ -735,7 +924,7 @@ async function generateCheckoutLink(
       text: {
         preview_url: false,
         body: [
-          '🛵 *Delivery Order*',
+          '🛵 *Delivery Order Summary*',
           '',
           `📋 *Items:*`,
           cartSummaryText(cart.items),
@@ -743,11 +932,13 @@ async function generateCheckoutLink(
           `Subtotal: ${formatPrice(cart.basePence / 100)}`,
           `Delivery: ${feeText}`,
           `*Total: ${formatPrice(totalPence / 100)}*`,
-          postcode ? `📍 ${postcode}` : '',
+          streetAddress ? `📍 ${streetAddress}, ${postcode}` : (postcode ? `📍 ${postcode}` : ''),
           `⏱️ Est. ${est.min}–${est.max} mins`,
           '',
-          `💳 Pay securely via Apple Pay / Google Pay:`,
+          `💳 Pay securely via Apple Pay / Google Pay / Card:`,
           squareLink,
+          '',
+          `_Your basket remains saved until payment completes._`,
         ].filter(Boolean).join('\n'),
       },
     });
@@ -757,7 +948,7 @@ async function generateCheckoutLink(
       text: {
         preview_url: false,
         body: [
-          '🏪 *Collection Order*',
+          '🏪 *Collection Order Summary*',
           '',
           `📋 *Items:*`,
           cartSummaryText(cart.items),
@@ -766,9 +957,11 @@ async function generateCheckoutLink(
           '',
           `📍 Pickup at: *${LOC.address}, ${LOC.city} ${LOC.postcode}*`,
           '',
-          `💳 Pay securely:`,
+          `💳 Pay securely via Apple Pay / Google Pay / Card:`,
           squareLink,
-        ].join('\n'),
+          '',
+          `_Your basket remains saved until payment completes._`,
+        ].filter(Boolean).join('\n'),
       },
     });
   }
@@ -824,17 +1017,42 @@ async function sendFulfillmentChoice(
 }
 
 async function sendWelcome(phoneId: string, from: string, name: string, conv?: ConversationState) {
+  const hour = new Date().getUTCHours();
+  let timeGreeting = 'Hello';
+  if (hour >= 5 && hour < 12) timeGreeting = 'Good morning';
+  else if (hour >= 12 && hour < 17) timeGreeting = 'Good afternoon';
+  else timeGreeting = 'Good evening';
+
+  const cleanName = name && name !== from ? `, ${name}` : '';
   const hasCart = conv?.activeCart?.items?.length;
-  const cartLine = hasCart
-    ? `\n\n🛒 You have ${conv!.activeCart!.items.length} item(s) in your basket (${formatPrice(conv!.activeCart!.basePence / 100)}).`
-    : '';
+  const checkoutLink = conv?.activeCart?.checkoutLink;
+
+  let cartSection = '';
+  if (hasCart) {
+    cartSection = `\n\n🛒 *Your Basket:* ${conv!.activeCart!.items.length} item(s) (${formatPrice(conv!.activeCart!.basePence / 100)})`;
+    if (checkoutLink) {
+      cartSection += `\n💳 *Payment Link Ready:* ${checkoutLink}`;
+    }
+  }
+
+  const fastMenuUrl = `https://tasteofvillagerestaurants.co.uk/${BRANCH_ID}/order?phone=${from}`;
 
   await sendWhatsAppMessage(phoneId, from, {
     type: 'interactive',
     interactive: {
       type: 'button',
+      header: { type: 'text', text: 'Taste of Village Hayes' },
       body: {
-        text: `👋 Welcome to *${LOC.name}*!${cartLine}\n\nBrowse our menu below, or use our catalog to build your order.`,
+        text: [
+          `👋 *${timeGreeting}${cleanName}!* Welcome to Taste of Village.`,
+          cartSection,
+          ``,
+          `✨ *Two easy ways to order:*`,
+          `📸 *Fast Photo Menu & 1-Tap Pay:*`,
+          fastMenuUrl,
+          ``,
+          `Or tap *Browse Menu* below to order directly in chat! 👇`,
+        ].filter(Boolean).join('\n'),
       },
       action: {
         buttons: hasCart
@@ -843,7 +1061,7 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
               { type: 'reply', reply: { id: 'tov_menu', title: '📋 Menu' } },
             ]
           : [
-              { type: 'reply', reply: { id: 'tov_menu', title: '📋 View Menu' } },
+              { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
             ],
       },
     },

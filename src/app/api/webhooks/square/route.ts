@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import crypto from 'crypto';
 import { adminDb } from '@/lib/firebaseAdmin';
+import { sendWhatsAppMessage } from '@/lib/waba';
 
 /**
  * POST /api/webhooks/square
@@ -132,6 +133,84 @@ export async function POST(req: NextRequest) {
               }
             } catch (updateErr) {
               console.error(`[Square Webhook] Failed to update order ${orderRefId}:`, updateErr);
+            }
+          }
+
+          // ── WhatsApp Order Payment Sync & Notification ──
+          const squareOrderId = payment.order_id;
+          const isWaRef = orderRefId && orderRefId.startsWith('TOV-WA-');
+
+          if (isWaRef || squareOrderId) {
+            try {
+              // Try finding whatsapp_orders by referenceId first, then squareOrderId
+              let waDocRef = orderRefId ? adminDb.collection('whatsapp_orders').doc(orderRefId) : null;
+              let waSnap = waDocRef ? await waDocRef.get() : null;
+
+              if (!waSnap?.exists && squareOrderId) {
+                waDocRef = adminDb.collection('whatsapp_orders').doc(squareOrderId);
+                waSnap = await waDocRef.get();
+              }
+
+              if (waSnap?.exists) {
+                const waOrder = waSnap.data();
+                if (waOrder && waOrder.status !== 'PAID') {
+                  await waDocRef!.update({
+                    status: 'PAID',
+                    paidAt: new Date().toISOString(),
+                    squarePaymentId: payment.id,
+                  });
+                  console.info(`[Square Webhook] whatsapp_orders/${waDocRef!.id} marked as PAID`);
+
+                  // Clear user's active cart in whatsapp_conversations since they paid!
+                  if (waOrder.phone) {
+                    await adminDb.collection('whatsapp_conversations').doc(waOrder.phone).set({
+                      activeCart: null,
+                      state: 'idle',
+                      lastPaidOrderId: orderRefId || squareOrderId,
+                      lastPaidAt: new Date().toISOString(),
+                    }, { merge: true });
+
+                    // Send Instant WhatsApp Receipt & Confirmation!
+                    const phoneId = waOrder.phoneId || process.env.TOV_WABA_PHONE_ID || '1353080021225827';
+                    const isDelivery = waOrder.fulfillmentType === 'delivery';
+                    const addressLine = isDelivery
+                      ? (waOrder.streetAddress
+                          ? `📍 Delivering to: *${waOrder.streetAddress}, ${waOrder.postcode || ''}*`
+                          : `📍 Delivering to: *${waOrder.postcode || 'Your address'}*`)
+                      : `📍 Pickup at: *766B Uxbridge Rd, Hayes UB4 0RU*`;
+
+                    const itemsList = (waOrder.items || [])
+                      .map((i: any) => `• ${i.quantity}x ${i.name}`)
+                      .join('\n');
+
+                    const estMinutes = isDelivery ? '35–45' : '20–25';
+                    const displayId = orderRefId || (squareOrderId ? squareOrderId.slice(-6).toUpperCase() : 'TOV');
+
+                    await sendWhatsAppMessage(phoneId, waOrder.phone, {
+                      type: 'text',
+                      text: {
+                        preview_url: false,
+                        body: [
+                          `🎉 *Payment Confirmed!*`,
+                          `Thank you ${waOrder.name || ''}! We've received your payment.`,
+                          ``,
+                          `📋 *Order #${displayId}*`,
+                          itemsList,
+                          ``,
+                          addressLine,
+                          `⏱️ *Estimated Time: ${estMinutes} mins*`,
+                          ``,
+                          `Our kitchen has started preparing your fresh food! 👨‍🍳🔥`,
+                          `If you have any questions or dietary notes, simply reply to this chat.`
+                        ].filter(Boolean).join('\n'),
+                      },
+                    });
+                    console.info(`[Square Webhook] Sent WhatsApp payment confirmation to ${waOrder.phone}`);
+                  }
+                }
+              }
+            } catch (waErr) {
+              console.error('[Square Webhook] Failed to process WhatsApp order confirmation:', waErr);
             }
           }
         }
