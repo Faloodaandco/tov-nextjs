@@ -507,11 +507,12 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
   const replyType = message.interactive.type;
 
   if (replyType === 'list_reply') {
-    const listId: string = message.interactive.list_reply.id;
+    const rawListId: string = message.interactive.list_reply.id;
+    const [listId, carriedCart] = rawListId.split('~');
 
     // Category selected → show items
     if (listId.startsWith('cat_')) {
-      const rows = buildItemListRows(listId);
+      const rows = buildItemListRows(listId, carriedCart);
       if (rows.length === 0) {
         await sendWhatsAppMessage(phoneId, from, {
           type: 'text',
@@ -539,8 +540,9 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     // Item selected → add to cart and offer immediate close options
     const menuItem = getMenuItemById(listId);
     if (menuItem) {
-      const conv = await getConversation(from);
-      const newItems = addToCart(conv.activeCart?.items, {
+      const carriedItems = decodeCart(carriedCart || '');
+      const existingItems = carriedItems.length ? carriedItems : ((await getConversation(from)).activeCart?.items || []);
+      const newItems = addToCart(existingItems, {
         id: menuItem.id,
         name: menuItem.name,
         quantity: 1,
@@ -645,17 +647,11 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
 
     // ── Add More → category list (preserving existing encoded cart) ─
     if (buttonId.startsWith('tov_more_') || buttonId === 'tov_add_more' || buttonId === 'tov_menu') {
+      let carriedCart = '';
       if (buttonId.startsWith('tov_more_')) {
-        const items = decodeCart(buttonId.replace('tov_more_', ''));
-        if (items.length) {
-          const total = cartTotal(items);
-          await updateConversation(from, {
-            activeCart: { items, basePence: total, updatedAt: new Date().toISOString() },
-            state: 'idle',
-          });
-        }
+        carriedCart = buttonId.replace('tov_more_', '');
       }
-      await sendCategoryList(phoneId, from);
+      await sendCategoryList(phoneId, from, carriedCart);
       return;
     }
 
@@ -1146,17 +1142,17 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
   });
 }
 
-async function sendCategoryList(phoneId: string, from: string) {
+async function sendCategoryList(phoneId: string, from: string, carriedCart?: string) {
   await sendWhatsAppMessage(phoneId, from, {
     type: 'interactive',
     interactive: {
       type: 'list',
       header: { type: 'text', text: 'Taste of Village Menu' },
-      body: { text: 'Pick a category to browse dishes:' },
+      body: { text: carriedCart ? 'Pick a category to add more dishes:' : 'Pick a category to browse dishes:' },
       footer: { text: 'Authentic Pakistani & Indian Cuisine' },
       action: {
         button: '📋 Browse Menu',
-        sections: buildMenuCategorySections(),
+        sections: buildMenuCategorySections(carriedCart),
       },
     },
   });

@@ -149,7 +149,8 @@ export function buildDeliveryProgressBar(currentPence: number, thresholdPence: n
 // ── WhatsApp List Builders ───────────────────────────────────────────
 
 /** Build the top-level category list for the "Browse Menu" action. */
-export function buildMenuCategorySections() {
+export function buildMenuCategorySections(carriedCart?: string) {
+  const suffix = carriedCart ? `~${carriedCart}` : '';
   return [{
     title: 'Menu Categories',
     rows: MENU_SECTIONS.map(section => {
@@ -160,7 +161,7 @@ export function buildMenuCategorySections() {
         ? `${formatPrice(items[items.length - 1].price)}–${formatPrice(items[0].price)}`
         : '';
       return {
-        id: section.id,
+        id: `${section.id}${suffix}`.slice(0, 200),
         title: section.title.slice(0, 24),
         description: `${count} items • ${priceRange}`.slice(0, 72),
       };
@@ -169,15 +170,17 @@ export function buildMenuCategorySections() {
 }
 
 /** Build item rows for a category section (max 10 per WhatsApp limit). */
-export function buildItemListRows(sectionId: string) {
-  const items = getItemsBySection(sectionId);
+export function buildItemListRows(sectionId: string, carriedCart?: string) {
+  const pureSectionId = sectionId.split('~')[0];
+  const items = getItemsBySection(pureSectionId);
+  const suffix = carriedCart ? `~${carriedCart}` : '';
   return items.slice(0, 10).map(item => {
     const proof = getSocialProof(item.id);
     const desc = proof
       ? `${formatPrice(item.price)} • ${proof}`
       : `${formatPrice(item.price)}`;
     return {
-      id: item.id,
+      id: `${item.id}${suffix}`.slice(0, 200),
       title: item.name.slice(0, 24),
       description: desc.slice(0, 72),
     };
@@ -186,7 +189,8 @@ export function buildItemListRows(sectionId: string) {
 
 /** Find the section title for a given section ID. */
 export function getSectionTitle(sectionId: string): string {
-  return MENU_SECTIONS.find(s => s.id === sectionId)?.title || 'Menu';
+  const pureSectionId = sectionId.split('~')[0];
+  return MENU_SECTIONS.find(s => s.id === pureSectionId)?.title || 'Menu';
 }
 
 /**
