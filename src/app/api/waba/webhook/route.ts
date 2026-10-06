@@ -597,7 +597,9 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   }
 
   // ── Smart Curation: Fast-close on popular dishes (e.g. "I biryani", "karahi", "grill") ──
-  const curated = getCuratedDish(text);
+  const activeBranch = getEffectiveBranch(conv);
+  const loc = LOCATIONS[activeBranch];
+  const curated = getCuratedDish(text, activeBranch);
   if (curated) {
     const newItems = addToCart(conv.activeCart?.items, {
       id: curated.item.id,
@@ -640,12 +642,10 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   }
 
   // ── Intent: Smart Category Match (e.g., "biryani", "karahi", "kebab", "naan") ──
-  const activeBranch = getEffectiveBranch(conv);
-  const loc = LOCATIONS[activeBranch];
-  const matchedCategory = findMatchingCategory(text);
+  const matchedCategory = findMatchingCategory(text, activeBranch);
   if (matchedCategory) {
     const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
-    const rows = buildItemListRows(matchedCategory.id, carriedCartStr);
+    const rows = buildItemListRows(matchedCategory.id, carriedCartStr, activeBranch);
     if (rows.length > 0) {
       await sendWhatsAppMessage(phoneId, from, {
         type: 'interactive',
@@ -665,7 +665,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   }
 
   // ── Intent: Dish Keyword Search (e.g., "chicken tikka", "paneer", "lamb chops") ──
-  const matchingDishes = searchMenuDishes(text);
+  const matchingDishes = searchMenuDishes(text, activeBranch);
   if (matchingDishes.length > 0) {
     const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
     const carriedSuffix = carriedCartStr ? `~${carriedCartStr}` : '';
@@ -793,18 +793,18 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
 
     // Category selected → show items
     if (listId.startsWith('cat_')) {
-      const rows = buildItemListRows(listId, carriedCart);
+      const rows = buildItemListRows(listId, carriedCart, activeBranch);
       if (rows.length > 0) {
         await sendWhatsAppMessage(phoneId, from, {
           type: 'interactive',
           interactive: {
             type: 'list',
-            header: { type: 'text', text: getSectionTitle(listId) },
+            header: { type: 'text', text: getSectionTitle(listId, activeBranch) },
             body: { text: 'Tap an item to add it to your order:' },
             footer: { text: `Taste of Village ${loc.city}` },
             action: {
               button: 'Select Item',
-              sections: [{ title: getSectionTitle(listId), rows }],
+              sections: [{ title: getSectionTitle(listId, activeBranch), rows }],
             },
           },
         });
@@ -813,7 +813,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     }
 
     // Item selected → add to cart and offer immediate close options
-    const menuItem = getMenuItemById(listId);
+    const menuItem = getMenuItemById(listId, activeBranch);
     if (menuItem) {
       const carriedItems = decodeCart(carriedCart || '');
       const existingItems = carriedItems.length ? carriedItems : (conv.activeCart?.items || []);
@@ -919,18 +919,18 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     // ── Category Button (e.g. from curated dish alternative) ─────
     if (buttonId.startsWith('cat_')) {
       const [catId, carriedCart] = buttonId.split('~');
-      const rows = buildItemListRows(catId, carriedCart);
+      const rows = buildItemListRows(catId, carriedCart, activeBranch);
       if (rows.length > 0) {
         await sendWhatsAppMessage(phoneId, from, {
           type: 'interactive',
           interactive: {
             type: 'list',
-            header: { type: 'text', text: getSectionTitle(catId) },
-            body: { text: `Here are our ${getSectionTitle(catId)} options. Tap to add:` },
+            header: { type: 'text', text: getSectionTitle(catId, activeBranch) },
+            body: { text: `Here are our ${getSectionTitle(catId, activeBranch)} options. Tap to add:` },
             footer: { text: `Taste of Village ${loc.city}` },
             action: {
               button: 'Select Dish',
-              sections: [{ title: getSectionTitle(catId), rows }],
+              sections: [{ title: getSectionTitle(catId, activeBranch), rows }],
             },
           },
         });
@@ -1130,11 +1130,14 @@ async function handleOrderMessage(phoneId: string, from: string, name: string, m
   const orderItems: any[] = message.order?.product_items || [];
   if (!orderItems.length) return;
 
+  const conv = await getConversation(from);
+  const branchId = getEffectiveBranch(conv);
+
   const cartItems: CartItem[] = [];
   let totalPence = 0;
 
   for (const item of orderItems) {
-    const menuItem = getMenuItemById(item.product_retailer_id);
+    const menuItem = getMenuItemById(item.product_retailer_id, branchId);
     const pricePence = menuItem
       ? Math.round(menuItem.price * 100)
       : Math.round(parseFloat(item.item_price || '0') * 100);
@@ -1682,7 +1685,7 @@ async function sendCategoryList(phoneId: string, from: string, carriedCart?: str
       footer: { text: `Taste of Village ${loc.city} • Open 10AM–2AM` },
       action: {
         button: '📋 Browse Menu',
-        sections: buildMenuCategorySections(carriedCart),
+        sections: buildMenuCategorySections(carriedCart, branchId),
       },
     },
   });

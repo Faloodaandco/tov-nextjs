@@ -1,9 +1,10 @@
 /**
- * WhatsApp Menu Helpers — loads tov-menu.json and provides
- * lookup / formatting utilities for WhatsApp List messages.
+ * WhatsApp Menu Helpers — loads tov-menu.json (Hayes) and tov-menu-slough.json (Slough)
+ * and provides lookup / formatting utilities for WhatsApp List messages.
  *
- * Single source of truth: both the website and WhatsApp bot
- * read from the same menu data file.
+ * Branch-aware: all public functions accept an optional branchId parameter.
+ * When branchId is 'slough', items from the Slough menu are used.
+ * Default is 'hayes' for backward compatibility.
  *
  * Marketing psychology applied:
  * - Price anchoring: high-AOV platters/karahi listed first
@@ -11,7 +12,9 @@
  * - Bridge items: low-cost impulse adds surfaced contextually
  */
 
-import menuItems from '@/data/tov-menu.json';
+import hayesMenuItems from '@/data/tov-menu.json';
+import sloughMenuItems from '@/data/tov-menu-slough.json';
+import type { LocationId } from '@/config/shopConfig';
 
 // ── Types ────────────────────────────────────────────────────────────
 export interface MenuItem {
@@ -27,8 +30,23 @@ export interface MenuItem {
   dineInPrice: number;
 }
 
-// ── Category Groups — ORDERED BY AOV (anchoring: expensive first) ────
-export const MENU_SECTIONS = [
+// ── Menu Data Per Branch ─────────────────────────────────────────────
+const hayesMenu: MenuItem[] = hayesMenuItems as MenuItem[];
+const sloughMenu: MenuItem[] = sloughMenuItems as MenuItem[];
+
+const MENUS: Record<string, MenuItem[]> = {
+  hayes: hayesMenu,
+  slough: sloughMenu,
+};
+
+/** Get the menu array for a branch. Defaults to hayes. */
+function getMenu(branchId?: LocationId | string): MenuItem[] {
+  return MENUS[branchId || 'hayes'] || hayesMenu;
+}
+
+// ── Category Groups — Branch-Specific ────────────────────────────────
+// Hayes: original TOV menu with Lahori/Desi focus
+const HAYES_SECTIONS = [
   { id: 'cat_platters', title: '👑 Feasts & Platters', categories: ['village_special_platters', 'weekend_special', 'village_brunch_special'] },
   { id: 'cat_karahi', title: '🔥 Karahi E Khaas', categories: ['karahi_e_khaas'] },
   { id: 'cat_curries', title: '🍛 Curries & Handi', categories: ['curries_salan_se', 'desi_handi'] },
@@ -41,35 +59,66 @@ export const MENU_SECTIONS = [
   { id: 'cat_specials', title: '🌟 Weekend Specials', categories: ['weekend_special'] },
 ];
 
-const menu: MenuItem[] = menuItems as MenuItem[];
+// Slough: different menu structure with breakfast focus, Sunday roast, signature dishes
+const SLOUGH_SECTIONS = [
+  { id: 'cat_breakfast', title: '🌅 Breakfast & Desi Nashta', categories: ['breakfast___desi_nashta'] },
+  { id: 'cat_mains', title: '🍛 Village Classics', categories: ['mains___village_classics'] },
+  { id: 'cat_signature', title: '⭐ Signature Dishes', categories: ['signature_dishes', 'weekend_specials'] },
+  { id: 'cat_grill', title: '🔥 Starters & Charcoal Grill', categories: ['starters_n_charcoal_grill'] },
+  { id: 'cat_platters', title: '👑 Family Platters', categories: ['family_platters'] },
+  { id: 'cat_roast', title: '🍖 Sunday Roast', categories: ['sunday_roast'] },
+  { id: 'cat_veg', title: '🥬 Vegetarian Mains', categories: ['vegetarian_mains'] },
+  { id: 'cat_breads', title: '🫓 Naan & Bread', categories: ['naan_n_bread'] },
+  { id: 'cat_rice', title: '🍚 Rice Specials', categories: ['rice_specials'] },
+  { id: 'cat_sides', title: '🥗 Salads & Sides', categories: ['salads', 'sides_n_sauces'] },
+  { id: 'cat_desserts', title: '🍨 Desserts', categories: ['desserts'] },
+  { id: 'cat_drinks', title: '🥤 Drinks & Mocktails', categories: ['soft_drinks', 'mocktails_n_lassi'] },
+  { id: 'cat_kids', title: '👶 Kids Meal', categories: ['kids_meal'] },
+];
+
+const BRANCH_SECTIONS: Record<string, typeof HAYES_SECTIONS> = {
+  hayes: HAYES_SECTIONS,
+  slough: SLOUGH_SECTIONS,
+};
+
+/** Get menu sections for a branch. */
+export function getMenuSections(branchId?: LocationId | string) {
+  return BRANCH_SECTIONS[branchId || 'hayes'] || HAYES_SECTIONS;
+}
+
+// Legacy export for backward compat
+export const MENU_SECTIONS = HAYES_SECTIONS;
 
 // ── Social Proof Tags ────────────────────────────────────────────────
-// Hardcoded "most popular" items based on category bestsellers.
-// These override the `popular` field from tov-menu.json (which is all false).
 const SOCIAL_PROOF: Record<string, string> = {
-  // Karahi
+  // Hayes
   'chicken_karahi': '🔥 Most Popular',
   'lamb_karahi': '⭐ Customer Favourite',
-  // Curries
   'butter_chicken': '🔥 Best Seller',
   'lamb_rogan_josh': '⭐ Chef\'s Pick',
-  // Biryani
   'chicken_biryani': '🔥 Most Ordered',
-  // BBQ
   'seekh_kebab': '⭐ Grill Favourite',
   'chicken_tikka': '🔥 Must Try',
-  // Platters
   'village_special_platter': '👑 Best Value',
   'bbq_mix_platter': '🔥 Feeds the Family',
+  // Slough
+  'tov_slough_special_nihari': '🔥 Signature Dish',
+  'tov_slough_chicken_charsi_karahi': '⭐ Customer Favourite',
+  'tov_slough_seabass_fillet': '👑 Chef\'s Special',
+  'tov_slough_lamb_skewers': '🔥 Must Try',
+  'tov_slough_afghani_pulao': '⭐ Most Ordered',
+  'tov_slough_partner_grill_feast': '👑 Best Value',
 };
 
 // ── Categories that qualify for "Make it a Meal" upsell ──────────────
 const CURRY_CATEGORIES = new Set([
   'karahi_e_khaas', 'curries_salan_se', 'desi_handi',
+  'mains___village_classics', 'signature_dishes',
 ]);
 
 const BREAD_CATEGORIES = new Set([
   'naan_n_roti', 'parathas', 'lahori_kulchas',
+  'naan_n_bread',
 ]);
 
 // ── Meal Deal Config ─────────────────────────────────────────────────
@@ -95,17 +144,24 @@ export const BRIDGE_ITEMS = [
 // ── Lookups ──────────────────────────────────────────────────────────
 
 /** Get all items in a category section, sorted: expensive first (anchoring). */
-export function getItemsBySection(sectionId: string): MenuItem[] {
-  const section = MENU_SECTIONS.find(s => s.id === sectionId);
+export function getItemsBySection(sectionId: string, branchId?: LocationId | string): MenuItem[] {
+  const sections = getMenuSections(branchId);
+  const menu = getMenu(branchId);
+  const section = sections.find(s => s.id === sectionId);
   if (!section) return [];
   return menu
     .filter(item => (section.categories as readonly string[]).includes(item.category))
     .sort((a, b) => b.price - a.price); // Price anchoring: expensive first
 }
 
-/** Look up a single item by its ID (matches tov-menu.json and catalog product_retailer_id). */
-export function getMenuItemById(itemId: string): MenuItem | undefined {
-  return menu.find(item => item.id === itemId);
+/** Look up a single item by its ID. Searches both menus for resilience. */
+export function getMenuItemById(itemId: string, branchId?: LocationId | string): MenuItem | undefined {
+  const primaryMenu = getMenu(branchId);
+  const found = primaryMenu.find(item => item.id === itemId);
+  if (found) return found;
+  // Fallback: search the other menu (handles cross-branch cart items)
+  const otherMenu = branchId === 'slough' ? hayesMenu : sloughMenu;
+  return otherMenu.find(item => item.id === itemId);
 }
 
 /** Format a price in GBP. */
@@ -149,12 +205,13 @@ export function buildDeliveryProgressBar(currentPence: number, thresholdPence: n
 // ── WhatsApp List Builders ───────────────────────────────────────────
 
 /** Build the top-level category list for the "Browse Menu" action. */
-export function buildMenuCategorySections(carriedCart?: string) {
+export function buildMenuCategorySections(carriedCart?: string, branchId?: LocationId | string) {
+  const sections = getMenuSections(branchId);
   const suffix = carriedCart ? `~${carriedCart}` : '';
   return [{
     title: 'Menu Categories',
-    rows: MENU_SECTIONS.map(section => {
-      const items = getItemsBySection(section.id);
+    rows: sections.map(section => {
+      const items = getItemsBySection(section.id, branchId);
       const count = items.length;
       if (count === 0) return null;
       const priceRange = count > 0
@@ -170,9 +227,9 @@ export function buildMenuCategorySections(carriedCart?: string) {
 }
 
 /** Build item rows for a category section (max 10 per WhatsApp limit). */
-export function buildItemListRows(sectionId: string, carriedCart?: string) {
+export function buildItemListRows(sectionId: string, carriedCart?: string, branchId?: LocationId | string) {
   const pureSectionId = sectionId.split('~')[0];
-  const items = getItemsBySection(pureSectionId);
+  const items = getItemsBySection(pureSectionId, branchId);
   const suffix = carriedCart ? `~${carriedCart}` : '';
   return items.slice(0, 10).map(item => {
     const proof = getSocialProof(item.id);
@@ -188,18 +245,65 @@ export function buildItemListRows(sectionId: string, carriedCart?: string) {
 }
 
 /** Find the section title for a given section ID. */
-export function getSectionTitle(sectionId: string): string {
+export function getSectionTitle(sectionId: string, branchId?: LocationId | string): string {
   const pureSectionId = sectionId.split('~')[0];
-  return MENU_SECTIONS.find(s => s.id === pureSectionId)?.title || 'Menu';
+  const sections = getMenuSections(branchId);
+  return sections.find(s => s.id === pureSectionId)?.title || 'Menu';
 }
 
 /**
  * Match user text to a menu category section.
- * Handles queries like 'I biryani', 'need karahi', 'kebab', 'naan', etc.
+ * Branch-aware: Slough has different categories (breakfast, Sunday roast, etc.)
  */
-export function findMatchingCategory(query: string): { id: string; title: string } | null {
+export function findMatchingCategory(query: string, branchId?: LocationId | string): { id: string; title: string } | null {
   const q = query.toLowerCase().trim();
+  const isSlough = branchId === 'slough';
 
+  // Slough-specific categories
+  if (isSlough) {
+    if (/\b(breakfast|nashta|brunch|nihari|haleem|paya|paye)/.test(q)) {
+      return { id: 'cat_breakfast', title: '🌅 Breakfast & Desi Nashta' };
+    }
+    if (/\b(roast|sunday|beef roast|lamb roast)/.test(q)) {
+      return { id: 'cat_roast', title: '🍖 Sunday Roast' };
+    }
+    if (/\b(signature|seabass|special)/.test(q)) {
+      return { id: 'cat_signature', title: '⭐ Signature Dishes' };
+    }
+    if (/\b(starter|grill|skewer|tikka|kebab|seekh|chops|charcoal|bbq|tandoor)/.test(q)) {
+      return { id: 'cat_grill', title: '🔥 Starters & Charcoal Grill' };
+    }
+    if (/\b(karahi|curry|curries|handi|classic|main|charsi)/.test(q)) {
+      return { id: 'cat_mains', title: '🍛 Village Classics' };
+    }
+    if (/\b(platter|feast|family)/.test(q)) {
+      return { id: 'cat_platters', title: '👑 Family Platters' };
+    }
+    if (/\b(veg|vegetarian|daal|paneer|mushroom)/.test(q)) {
+      return { id: 'cat_veg', title: '🥬 Vegetarian Mains' };
+    }
+    if (/\b(naan|roti|bread|kulcha|paratha)/.test(q)) {
+      return { id: 'cat_breads', title: '🫓 Naan & Bread' };
+    }
+    if (/\b(rice|biryani|pulao|pilau|afghani)/.test(q)) {
+      return { id: 'cat_rice', title: '🍚 Rice Specials' };
+    }
+    if (/\b(salad|sauce|side|raita|chutney)/.test(q)) {
+      return { id: 'cat_sides', title: '🥗 Salads & Sides' };
+    }
+    if (/\b(dessert|kheer|gulab jamun|sweet|halwa|gajar)/.test(q)) {
+      return { id: 'cat_desserts', title: '🍨 Desserts' };
+    }
+    if (/\b(drink|coke|fanta|sprite|water|lassi|mocktail|mint|mango)/.test(q)) {
+      return { id: 'cat_drinks', title: '🥤 Drinks & Mocktails' };
+    }
+    if (/\b(kid|child|nugget|fries)/.test(q)) {
+      return { id: 'cat_kids', title: '👶 Kids Meal' };
+    }
+    return null;
+  }
+
+  // Hayes categories (unchanged)
   if (/\b(biryani|rice|pulao|pilau)\b/.test(q)) {
     return { id: 'cat_biryani', title: '🍚 Biryani & Rice' };
   }
@@ -235,9 +339,9 @@ export function findMatchingCategory(query: string): { id: string; title: string
 
 /**
  * Search dishes across item names and descriptions.
- * Returns up to 10 matching MenuItem objects with formatted list rows.
+ * Returns up to 10 matching MenuItem objects.
  */
-export function searchMenuDishes(query: string): MenuItem[] {
+export function searchMenuDishes(query: string, branchId?: LocationId | string): MenuItem[] {
   const q = query.toLowerCase().trim();
   if (!q || q.length < 3) return [];
 
@@ -248,6 +352,7 @@ export function searchMenuDishes(query: string): MenuItem[] {
   const words = q.split(/\s+/).filter(w => w.length >= 3 && !stopwords.has(w));
   if (words.length === 0) return [];
 
+  const menu = getMenu(branchId);
   return menu.filter(item => {
     const nameLower = item.name.toLowerCase();
     const catLower = item.category.toLowerCase();
@@ -264,36 +369,55 @@ export interface CuratedRecommendation {
 }
 
 /**
- * Curate the #1 customer favorite when someone mentions a broad food type (e.g. 'I biryani', 'karahi', 'grill')
- * to close the transaction immediately without forcing endless category navigation.
+ * Curate the #1 customer favorite when someone mentions a broad food type.
+ * Branch-aware: different hero items per branch.
  */
-export function getCuratedDish(query: string): CuratedRecommendation | null {
+export function getCuratedDish(query: string, branchId?: LocationId | string): CuratedRecommendation | null {
   const q = query.toLowerCase().trim();
+  const menu = getMenu(branchId);
+  const isSlough = branchId === 'slough';
 
-  // Biryani -> Chicken Biryani
+  // Biryani/Pulao
   if (/\b(biryani|pulao)\b/.test(q)) {
-    const item = menu.find(i => i.id === 'chicken_biryani')
-      || menu.find(i => i.name.toLowerCase().includes('chicken biryani'))
-      || menu.find(i => i.category === 'biryani_and_rice');
+    const item = isSlough
+      ? menu.find(i => i.id === 'tov_slough_afghani_pulao') || menu.find(i => i.name.toLowerCase().includes('pulao'))
+      : menu.find(i => i.id === 'chicken_biryani') || menu.find(i => i.name.toLowerCase().includes('chicken biryani')) || menu.find(i => i.category === 'biryani_and_rice');
     if (item) {
-      return { item, categoryId: 'cat_biryani', categoryTitle: '📋 Other Biryanis' };
+      return { item, categoryId: isSlough ? 'cat_rice' : 'cat_biryani', categoryTitle: isSlough ? '📋 Other Rice Dishes' : '📋 Other Biryanis' };
     }
   }
 
-  // Karahi -> Chicken Karahi
+  // Karahi
   if (/\b(karahi)\b/.test(q)) {
-    const item = menu.find(i => i.id === 'chicken_karahi')
-      || menu.find(i => i.name.toLowerCase().includes('chicken karahi'))
-      || menu.find(i => i.category === 'karahi_e_khaas');
+    const item = isSlough
+      ? menu.find(i => i.id === 'tov_slough_chicken_charsi_karahi') || menu.find(i => i.name.toLowerCase().includes('karahi'))
+      : menu.find(i => i.id === 'chicken_karahi') || menu.find(i => i.name.toLowerCase().includes('chicken karahi')) || menu.find(i => i.category === 'karahi_e_khaas');
     if (item) {
-      return { item, categoryId: 'cat_karahi', categoryTitle: '📋 Other Karahis' };
+      return { item, categoryId: isSlough ? 'cat_mains' : 'cat_karahi', categoryTitle: isSlough ? '📋 Other Village Classics' : '📋 Other Karahis' };
+    }
+  }
+
+  // Nihari / Paya (Slough breakfast focus)
+  if (isSlough && /\b(nihari|paya|haleem)\b/.test(q)) {
+    const item = menu.find(i => i.id === 'tov_slough_special_nihari') || menu.find(i => i.name.toLowerCase().includes('nihari'));
+    if (item) {
+      return { item, categoryId: 'cat_breakfast', categoryTitle: '📋 Other Breakfast Items' };
+    }
+  }
+
+  // Sunday Roast (Slough only)
+  if (isSlough && /\b(roast|sunday)\b/.test(q)) {
+    const item = menu.find(i => i.category === 'sunday_roast');
+    if (item) {
+      return { item, categoryId: 'cat_roast', categoryTitle: '📋 Other Roast Options' };
     }
   }
 
   // Mixed Grill / BBQ Platters
   if (/\b(mixed grill|platter|feasts?)\b/.test(q)) {
-    const item = menu.find(i => i.id === 'village_special_platter')
-      || menu.find(i => i.name.toLowerCase().includes('platter'));
+    const item = isSlough
+      ? menu.find(i => i.id === 'tov_slough_partner_grill_feast') || menu.find(i => i.name.toLowerCase().includes('platter'))
+      : menu.find(i => i.id === 'village_special_platter') || menu.find(i => i.name.toLowerCase().includes('platter'));
     if (item) {
       return { item, categoryId: 'cat_platters', categoryTitle: '📋 Other Platters' };
     }
@@ -301,20 +425,19 @@ export function getCuratedDish(query: string): CuratedRecommendation | null {
 
   // Kebab / Grill / Tikka
   if (/\b(kebab|bbq|tikka|grill|chops?)\b/.test(q)) {
-    const item = menu.find(i => i.id === 'seekh_kebab')
-      || menu.find(i => i.id === 'chicken_tikka')
-      || menu.find(i => i.name.toLowerCase().includes('tikka'));
+    const item = isSlough
+      ? menu.find(i => i.id === 'tov_slough_lamb_skewers') || menu.find(i => i.name.toLowerCase().includes('skewer'))
+      : menu.find(i => i.id === 'seekh_kebab') || menu.find(i => i.id === 'chicken_tikka') || menu.find(i => i.name.toLowerCase().includes('tikka'));
     if (item) {
-      return { item, categoryId: 'cat_bbq', categoryTitle: '📋 Other Grills' };
+      return { item, categoryId: isSlough ? 'cat_grill' : 'cat_bbq', categoryTitle: isSlough ? '📋 Other Grills' : '📋 Other Grills' };
     }
   }
 
   // Butter chicken / Curry
   if (/\b(butter chicken)\b/.test(q)) {
-    const item = menu.find(i => i.id === 'butter_chicken')
-      || menu.find(i => i.name.toLowerCase().includes('butter chicken'));
+    const item = menu.find(i => i.id === 'butter_chicken') || menu.find(i => i.name.toLowerCase().includes('butter chicken'));
     if (item) {
-      return { item, categoryId: 'cat_curries', categoryTitle: '📋 Other Curries' };
+      return { item, categoryId: isSlough ? 'cat_mains' : 'cat_curries', categoryTitle: isSlough ? '📋 Other Village Classics' : '📋 Other Curries' };
     }
   }
 
