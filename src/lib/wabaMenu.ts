@@ -249,3 +249,67 @@ export function searchMenuDishes(query: string): MenuItem[] {
     return words.some(w => nameLower.includes(w) || catLower.includes(w) || descLower.includes(w));
   }).slice(0, 10);
 }
+
+export interface CuratedRecommendation {
+  item: MenuItem;
+  categoryId: string;
+  categoryTitle: string;
+}
+
+/**
+ * Curate the #1 customer favorite when someone mentions a broad food type (e.g. 'I biryani', 'karahi', 'grill')
+ * to close the transaction immediately without forcing endless category navigation.
+ */
+export function getCuratedDish(query: string): CuratedRecommendation | null {
+  const q = query.toLowerCase().trim();
+
+  // Biryani -> Chicken Biryani
+  if (/\b(biryani|pulao)\b/.test(q)) {
+    const item = menu.find(i => i.id === 'chicken_biryani')
+      || menu.find(i => i.name.toLowerCase().includes('chicken biryani'))
+      || menu.find(i => i.category === 'biryani_and_rice');
+    if (item) {
+      return { item, categoryId: 'cat_biryani', categoryTitle: '📋 Other Biryanis' };
+    }
+  }
+
+  // Karahi -> Chicken Karahi
+  if (/\b(karahi)\b/.test(q)) {
+    const item = menu.find(i => i.id === 'chicken_karahi')
+      || menu.find(i => i.name.toLowerCase().includes('chicken karahi'))
+      || menu.find(i => i.category === 'karahi_e_khaas');
+    if (item) {
+      return { item, categoryId: 'cat_karahi', categoryTitle: '📋 Other Karahis' };
+    }
+  }
+
+  // Mixed Grill / BBQ Platters
+  if (/\b(mixed grill|platter|feasts?)\b/.test(q)) {
+    const item = menu.find(i => i.id === 'village_special_platter')
+      || menu.find(i => i.name.toLowerCase().includes('platter'));
+    if (item) {
+      return { item, categoryId: 'cat_platters', categoryTitle: '📋 Other Platters' };
+    }
+  }
+
+  // Kebab / Grill / Tikka
+  if (/\b(kebab|bbq|tikka|grill|chops?)\b/.test(q)) {
+    const item = menu.find(i => i.id === 'seekh_kebab')
+      || menu.find(i => i.id === 'chicken_tikka')
+      || menu.find(i => i.name.toLowerCase().includes('tikka'));
+    if (item) {
+      return { item, categoryId: 'cat_bbq', categoryTitle: '📋 Other Grills' };
+    }
+  }
+
+  // Butter chicken / Curry
+  if (/\b(butter chicken)\b/.test(q)) {
+    const item = menu.find(i => i.id === 'butter_chicken')
+      || menu.find(i => i.name.toLowerCase().includes('butter chicken'));
+    if (item) {
+      return { item, categoryId: 'cat_curries', categoryTitle: '📋 Other Curries' };
+    }
+  }
+
+  return null;
+}

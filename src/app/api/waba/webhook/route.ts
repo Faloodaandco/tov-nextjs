@@ -16,6 +16,7 @@ import {
   BRIDGE_ITEMS,
   findMatchingCategory,
   searchMenuDishes,
+  getCuratedDish,
 } from '@/lib/wabaMenu';
 import {
   LOCATIONS,
@@ -241,14 +242,8 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     timestamp: new Date().toISOString(),
   }).catch(() => {});
 
-  // ── State: awaiting postcode for delivery ──────────────────────
-  if (conv.state === 'awaiting_postcode') {
-    await handlePostcodeInput(phoneId, from, name, rawText, conv);
-    return;
-  }
-
-  // ── State: awaiting street address for delivery ─────────────────
-  if (conv.state === 'awaiting_address') {
+  // ── State: awaiting delivery address or postcode ──────────────
+  if (conv.state === 'awaiting_postcode' || conv.state === 'awaiting_address') {
     await handleAddressInput(phoneId, from, name, rawText, conv);
     return;
   }
@@ -317,7 +312,50 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     return;
   }
 
-  // ── Intent: Smart Category Match (e.g., "I biryani", "need karahi", "kebab", "naan") ──
+  // ── Smart Curation: Fast-close on popular dishes (e.g. "I biryani", "karahi", "grill") ──
+  const curated = getCuratedDish(text);
+  if (curated) {
+    const newItems = addToCart(conv.activeCart?.items, {
+      id: curated.item.id,
+      name: curated.item.name,
+      quantity: 1,
+      pricePence: Math.round(curated.item.price * 100),
+    });
+    const total = cartTotal(newItems);
+
+    await updateConversation(from, {
+      activeCart: { items: newItems, basePence: total, updatedAt: new Date().toISOString() },
+      state: 'idle',
+    });
+
+    await sendWhatsAppMessage(phoneId, from, {
+      type: 'interactive',
+      interactive: {
+        type: 'button',
+        header: { type: 'text', text: curated.item.name.slice(0, 60) },
+        body: {
+          text: [
+            `✅ *${curated.item.name}* (${formatPrice(curated.item.price)}) in your basket!`,
+            curated.item.description ? `_${curated.item.description.slice(0, 80)}_` : '',
+            '',
+            `🛒 *Order Total: ${formatPrice(total / 100)}*`,
+            '',
+            'Ready to close your order?',
+          ].filter(Boolean).join('\n'),
+        },
+        action: {
+          buttons: [
+            { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Collection' } },
+            { type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Delivery' } },
+            { type: 'reply', reply: { id: curated.categoryId, title: curated.categoryTitle.slice(0, 20) } },
+          ],
+        },
+      },
+    });
+    return;
+  }
+
+  // ── Intent: Smart Category Match (e.g., "biryani", "karahi", "kebab", "naan") ──
   const matchedCategory = findMatchingCategory(text);
   if (matchedCategory) {
     const rows = buildItemListRows(matchedCategory.id);
@@ -442,7 +480,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       return;
     }
 
-    // Item selected → add to cart + psychology upsells
+    // Item selected → add to cart and offer immediate close options
     const menuItem = getMenuItemById(listId);
     if (menuItem) {
       const conv = await getConversation(from);
@@ -459,64 +497,32 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         state: 'idle',
       });
 
-      // Free delivery progress bar (nearest tier threshold = £30)
-      const progressBar = buildDeliveryProgressBar(total, 3000);
-
-      // Psychology: If curry added → "Make it a Meal" upsell (Thaler's Mental Accounting)
-      if (isCurryItem(menuItem)) {
-        await sendWhatsAppMessage(phoneId, from, {
-          type: 'interactive',
-          interactive: {
-            type: 'button',
-            header: { type: 'text', text: `Added: ${menuItem.name}` },
-            body: {
-              text: [
-                `✅ *${menuItem.name}* (${formatPrice(menuItem.price)}) added!`,
-                '',
-                `🍽️ *Make it a Meal for +${formatPrice(MEAL_DEAL.extraPricePence / 100)}?*`,
-                `Includes: ${MEAL_DEAL.includes}`,
-                `_(Save ${MEAL_DEAL.savings} vs ordering separately)_`,
-                '',
-                progressBar,
-              ].join('\n'),
-            },
-            action: {
-              buttons: [
-                { type: 'reply', reply: { id: 'tov_meal_deal', title: '✅ Upgrade to Meal' } },
-                { type: 'reply', reply: { id: 'tov_add_more', title: '📋 Add More' } },
-                { type: 'reply', reply: { id: 'tov_checkout', title: '🛒 Checkout' } },
-              ],
-            },
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'interactive',
+        interactive: {
+          type: 'button',
+          header: { type: 'text', text: menuItem.name.slice(0, 60) },
+          body: {
+            text: [
+              `✅ *${menuItem.name}* (${formatPrice(menuItem.price)}) in your basket!`,
+              '',
+              `🛒 *Your Order:*`,
+              cartSummaryText(newItems),
+              `*Total: ${formatPrice(total / 100)}*`,
+              '',
+              'Ready to checkout?',
+            ].join('\n'),
           },
-        });
-      } else {
-        // Non-curry: standard add confirmation with progress bar
-        await sendWhatsAppMessage(phoneId, from, {
-          type: 'interactive',
-          interactive: {
-            type: 'button',
-            header: { type: 'text', text: `Added: ${menuItem.name}` },
-            body: {
-              text: [
-                `✅ *${menuItem.name}* (${formatPrice(menuItem.price)}) added!`,
-                '',
-                `🛒 *Your basket:*`,
-                cartSummaryText(newItems),
-                `*Total: ${formatPrice(total / 100)}*`,
-                '',
-                progressBar,
-              ].join('\n'),
-            },
-            action: {
-              buttons: [
-                { type: 'reply', reply: { id: 'tov_checkout', title: '🛒 Checkout' } },
-                { type: 'reply', reply: { id: 'tov_add_more', title: '📋 Add More' } },
-                { type: 'reply', reply: { id: 'tov_clear_cart', title: '🗑️ Clear' } },
-              ],
-            },
+          action: {
+            buttons: [
+              { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Collection' } },
+              { type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Delivery' } },
+              { type: 'reply', reply: { id: 'tov_add_more', title: '➕ Add More' } },
+            ],
           },
-        });
-      }
+        },
+      });
+      return;
     }
     return;
   }
@@ -524,122 +530,60 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
   if (replyType === 'button_reply') {
     const buttonId: string = message.interactive.button_reply.id;
 
-    // ── Checkout → bread auto-suggest or Collection/Delivery ─────
+    // ── Category Button (e.g. from curated dish alternative) ─────
+    if (buttonId.startsWith('cat_')) {
+      const rows = buildItemListRows(buttonId);
+      if (rows.length > 0) {
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'interactive',
+          interactive: {
+            type: 'list',
+            header: { type: 'text', text: getSectionTitle(buttonId) },
+            body: { text: `Here are our ${getSectionTitle(buttonId)} options. Tap to add:` },
+            footer: { text: `Taste of Village ${LOC.city}` },
+            action: {
+              button: 'Select Dish',
+              sections: [{ title: getSectionTitle(buttonId), rows }],
+            },
+          },
+        });
+        return;
+      }
+    }
+
+    // ── Checkout → ask Collection/Delivery ───────────────────────
     if (buttonId === 'tov_checkout') {
       const conv = await getConversation(from);
       if (!conv.activeCart?.items?.length) {
         await sendWhatsAppMessage(phoneId, from, {
           type: 'text',
-          text: { body: '🛒 Your basket is empty! Type *Menu* to browse our dishes, or browse our catalog.' },
+          text: { body: '🛒 Your basket is empty! Type *Menu* to browse our dishes.' },
         });
         return;
       }
-
-      // Psychology: Bread auto-suggest if cart has curry but no bread
-      const itemIds = conv.activeCart.items.map(i => i.id);
-      const hasCurry = itemIds.some(id => {
-        const item = getMenuItemById(id);
-        return item && isCurryItem(item);
-      });
-
-      if (hasCurry && !cartHasBread(itemIds)) {
-        await sendWhatsAppMessage(phoneId, from, {
-          type: 'interactive',
-          interactive: {
-            type: 'button',
-            header: { type: 'text', text: '🫓 No bread in your order!' },
-            body: {
-              text: `Every curry deserves fresh naan from our tandoor.\n\n🛒 *Your order:*\n${cartSummaryText(conv.activeCart.items)}\n*Subtotal: ${formatPrice(conv.activeCart.basePence / 100)}*`,
-            },
-            action: {
-              buttons: [
-                { type: 'reply', reply: { id: 'tov_add_naan', title: '+ Naan £0.99' } },
-                { type: 'reply', reply: { id: 'tov_add_garlic', title: '+ Garlic Naan £1.99' } },
-                { type: 'reply', reply: { id: 'tov_skip_bread', title: 'No bread needed' } },
-              ],
-            },
-          },
-        });
-        return;
-      }
-
-      // No bread needed or already has bread → go to fulfillment
-      await sendFulfillmentChoice(phoneId, from, conv.activeCart);
-      return;
-    }
-
-    // ── Meal Deal Upgrade → add naan + rice + drink in 1 tap ─────
-    if (buttonId === 'tov_meal_deal') {
-      const conv = await getConversation(from);
-      let items = conv.activeCart?.items || [];
-      for (const mealItem of MEAL_DEAL.items) {
-        items = addToCart(items, {
-          id: mealItem.id,
-          name: mealItem.name,
-          quantity: 1,
-          pricePence: mealItem.pricePence,
-        });
-      }
-      const total = cartTotal(items);
-
-      await updateConversation(from, {
-        activeCart: { items, basePence: total, updatedAt: new Date().toISOString() },
-      });
-
-      const progressBar = buildDeliveryProgressBar(total, 3000);
 
       await sendWhatsAppMessage(phoneId, from, {
         type: 'interactive',
         interactive: {
           type: 'button',
-          header: { type: 'text', text: '🍽️ Meal Deal Added!' },
+          header: { type: 'text', text: 'Select Fulfillment' },
           body: {
             text: [
-              `✅ Upgraded to a meal!`,
-              `_${MEAL_DEAL.includes}_`,
+              `🛒 *Your Order:*`,
+              cartSummaryText(conv.activeCart.items),
+              `*Total: ${formatPrice(conv.activeCart.basePence / 100)}*`,
               '',
-              `🛒 *Your basket:*`,
-              cartSummaryText(items),
-              `*Total: ${formatPrice(total / 100)}*`,
-              '',
-              progressBar,
+              'How would you like to receive your food?',
             ].join('\n'),
           },
           action: {
             buttons: [
-              { type: 'reply', reply: { id: 'tov_checkout', title: '🛒 Checkout' } },
-              { type: 'reply', reply: { id: 'tov_add_more', title: '📋 Add More' } },
-              { type: 'reply', reply: { id: 'tov_clear_cart', title: '🗑️ Clear' } },
+              { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Collection' } },
+              { type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Delivery' } },
             ],
           },
         },
       });
-      return;
-    }
-
-    // ── Bread quick-add buttons ──────────────────────────────────
-    if (buttonId === 'tov_add_naan' || buttonId === 'tov_add_garlic') {
-      const conv = await getConversation(from);
-      const breadItem = buttonId === 'tov_add_naan'
-        ? { id: 'naan', name: 'Naan', pricePence: 99 }
-        : { id: 'garlic', name: 'Garlic Naan', pricePence: 199 };
-      const newItems = addToCart(conv.activeCart?.items, { ...breadItem, quantity: 1 });
-      const total = cartTotal(newItems);
-
-      await updateConversation(from, {
-        activeCart: { items: newItems, basePence: total, updatedAt: new Date().toISOString() },
-      });
-
-      await sendFulfillmentChoice(phoneId, from, { items: newItems, basePence: total });
-      return;
-    }
-
-    // ── Skip bread → go straight to fulfillment ─────────────────
-    if (buttonId === 'tov_skip_bread') {
-      const conv = await getConversation(from);
-      if (conv.activeCart?.items?.length) {
-        await sendFulfillmentChoice(phoneId, from, conv.activeCart);
-      }
       return;
     }
 
@@ -696,11 +640,11 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         return;
       }
 
-      await updateConversation(from, { state: 'awaiting_postcode' });
+      await updateConversation(from, { state: 'awaiting_address' });
       await sendWhatsAppMessage(phoneId, from, {
         type: 'text',
         text: {
-          body: `📍 *Where should we deliver?*\n\nPlease send your postcode so we can check delivery to your area and calculate the fee.\n\n_Example: UB4 0RU_`,
+          body: `🛵 *Where should we deliver?*\n\nPlease reply with your street address and postcode:\n_(e.g., 14 High Street, UB4 0RU)_`,
         },
       });
       return;
@@ -757,98 +701,7 @@ async function handleOrderMessage(phoneId: string, from: string, name: string, m
 // Sub-Handlers
 // ══════════════════════════════════════════════════════════════════════
 
-async function handlePostcodeInput(
-  phoneId: string,
-  from: string,
-  name: string,
-  rawText: string,
-  conv: ConversationState
-) {
-  // Reset state regardless of outcome
-  await updateConversation(from, { state: 'idle' });
-
-  // Quick validation: does this look remotely like a UK postcode?
-  const cleaned = rawText.trim().toUpperCase();
-  if (cleaned.length < 3 || cleaned.length > 10) {
-    await sendWhatsAppMessage(phoneId, from, {
-      type: 'text',
-      text: { body: '❌ That doesn\'t look like a valid UK postcode. Please try again (e.g., *UB4 0RU*) or type *Menu* to start over.' },
-    });
-    return;
-  }
-
-  // Geocode via Postcodes.io (free, no API key)
-  const geo = await geocodePostcode(cleaned);
-
-  if (!geo.valid || !geo.lat || !geo.lng) {
-    await sendWhatsAppMessage(phoneId, from, {
-      type: 'text',
-      text: { body: `❌ We couldn't find postcode *${cleaned}*. Please check and resend, or type *Collection* to pick up instead.` },
-    });
-    return;
-  }
-
-  // Calculate distance and delivery fee using shopConfig tiers
-  const miles = haversineDistanceMiles(LOC.coords.lat, LOC.coords.lng, geo.lat, geo.lng);
-  const tier = getDeliveryFeeByDistance(miles, BRANCH_ID);
-
-  if (!tier.eligible) {
-    await sendWhatsAppMessage(phoneId, from, {
-      type: 'interactive',
-      interactive: {
-        type: 'button',
-        body: {
-          text: `📍 *${geo.formatted}* is ${miles.toFixed(1)} miles away.\n\n${tier.reason || `Our delivery radius is ${LOC.delivery.maxRadiusMiles} miles.`}\n\nWould you like to collect instead?`,
-        },
-        action: {
-          buttons: [
-            { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Collection' } },
-          ],
-        },
-      },
-    });
-    return;
-  }
-
-  // Check if order qualifies for free delivery
-  const cart = conv.activeCart;
-  if (!cart?.items?.length) {
-    await sendWhatsAppMessage(phoneId, from, {
-      type: 'text',
-      text: { body: '🛒 Your basket is empty! Type *Menu* to browse.' },
-    });
-    return;
-  }
-
-  const subtotalPounds = cart.basePence / 100;
-  const isFree = subtotalPounds >= tier.freeThreshold;
-  const deliveryFeePence = isFree ? 0 : Math.round(tier.fee * 100);
-
-  // Store delivery quote and prompt for building/street address
-  await updateConversation(from, {
-    state: 'awaiting_address',
-    pendingDelivery: {
-      postcode: geo.formatted,
-      miles,
-      deliveryFeePence,
-    },
-  });
-
-  const feeDesc = deliveryFeePence === 0 ? '*FREE* 🎉' : formatPrice(deliveryFeePence / 100);
-  await sendWhatsAppMessage(phoneId, from, {
-    type: 'text',
-    text: {
-      body: [
-        `✅ *Postcode confirmed:* ${geo.formatted} (${miles.toFixed(1)} miles)`,
-        `🚗 Delivery: ${feeDesc} • Est. 35–45 mins`,
-        ``,
-        `🏠 *What is your street address?*`,
-        `Please send your building/flat number and street name:`,
-        `_(e.g., 14 High Street, Flat 2B)_`,
-      ].join('\n'),
-    },
-  });
-}
+const UK_POSTCODE_REGEX = /\b([A-Z]{1,2}[0-9][A-Z0-9]?\s?[0-9][A-Z]{2})\b/i;
 
 async function handleAddressInput(
   phoneId: string,
@@ -857,10 +710,7 @@ async function handleAddressInput(
   rawText: string,
   conv: ConversationState
 ) {
-  const streetAddress = rawText.trim();
-  const pending = conv.pendingDelivery;
   const cart = conv.activeCart;
-
   if (!cart?.items?.length) {
     await updateConversation(from, { state: 'idle', pendingDelivery: null });
     await sendWhatsAppMessage(phoneId, from, {
@@ -870,27 +720,125 @@ async function handleAddressInput(
     return;
   }
 
-  if (streetAddress.length < 3) {
+  const trimmed = rawText.trim();
+  const postcodeMatch = trimmed.match(UK_POSTCODE_REGEX);
+
+  // ── Scenario A: Customer provided a UK postcode (either alone or with full street address) ──
+  if (postcodeMatch) {
+    const rawPostcode = postcodeMatch[1].toUpperCase().trim();
+    const streetPart = trimmed
+      .replace(postcodeMatch[0], '')
+      .replace(/^[,\s-]+|[,\s-]+$/g, '')
+      .trim();
+
+    const geo = await geocodePostcode(rawPostcode);
+    if (!geo.valid || !geo.lat || !geo.lng) {
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: {
+          body: `❌ We couldn't verify postcode *${rawPostcode}*. Please check and reply with your address (e.g. *14 High Street, UB4 0RU*), or type *Collection* to collect.`,
+        },
+      });
+      return;
+    }
+
+    const miles = haversineDistanceMiles(LOC.coords.lat, LOC.coords.lng, geo.lat, geo.lng);
+    const tier = getDeliveryFeeByDistance(miles, BRANCH_ID);
+
+    if (!tier.eligible) {
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'interactive',
+        interactive: {
+          type: 'button',
+          body: {
+            text: `📍 *${geo.formatted}* is ${miles.toFixed(1)} miles away.\n\n${tier.reason || `Our delivery radius is ${LOC.delivery.maxRadiusMiles} miles.`}\n\nWould you like to collect from our Hayes restaurant instead?`,
+          },
+          action: {
+            buttons: [
+              { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Collection' } },
+            ],
+          },
+        },
+      });
+      return;
+    }
+
+    const subtotalPounds = cart.basePence / 100;
+    const isFree = subtotalPounds >= tier.freeThreshold;
+    const deliveryFeePence = isFree ? 0 : Math.round(tier.fee * 100);
+
+    // If street address was included in the same message (e.g. "14 High Street, UB4 0RU")
+    if (streetPart.length >= 2) {
+      await generateCheckoutLink(
+        phoneId,
+        from,
+        name,
+        cart,
+        true,
+        deliveryFeePence,
+        geo.formatted || rawPostcode,
+        streetPart
+      );
+      return;
+    }
+
+    // Otherwise they only gave the postcode: save quote & ask for house/street number
+    await updateConversation(from, {
+      state: 'awaiting_address',
+      pendingDelivery: {
+        postcode: geo.formatted || rawPostcode,
+        miles,
+        deliveryFeePence,
+      },
+    });
+
+    const feeDesc = deliveryFeePence === 0 ? '*FREE* 🎉' : formatPrice(deliveryFeePence / 100);
     await sendWhatsAppMessage(phoneId, from, {
       type: 'text',
-      text: { body: 'Please reply with your building/flat number and street name (e.g., *14 High Street*):' },
+      text: {
+        body: [
+          `✅ *Postcode confirmed:* ${geo.formatted} (${miles.toFixed(1)} miles)`,
+          `🛵 Delivery: ${feeDesc} • Est. 35–45 mins`,
+          ``,
+          `🏠 *What is your street address?*`,
+          `Please reply with your house/flat number and street name:`,
+          `_(e.g., 14 High Street, Flat 2B)_`,
+        ].join('\n'),
+      },
     });
     return;
   }
 
-  const deliveryFeePence = pending?.deliveryFeePence || 0;
-  const postcode = pending?.postcode || '';
+  // ── Scenario B: Customer replied with street address following a previously confirmed postcode ──
+  if (conv.pendingDelivery?.postcode) {
+    if (trimmed.length < 2) {
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: { body: 'Please reply with your building/flat number and street name (e.g., *14 High Street*):' },
+      });
+      return;
+    }
 
-  await generateCheckoutLink(
-    phoneId,
-    from,
-    name,
-    cart,
-    true,
-    deliveryFeePence,
-    postcode,
-    streetAddress
-  );
+    await generateCheckoutLink(
+      phoneId,
+      from,
+      name,
+      cart,
+      true,
+      conv.pendingDelivery.deliveryFeePence || 0,
+      conv.pendingDelivery.postcode,
+      trimmed
+    );
+    return;
+  }
+
+  // ── Scenario C: No postcode detected and no quote yet ──
+  await sendWhatsAppMessage(phoneId, from, {
+    type: 'text',
+    text: {
+      body: `🛵 Please include your UK postcode with your delivery address:\n_(e.g., 14 High Street, UB4 0RU)_`,
+    },
+  });
 }
 
 async function generateCheckoutLink(
