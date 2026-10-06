@@ -188,3 +188,64 @@ export function buildItemListRows(sectionId: string) {
 export function getSectionTitle(sectionId: string): string {
   return MENU_SECTIONS.find(s => s.id === sectionId)?.title || 'Menu';
 }
+
+/**
+ * Match user text to a menu category section.
+ * Handles queries like 'I biryani', 'need karahi', 'kebab', 'naan', etc.
+ */
+export function findMatchingCategory(query: string): { id: string; title: string } | null {
+  const q = query.toLowerCase().trim();
+
+  if (/\b(biryani|rice|pulao|pilau)\b/.test(q)) {
+    return { id: 'cat_biryani', title: '🍚 Biryani & Rice' };
+  }
+  if (/\b(karahi|wok)\b/.test(q)) {
+    return { id: 'cat_karahi', title: '🔥 Karahi E Khaas' };
+  }
+  if (/\b(curry|curries|salan|handi|daal|korma|masala|butter chicken|paneer)\b/.test(q)) {
+    return { id: 'cat_curries', title: '🍛 Curries & Handi' };
+  }
+  if (/\b(bbq|grill|tikka|kebab|seekh|chops|tandoor)\b/.test(q)) {
+    return { id: 'cat_bbq', title: '🔥 BBQ & Tandoor' };
+  }
+  if (/\b(naan|roti|bread|kulcha|paratha)\b/.test(q)) {
+    return { id: 'cat_breads', title: '🫓 Naan, Roti & Kulcha' };
+  }
+  if (/\b(platter|feast|family|deal|special)\b/.test(q)) {
+    return { id: 'cat_platters', title: '👑 Feasts & Platters' };
+  }
+  if (/\b(burger|roll|wrap)\b/.test(q)) {
+    return { id: 'cat_rolls', title: '🌯 Rolls & Burgers' };
+  }
+  if (/\b(dessert|kheer|gulab jamun|sweet|chaat|gol gappa|pani puri)\b/.test(q)) {
+    return { id: 'cat_desserts', title: '🍨 Desserts' };
+  }
+  if (/\b(samosa|pakora|wings|fried|chana)\b/.test(q)) {
+    return { id: 'cat_fried', title: '⚡ Chatkhara & Fried' };
+  }
+  if (/\b(weekend|nihari|halwa|puri|paye|brunch)\b/.test(q)) {
+    return { id: 'cat_specials', title: '🌟 Weekend Specials' };
+  }
+  return null;
+}
+
+/**
+ * Search dishes across item names and descriptions.
+ * Returns up to 10 matching MenuItem objects with formatted list rows.
+ */
+export function searchMenuDishes(query: string): MenuItem[] {
+  const q = query.toLowerCase().trim();
+  if (!q || q.length < 2) return [];
+
+  const stopwords = new Set(['want', 'need', 'give', 'some', 'please', 'like', 'have', 'the', 'and', 'with', 'for']);
+  const words = q.split(/\s+/).filter(w => w.length >= 2 && !stopwords.has(w));
+  if (words.length === 0) words.push(q);
+
+  return menu.filter(item => {
+    const nameLower = item.name.toLowerCase();
+    const catLower = item.category.toLowerCase();
+    const descLower = item.description?.toLowerCase() || '';
+
+    return words.some(w => nameLower.includes(w) || catLower.includes(w) || descLower.includes(w));
+  }).slice(0, 10);
+}

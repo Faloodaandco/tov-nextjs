@@ -14,6 +14,8 @@ import {
   buildDeliveryProgressBar,
   MEAL_DEAL,
   BRIDGE_ITEMS,
+  findMatchingCategory,
+  searchMenuDishes,
 } from '@/lib/wabaMenu';
 import {
   LOCATIONS,
@@ -144,6 +146,9 @@ export async function GET(request: NextRequest) {
   return new NextResponse('Forbidden', { status: 403 });
 }
 
+// ── In-Memory Fast Dedup Cache (0ms latency) ────────────────────────
+const SEEN_MESSAGE_IDS = new Set<string>();
+
 // ══════════════════════════════════════════════════════════════════════
 // POST — Incoming WhatsApp Messages
 // ══════════════════════════════════════════════════════════════════════
@@ -177,19 +182,22 @@ export async function POST(request: NextRequest) {
         const contacts = change.value?.contacts || [];
 
         for (const message of messages) {
-          // ── Deduplication ───────────────────────────────────────
-          try {
-            const dedupRef = adminDb.collection('webhook_dedup').doc(`tov_${message.id}`);
-            const dedupSnap = await dedupRef.get();
-            if (dedupSnap.exists) continue;
-            await dedupRef.set({
-              messageId: message.id,
-              processedAt: new Date().toISOString(),
-              expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-            });
-          } catch (err) {
-            console.warn('[TOV WABA] Dedup check failed, processing anyway:', err);
+          // ── Fast In-Memory Deduplication (0ms) ───────────────────
+          if (SEEN_MESSAGE_IDS.has(message.id)) {
+            continue;
           }
+          SEEN_MESSAGE_IDS.add(message.id);
+          if (SEEN_MESSAGE_IDS.size > 2000) {
+            const first = SEEN_MESSAGE_IDS.values().next().value;
+            if (first) SEEN_MESSAGE_IDS.delete(first);
+          }
+
+          // Asynchronously persist to Firestore without blocking response
+          adminDb.collection('webhook_dedup').doc(`tov_${message.id}`).set({
+            messageId: message.id,
+            processedAt: new Date().toISOString(),
+            expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          }).catch(() => {});
 
           const from = message.from;
           const profileName = contacts[0]?.profile?.name || from;
@@ -221,16 +229,17 @@ export async function POST(request: NextRequest) {
 // ══════════════════════════════════════════════════════════════════════
 
 async function handleTextMessage(phoneId: string, from: string, name: string, rawText: string) {
-  // Log conversation
-  await updateConversation(from, {
+  // Read conversation state immediately
+  const conv = await getConversation(from);
+  const text = rawText.toLowerCase().trim();
+
+  // Log conversation in background without blocking response
+  updateConversation(from, {
     phone: from,
     name,
     lastMessage: rawText,
     timestamp: new Date().toISOString(),
-  });
-
-  const conv = await getConversation(from);
-  const text = rawText.toLowerCase().trim();
+  }).catch(() => {});
 
   // ── State: awaiting postcode for delivery ──────────────────────
   if (conv.state === 'awaiting_postcode') {
@@ -305,6 +314,53 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   // ── Intent: menu / food / order ────────────────────────────────
   if (/\b(menu|food|order|browse|dishes|eat)\b/.test(text)) {
     await sendCategoryList(phoneId, from);
+    return;
+  }
+
+  // ── Intent: Smart Category Match (e.g., "I biryani", "need karahi", "kebab", "naan") ──
+  const matchedCategory = findMatchingCategory(text);
+  if (matchedCategory) {
+    const rows = buildItemListRows(matchedCategory.id);
+    if (rows.length > 0) {
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'interactive',
+        interactive: {
+          type: 'list',
+          header: { type: 'text', text: matchedCategory.title },
+          body: { text: `Here are our freshly cooked ${matchedCategory.title} options. Tap any dish to add it to your order:` },
+          footer: { text: `Taste of Village ${LOC.city}` },
+          action: {
+            button: 'Select Dish',
+            sections: [{ title: matchedCategory.title, rows }],
+          },
+        },
+      });
+      return;
+    }
+  }
+
+  // ── Intent: Dish Keyword Search (e.g., "chicken tikka", "paneer", "lamb chops") ──
+  const matchingDishes = searchMenuDishes(text);
+  if (matchingDishes.length > 0) {
+    const rows = matchingDishes.map(d => ({
+      id: d.id,
+      title: d.name.slice(0, 24),
+      description: `${formatPrice(d.price)} • Tap to add`.slice(0, 72),
+    }));
+
+    await sendWhatsAppMessage(phoneId, from, {
+      type: 'interactive',
+      interactive: {
+        type: 'list',
+        header: { type: 'text', text: 'Dishes Found' },
+        body: { text: `We found ${matchingDishes.length} dish(es) matching "${rawText.slice(0, 20)}". Tap an item to add it:` },
+        footer: { text: `Taste of Village ${LOC.city}` },
+        action: {
+          button: 'View Dishes',
+          sections: [{ title: 'Matching Dishes', rows }],
+        },
+      },
+    });
     return;
   }
 
