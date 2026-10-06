@@ -58,7 +58,7 @@ export const TOV_KNOWLEDGE_BASE: FAQItem[] = [
     category: 'operations',
     topic: 'Opening Hours',
     question: 'What are your opening hours?',
-    answer: 'We are open 7 days a week from 12:00 PM (Noon) to 11:00 PM. Hot food is served continuously throughout the day.',
+    answer: 'We are open 7 days a week, Monday through Sunday, from 10:00 AM to 02:00 AM midnight. Hot food is served continuously throughout the day and late night.',
   },
   {
     category: 'operations',

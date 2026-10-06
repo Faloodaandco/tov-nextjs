@@ -628,7 +628,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
       type: 'text',
       text: {
         preview_url: false,
-        body: `📍 *${LOC.name}*\n${LOC.address}, ${LOC.city} ${LOC.postcode}\n📞 ${LOC.phone}\n\n🕐 Open daily\n\nTo order, type *Menu* or browse our catalog.`,
+        body: `📍 *${LOC.name}*\n${LOC.address}, ${LOC.city} ${LOC.postcode}\n📞 ${LOC.phone}\n\n🕐 Open daily: 10:00 AM – 02:00 AM midnight\n\nTo order, type *Menu* or browse our catalog.`,
       },
     });
     return;

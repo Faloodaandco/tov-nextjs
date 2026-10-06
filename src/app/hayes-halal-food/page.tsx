@@ -91,7 +91,7 @@ export default function HayesHalalFoodPage() {
         <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border border-pine/5 text-center">
           <h2 className="font-serif text-4xl mb-6 text-pine">Visit Us in Hayes</h2>
           <p className="text-pine leading-relaxed max-w-xl mx-auto mb-10">
-            Walk in for lunch, bring the family for dinner, or order online. We cook every dish fresh — open daily, 12 PM to 11 PM.
+            Walk in for lunch, bring the family for dinner, or order online. We cook every dish fresh — open daily, 10:00 AM to 02:00 AM midnight.
           </p>
 
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-10">
@@ -99,7 +99,7 @@ export default function HayesHalalFoodPage() {
               <MapPin className="text-terracotta" /> 766B Uxbridge Road, Hayes UB4 0RU
             </div>
             <div className="flex items-center gap-2 text-pine font-bold">
-              <Clock className="text-terracotta" /> 12 PM – 11 PM Daily
+              <Clock className="text-terracotta" /> 10:00 AM – 02:00 AM Daily
             </div>
           </div>
 

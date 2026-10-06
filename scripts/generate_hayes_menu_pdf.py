@@ -963,8 +963,8 @@ body {{
                 </div>
                 <div class="final-info-item">
                     <strong>HOURS OF SERVICE</strong>
-                    Mon – Sun: 12:00 PM – 11:00 PM<br>
-                    Weekend Desi Nashta: From 10:00 AM
+                    Mon – Sun: 10:00 AM – 02:00 AM<br>
+                    Open Daily 7 Days a Week
                 </div>
                 <div class="final-info-item">
                     <strong>TELEPHONE ORDERS</strong>
