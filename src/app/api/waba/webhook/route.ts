@@ -9,6 +9,11 @@ import {
   buildItemListRows,
   getSectionTitle,
   formatPrice,
+  isCurryItem,
+  cartHasBread,
+  buildDeliveryProgressBar,
+  MEAL_DEAL,
+  BRIDGE_ITEMS,
 } from '@/lib/wabaMenu';
 import {
   LOCATIONS,
@@ -281,7 +286,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       return;
     }
 
-    // Item selected → add to cart
+    // Item selected → add to cart + psychology upsells
     const menuItem = getMenuItemById(listId);
     if (menuItem) {
       const conv = await getConversation(from);
@@ -298,23 +303,64 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         state: 'idle',
       });
 
-      await sendWhatsAppMessage(phoneId, from, {
-        type: 'interactive',
-        interactive: {
-          type: 'button',
-          header: { type: 'text', text: `Added: ${menuItem.name}` },
-          body: {
-            text: `✅ *${menuItem.name}* (${formatPrice(menuItem.price)}) added!\n\n🛒 *Your basket:*\n${cartSummaryText(newItems)}\n\n*Total: ${formatPrice(total / 100)}*`,
+      // Free delivery progress bar (nearest tier threshold = £30)
+      const progressBar = buildDeliveryProgressBar(total, 3000);
+
+      // Psychology: If curry added → "Make it a Meal" upsell (Thaler's Mental Accounting)
+      if (isCurryItem(menuItem)) {
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'interactive',
+          interactive: {
+            type: 'button',
+            header: { type: 'text', text: `Added: ${menuItem.name}` },
+            body: {
+              text: [
+                `✅ *${menuItem.name}* (${formatPrice(menuItem.price)}) added!`,
+                '',
+                `🍽️ *Make it a Meal for +${formatPrice(MEAL_DEAL.extraPricePence / 100)}?*`,
+                `Includes: ${MEAL_DEAL.includes}`,
+                `_(Save ${MEAL_DEAL.savings} vs ordering separately)_`,
+                '',
+                progressBar,
+              ].join('\n'),
+            },
+            action: {
+              buttons: [
+                { type: 'reply', reply: { id: 'tov_meal_deal', title: '✅ Upgrade to Meal' } },
+                { type: 'reply', reply: { id: 'tov_add_more', title: '📋 Add More' } },
+                { type: 'reply', reply: { id: 'tov_checkout', title: '🛒 Checkout' } },
+              ],
+            },
           },
-          action: {
-            buttons: [
-              { type: 'reply', reply: { id: 'tov_checkout', title: '🛒 Checkout' } },
-              { type: 'reply', reply: { id: 'tov_add_more', title: '📋 Add More' } },
-              { type: 'reply', reply: { id: 'tov_clear_cart', title: '🗑️ Clear' } },
-            ],
+        });
+      } else {
+        // Non-curry: standard add confirmation with progress bar
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'interactive',
+          interactive: {
+            type: 'button',
+            header: { type: 'text', text: `Added: ${menuItem.name}` },
+            body: {
+              text: [
+                `✅ *${menuItem.name}* (${formatPrice(menuItem.price)}) added!`,
+                '',
+                `🛒 *Your basket:*`,
+                cartSummaryText(newItems),
+                `*Total: ${formatPrice(total / 100)}*`,
+                '',
+                progressBar,
+              ].join('\n'),
+            },
+            action: {
+              buttons: [
+                { type: 'reply', reply: { id: 'tov_checkout', title: '🛒 Checkout' } },
+                { type: 'reply', reply: { id: 'tov_add_more', title: '📋 Add More' } },
+                { type: 'reply', reply: { id: 'tov_clear_cart', title: '🗑️ Clear' } },
+              ],
+            },
           },
-        },
-      });
+        });
+      }
     }
     return;
   }
@@ -322,7 +368,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
   if (replyType === 'button_reply') {
     const buttonId: string = message.interactive.button_reply.id;
 
-    // ── Checkout → ask Collection/Delivery ───────────────────────
+    // ── Checkout → bread auto-suggest or Collection/Delivery ─────
     if (buttonId === 'tov_checkout') {
       const conv = await getConversation(from);
       if (!conv.activeCart?.items?.length) {
@@ -333,22 +379,111 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         return;
       }
 
+      // Psychology: Bread auto-suggest if cart has curry but no bread
+      const itemIds = conv.activeCart.items.map(i => i.id);
+      const hasCurry = itemIds.some(id => {
+        const item = getMenuItemById(id);
+        return item && isCurryItem(item);
+      });
+
+      if (hasCurry && !cartHasBread(itemIds)) {
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'interactive',
+          interactive: {
+            type: 'button',
+            header: { type: 'text', text: '🫓 No bread in your order!' },
+            body: {
+              text: `Every curry deserves fresh naan from our tandoor.\n\n🛒 *Your order:*\n${cartSummaryText(conv.activeCart.items)}\n*Subtotal: ${formatPrice(conv.activeCart.basePence / 100)}*`,
+            },
+            action: {
+              buttons: [
+                { type: 'reply', reply: { id: 'tov_add_naan', title: '+ Naan £0.99' } },
+                { type: 'reply', reply: { id: 'tov_add_garlic', title: '+ Garlic Naan £1.99' } },
+                { type: 'reply', reply: { id: 'tov_skip_bread', title: 'No bread needed' } },
+              ],
+            },
+          },
+        });
+        return;
+      }
+
+      // No bread needed or already has bread → go to fulfillment
+      await sendFulfillmentChoice(phoneId, from, conv.activeCart);
+      return;
+    }
+
+    // ── Meal Deal Upgrade → add naan + rice + drink in 1 tap ─────
+    if (buttonId === 'tov_meal_deal') {
+      const conv = await getConversation(from);
+      let items = conv.activeCart?.items || [];
+      for (const mealItem of MEAL_DEAL.items) {
+        items = addToCart(items, {
+          id: mealItem.id,
+          name: mealItem.name,
+          quantity: 1,
+          pricePence: mealItem.pricePence,
+        });
+      }
+      const total = cartTotal(items);
+
+      await updateConversation(from, {
+        activeCart: { items, basePence: total, updatedAt: new Date().toISOString() },
+      });
+
+      const progressBar = buildDeliveryProgressBar(total, 3000);
+
       await sendWhatsAppMessage(phoneId, from, {
         type: 'interactive',
         interactive: {
           type: 'button',
-          header: { type: 'text', text: 'How would you like your order?' },
+          header: { type: 'text', text: '🍽️ Meal Deal Added!' },
           body: {
-            text: `🛒 *Your order:*\n${cartSummaryText(conv.activeCart.items)}\n\n*Subtotal: ${formatPrice(conv.activeCart.basePence / 100)}*\n\nSelect your fulfillment:`,
+            text: [
+              `✅ Upgraded to a meal!`,
+              `_${MEAL_DEAL.includes}_`,
+              '',
+              `🛒 *Your basket:*`,
+              cartSummaryText(items),
+              `*Total: ${formatPrice(total / 100)}*`,
+              '',
+              progressBar,
+            ].join('\n'),
           },
           action: {
             buttons: [
-              { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Collection' } },
-              { type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Delivery' } },
+              { type: 'reply', reply: { id: 'tov_checkout', title: '🛒 Checkout' } },
+              { type: 'reply', reply: { id: 'tov_add_more', title: '📋 Add More' } },
+              { type: 'reply', reply: { id: 'tov_clear_cart', title: '🗑️ Clear' } },
             ],
           },
         },
       });
+      return;
+    }
+
+    // ── Bread quick-add buttons ──────────────────────────────────
+    if (buttonId === 'tov_add_naan' || buttonId === 'tov_add_garlic') {
+      const conv = await getConversation(from);
+      const breadItem = buttonId === 'tov_add_naan'
+        ? { id: 'naan', name: 'Naan', pricePence: 99 }
+        : { id: 'garlic', name: 'Garlic Naan', pricePence: 199 };
+      const newItems = addToCart(conv.activeCart?.items, { ...breadItem, quantity: 1 });
+      const total = cartTotal(newItems);
+
+      await updateConversation(from, {
+        activeCart: { items: newItems, basePence: total, updatedAt: new Date().toISOString() },
+      });
+
+      await sendFulfillmentChoice(phoneId, from, { items: newItems, basePence: total });
+      return;
+    }
+
+    // ── Skip bread → go straight to fulfillment ─────────────────
+    if (buttonId === 'tov_skip_bread') {
+      const conv = await getConversation(from);
+      if (conv.activeCart?.items?.length) {
+        await sendFulfillmentChoice(phoneId, from, conv.activeCart);
+      }
       return;
     }
 
@@ -637,6 +772,55 @@ async function generateCheckoutLink(
       },
     });
   }
+}
+
+async function sendFulfillmentChoice(
+  phoneId: string,
+  from: string,
+  cart: { items: CartItem[]; basePence: number }
+) {
+  const progressBar = buildDeliveryProgressBar(cart.basePence, 3000);
+
+  // Bridge items: suggest low-cost impulse adds if below free delivery threshold
+  let bridgeText = '';
+  if (cart.basePence < 3000) {
+    const gap = 3000 - cart.basePence;
+    const suggestions = BRIDGE_ITEMS
+      .filter(b => b.pricePence <= gap + 200) // slightly above gap is fine
+      .slice(0, 2)
+      .map(b => `${b.emoji} ${b.name} (${formatPrice(b.pricePence / 100)})`)
+      .join(' • ');
+    if (suggestions) {
+      bridgeText = `\n💡 _Popular add-ons: ${suggestions}_`;
+    }
+  }
+
+  await sendWhatsAppMessage(phoneId, from, {
+    type: 'interactive',
+    interactive: {
+      type: 'button',
+      header: { type: 'text', text: 'How would you like your order?' },
+      body: {
+        text: [
+          `🛒 *Your order:*`,
+          cartSummaryText(cart.items),
+          '',
+          `*Subtotal: ${formatPrice(cart.basePence / 100)}*`,
+          '',
+          progressBar,
+          bridgeText,
+          '',
+          'Select your fulfillment:',
+        ].filter(Boolean).join('\n'),
+      },
+      action: {
+        buttons: [
+          { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Collection' } },
+          { type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Delivery' } },
+        ],
+      },
+    },
+  });
 }
 
 async function sendWelcome(phoneId: string, from: string, name: string, conv?: ConversationState) {
