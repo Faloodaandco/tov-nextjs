@@ -68,21 +68,25 @@ async function getConversation(phone: string): Promise<ConversationState> {
   }
 
   try {
-    const snap = await adminDb.collection('whatsapp_conversations').doc(phone).get();
-    const data = snap.data();
-    const state: ConversationState = {
-      state: data?.state || cached?.state?.state || 'idle',
-      pendingDelivery: data?.pendingDelivery || cached?.state?.pendingDelivery || undefined,
-      activeCart: data?.activeCart || cached?.state?.activeCart || undefined,
-      lastPaidOrderId: data?.lastPaidOrderId || cached?.state?.lastPaidOrderId || undefined,
-      lastPaidAt: data?.lastPaidAt || cached?.state?.lastPaidAt || undefined,
-    };
-    CONVERSATION_CACHE.set(phone, { state, updatedAt: Date.now() });
-    return state;
+    const fetchPromise = adminDb.collection('whatsapp_conversations').doc(phone).get();
+    const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 250));
+    const snap = await Promise.race([fetchPromise, timeoutPromise]);
+    if (snap && typeof (snap as any).data === 'function') {
+      const data = (snap as any).data();
+      const state: ConversationState = {
+        state: data?.state || cached?.state?.state || 'idle',
+        pendingDelivery: data?.pendingDelivery || cached?.state?.pendingDelivery || undefined,
+        activeCart: data?.activeCart || cached?.state?.activeCart || undefined,
+        lastPaidOrderId: data?.lastPaidOrderId || cached?.state?.lastPaidOrderId || undefined,
+        lastPaidAt: data?.lastPaidAt || cached?.state?.lastPaidAt || undefined,
+      };
+      CONVERSATION_CACHE.set(phone, { state, updatedAt: Date.now() });
+      return state;
+    }
   } catch (err) {
-    console.warn('[TOV WABA] Firestore get failed, using in-memory session:', err);
-    return cached?.state || { state: 'idle' };
+    // Non-blocking fallback to memory session
   }
+  return cached?.state || { state: 'idle' };
 }
 
 async function updateConversation(phone: string, updates: Record<string, unknown>) {
@@ -98,12 +102,8 @@ async function updateConversation(phone: string, updates: Record<string, unknown
   };
   CONVERSATION_CACHE.set(phone, { state: merged, updatedAt: Date.now() });
 
-  // Asynchronously attempt to sync to Firestore
-  try {
-    await adminDb.collection('whatsapp_conversations').doc(phone).set(updates, { merge: true });
-  } catch (e) {
-    console.error('[TOV WABA] Firestore write error:', e);
-  }
+  // Asynchronously attempt to sync to Firestore in background (NEVER block response)
+  adminDb.collection('whatsapp_conversations').doc(phone).set(updates, { merge: true }).catch(() => {});
 }
 
 // ── Cart Helpers ─────────────────────────────────────────────────────
@@ -1138,16 +1138,12 @@ async function generateCheckoutLink(
     createdAt: new Date().toISOString(),
   };
 
-  try {
-    if (referenceId) {
-      await adminDb.collection('whatsapp_orders').doc(referenceId).set(orderRecord);
-    }
-    if (orderId && orderId !== referenceId) {
-      await adminDb.collection('whatsapp_orders').doc(orderId).set(orderRecord);
-    }
-  } catch (e) {
-    // NEVER block payment link delivery — log and continue
-    console.error('[TOV WABA] Failed to save whatsapp_orders:', e);
+  // Store order in background (never blocks payment link delivery)
+  if (referenceId) {
+    adminDb.collection('whatsapp_orders').doc(referenceId).set(orderRecord).catch(() => {});
+  }
+  if (orderId && orderId !== referenceId) {
+    adminDb.collection('whatsapp_orders').doc(orderId).set(orderRecord).catch(() => {});
   }
 
   if (!squareLink) {

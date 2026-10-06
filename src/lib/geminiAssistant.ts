@@ -15,6 +15,7 @@
 import { GoogleGenAI } from '@google/genai';
 import menuItems from '@/data/tov-menu.json';
 import { getMenuItemById, type MenuItem } from '@/lib/wabaMenu';
+import { TOV_KNOWLEDGE_BASE } from '@/data/tovKnowledge';
 
 export interface ParsedOrderItem {
   id: string;
@@ -43,6 +44,10 @@ const COMPACT_MENU = (menuItems as MenuItem[]).map(item => {
     category: item.category,
   };
 });
+
+const KNOWLEDGE_BASE_TEXT = TOV_KNOWLEDGE_BASE.map(
+  k => `• [${k.category.toUpperCase()}] Q: ${k.question} -> A: ${k.answer}`
+).join('\n');
 
 let cachedClient: GoogleGenAI | null = null;
 
@@ -91,12 +96,12 @@ function getClient(): GoogleGenAI | null {
   return null;
 }
 
-const SYSTEM_INSTRUCTION = `You are the AI Order Assistant for Taste of Village Hayes (766B Uxbridge Rd, Hayes UB4 0RU, London).
-We serve 100% Halal authentic Pakistani & Indian cuisine.
-All meat, poultry, and ingredients are strictly 100% Halal certified.
-Collection: Ready in 20-25 mins from 766B Uxbridge Rd, Hayes.
-Delivery: Within 4 miles (Free delivery over £30, otherwise £3.99).
-Payment: Apple Pay, Google Pay, and cards via secure Square checkout.
+const SYSTEM_INSTRUCTION = `You are the AI Order & Hospitality Assistant for Taste of Village Hayes (766B Uxbridge Rd, Hayes UB4 0RU, London).
+We serve 100% Halal authentic Pakistani & North Indian Punjabi cuisine.
+Signature items: Chicken Karahi (£12.99), Lamb Charsi Karahi (£24.99), Village Special Platters, Seekh Kebabs, Biryanis, and fresh Tandoori Naans.
+
+KNOWLEDGE BASE & FAQS:
+${KNOWLEDGE_BASE_TEXT}
 
 MENU DISHES (Short ID, Full ID, Name, Price GBP):
 ${JSON.stringify(COMPACT_MENU)}
@@ -105,7 +110,7 @@ TASK:
 Analyze the customer's WhatsApp message and return a JSON object with:
 {
   "intent": "order" | "recommendation" | "faq" | "general",
-  "reply": "Concise, warm response in British English (max 2 sentences). Always polite and hospitable.",
+  "reply": "Concise, warm response in British English (max 2 sentences). Always polite, hospitable, and helpful.",
   "items": [
     { "id": "short_or_full_id", "name": "Exact Dish Name", "quantity": 1 }
   ],
@@ -114,8 +119,8 @@ Analyze the customer's WhatsApp message and return a JSON object with:
 
 RULES:
 1. 'order': If the user requests to order, buy, or get dishes (e.g. "2 chicken biryani", "I want chicken karahi and 2 naan"), match dishes from the MENU and put them in 'items' with exact quantity.
-2. 'recommendation': If the user asks for suggestions, recommendations, or best dishes (e.g. "what karahi do you recommend?", "what is good to eat?"), suggest 1 or 2 authentic TOV dishes, explain briefly why they are popular, and set 'suggestedDishId' to the primary recommendation.
-3. 'faq': If the user asks about Halal status, opening hours, address, parking, or allergens, answer accurately.
+2. 'recommendation': If the user asks for suggestions, recommendations, or popular dishes (e.g. "what karahi do you recommend?", "what is good to eat?"), suggest 1 or 2 authentic TOV dishes, explain briefly why they are popular, and set 'suggestedDishId' to the primary recommendation.
+3. 'faq': If the user asks about Halal status, opening hours, address, parking, spice levels, catering, or allergens, answer accurately using the KNOWLEDGE BASE above.
 4. STRICT INVARIANT: ONLY recommend dishes from the Taste of Village menu above. Never invent dishes. Never mention other restaurants.`;
 
 /**
