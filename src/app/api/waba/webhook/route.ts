@@ -23,6 +23,7 @@ import {
   haversineDistanceMiles,
   getDeliveryFeeByDistance,
 } from '@/config/shopConfig';
+import { analyzeWithGemini } from '@/lib/geminiAssistant';
 
 // ── Types ────────────────────────────────────────────────────────────
 interface CartItem {
@@ -127,9 +128,14 @@ function cartSummaryText(items: CartItem[]): string {
     .join('\n');
 }
 
+const TOV_PREFIX = 'tov_item_1777480501499_';
+
 function encodeCart(items: CartItem[]): string {
   if (!items?.length) return '';
-  return items.map(i => `${i.id}:${i.quantity}`).join(',').slice(0, 200);
+  return items.map(i => {
+    const cleanId = i.id.startsWith(TOV_PREFIX) ? i.id.slice(TOV_PREFIX.length) : i.id;
+    return `${cleanId}:${i.quantity}`;
+  }).join(',').slice(0, 200);
 }
 
 function decodeCart(str: string): CartItem[] {
@@ -137,9 +143,10 @@ function decodeCart(str: string): CartItem[] {
   const parts = str.split(',');
   const items: CartItem[] = [];
   for (const part of parts) {
-    const [id, qtyStr] = part.split(':');
-    if (!id) continue;
-    const item = getMenuItemById(id);
+    const [rawId, qtyStr] = part.split(':');
+    if (!rawId) continue;
+    const fullId = rawId.startsWith('tov_item_') ? rawId : `${TOV_PREFIX}${rawId}`;
+    const item = getMenuItemById(fullId) || getMenuItemById(rawId);
     if (item) {
       const quantity = Math.max(1, parseInt(qtyStr || '1', 10) || 1);
       items.push({
@@ -351,6 +358,37 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     }
   }
 
+  // ── Intent: Direct Text "Collection" / "Delivery" ──────────────
+  if (/^(collection|pickup|pick up)\b/i.test(text)) {
+    if (conv.activeCart?.items?.length) {
+      await generateCheckoutLink(phoneId, from, name, conv.activeCart, false, 0);
+      return;
+    } else {
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: { body: 'To place a collection order, please choose your dishes from our menu below 👇' },
+      });
+      await sendCategoryList(phoneId, from);
+      return;
+    }
+  }
+
+  if (/^(delivery|deliver)\b/i.test(text)) {
+    if (conv.activeCart?.items?.length) {
+      const isFree = conv.activeCart.basePence >= 3000;
+      const deliveryFeePence = isFree ? 0 : 399;
+      await generateCheckoutLink(phoneId, from, name, conv.activeCart, true, deliveryFeePence);
+      return;
+    } else {
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: { body: 'To place a delivery order, please choose your dishes from our menu below 👇' },
+      });
+      await sendCategoryList(phoneId, from);
+      return;
+    }
+  }
+
   // ── Intent: Halal certification query ──────────────────────────
   if (/\b(halal|hmc)\b/.test(text)) {
     await sendWhatsAppMessage(phoneId, from, {
@@ -363,9 +401,103 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   }
 
   // ── Intent: menu / food / order ────────────────────────────────
-  if (/\b(menu|food|order|browse|dishes|eat)\b/.test(text)) {
-    await sendCategoryList(phoneId, from);
+  if (/^(menu|food|order|browse|dishes|eat)$/i.test(text)) {
+    const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
+    await sendCategoryList(phoneId, from, carriedCartStr);
     return;
+  }
+
+  // ── Intelligent Gemini Assistant (Multi-dish order, recommendations, FAQs) ──
+  const aiResult = await analyzeWithGemini(rawText);
+  if (aiResult) {
+    if (aiResult.intent === 'order' && aiResult.orderItems.length > 0) {
+      let currentItems = conv.activeCart?.items || [];
+      for (const ordItem of aiResult.orderItems) {
+        currentItems = addToCart(currentItems, ordItem);
+      }
+      const total = cartTotal(currentItems);
+
+      await updateConversation(from, {
+        activeCart: { items: currentItems, basePence: total, updatedAt: new Date().toISOString() },
+        state: 'idle',
+      });
+
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'interactive',
+        interactive: {
+          type: 'button',
+          header: { type: 'text', text: 'Order Updated' },
+          body: {
+            text: [
+              `✅ ${aiResult.reply || 'Added to your order!'}`,
+              '',
+              `🛒 *Your Basket:*`,
+              cartSummaryText(currentItems),
+              `*Total: ${formatPrice(total / 100)}*`,
+              '',
+              'Ready to checkout?',
+            ].join('\n'),
+          },
+          action: {
+            buttons: [
+              { type: 'reply', reply: { id: `tov_col_${encodeCart(currentItems)}`, title: '🏪 Collection' } },
+              { type: 'reply', reply: { id: `tov_del_${encodeCart(currentItems)}`, title: '🛵 Delivery' } },
+              { type: 'reply', reply: { id: `tov_more_${encodeCart(currentItems)}`, title: '➕ Add More' } },
+            ],
+          },
+        },
+      });
+      return;
+    }
+
+    if (aiResult.intent === 'recommendation' && aiResult.suggestedDish) {
+      const sug = aiResult.suggestedDish;
+      const sugCart = addToCart(conv.activeCart?.items, {
+        id: sug.id,
+        name: sug.name,
+        quantity: 1,
+        pricePence: Math.round(sug.price * 100),
+      });
+
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'interactive',
+        interactive: {
+          type: 'button',
+          header: { type: 'text', text: sug.name.slice(0, 60) },
+          body: {
+            text: [
+              aiResult.reply,
+              '',
+              `⭐ *${sug.name}* (${formatPrice(sug.price)})`,
+              sug.description ? `_${sug.description.slice(0, 80)}_` : '',
+            ].filter(Boolean).join('\n'),
+          },
+          action: {
+            buttons: [
+              { type: 'reply', reply: { id: `tov_add_${encodeCart(sugCart)}`, title: `➕ Add (${formatPrice(sug.price)})` } },
+              { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
+            ],
+          },
+        },
+      });
+      return;
+    }
+
+    if (aiResult.intent === 'faq') {
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'interactive',
+        interactive: {
+          type: 'button',
+          body: { text: aiResult.reply },
+          action: {
+            buttons: [
+              { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
+            ],
+          },
+        },
+      });
+      return;
+    }
   }
 
   // ── Smart Curation: Fast-close on popular dishes (e.g. "I biryani", "karahi", "grill") ──
@@ -403,7 +535,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
           buttons: [
             { type: 'reply', reply: { id: `tov_col_${encodeCart(newItems)}`, title: '🏪 Collection' } },
             { type: 'reply', reply: { id: `tov_del_${encodeCart(newItems)}`, title: '🛵 Delivery' } },
-            { type: 'reply', reply: { id: curated.categoryId, title: curated.categoryTitle.slice(0, 20) } },
+            { type: 'reply', reply: { id: `tov_more_${encodeCart(newItems)}`, title: '➕ Add More' } },
           ],
         },
       },
@@ -414,7 +546,8 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   // ── Intent: Smart Category Match (e.g., "biryani", "karahi", "kebab", "naan") ──
   const matchedCategory = findMatchingCategory(text);
   if (matchedCategory) {
-    const rows = buildItemListRows(matchedCategory.id);
+    const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
+    const rows = buildItemListRows(matchedCategory.id, carriedCartStr);
     if (rows.length > 0) {
       await sendWhatsAppMessage(phoneId, from, {
         type: 'interactive',
@@ -436,8 +569,10 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   // ── Intent: Dish Keyword Search (e.g., "chicken tikka", "paneer", "lamb chops") ──
   const matchingDishes = searchMenuDishes(text);
   if (matchingDishes.length > 0) {
+    const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
+    const carriedSuffix = carriedCartStr ? `~${carriedCartStr}` : '';
     const rows = matchingDishes.map(d => ({
-      id: d.id,
+      id: `${d.id}${carriedSuffix}`.slice(0, 200),
       title: d.name.slice(0, 24),
       description: `${formatPrice(d.price)} • Tap to add`.slice(0, 72),
     }));
@@ -590,18 +725,55 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
 
     // ── Category Button (e.g. from curated dish alternative) ─────
     if (buttonId.startsWith('cat_')) {
-      const rows = buildItemListRows(buttonId);
+      const [catId, carriedCart] = buttonId.split('~');
+      const rows = buildItemListRows(catId, carriedCart);
       if (rows.length > 0) {
         await sendWhatsAppMessage(phoneId, from, {
           type: 'interactive',
           interactive: {
             type: 'list',
-            header: { type: 'text', text: getSectionTitle(buttonId) },
-            body: { text: `Here are our ${getSectionTitle(buttonId)} options. Tap to add:` },
+            header: { type: 'text', text: getSectionTitle(catId) },
+            body: { text: `Here are our ${getSectionTitle(catId)} options. Tap to add:` },
             footer: { text: `Taste of Village ${LOC.city}` },
             action: {
               button: 'Select Dish',
-              sections: [{ title: getSectionTitle(buttonId), rows }],
+              sections: [{ title: getSectionTitle(catId), rows }],
+            },
+          },
+        });
+        return;
+      }
+    }
+
+    // ── Direct Add Dish (e.g. from recommendation) ──────────────
+    if (buttonId.startsWith('tov_add_')) {
+      const items = decodeCart(buttonId.replace('tov_add_', ''));
+      if (items.length) {
+        const total = cartTotal(items);
+        await updateConversation(from, {
+          activeCart: { items, basePence: total, updatedAt: new Date().toISOString() },
+          state: 'idle',
+        });
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'interactive',
+          interactive: {
+            type: 'button',
+            header: { type: 'text', text: 'Dish Added' },
+            body: {
+              text: [
+                `🛒 *Your Basket:*`,
+                cartSummaryText(items),
+                `*Total: ${formatPrice(total / 100)}*`,
+                '',
+                'Ready to checkout?',
+              ].join('\n'),
+            },
+            action: {
+              buttons: [
+                { type: 'reply', reply: { id: `tov_col_${encodeCart(items)}`, title: '🏪 Collection' } },
+                { type: 'reply', reply: { id: `tov_del_${encodeCart(items)}`, title: '🛵 Delivery' } },
+                { type: 'reply', reply: { id: `tov_more_${encodeCart(items)}`, title: '➕ Add More' } },
+              ],
             },
           },
         });
@@ -610,9 +782,16 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     }
 
     // ── Checkout → ask Collection/Delivery ───────────────────────
-    if (buttonId === 'tov_checkout') {
-      const conv = await getConversation(from);
-      if (!conv.activeCart?.items?.length) {
+    if (buttonId.startsWith('tov_checkout')) {
+      let items: CartItem[] = [];
+      if (buttonId.startsWith('tov_checkout_')) {
+        items = decodeCart(buttonId.replace('tov_checkout_', ''));
+      }
+      if (!items.length) {
+        const conv = await getConversation(from);
+        items = conv.activeCart?.items || [];
+      }
+      if (!items.length) {
         await sendWhatsAppMessage(phoneId, from, {
           type: 'text',
           text: { body: '🛒 Your basket is empty! Type *Menu* to browse our dishes.' },
@@ -620,6 +799,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         return;
       }
 
+      const total = cartTotal(items);
       await sendWhatsAppMessage(phoneId, from, {
         type: 'interactive',
         interactive: {
@@ -628,16 +808,16 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
           body: {
             text: [
               `🛒 *Your Order:*`,
-              cartSummaryText(conv.activeCart.items),
-              `*Total: ${formatPrice(conv.activeCart.basePence / 100)}*`,
+              cartSummaryText(items),
+              `*Total: ${formatPrice(total / 100)}*`,
               '',
               'How would you like to receive your food?',
             ].join('\n'),
           },
           action: {
             buttons: [
-              { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Collection' } },
-              { type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Delivery' } },
+              { type: 'reply', reply: { id: `tov_col_${encodeCart(items)}`, title: '🏪 Collection' } },
+              { type: 'reply', reply: { id: `tov_del_${encodeCart(items)}`, title: '🛵 Delivery' } },
             ],
           },
         },
@@ -759,8 +939,9 @@ async function handleOrderMessage(phoneId: string, from: string, name: string, m
       },
       action: {
         buttons: [
-          { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Collection' } },
-          { type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Delivery' } },
+          { type: 'reply', reply: { id: `tov_col_${encodeCart(cartItems)}`, title: '🏪 Collection' } },
+          { type: 'reply', reply: { id: `tov_del_${encodeCart(cartItems)}`, title: '🛵 Delivery' } },
+          { type: 'reply', reply: { id: `tov_more_${encodeCart(cartItems)}`, title: '➕ Add More' } },
         ],
       },
     },
@@ -1082,8 +1263,8 @@ async function sendFulfillmentChoice(
       },
       action: {
         buttons: [
-          { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Collection' } },
-          { type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Delivery' } },
+          { type: 'reply', reply: { id: `tov_col_${encodeCart(cart.items)}`, title: '🏪 Collection' } },
+          { type: 'reply', reply: { id: `tov_del_${encodeCart(cart.items)}`, title: '🛵 Delivery' } },
         ],
       },
     },
@@ -1131,8 +1312,9 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
       action: {
         buttons: hasCart
           ? [
-              { type: 'reply', reply: { id: 'tov_checkout', title: '🛒 Checkout' } },
-              { type: 'reply', reply: { id: 'tov_menu', title: '📋 Menu' } },
+              { type: 'reply', reply: { id: `tov_col_${encodeCart(conv!.activeCart!.items)}`, title: '🏪 Collection' } },
+              { type: 'reply', reply: { id: `tov_del_${encodeCart(conv!.activeCart!.items)}`, title: '🛵 Delivery' } },
+              { type: 'reply', reply: { id: `tov_more_${encodeCart(conv!.activeCart!.items)}`, title: '📋 Browse Menu' } },
             ]
           : [
               { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
