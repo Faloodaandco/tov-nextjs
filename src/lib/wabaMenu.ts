@@ -59,21 +59,18 @@ const HAYES_SECTIONS = [
   { id: 'cat_specials', title: '🌟 Weekend Specials', categories: ['weekend_special'] },
 ];
 
-// Slough: different menu structure with breakfast focus, Sunday roast, signature dishes
+// Slough: 10 sections (WhatsApp max 10 rows per list message)
 const SLOUGH_SECTIONS = [
   { id: 'cat_breakfast', title: '🌅 Breakfast & Desi Nashta', categories: ['breakfast___desi_nashta'] },
   { id: 'cat_mains', title: '🍛 Village Classics', categories: ['mains___village_classics'] },
-  { id: 'cat_signature', title: '⭐ Signature Dishes', categories: ['signature_dishes', 'weekend_specials'] },
+  { id: 'cat_signature', title: '⭐ Specials & Signatures', categories: ['signature_dishes', 'weekend_specials'] },
   { id: 'cat_grill', title: '🔥 Starters & Charcoal Grill', categories: ['starters_n_charcoal_grill'] },
   { id: 'cat_platters', title: '👑 Family Platters', categories: ['family_platters'] },
   { id: 'cat_roast', title: '🍖 Sunday Roast', categories: ['sunday_roast'] },
   { id: 'cat_veg', title: '🥬 Vegetarian Mains', categories: ['vegetarian_mains'] },
-  { id: 'cat_breads', title: '🫓 Naan & Bread', categories: ['naan_n_bread'] },
-  { id: 'cat_rice', title: '🍚 Rice Specials', categories: ['rice_specials'] },
-  { id: 'cat_sides', title: '🥗 Salads & Sides', categories: ['salads', 'sides_n_sauces'] },
-  { id: 'cat_desserts', title: '🍨 Desserts', categories: ['desserts'] },
-  { id: 'cat_drinks', title: '🥤 Drinks & Mocktails', categories: ['soft_drinks', 'mocktails_n_lassi'] },
-  { id: 'cat_kids', title: '👶 Kids Meal', categories: ['kids_meal'] },
+  { id: 'cat_breads', title: '🫓 Naan, Bread & Rice', categories: ['naan_n_bread', 'rice_specials'] },
+  { id: 'cat_desserts', title: '🍨 Desserts & Drinks', categories: ['desserts', 'soft_drinks', 'mocktails_n_lassi'] },
+  { id: 'cat_sides', title: '🥗 Sides, Salads & Kids', categories: ['salads', 'sides_n_sauces', 'kids_meal'] },
 ];
 
 const BRANCH_SECTIONS: Record<string, typeof HAYES_SECTIONS> = {
@@ -268,7 +265,7 @@ export function findMatchingCategory(query: string, branchId?: LocationId | stri
       return { id: 'cat_roast', title: '🍖 Sunday Roast' };
     }
     if (/\b(signature|seabass|special)/.test(q)) {
-      return { id: 'cat_signature', title: '⭐ Signature Dishes' };
+      return { id: 'cat_signature', title: '⭐ Specials & Signatures' };
     }
     if (/\b(starter|grill|skewer|tikka|kebab|seekh|chops|charcoal|bbq|tandoor)/.test(q)) {
       return { id: 'cat_grill', title: '🔥 Starters & Charcoal Grill' };
@@ -282,23 +279,14 @@ export function findMatchingCategory(query: string, branchId?: LocationId | stri
     if (/\b(veg|vegetarian|daal|paneer|mushroom)/.test(q)) {
       return { id: 'cat_veg', title: '🥬 Vegetarian Mains' };
     }
-    if (/\b(naan|roti|bread|kulcha|paratha)/.test(q)) {
-      return { id: 'cat_breads', title: '🫓 Naan & Bread' };
+    if (/\b(naan|roti|bread|kulcha|paratha|rice|biryani|pulao|pilau|afghani)/.test(q)) {
+      return { id: 'cat_breads', title: '🫓 Naan, Bread & Rice' };
     }
-    if (/\b(rice|biryani|pulao|pilau|afghani)/.test(q)) {
-      return { id: 'cat_rice', title: '🍚 Rice Specials' };
+    if (/\b(salad|sauce|side|raita|chutney|kid|child|nugget|fries)/.test(q)) {
+      return { id: 'cat_sides', title: '🥗 Sides, Salads & Kids' };
     }
-    if (/\b(salad|sauce|side|raita|chutney)/.test(q)) {
-      return { id: 'cat_sides', title: '🥗 Salads & Sides' };
-    }
-    if (/\b(dessert|kheer|gulab jamun|sweet|halwa|gajar)/.test(q)) {
-      return { id: 'cat_desserts', title: '🍨 Desserts' };
-    }
-    if (/\b(drink|coke|fanta|sprite|water|lassi|mocktail|mint|mango)/.test(q)) {
-      return { id: 'cat_drinks', title: '🥤 Drinks & Mocktails' };
-    }
-    if (/\b(kid|child|nugget|fries)/.test(q)) {
-      return { id: 'cat_kids', title: '👶 Kids Meal' };
+    if (/\b(dessert|kheer|gulab jamun|sweet|halwa|gajar|drink|coke|fanta|sprite|water|lassi|mocktail|mint|mango)/.test(q)) {
+      return { id: 'cat_desserts', title: '🍨 Desserts & Drinks' };
     }
     return null;
   }

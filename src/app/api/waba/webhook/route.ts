@@ -365,30 +365,18 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   if (/^(slough|hayes)(\s*(branch|restaurant|location|please))?$/i.test(text) || /^(i\s*(want|would like)\s*to\s*order\s*from\s*(slough|hayes))\b/i.test(text)) {
     const activeBranch = getEffectiveBranch(conv);
     const loc = LOCATIONS[activeBranch];
+    // Brief confirmation then immediate menu
     await sendWhatsAppMessage(phoneId, from, {
-      type: 'interactive',
-      interactive: {
-        type: 'button',
-        header: { type: 'text', text: loc.name },
-        body: {
-          text: [
-            `📍 *${loc.name}* is selected!`,
-            `${loc.address}, ${loc.city} ${loc.postcode}`,
-            `📞 ${loc.phone}`,
-            ``,
-            `🕐 Open daily: 10:00 AM – 02:00 AM midnight`,
-            ``,
-            `What would you like to order today?`,
-          ].join('\n'),
-        },
-        action: {
-          buttons: [
-            { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
-            { type: 'reply', reply: { id: 'tov_choose_branch', title: '🔄 Switch Branch' } },
-          ],
-        },
+      type: 'text',
+      text: {
+        body: [
+          `✅ *${loc.name}*`,
+          `📍 ${loc.address}, ${loc.city} ${loc.postcode}`,
+          `🕐 Open daily 10AM – 2AM`,
+        ].join('\n'),
       },
     });
+    await sendCategoryList(phoneId, from);
     return;
   }
 
@@ -872,47 +860,28 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     if (buttonId === 'tov_branch_hayes' || buttonId === 'tov_branch_slough') {
       const selectedBranch: LocationId = buttonId === 'tov_branch_slough' ? 'slough' : 'hayes';
       const branchLoc = LOCATIONS[selectedBranch];
-      await updateConversation(from, { branchId: selectedBranch });
+      await updateConversation(from, { branchId: selectedBranch, state: 'idle' });
       conv.branchId = selectedBranch;
       if (conv.activeCart) {
         conv.activeCart.branchId = selectedBranch;
         await updateConversation(from, { activeCart: conv.activeCart });
       }
 
-      const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
-
+      // Send brief confirmation then immediately show the menu (skip extra tap)
       await sendWhatsAppMessage(phoneId, from, {
-        type: 'interactive',
-        interactive: {
-          type: 'button',
-          header: { type: 'text', text: branchLoc.name },
-          body: {
-            text: [
-              `✅ Active branch set to *${branchLoc.name}*`,
-              `📍 ${branchLoc.address}, ${branchLoc.city} ${branchLoc.postcode}`,
-              `📞 ${branchLoc.phone}`,
-              ``,
-              `🕐 Open daily: 10:00 AM – 02:00 AM midnight`,
-              ``,
-              conv.activeCart?.items?.length
-                ? `🛒 You have ${conv.activeCart.items.length} item(s) in your basket. Ready to checkout?`
-                : `Tap *Browse Menu* to explore dishes freshly cooked to order! 👇`,
-            ].join('\n'),
-          },
-          action: {
-            buttons: conv.activeCart?.items?.length
-              ? [
-                  { type: 'reply', reply: { id: `tov_col_${carriedCartStr}`, title: '🏪 Collection' } },
-                  { type: 'reply', reply: { id: `tov_del_${carriedCartStr}`, title: '🛵 Delivery' } },
-                  { type: 'reply', reply: { id: `tov_more_${carriedCartStr}`, title: '➕ Add More' } },
-                ]
-              : [
-                  { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
-                  { type: 'reply', reply: { id: 'tov_choose_branch', title: '🔄 Switch Branch' } },
-                ],
-          },
+        type: 'text',
+        text: {
+          body: [
+            `✅ *${branchLoc.name}*`,
+            `📍 ${branchLoc.address}, ${branchLoc.city} ${branchLoc.postcode}`,
+            `🕐 Open daily 10AM – 2AM`,
+          ].join('\n'),
         },
       });
+
+      // Immediately show the menu — no extra "Browse Menu" button tap needed
+      const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
+      await sendCategoryList(phoneId, from, carriedCartStr);
       return;
     }
 
