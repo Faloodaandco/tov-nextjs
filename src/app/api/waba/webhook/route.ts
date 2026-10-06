@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { sendWhatsAppMessage } from '@/lib/waba';
-import { createItemisedCheckoutLink, createQuickPayFallbackLink, type CheckoutLineItem } from '@/lib/square';
+import { createItemisedCheckoutLink, createQuickPayFallbackLink, verifySquareOrderPayment, type CheckoutLineItem } from '@/lib/square';
 import {
   getMenuItemById,
   buildMenuCategorySections,
@@ -152,11 +152,15 @@ function cartSummaryText(items: CartItem[]): string {
 
 const TOV_PREFIX = 'tov_item_1777480501499_';
 
+// Cache for catalog items that don't match tov-menu.json IDs (e.g. Facebook Commerce Catalog)
+// Populated by handleOrderMessage so decodeCart can recover name/price for non-menu IDs.
+const CATALOG_ITEM_CACHE = new Map<string, { name: string; pricePence: number }>();
+
 function encodeCart(items: CartItem[]): string {
   if (!items?.length) return '';
   return items.map(i => {
     const cleanId = i.id.startsWith(TOV_PREFIX) ? i.id.slice(TOV_PREFIX.length) : i.id;
-    return `${cleanId}:${i.quantity}`;
+    return `${cleanId}:${i.quantity}:${i.pricePence}`;
   }).join(',').slice(0, 200);
 }
 
@@ -165,18 +169,34 @@ function decodeCart(str: string): CartItem[] {
   const parts = str.split(',');
   const items: CartItem[] = [];
   for (const part of parts) {
-    const [rawId, qtyStr] = part.split(':');
+    const segments = part.split(':');
+    const rawId = segments[0];
+    const qtyStr = segments[1];
+    const pricePenceStr = segments[2]; // Embedded price fallback
     if (!rawId) continue;
     const fullId = rawId.startsWith('tov_item_') ? rawId : `${TOV_PREFIX}${rawId}`;
     const item = getMenuItemById(fullId) || getMenuItemById(rawId);
+    const quantity = Math.max(1, parseInt(qtyStr || '1', 10) || 1);
     if (item) {
-      const quantity = Math.max(1, parseInt(qtyStr || '1', 10) || 1);
       items.push({
         id: item.id,
         name: item.name,
         quantity,
         pricePence: Math.round(item.price * 100),
       });
+    } else {
+      // Preserve items not in local menu (native catalog orders, custom items)
+      const cached = CATALOG_ITEM_CACHE.get(rawId) || CATALOG_ITEM_CACHE.get(fullId);
+      const fallbackPrice = parseInt(pricePenceStr || '0', 10) || cached?.pricePence || 0;
+      const fallbackName = cached?.name || rawId;
+      if (fallbackPrice > 0) {
+        items.push({
+          id: fullId,
+          name: fallbackName,
+          quantity,
+          pricePence: fallbackPrice,
+        });
+      }
     }
   }
   return items;
@@ -677,14 +697,42 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     if (activeRef) {
       try {
         const orderSnap = await adminDb.collection('whatsapp_orders').doc(activeRef).get();
-        if (orderSnap.exists && orderSnap.data()?.status === 'PAID') {
-          await sendWhatsAppMessage(phoneId, from, {
-            type: 'text',
-            text: {
-              body: `✅ *Payment Verified!* Your order #${activeRef} has been received and confirmed by the kitchen. Fresh food is being prepared right now! 👨‍🍳🔥`,
-            },
-          });
-          return;
+        if (orderSnap.exists) {
+          const orderData = orderSnap.data();
+          let isPaid = orderData?.status === 'PAID';
+
+          // If not marked paid in Firestore, check Square Orders API directly
+          if (!isPaid && orderData?.orderId && orderData?.branchId) {
+            isPaid = await verifySquareOrderPayment(orderData.orderId, orderData.branchId as LocationId);
+            if (isPaid) {
+              await adminDb.collection('whatsapp_orders').doc(activeRef).update({ status: 'PAID' });
+            }
+          }
+
+          if (isPaid) {
+            await sendWhatsAppMessage(phoneId, from, {
+              type: 'text',
+              text: {
+                body: `✅ *Payment Verified!* Your order #${activeRef} has been received and confirmed by the kitchen. Fresh food is being prepared right now! 👨‍🍳🔥`,
+              },
+            });
+            // Clear cart upon successful manual verification
+            await updateConversation(from, {
+              activeCart: null,
+              state: 'idle',
+              lastPaidOrderId: activeRef,
+              lastPaidAt: new Date().toISOString(),
+            });
+            return;
+          } else if (orderData?.paymentLinkUrl) {
+            await sendWhatsAppMessage(phoneId, from, {
+              type: 'text',
+              text: {
+                body: `❌ We haven't received your payment yet. Please complete it using your link:\n${orderData.paymentLinkUrl}`,
+              },
+            });
+            return;
+          }
         }
       } catch (err) {
         console.warn('[TOV WABA] Error checking payment status:', err);
@@ -1095,6 +1143,11 @@ async function handleOrderMessage(phoneId: string, from: string, name: string, m
 
     cartItems.push({ id: item.product_retailer_id, name: itemName, quantity: qty, pricePence });
     totalPence += pricePence * qty;
+
+    // Cache catalog items so decodeCart can recover name/price for non-menu IDs
+    if (!menuItem) {
+      CATALOG_ITEM_CACHE.set(item.product_retailer_id, { name: itemName, pricePence });
+    }
   }
 
   await updateConversation(from, {

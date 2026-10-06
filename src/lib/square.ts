@@ -198,3 +198,43 @@ export async function createQuickPayFallbackLink(options: {
     return { url: `https://tasteofvillagerestaurants.co.uk/${branchId}/menu`, orderId: null, referenceId };
   }
 }
+
+/**
+ * Verify if a Square order has been paid by checking the 'tenders' array
+ */
+export async function verifySquareOrderPayment(
+  orderId: string,
+  branchId: LocationId
+): Promise<boolean> {
+  const token = branchId === 'hayes'
+    ? process.env.SQUARE_HAYES_ACCESS_TOKEN
+    : process.env.SQUARE_SLOUGH_ACCESS_TOKEN;
+
+  if (!token) {
+    console.error(`[Square Verify] Missing token for ${branchId}`);
+    return false;
+  }
+
+  try {
+    const res = await fetch(`https://connect.squareup.com/v2/orders/${orderId}`, {
+      method: 'GET',
+      headers: {
+        'Square-Version': '2024-08-21',
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      console.warn('[Square Verify] Order fetch failed:', await res.text());
+      return false;
+    }
+
+    const data = await res.json();
+    const tenders = data?.order?.tenders || [];
+    return tenders.length > 0;
+  } catch (err) {
+    console.error('[Square Verify] Exception:', err);
+    return false;
+  }
+}

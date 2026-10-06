@@ -105,16 +105,14 @@ export async function POST(req: NextRequest) {
     console.info(`[Square Webhook] Received: ${eventType} (${event?.data?.id || 'no-id'}) location=${locationId || 'unknown'}`);
 
     switch (eventType) {
-      case 'payment.created': {
-        const payment = event?.data?.object?.payment;
-        if (payment) {
-          console.info(`[Square Webhook] Payment ${payment.id}: status=${payment.status}, amount=${payment.amount_money?.amount}p, ref=${payment.reference_id}`);
-        }
-        break;
-      }
-
+      case 'payment.created':
       case 'payment.updated': {
         const payment = event?.data?.object?.payment;
+        
+        if (payment && eventType === 'payment.created' && payment.status !== 'COMPLETED') {
+          console.info(`[Square Webhook] Payment ${payment.id}: status=${payment.status}, amount=${payment.amount_money?.amount}p, ref=${payment.reference_id}`);
+        }
+
         if (payment && payment.status === 'COMPLETED') {
           console.info(`[Square Webhook] Payment ${payment.id} COMPLETED: amount=${payment.amount_money?.amount}p, ref=${payment.reference_id}`);
           const orderRefId = payment.reference_id;
