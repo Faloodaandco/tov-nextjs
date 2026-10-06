@@ -127,6 +127,32 @@ function cartSummaryText(items: CartItem[]): string {
     .join('\n');
 }
 
+function encodeCart(items: CartItem[]): string {
+  if (!items?.length) return '';
+  return items.map(i => `${i.id}:${i.quantity}`).join(',').slice(0, 200);
+}
+
+function decodeCart(str: string): CartItem[] {
+  if (!str) return [];
+  const parts = str.split(',');
+  const items: CartItem[] = [];
+  for (const part of parts) {
+    const [id, qtyStr] = part.split(':');
+    if (!id) continue;
+    const item = getMenuItemById(id);
+    if (item) {
+      const quantity = Math.max(1, parseInt(qtyStr || '1', 10) || 1);
+      items.push({
+        id: item.id,
+        name: item.name,
+        quantity,
+        pricePence: Math.round(item.price * 100),
+      });
+    }
+  }
+  return items;
+}
+
 // ── Postcode Geocoding (Postcodes.io — free, no API key) ─────────────
 async function geocodePostcode(postcode: string): Promise<{
   valid: boolean;
@@ -272,6 +298,12 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     return;
   }
 
+  // ── Intent: Greetings (Hi, Hello, Hey, Salam, etc.) ───────────
+  if (/^(hi|hello|hey|hiya|salam|assalam|yo|hlo|good\s*(morning|afternoon|evening))\b/i.test(text)) {
+    await sendWelcome(phoneId, from, name, conv);
+    return;
+  }
+
   // ── Intent: Clear / Cancel / Reset ─────────────────────────────
   if (/\b(clear|cancel|reset|start over)\b/.test(text)) {
     await updateConversation(from, { activeCart: null, state: 'idle', pendingDelivery: null });
@@ -369,8 +401,8 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
         },
         action: {
           buttons: [
-            { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Collection' } },
-            { type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Delivery' } },
+            { type: 'reply', reply: { id: `tov_col_${encodeCart(newItems)}`, title: '🏪 Collection' } },
+            { type: 'reply', reply: { id: `tov_del_${encodeCart(newItems)}`, title: '🛵 Delivery' } },
             { type: 'reply', reply: { id: curated.categoryId, title: curated.categoryTitle.slice(0, 20) } },
           ],
         },
@@ -539,9 +571,9 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
           },
           action: {
             buttons: [
-              { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Collection' } },
-              { type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Delivery' } },
-              { type: 'reply', reply: { id: 'tov_add_more', title: '➕ Add More' } },
+              { type: 'reply', reply: { id: `tov_col_${encodeCart(newItems)}`, title: '🏪 Collection' } },
+              { type: 'reply', reply: { id: `tov_del_${encodeCart(newItems)}`, title: '🛵 Delivery' } },
+              { type: 'reply', reply: { id: `tov_more_${encodeCart(newItems)}`, title: '➕ Add More' } },
             ],
           },
         },
@@ -611,8 +643,18 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       return;
     }
 
-    // ── Add More → category list ─────────────────────────────────
-    if (buttonId === 'tov_add_more' || buttonId === 'tov_menu') {
+    // ── Add More → category list (preserving existing encoded cart) ─
+    if (buttonId.startsWith('tov_more_') || buttonId === 'tov_add_more' || buttonId === 'tov_menu') {
+      if (buttonId.startsWith('tov_more_')) {
+        const items = decodeCart(buttonId.replace('tov_more_', ''));
+        if (items.length) {
+          const total = cartTotal(items);
+          await updateConversation(from, {
+            activeCart: { items, basePence: total, updatedAt: new Date().toISOString() },
+            state: 'idle',
+          });
+        }
+      }
       await sendCategoryList(phoneId, from);
       return;
     }
@@ -627,24 +669,39 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       return;
     }
 
-    // ── Collection → generate payment link ───────────────────────
-    if (buttonId === 'tov_collection') {
-      const conv = await getConversation(from);
-      if (!conv.activeCart?.items?.length) {
+    // ── Collection → generate payment link (Stateless & Resilient) ──
+    if (buttonId.startsWith('tov_col_') || buttonId === 'tov_collection') {
+      let items: CartItem[] = [];
+      if (buttonId.startsWith('tov_col_')) {
+        items = decodeCart(buttonId.replace('tov_col_', ''));
+      }
+      if (!items.length) {
+        const conv = await getConversation(from);
+        items = conv.activeCart?.items || [];
+      }
+      if (!items.length) {
         await sendWhatsAppMessage(phoneId, from, {
           type: 'text',
           text: { body: '🛒 Your basket is empty! Type *Menu* to browse dishes.' },
         });
         return;
       }
-      await generateCheckoutLink(phoneId, from, name, conv.activeCart, false, 0);
+      const total = cartTotal(items);
+      await generateCheckoutLink(phoneId, from, name, { items, basePence: total }, false, 0);
       return;
     }
 
-    // ── Delivery → ask for postcode ──────────────────────────────
-    if (buttonId === 'tov_delivery') {
-      const conv = await getConversation(from);
-      if (!conv.activeCart?.items?.length) {
+    // ── Delivery → generate payment link with Square address capture ──
+    if (buttonId.startsWith('tov_del_') || buttonId === 'tov_delivery') {
+      let items: CartItem[] = [];
+      if (buttonId.startsWith('tov_del_')) {
+        items = decodeCart(buttonId.replace('tov_del_', ''));
+      }
+      if (!items.length) {
+        const conv = await getConversation(from);
+        items = conv.activeCart?.items || [];
+      }
+      if (!items.length) {
         await sendWhatsAppMessage(phoneId, from, {
           type: 'text',
           text: { body: '🛒 Your basket is empty! Type *Menu* to browse dishes.' },
@@ -652,25 +709,18 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         return;
       }
 
-      // Check minimum order (£15 for Hayes)
-      if (conv.activeCart.basePence < LOC.delivery.minOrder * 100) {
-        const shortBy = formatPrice(LOC.delivery.minOrder - conv.activeCart.basePence / 100);
-        await sendWhatsAppMessage(phoneId, from, {
-          type: 'text',
-          text: {
-            body: `⚠️ *Minimum delivery order: ${formatPrice(LOC.delivery.minOrder)}*\n\nYour basket is ${formatPrice(conv.activeCart.basePence / 100)}. You need ${shortBy} more.\n\nType *Menu* to add items, or select *Collection* below.`,
-          },
-        });
-        return;
-      }
+      const total = cartTotal(items);
+      const isFree = total >= 3000;
+      const deliveryFeePence = isFree ? 0 : 399;
 
-      await updateConversation(from, { state: 'awaiting_address' });
-      await sendWhatsAppMessage(phoneId, from, {
-        type: 'text',
-        text: {
-          body: `🛵 *Where should we deliver?*\n\nPlease reply with your street address and postcode:\n_(e.g., 14 High Street, UB4 0RU)_`,
-        },
-      });
+      await generateCheckoutLink(
+        phoneId,
+        from,
+        name,
+        { items, basePence: total },
+        true,
+        deliveryFeePence
+      );
       return;
     }
   }

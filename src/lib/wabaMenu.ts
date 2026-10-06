@@ -235,11 +235,14 @@ export function findMatchingCategory(query: string): { id: string; title: string
  */
 export function searchMenuDishes(query: string): MenuItem[] {
   const q = query.toLowerCase().trim();
-  if (!q || q.length < 2) return [];
+  if (!q || q.length < 3) return [];
 
-  const stopwords = new Set(['want', 'need', 'give', 'some', 'please', 'like', 'have', 'the', 'and', 'with', 'for']);
-  const words = q.split(/\s+/).filter(w => w.length >= 2 && !stopwords.has(w));
-  if (words.length === 0) words.push(q);
+  const stopwords = new Set([
+    'hi', 'hello', 'hey', 'hiya', 'salam', 'assalam', 'yo',
+    'want', 'need', 'give', 'some', 'please', 'like', 'have', 'the', 'and', 'with', 'for'
+  ]);
+  const words = q.split(/\s+/).filter(w => w.length >= 3 && !stopwords.has(w));
+  if (words.length === 0) return [];
 
   return menu.filter(item => {
     const nameLower = item.name.toLowerCase();
