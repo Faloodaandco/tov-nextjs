@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import crypto from 'crypto';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { sendWhatsAppMessage } from '@/lib/waba';
@@ -83,7 +83,7 @@ const CACHE_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
 
 async function getConversation(phone: string): Promise<ConversationState> {
   const cached = CONVERSATION_CACHE.get(phone);
-  if (cached && (Date.now() - cached.updatedAt < CACHE_TTL_MS) && cached.state.activeCart?.items?.length) {
+  if (cached && (Date.now() - cached.updatedAt < CACHE_TTL_MS)) {
     return cached.state;
   }
 
@@ -275,47 +275,52 @@ export async function POST(request: NextRequest) {
 
     const body = JSON.parse(rawBody);
 
-    for (const entry of body.entry || []) {
-      for (const change of entry.changes || []) {
-        const phoneId = change.value?.metadata?.phone_number_id;
-        const messages = change.value?.messages || [];
-        const contacts = change.value?.contacts || [];
+    after(async () => {
+      for (const entry of body.entry || []) {
+        for (const change of entry.changes || []) {
+          const phoneId = change.value?.metadata?.phone_number_id;
+          const messages = change.value?.messages || [];
+          const contacts = change.value?.contacts || [];
 
-        for (const message of messages) {
-          // ── Fast In-Memory Deduplication (0ms) ───────────────────
-          if (SEEN_MESSAGE_IDS.has(message.id)) {
-            continue;
-          }
-          SEEN_MESSAGE_IDS.add(message.id);
-          if (SEEN_MESSAGE_IDS.size > 2000) {
-            const first = SEEN_MESSAGE_IDS.values().next().value;
-            if (first) SEEN_MESSAGE_IDS.delete(first);
-          }
-
-          // Asynchronously persist to Firestore without blocking response
-          adminDb.collection('webhook_dedup').doc(`tov_${message.id}`).set({
-            messageId: message.id,
-            processedAt: new Date().toISOString(),
-            expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-          }).catch(() => {});
-
-          const from = message.from;
-          const profileName = contacts[0]?.profile?.name || from;
-
-          try {
-            if (message.type === 'text') {
-              await handleTextMessage(phoneId, from, profileName, message.text?.body || '');
-            } else if (message.type === 'interactive') {
-              await handleInteractiveMessage(phoneId, from, profileName, message);
-            } else if (message.type === 'order') {
-              await handleOrderMessage(phoneId, from, profileName, message);
+          // Process messages in parallel to avoid sequential blocking delays!
+          const messagePromises = messages.map(async (message: any) => {
+            // ── Fast In-Memory Deduplication (0ms) ───────────────────
+            if (SEEN_MESSAGE_IDS.has(message.id)) {
+              return;
             }
-          } catch (msgErr) {
-            console.error(`[TOV WABA] Error handling message ${message.id}:`, msgErr);
-          }
+            SEEN_MESSAGE_IDS.add(message.id);
+            if (SEEN_MESSAGE_IDS.size > 2000) {
+              const first = SEEN_MESSAGE_IDS.values().next().value;
+              if (first) SEEN_MESSAGE_IDS.delete(first);
+            }
+
+            // Asynchronously persist to Firestore without blocking response
+            adminDb.collection('webhook_dedup').doc(`tov_${message.id}`).set({
+              messageId: message.id,
+              processedAt: new Date().toISOString(),
+              expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+            }).catch(() => {});
+
+            const from = message.from;
+            const profileName = contacts[0]?.profile?.name || from;
+
+            try {
+              if (message.type === 'text') {
+                await handleTextMessage(phoneId, from, profileName, message.text?.body || '');
+              } else if (message.type === 'interactive') {
+                await handleInteractiveMessage(phoneId, from, profileName, message);
+              } else if (message.type === 'order') {
+                await handleOrderMessage(phoneId, from, profileName, message);
+              }
+            } catch (msgErr) {
+              console.error(`[TOV WABA] Error handling message ${message.id}:`, msgErr);
+            }
+          });
+
+          await Promise.all(messagePromises);
         }
       }
-    }
+    });
 
     return new NextResponse('EVENT_RECEIVED', { status: 200 });
   } catch (error) {
@@ -370,9 +375,9 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
       type: 'text',
       text: {
         body: [
-          `✅ *${loc.name}*`,
-          `📍 ${loc.address}, ${loc.city} ${loc.postcode}`,
-          `🕐 Open daily 10AM – 2AM`,
+          `*${loc.name}*`,
+          `${loc.address}, ${loc.city} ${loc.postcode}`,
+          `Open daily 10AM – 2AM`,
         ].join('\n'),
       },
     });
@@ -559,7 +564,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
           action: {
             buttons: [
               { type: 'reply', reply: { id: `tov_add_${encodeCart(sugCart)}`, title: `➕ Add (${formatPrice(sug.price)})` } },
-              { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
+              { type: 'reply', reply: { id: 'tov_menu', title: 'Browse Menu' } },
             ],
           },
         },
@@ -575,7 +580,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
           body: { text: aiResult.reply },
           action: {
             buttons: [
-              { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
+              { type: 'reply', reply: { id: 'tov_menu', title: 'Browse Menu' } },
             ],
           },
         },
@@ -872,9 +877,9 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         type: 'text',
         text: {
           body: [
-            `✅ *${branchLoc.name}*`,
-            `📍 ${branchLoc.address}, ${branchLoc.city} ${branchLoc.postcode}`,
-            `🕐 Open daily 10AM – 2AM`,
+            `*${branchLoc.name}*`,
+            `${branchLoc.address}, ${branchLoc.city} ${branchLoc.postcode}`,
+            `Open daily 10AM – 2AM`,
           ].join('\n'),
         },
       });
@@ -1257,7 +1262,7 @@ async function handleAddressInput(
           action: {
             buttons: [
               { type: 'reply', reply: { id: `tov_col_${encodeCart(cart.items)}`, title: `🏪 Collect (${closestLoc.city})` } },
-              { type: 'reply', reply: { id: 'tov_choose_branch', title: '🔄 Change Branch' } },
+              { type: 'reply', reply: { id: 'tov_choose_branch', title: 'Change Branch' } },
             ],
           },
         },
@@ -1605,18 +1610,19 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
     type: 'interactive',
     interactive: {
       type: 'button',
-      header: { type: 'text', text: loc.name },
+      header: { type: 'text', text: `Taste of Village` },
       body: {
         text: [
-          `👋 *${timeGreeting}${cleanName}!* Welcome to Taste of Village.`,
-          `📍 Active Branch: *${loc.name}* (${loc.city})`,
+          `${timeGreeting}${cleanName}! Welcome to *Taste of Village*.`,
+          hasExplicitBranch ? `Active branch: *${loc.name}*` : '',
           cartSection,
           ``,
-          `✨ *Two easy ways to order:*`,
-          `📸 *Fast Photo Menu & 1-Tap Pay:*`,
+          `Order online:`,
           fastMenuUrl,
           ``,
-          `Or tap *Browse Menu* below to order directly in chat! 👇`,
+          hasExplicitBranch
+            ? `Or tap *Browse Menu* to order in chat.`
+            : `Select your branch to see the menu.`,
         ].filter(Boolean).join('\n'),
       },
       action: {
@@ -1624,17 +1630,16 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
           ? [
               { type: 'reply', reply: { id: `tov_col_${encodeCart(conv!.activeCart!.items)}`, title: '🏪 Collection' } },
               { type: 'reply', reply: { id: `tov_del_${encodeCart(conv!.activeCart!.items)}`, title: '🛵 Delivery' } },
-              { type: 'reply', reply: { id: `tov_more_${encodeCart(conv!.activeCart!.items)}`, title: '📋 Browse Menu' } },
+              { type: 'reply', reply: { id: `tov_more_${encodeCart(conv!.activeCart!.items)}`, title: 'Browse Menu' } },
             ]
           : hasExplicitBranch
           ? [
-              { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
-              { type: 'reply', reply: { id: 'tov_choose_branch', title: '🔄 Switch Branch' } },
+              { type: 'reply', reply: { id: 'tov_menu', title: 'Browse Menu' } },
+              { type: 'reply', reply: { id: 'tov_choose_branch', title: 'Switch Branch' } },
             ]
           : [
-              { type: 'reply', reply: { id: 'tov_branch_hayes', title: '📍 Hayes (UB4)' } },
-              { type: 'reply', reply: { id: 'tov_branch_slough', title: '📍 Slough (SL1)' } },
-              { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
+              { type: 'reply', reply: { id: 'tov_branch_hayes', title: 'Hayes (UB4)' } },
+              { type: 'reply', reply: { id: 'tov_branch_slough', title: 'Slough (SL1)' } },
             ],
       },
     },
@@ -1669,20 +1674,19 @@ async function sendBranchSelector(phoneId: string, from: string, conv?: Conversa
       header: { type: 'text', text: 'Select Your Branch' },
       body: {
         text: [
-          `Welcome to *Taste of Village*!`,
-          `We have two branch locations serving authentic Lahore & Gujranwala food (10:00 AM – 02:00 AM daily):`,
+          `*Taste of Village* — two locations:`,
           ``,
-          `📍 *Hayes:* 766B Uxbridge Rd, UB4 0RU`,
-          `📍 *Slough:* 260 Farnham Road, SL1 4XL`,
+          `*Hayes:* 766B Uxbridge Rd, UB4 0RU`,
+          `*Slough:* 260 Farnham Road, SL1 4XL`,
           ``,
-          `Active branch: *${LOCATIONS[currentBranch].name}*`,
-          `Tap below to select or switch your branch:`,
+          `Open daily 10AM – 2AM`,
+          `Current: *${LOCATIONS[currentBranch].name}*`,
         ].join('\n'),
       },
       action: {
         buttons: [
-          { type: 'reply', reply: { id: 'tov_branch_hayes', title: '📍 Hayes (UB4)' } },
-          { type: 'reply', reply: { id: 'tov_branch_slough', title: '📍 Slough (SL1)' } },
+          { type: 'reply', reply: { id: 'tov_branch_hayes', title: 'Hayes (UB4)' } },
+          { type: 'reply', reply: { id: 'tov_branch_slough', title: 'Slough (SL1)' } },
         ],
       },
     },
