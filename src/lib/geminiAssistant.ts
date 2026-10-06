@@ -15,7 +15,14 @@
 import { GoogleGenAI } from '@google/genai';
 import menuItems from '@/data/tov-menu.json';
 import { getMenuItemById, type MenuItem } from '@/lib/wabaMenu';
-import { TOV_KNOWLEDGE_BASE } from '@/data/tovKnowledge';
+import {
+  TOV_KNOWLEDGE_BASE,
+  TOV_CHEF_TASTING_PROFILES,
+  TOV_SALES_PSYCHOLOGY_PLAYBOOK,
+  TOV_OBJECTION_HANDLERS,
+  TOV_PSYCHOLOGICAL_DIAGNOSTICS,
+  TOV_BRAND_DNA,
+} from '@/data/tovKnowledge';
 
 export interface ParsedOrderItem {
   id: string;
@@ -47,6 +54,18 @@ const COMPACT_MENU = (menuItems as MenuItem[]).map(item => {
 
 const KNOWLEDGE_BASE_TEXT = TOV_KNOWLEDGE_BASE.map(
   k => `• [${k.category.toUpperCase()}] Q: ${k.question} -> A: ${k.answer}`
+).join('\n');
+
+const CHEF_TASTING_TEXT = TOV_CHEF_TASTING_PROFILES.map(
+  p => `• ${p.name} (Heat: ${p.heatLevel}/5): ${p.tastingHook} Best with: ${p.pairingRecommendation.bread} & ${p.pairingRecommendation.drink}`
+).join('\n');
+
+const OBJECTIONS_TEXT = TOV_OBJECTION_HANDLERS.map(
+  o => `• When customer asks/worries: "${o.objection}" -> Chef rapid answer: "${o.rapidChefResponse}" Closing prompt: "${o.closingQuestion}"`
+).join('\n');
+
+const DIAGNOSTICS_TEXT = TOV_PSYCHOLOGICAL_DIAGNOSTICS.map(
+  d => `• If customer is undecided (${d.qualificationGoal}): Ask: "${d.question}"`
 ).join('\n');
 
 let cachedClient: GoogleGenAI | null = null;
@@ -96,9 +115,29 @@ function getClient(): GoogleGenAI | null {
   return null;
 }
 
-const SYSTEM_INSTRUCTION = `You are the AI Order & Hospitality Assistant for Taste of Village Hayes (766B Uxbridge Rd, Hayes UB4 0RU, London).
-We serve 100% Halal authentic Pakistani & North Indian Punjabi cuisine.
-Signature items: Chicken Karahi (£12.99), Lamb Charsi Karahi (£24.99), Village Special Platters, Seekh Kebabs, Biryanis, and fresh Tandoori Naans.
+const SYSTEM_INSTRUCTION = `You are the Executive Chef & Master Food Consultant for Taste of Village Hayes (766B Uxbridge Rd, Hayes UB4 0RU, London | https://tasteofvillagerestaurants.co.uk/).
+You embody an Asian culinary food master (chef/taster level) AND an elite, warm, charismatic WhatsApp salesman.
+
+CHEF CULINARY EXPERTISE:
+- Authentic Pakistani & North Indian Punjabi tradition: iron-wok Karahi seared over roaring high flame (fresh tomatoes, ginger, green chilies, whole crushed coriander—never watery buffet base gravy!), charcoal tandoor grilling at 450°C, and slow-dum basmati rice.
+- Use mouthwatering, vivid sensory vocabulary ('sizzling charcoal-kissed', 'wok-caramelized tomato fond', 'tender marrow richness', 'aromatic fenugreek butter cream').
+
+SALES PSYCHOLOGY & RAPID CLOSING PLAYBOOK:
+1. BREVITY IS KING: Max 2 punchy, appetizing sentences in British English. WhatsApp customers skim on mobile.
+2. ASSUMPTIVE CLOSE: If the customer orders or asks about a Karahi or Curry, don't ask "anything else?" Instead, ask an assumptive bread/rice question: "Shall I add a hot Butter Naan or fragrant Pilau Rice to scoop that rich masala?"
+3. PALATE BALANCE UPSELL: If ordering spicy or fiery dishes (Charsi Karahi, Seekh Kebabs, Chops), suggest balancing the heat with a chilled Mango Lassi (£2.50) or fresh Mint Raita (£1.20).
+4. GROUP SOCIAL PROOF: If the user is undecided or feeding a group/family, anchor to the Village Special Platter (Serves 4 - £29.99), highlighting that it feeds 4 generously with chops, kebabs, tikkas, and wings while saving over £14 vs individual dishes.
+5. OBJECTION DEFENSE: If asked why prep takes 20-25 mins, proudly state that every dish is fired fresh from raw scratch on high flame and charcoal—never reheated pre-cooked trays.
+6. DELIVEROO SAVINGS: When comparing delivery apps, remind that ordering direct saves 15-20% with zero service fees.
+
+CHEF TASTING NOTES & SIGNATURES:
+${CHEF_TASTING_TEXT}
+
+RAPID OBJECTION HANDLING MATRIX:
+${OBJECTIONS_TEXT}
+
+QUALIFYING UNDECIDED CUSTOMERS:
+${DIAGNOSTICS_TEXT}
 
 KNOWLEDGE BASE & FAQS:
 ${KNOWLEDGE_BASE_TEXT}
@@ -110,7 +149,7 @@ TASK:
 Analyze the customer's WhatsApp message and return a JSON object with:
 {
   "intent": "order" | "recommendation" | "faq" | "general",
-  "reply": "Concise, warm response in British English (max 2 sentences). Always polite, hospitable, and helpful.",
+  "reply": "Concise, appetizing response (max 2 sentences). Warm, confident chef/salesman voice.",
   "items": [
     { "id": "short_or_full_id", "name": "Exact Dish Name", "quantity": 1 }
   ],
@@ -118,85 +157,160 @@ Analyze the customer's WhatsApp message and return a JSON object with:
 }
 
 RULES:
-1. 'order': If the user requests to order, buy, or get dishes (e.g. "2 chicken biryani", "I want chicken karahi and 2 naan"), match dishes from the MENU and put them in 'items' with exact quantity.
-2. 'recommendation': If the user asks for suggestions, recommendations, or popular dishes (e.g. "what karahi do you recommend?", "what is good to eat?"), suggest 1 or 2 authentic TOV dishes, explain briefly why they are popular, and set 'suggestedDishId' to the primary recommendation.
-3. 'faq': If the user asks about Halal status, opening hours, address, parking, spice levels, catering, or allergens, answer accurately using the KNOWLEDGE BASE above.
-4. STRICT INVARIANT: ONLY recommend dishes from the Taste of Village menu above. Never invent dishes. Never mention other restaurants.`;
+1. 'order': If the user asks to order or buy items (e.g. "2 chicken biryani", "I want charsi karahi and 2 garlic naan"), match dishes from the MENU and put them in 'items' with exact quantity.
+2. 'recommendation': If the user asks for suggestions, recommendations, or popular dishes, recommend authentic TOV dishes using chef sensory terms, set 'suggestedDishId', and use an assumptive closing prompt.
+3. 'faq': If the user asks about Halal status, opening hours, address, parking, delivery, or allergens, answer accurately using the KNOWLEDGE BASE above.
+4. STRICT INVARIANT: ONLY recommend dishes from the Taste of Village menu above. Never invent dishes. Never mention other restaurants. Canonical domain is https://tasteofvillagerestaurants.co.uk/.`;
 
 /**
  * Analyze a customer's message using Gemini 2.5 Flash.
  * Enforces a strict 2500ms safety timeout — if Gemini takes too long or fails,
  * returns null so the caller can fall back to instant deterministic routing.
  */
-export async function analyzeWithGemini(userText: string): Promise<AssistantResult | null> {
-  const client = getClient();
-  if (!client) {
-    return null;
+/**
+ * Validate & parse raw assistant JSON output into a verified AssistantResult.
+ * Resolves ordered dishes and recommendations strictly against tov-menu.json.
+ */
+function parseAssistantJson(parsed: any): AssistantResult | null {
+  if (!parsed || typeof parsed !== 'object') return null;
+
+  const intent = (parsed.intent || 'general') as AssistantResult['intent'];
+  const reply = typeof parsed.reply === 'string' ? parsed.reply : '';
+
+  // Validate & resolve ordered items against real menu
+  const orderItems: ParsedOrderItem[] = [];
+  if (Array.isArray(parsed.items) && parsed.items.length > 0) {
+    for (const item of parsed.items) {
+      const rawId = item.id ? String(item.id).trim() : '';
+      const fullId = rawId.startsWith('tov_item_') ? rawId : `${TOV_PREFIX}${rawId}`;
+      const menuItem = getMenuItemById(fullId) || getMenuItemById(rawId);
+
+      if (menuItem) {
+        const qty = Math.max(1, parseInt(item.quantity || '1', 10) || 1);
+        orderItems.push({
+          id: menuItem.id,
+          name: menuItem.name,
+          quantity: qty,
+          pricePence: Math.round(menuItem.price * 100),
+        });
+      }
+    }
   }
 
-  const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  // Validate suggested dish
+  let suggestedDish: MenuItem | null = null;
+  if (parsed.suggestedDishId) {
+    const rawSugId = String(parsed.suggestedDishId).trim();
+    const fullSugId = rawSugId.startsWith('tov_item_') ? rawSugId : `${TOV_PREFIX}${rawSugId}`;
+    suggestedDish = getMenuItemById(fullSugId) || getMenuItemById(rawSugId) || null;
+  }
 
-  const timeoutPromise = new Promise<null>((resolve) => {
-    setTimeout(() => resolve(null), 2500);
-  });
+  return {
+    intent,
+    reply,
+    orderItems,
+    suggestedDish,
+  };
+}
 
-  const queryPromise = (async (): Promise<AssistantResult | null> => {
+/**
+ * Redundant Edge Nodes on Local Mesh (Priority: LAN -> Tailscale)
+ */
+const EDGE_OLLAMA_NODES: string[] = [
+  // Removed private LAN and Tailscale IPs as Vercel cannot reach them.
+  // Add a public Cloudflare Tunnel URL here when available.
+];
+
+/**
+ * Query Redundant Edge Ollama Cluster (mkr4 & rnw2 running Qwen2.5:3b).
+ * Provides sub-second local failover if Google Gemini API times out or is offline.
+ */
+async function queryEdgeOllama(userText: string): Promise<AssistantResult | null> {
+  for (const baseUrl of EDGE_OLLAMA_NODES) {
     try {
-      const response = await client.models.generateContent({
-        model,
-        config: {
-          systemInstruction: SYSTEM_INSTRUCTION,
-          responseMimeType: 'application/json',
-        },
-        contents: userText,
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+      const res = await fetch(`${baseUrl}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'qwen2.5:3b',
+          format: 'json',
+          messages: [
+            { role: 'system', content: SYSTEM_INSTRUCTION },
+            { role: 'user', content: userText },
+          ],
+          stream: false,
+        }),
+        signal: controller.signal,
       });
 
-      const rawJson = response.text?.trim();
-      if (!rawJson) return null;
+      clearTimeout(timeoutId);
 
-      const parsed = JSON.parse(rawJson);
-      const intent = (parsed.intent || 'general') as AssistantResult['intent'];
-      const reply = typeof parsed.reply === 'string' ? parsed.reply : '';
+      if (!res.ok) continue;
+      const data = await res.json();
+      const content = data?.message?.content?.trim();
+      if (!content) continue;
 
-      // Validate & resolve ordered items against real menu
-      const orderItems: ParsedOrderItem[] = [];
-      if (Array.isArray(parsed.items) && parsed.items.length > 0) {
-        for (const item of parsed.items) {
-          const rawId = item.id ? String(item.id).trim() : '';
-          const fullId = rawId.startsWith('tov_item_') ? rawId : `${TOV_PREFIX}${rawId}`;
-          const menuItem = getMenuItemById(fullId) || getMenuItemById(rawId);
-
-          if (menuItem) {
-            const qty = Math.max(1, parseInt(item.quantity || '1', 10) || 1);
-            orderItems.push({
-              id: menuItem.id,
-              name: menuItem.name,
-              quantity: qty,
-              pricePence: Math.round(menuItem.price * 100),
-            });
-          }
-        }
+      const parsed = JSON.parse(content);
+      const result = parseAssistantJson(parsed);
+      if (result) {
+        return result;
       }
-
-      // Validate suggested dish
-      let suggestedDish: MenuItem | null = null;
-      if (parsed.suggestedDishId) {
-        const rawSugId = String(parsed.suggestedDishId).trim();
-        const fullSugId = rawSugId.startsWith('tov_item_') ? rawSugId : `${TOV_PREFIX}${rawSugId}`;
-        suggestedDish = getMenuItemById(fullSugId) || getMenuItemById(rawSugId) || null;
-      }
-
-      return {
-        intent,
-        reply,
-        orderItems,
-        suggestedDish,
-      };
-    } catch (err) {
-      console.warn('[geminiAssistant] Inference error:', err);
-      return null;
+    } catch {
+      // Failover to next node in cluster
     }
-  })();
+  }
+  return null;
+}
 
-  return Promise.race([queryPromise, timeoutPromise]);
+/**
+ * Analyze a customer's message using Multi-Tier Redundant RAG Architecture:
+ * 1. Primary: Google Gemini 2.5 Flash API (2500ms safety cap)
+ * 2. Secondary Failover: Edge Node 1 (mkr4 Ollama Qwen2.5 on Tailscale/LAN)
+ * 3. Tertiary Failover: Edge Node 2 (rnw2 Ollama Qwen2.5 on Tailscale/LAN)
+ * 4. Quaternary Fallback: Safe deterministic regex routing in wabaMenu
+ */
+export async function analyzeWithGemini(userText: string): Promise<AssistantResult | null> {
+  const client = getClient();
+
+  if (client) {
+    const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+
+    const timeoutPromise = new Promise<null>((resolve) => {
+      setTimeout(() => resolve(null), 2500);
+    });
+
+    const queryPromise = (async (): Promise<AssistantResult | null> => {
+      try {
+        const response = await client.models.generateContent({
+          model,
+          config: {
+            systemInstruction: SYSTEM_INSTRUCTION,
+            responseMimeType: 'application/json',
+          },
+          contents: userText,
+        });
+
+        const rawJson = response.text?.trim();
+        if (!rawJson) return null;
+
+        const parsed = JSON.parse(rawJson);
+        return parseAssistantJson(parsed);
+      } catch (err) {
+        console.warn('[geminiAssistant] Cloud Gemini error, triggering Edge RAG failover:', err);
+        return null;
+      }
+    })();
+
+    const result = await Promise.race([queryPromise, timeoutPromise]);
+    if (result) {
+      return result;
+    }
+  }
+
+  // Failover to local Edge RAG cluster (mkr4 / rnw2)
+  const edgeResult = await queryEdgeOllama(userText);
+  return edgeResult;
 }

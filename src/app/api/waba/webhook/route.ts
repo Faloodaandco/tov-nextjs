@@ -20,6 +20,7 @@ import {
 } from '@/lib/wabaMenu';
 import {
   LOCATIONS,
+  type LocationId,
   haversineDistanceMiles,
   getDeliveryFeeByDistance,
 } from '@/config/shopConfig';
@@ -34,13 +35,16 @@ interface CartItem {
 }
 
 interface ConversationState {
-  state: 'idle' | 'awaiting_postcode' | 'awaiting_address';
+  state: 'idle' | 'awaiting_postcode' | 'awaiting_address' | 'awaiting_branch';
+  branchId?: LocationId;
   pendingDelivery?: {
+    branchId?: LocationId;
     postcode: string;
     miles: number;
     deliveryFeePence: number;
   };
   activeCart?: {
+    branchId?: LocationId;
     items: CartItem[];
     basePence: number;
     updatedAt: string;
@@ -53,9 +57,25 @@ interface ConversationState {
   lastPaidAt?: string;
 }
 
-// ── Constants ────────────────────────────────────────────────────────
-const BRANCH_ID = 'hayes' as const;
-const LOC = LOCATIONS[BRANCH_ID];
+// ── Branch & Location Resolution ─────────────────────────────────────
+const DEFAULT_BRANCH_ID: LocationId = 'hayes';
+
+function getEffectiveBranch(conv?: ConversationState): LocationId {
+  if (conv?.branchId && (conv.branchId === 'hayes' || conv.branchId === 'slough')) {
+    return conv.branchId;
+  }
+  if (conv?.pendingDelivery?.branchId && (conv.pendingDelivery.branchId === 'hayes' || conv.pendingDelivery.branchId === 'slough')) {
+    return conv.pendingDelivery.branchId;
+  }
+  if (conv?.activeCart?.branchId && (conv.activeCart.branchId === 'hayes' || conv.activeCart.branchId === 'slough')) {
+    return conv.activeCart.branchId;
+  }
+  return DEFAULT_BRANCH_ID;
+}
+
+function getLocationConfig(branchId: LocationId = DEFAULT_BRANCH_ID) {
+  return LOCATIONS[branchId] || LOCATIONS.hayes;
+}
 
 // ── In-Memory Session Cache (Fast & Resilient even if Firestore credentials fail) ──
 const CONVERSATION_CACHE = new Map<string, { state: ConversationState; updatedAt: number }>();
@@ -75,6 +95,7 @@ async function getConversation(phone: string): Promise<ConversationState> {
       const data = (snap as any).data();
       const state: ConversationState = {
         state: data?.state || cached?.state?.state || 'idle',
+        branchId: (data?.branchId as LocationId) || cached?.state?.branchId || undefined,
         pendingDelivery: data?.pendingDelivery || cached?.state?.pendingDelivery || undefined,
         activeCart: data?.activeCart || cached?.state?.activeCart || undefined,
         lastPaidOrderId: data?.lastPaidOrderId || cached?.state?.lastPaidOrderId || undefined,
@@ -95,6 +116,7 @@ async function updateConversation(phone: string, updates: Record<string, unknown
   const merged: ConversationState = {
     ...existing,
     ...(updates.state ? { state: updates.state as any } : {}),
+    ...(updates.branchId ? { branchId: updates.branchId as LocationId } : {}),
     ...(updates.pendingDelivery !== undefined ? { pendingDelivery: updates.pendingDelivery as any } : {}),
     ...(updates.activeCart !== undefined ? { activeCart: updates.activeCart as any } : {}),
     ...(updates.lastPaidOrderId ? { lastPaidOrderId: updates.lastPaidOrderId as any } : {}),
@@ -299,6 +321,57 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     timestamp: new Date().toISOString(),
   }).catch(() => {});
 
+  // ── Dynamic Branch Intent Detection (e.g. Slough vs Hayes, GBP pre-filled links) ──
+  const isExplicitSlough = /\b(slough|farnham)\b/i.test(text);
+  const isExplicitHayes = /\b(hayes|uxbridge)\b/i.test(text);
+
+  if (isExplicitSlough && !isExplicitHayes) {
+    conv.branchId = 'slough';
+    if (conv.activeCart) conv.activeCart.branchId = 'slough';
+    await updateConversation(from, { branchId: 'slough' });
+  } else if (isExplicitHayes && !isExplicitSlough) {
+    conv.branchId = 'hayes';
+    if (conv.activeCart) conv.activeCart.branchId = 'hayes';
+    await updateConversation(from, { branchId: 'hayes' });
+  }
+
+  // Branch switcher command
+  if (/^(switch|change|choose|select)\s*(branch|location)$/i.test(text) || text === 'branch' || text === 'branches') {
+    await sendBranchSelector(phoneId, from, conv);
+    return;
+  }
+
+  // Pure branch greeting/selection text (e.g. user just texts "Slough", "Hayes", or GBP click-to-chat prefill)
+  if (/^(slough|hayes)(\s*(branch|restaurant|location|please))?$/i.test(text) || /^(i\s*(want|would like)\s*to\s*order\s*from\s*(slough|hayes))\b/i.test(text)) {
+    const activeBranch = getEffectiveBranch(conv);
+    const loc = LOCATIONS[activeBranch];
+    await sendWhatsAppMessage(phoneId, from, {
+      type: 'interactive',
+      interactive: {
+        type: 'button',
+        header: { type: 'text', text: loc.name },
+        body: {
+          text: [
+            `📍 *${loc.name}* is selected!`,
+            `${loc.address}, ${loc.city} ${loc.postcode}`,
+            `📞 ${loc.phone}`,
+            ``,
+            `🕐 Open daily: 10:00 AM – 02:00 AM midnight`,
+            ``,
+            `What would you like to order today?`,
+          ].join('\n'),
+        },
+        action: {
+          buttons: [
+            { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
+            { type: 'reply', reply: { id: 'tov_choose_branch', title: '🔄 Switch Branch' } },
+          ],
+        },
+      },
+    });
+    return;
+  }
+
   // ── State: awaiting delivery address or postcode ──────────────
   if (conv.state === 'awaiting_postcode' || conv.state === 'awaiting_address') {
     await handleAddressInput(phoneId, from, name, rawText, conv);
@@ -360,13 +433,14 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
 
   // ── Intent: Direct Text "Collection" / "Delivery" ──────────────
   if (/^(collection|pickup|pick up)\b/i.test(text)) {
+    const branchId = getEffectiveBranch(conv);
     if (conv.activeCart?.items?.length) {
-      await generateCheckoutLink(phoneId, from, name, conv.activeCart, false, 0);
+      await generateCheckoutLink(phoneId, from, name, conv.activeCart, false, 0, undefined, undefined, branchId);
       return;
     } else {
       await sendWhatsAppMessage(phoneId, from, {
         type: 'text',
-        text: { body: 'To place a collection order, please choose your dishes from our menu below 👇' },
+        text: { body: `To place a collection order from Taste of Village (${LOCATIONS[branchId].city}), please choose your dishes from our menu below 👇` },
       });
       await sendCategoryList(phoneId, from);
       return;
@@ -375,9 +449,11 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
 
   if (/^(delivery|deliver)\b/i.test(text)) {
     if (conv.activeCart?.items?.length) {
-      const isFree = conv.activeCart.basePence >= 3000;
-      const deliveryFeePence = isFree ? 0 : 399;
-      await generateCheckoutLink(phoneId, from, name, conv.activeCart, true, deliveryFeePence);
+      await updateConversation(from, { state: 'awaiting_postcode' });
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: { body: '🛵 Please reply with your delivery postcode or address (e.g. *14 High Street, UB4 0RU* or *SL1 4NL*) so we can calculate delivery distance and fee:' },
+      });
       return;
     } else {
       await sendWhatsAppMessage(phoneId, from, {
@@ -544,6 +620,8 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   }
 
   // ── Intent: Smart Category Match (e.g., "biryani", "karahi", "kebab", "naan") ──
+  const activeBranch = getEffectiveBranch(conv);
+  const loc = LOCATIONS[activeBranch];
   const matchedCategory = findMatchingCategory(text);
   if (matchedCategory) {
     const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
@@ -555,7 +633,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
           type: 'list',
           header: { type: 'text', text: matchedCategory.title },
           body: { text: `Here are our freshly cooked ${matchedCategory.title} options. Tap any dish to add it to your order:` },
-          footer: { text: `Taste of Village ${LOC.city}` },
+          footer: { text: `Taste of Village ${loc.city}` },
           action: {
             button: 'Select Dish',
             sections: [{ title: matchedCategory.title, rows }],
@@ -583,7 +661,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
         type: 'list',
         header: { type: 'text', text: 'Dishes Found' },
         body: { text: `We found ${matchingDishes.length} dish(es) matching "${rawText.slice(0, 20)}". Tap an item to add it:` },
-        footer: { text: `Taste of Village ${LOC.city}` },
+        footer: { text: `Taste of Village ${loc.city}` },
         action: {
           button: 'View Dishes',
           sections: [{ title: 'Matching Dishes', rows }],
@@ -624,11 +702,28 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
 
   // ── Intent: help / hours / location ────────────────────────────
   if (/\b(help|hours|time|open|close|where|address|location)\b/.test(text)) {
+    const hayesLoc = LOCATIONS.hayes;
+    const sloughLoc = LOCATIONS.slough;
     await sendWhatsAppMessage(phoneId, from, {
       type: 'text',
       text: {
         preview_url: false,
-        body: `📍 *${LOC.name}*\n${LOC.address}, ${LOC.city} ${LOC.postcode}\n📞 ${LOC.phone}\n\n🕐 Open daily: 10:00 AM – 02:00 AM midnight\n\nTo order, type *Menu* or browse our catalog.`,
+        body: [
+          `📍 *Taste of Village Branches:*`,
+          ``,
+          `🏪 *${hayesLoc.name}*`,
+          `${hayesLoc.address}, ${hayesLoc.city} ${hayesLoc.postcode}`,
+          `📞 ${hayesLoc.phone}`,
+          ``,
+          `🏪 *${sloughLoc.name}*`,
+          `${sloughLoc.address}, ${sloughLoc.city} ${sloughLoc.postcode}`,
+          `📞 ${sloughLoc.phone}`,
+          ``,
+          `🕐 *Opening Hours:* 10:00 AM – 02:00 AM daily (7 days)`,
+          `Active branch: *${loc.name}*`,
+          ``,
+          `To switch branch, type *Slough* or *Hayes*, or type *Menu* to order!`,
+        ].join('\n'),
       },
     });
     return;
@@ -640,6 +735,9 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
 
 async function handleInteractiveMessage(phoneId: string, from: string, name: string, message: any) {
   const replyType = message.interactive.type;
+  const conv = await getConversation(from);
+  const activeBranch = getEffectiveBranch(conv);
+  const loc = LOCATIONS[activeBranch];
 
   if (replyType === 'list_reply') {
     const rawListId: string = message.interactive.list_reply.id;
@@ -648,35 +746,29 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     // Category selected → show items
     if (listId.startsWith('cat_')) {
       const rows = buildItemListRows(listId, carriedCart);
-      if (rows.length === 0) {
+      if (rows.length > 0) {
         await sendWhatsAppMessage(phoneId, from, {
-          type: 'text',
-          text: { body: 'This category is currently empty. Try another!' },
+          type: 'interactive',
+          interactive: {
+            type: 'list',
+            header: { type: 'text', text: getSectionTitle(listId) },
+            body: { text: 'Tap an item to add it to your order:' },
+            footer: { text: `Taste of Village ${loc.city}` },
+            action: {
+              button: 'Select Item',
+              sections: [{ title: getSectionTitle(listId), rows }],
+            },
+          },
         });
         return;
       }
-
-      await sendWhatsAppMessage(phoneId, from, {
-        type: 'interactive',
-        interactive: {
-          type: 'list',
-          header: { type: 'text', text: getSectionTitle(listId) },
-          body: { text: 'Tap an item to add it to your order:' },
-          footer: { text: `Taste of Village ${LOC.city}` },
-          action: {
-            button: 'Select Item',
-            sections: [{ title: getSectionTitle(listId), rows }],
-          },
-        },
-      });
-      return;
     }
 
     // Item selected → add to cart and offer immediate close options
     const menuItem = getMenuItemById(listId);
     if (menuItem) {
       const carriedItems = decodeCart(carriedCart || '');
-      const existingItems = carriedItems.length ? carriedItems : ((await getConversation(from)).activeCart?.items || []);
+      const existingItems = carriedItems.length ? carriedItems : (conv.activeCart?.items || []);
       const newItems = addToCart(existingItems, {
         id: menuItem.id,
         name: menuItem.name,
@@ -686,7 +778,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       const total = cartTotal(newItems);
 
       await updateConversation(from, {
-        activeCart: { items: newItems, basePence: total, updatedAt: new Date().toISOString() },
+        activeCart: { items: newItems, basePence: total, branchId: activeBranch, updatedAt: new Date().toISOString() },
         state: 'idle',
       });
 
@@ -723,6 +815,59 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
   if (replyType === 'button_reply') {
     const buttonId: string = message.interactive.button_reply.id;
 
+    // ── Branch Switching Buttons ─────────────────────────────────
+    if (buttonId === 'tov_choose_branch') {
+      await sendBranchSelector(phoneId, from, conv);
+      return;
+    }
+
+    if (buttonId === 'tov_branch_hayes' || buttonId === 'tov_branch_slough') {
+      const selectedBranch: LocationId = buttonId === 'tov_branch_slough' ? 'slough' : 'hayes';
+      const branchLoc = LOCATIONS[selectedBranch];
+      await updateConversation(from, { branchId: selectedBranch });
+      conv.branchId = selectedBranch;
+      if (conv.activeCart) {
+        conv.activeCart.branchId = selectedBranch;
+        await updateConversation(from, { activeCart: conv.activeCart });
+      }
+
+      const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
+
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'interactive',
+        interactive: {
+          type: 'button',
+          header: { type: 'text', text: branchLoc.name },
+          body: {
+            text: [
+              `✅ Active branch set to *${branchLoc.name}*`,
+              `📍 ${branchLoc.address}, ${branchLoc.city} ${branchLoc.postcode}`,
+              `📞 ${branchLoc.phone}`,
+              ``,
+              `🕐 Open daily: 10:00 AM – 02:00 AM midnight`,
+              ``,
+              conv.activeCart?.items?.length
+                ? `🛒 You have ${conv.activeCart.items.length} item(s) in your basket. Ready to checkout?`
+                : `Tap *Browse Menu* to explore dishes freshly cooked to order! 👇`,
+            ].join('\n'),
+          },
+          action: {
+            buttons: conv.activeCart?.items?.length
+              ? [
+                  { type: 'reply', reply: { id: `tov_col_${carriedCartStr}`, title: '🏪 Collection' } },
+                  { type: 'reply', reply: { id: `tov_del_${carriedCartStr}`, title: '🛵 Delivery' } },
+                  { type: 'reply', reply: { id: `tov_more_${carriedCartStr}`, title: '➕ Add More' } },
+                ]
+              : [
+                  { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
+                  { type: 'reply', reply: { id: 'tov_choose_branch', title: '🔄 Switch Branch' } },
+                ],
+          },
+        },
+      });
+      return;
+    }
+
     // ── Category Button (e.g. from curated dish alternative) ─────
     if (buttonId.startsWith('cat_')) {
       const [catId, carriedCart] = buttonId.split('~');
@@ -734,7 +879,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
             type: 'list',
             header: { type: 'text', text: getSectionTitle(catId) },
             body: { text: `Here are our ${getSectionTitle(catId)} options. Tap to add:` },
-            footer: { text: `Taste of Village ${LOC.city}` },
+            footer: { text: `Taste of Village ${loc.city}` },
             action: {
               button: 'Select Dish',
               sections: [{ title: getSectionTitle(catId), rows }],
@@ -751,7 +896,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       if (items.length) {
         const total = cartTotal(items);
         await updateConversation(from, {
-          activeCart: { items, basePence: total, updatedAt: new Date().toISOString() },
+          activeCart: { items, basePence: total, branchId: activeBranch, updatedAt: new Date().toISOString() },
           state: 'idle',
         });
         await sendWhatsAppMessage(phoneId, from, {
@@ -788,7 +933,6 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         items = decodeCart(buttonId.replace('tov_checkout_', ''));
       }
       if (!items.length) {
-        const conv = await getConversation(from);
         items = conv.activeCart?.items || [];
       }
       if (!items.length) {
@@ -852,17 +996,18 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         items = decodeCart(buttonId.replace('tov_col_', ''));
       }
       if (!items.length) {
-        const conv = await getConversation(from);
         items = conv.activeCart?.items || [];
       }
+      const branchKey = getEffectiveBranch(conv);
+      const branchLoc = LOCATIONS[branchKey];
+
       if (!items.length) {
         // Resilient Fallback: Generate QuickPay link so customer is NEVER blocked!
-        const conv = await getConversation(from);
         const fallbackPence = conv.activeCart?.basePence || 99;
         const quickPay = await createQuickPayFallbackLink({
-          branchId: BRANCH_ID,
+          branchId: branchKey,
           totalPence: fallbackPence,
-          memo: `Taste of Village Collection Order`,
+          memo: `Taste of Village ${branchLoc.city} Collection Order`,
           isDelivery: false,
         });
 
@@ -872,9 +1017,10 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
             text: {
               preview_url: false,
               body: [
-                '🏪 *Collection Order*',
+                `🏪 *${branchLoc.name} Collection Order*`,
                 '',
-                `📍 Pickup at: *${LOC.address}, ${LOC.city} ${LOC.postcode}*`,
+                `📍 Pickup at: *${branchLoc.name}*`,
+                `_${branchLoc.address}, ${branchLoc.city} ${branchLoc.postcode}_`,
                 '',
                 `💳 Complete your secure payment here (Apple Pay / GPay / Card):`,
                 quickPay.url,
@@ -888,63 +1034,45 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         return;
       }
       const total = cartTotal(items);
-      await generateCheckoutLink(phoneId, from, name, { items, basePence: total }, false, 0);
+      await generateCheckoutLink(phoneId, from, name, { items, basePence: total, branchId: branchKey }, false, 0, undefined, undefined, branchKey);
       return;
     }
 
-    // ── Delivery → generate payment link with Square address capture ──
+    // ── Delivery → prompt for postcode or use pending delivery ──
     if (buttonId.startsWith('tov_del_') || buttonId === 'tov_delivery') {
       let items: CartItem[] = [];
       if (buttonId.startsWith('tov_del_')) {
         items = decodeCart(buttonId.replace('tov_del_', ''));
       }
       if (!items.length) {
-        const conv = await getConversation(from);
         items = conv.activeCart?.items || [];
       }
       if (!items.length) {
-        // Resilient Fallback: Generate QuickPay link so customer is NEVER blocked!
-        const conv = await getConversation(from);
-        const fallbackPence = (conv.activeCart?.basePence || 99) + 399;
-        const quickPay = await createQuickPayFallbackLink({
-          branchId: BRANCH_ID,
-          totalPence: fallbackPence,
-          memo: `Taste of Village Delivery Order`,
-          isDelivery: true,
-        });
-
-        if (quickPay.url) {
-          await sendWhatsAppMessage(phoneId, from, {
-            type: 'text',
-            text: {
-              preview_url: false,
-              body: [
-                '🛵 *Delivery Order*',
-                '',
-                `💳 Complete your delivery address & secure payment here:`,
-                quickPay.url,
-              ].join('\n'),
-            },
-          });
-          return;
-        }
-
         await sendCategoryList(phoneId, from);
         return;
       }
 
+      const branchKey = getEffectiveBranch(conv);
+      const branchLoc = LOCATIONS[branchKey];
       const total = cartTotal(items);
-      const isFree = total >= 3000;
-      const deliveryFeePence = isFree ? 0 : 399;
 
-      await generateCheckoutLink(
-        phoneId,
-        from,
-        name,
-        { items, basePence: total },
-        true,
-        deliveryFeePence
-      );
+      await updateConversation(from, {
+        state: 'awaiting_postcode',
+        activeCart: { items, basePence: total, branchId: branchKey, updatedAt: new Date().toISOString() },
+      });
+
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: {
+          body: [
+            `🛵 *${branchLoc.name} Delivery Order*`,
+            `Please reply with your delivery postcode or full address:`,
+            `_(e.g., 14 High Street, UB4 0RU or SL1 4NL)_`,
+            ``,
+            `We will verify delivery distance and calculate your delivery fee!`,
+          ].join('\n'),
+        },
+      });
       return;
     }
   }
@@ -1041,20 +1169,70 @@ async function handleAddressInput(
       return;
     }
 
-    const miles = haversineDistanceMiles(LOC.coords.lat, LOC.coords.lng, geo.lat, geo.lng);
-    const tier = getDeliveryFeeByDistance(miles, BRANCH_ID);
+    const milesHayes = haversineDistanceMiles(LOCATIONS.hayes.coords.lat, LOCATIONS.hayes.coords.lng, geo.lat, geo.lng);
+    const milesSlough = haversineDistanceMiles(LOCATIONS.slough.coords.lat, LOCATIONS.slough.coords.lng, geo.lat, geo.lng);
 
-    if (!tier.eligible) {
+    const tierHayes = getDeliveryFeeByDistance(milesHayes, 'hayes');
+    const tierSlough = getDeliveryFeeByDistance(milesSlough, 'slough');
+
+    // ── Dynamic Dual-Branch Delivery Arbitration ──
+    let effectiveBranch: LocationId;
+    let effectiveMiles: number;
+    let effectiveTier: typeof tierHayes;
+    let branchNotice = '';
+
+    if (tierHayes.eligible && !tierSlough.eligible) {
+      effectiveBranch = 'hayes';
+      effectiveMiles = milesHayes;
+      effectiveTier = tierHayes;
+      if (conv.branchId === 'slough') {
+        branchNotice = `📍 *${geo.formatted}* is within our Hayes delivery area (${milesHayes.toFixed(1)} mi). We've routed your delivery to *Taste of Village Hayes*!\n\n`;
+      }
+    } else if (tierSlough.eligible && !tierHayes.eligible) {
+      effectiveBranch = 'slough';
+      effectiveMiles = milesSlough;
+      effectiveTier = tierSlough;
+      if (conv.branchId === 'hayes') {
+        branchNotice = `📍 *${geo.formatted}* is within our Slough delivery area (${milesSlough.toFixed(1)} mi). We've routed your delivery to *Taste of Village Slough*!\n\n`;
+      }
+    } else if (tierHayes.eligible && tierSlough.eligible) {
+      // Both branches can deliver — choose user preference or closer branch
+      if (conv.branchId === 'slough' || conv.branchId === 'hayes') {
+        effectiveBranch = conv.branchId;
+      } else {
+        effectiveBranch = milesSlough < milesHayes ? 'slough' : 'hayes';
+      }
+      effectiveMiles = effectiveBranch === 'slough' ? milesSlough : milesHayes;
+      effectiveTier = effectiveBranch === 'slough' ? tierSlough : tierHayes;
+    } else {
+      // Neither branch is eligible (> 5 miles from both)
+      const closestBranch: LocationId = milesSlough < milesHayes ? 'slough' : 'hayes';
+      const closestLoc = LOCATIONS[closestBranch];
+      const otherBranch: LocationId = closestBranch === 'slough' ? 'hayes' : 'slough';
+      const otherLoc = LOCATIONS[otherBranch];
+      const closestMiles = Math.min(milesSlough, milesHayes);
+      const otherMiles = Math.max(milesSlough, milesHayes);
+
       await sendWhatsAppMessage(phoneId, from, {
         type: 'interactive',
         interactive: {
           type: 'button',
+          header: { type: 'text', text: 'Out of Delivery Range' },
           body: {
-            text: `📍 *${geo.formatted}* is ${miles.toFixed(1)} miles away.\n\n${tier.reason || `Our delivery radius is ${LOC.delivery.maxRadiusMiles} miles.`}\n\nWould you like to collect from our Hayes restaurant instead?`,
+            text: [
+              `📍 *${geo.formatted}* is outside our 5-mile delivery radius:`,
+              `• ${closestLoc.city}: ${closestMiles.toFixed(1)} miles away`,
+              `• ${otherLoc.city}: ${otherMiles.toFixed(1)} miles away`,
+              ``,
+              `To ensure our authentic Desi dishes arrive sizzling hot, we deliver within 5.0 miles only.`,
+              ``,
+              `Would you like to collect your order from our ${closestLoc.city} restaurant instead?`,
+            ].join('\n'),
           },
           action: {
             buttons: [
-              { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Collection' } },
+              { type: 'reply', reply: { id: `tov_col_${encodeCart(cart.items)}`, title: `🏪 Collect (${closestLoc.city})` } },
+              { type: 'reply', reply: { id: 'tov_choose_branch', title: '🔄 Change Branch' } },
             ],
           },
         },
@@ -1062,9 +1240,51 @@ async function handleAddressInput(
       return;
     }
 
+    const loc = LOCATIONS[effectiveBranch];
     const subtotalPounds = cart.basePence / 100;
-    const isFree = subtotalPounds >= tier.freeThreshold;
-    const deliveryFeePence = isFree ? 0 : Math.round(tier.fee * 100);
+    const minOrder = loc.delivery.minOrder;
+
+    if (subtotalPounds < minOrder) {
+      const diff = minOrder - subtotalPounds;
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'interactive',
+        interactive: {
+          type: 'button',
+          header: { type: 'text', text: 'Minimum Order' },
+          body: {
+            text: [
+              branchNotice.trim(),
+              `🛵 *${loc.name} Delivery*`,
+              `Our minimum order for delivery is *£${minOrder.toFixed(2)}*.`,
+              `Your basket total is *${formatPrice(subtotalPounds)}*.`,
+              ``,
+              `Please add *${formatPrice(diff)}* more to qualify for delivery, or choose Store Collection!`,
+            ].filter(Boolean).join('\n'),
+          },
+          action: {
+            buttons: [
+              { type: 'reply', reply: { id: `tov_more_${encodeCart(cart.items)}`, title: '➕ Add Dishes' } },
+              { type: 'reply', reply: { id: `tov_col_${encodeCart(cart.items)}`, title: '🏪 Collection Instead' } },
+            ],
+          },
+        },
+      });
+      return;
+    }
+
+    const isFree = subtotalPounds >= effectiveTier.freeThreshold;
+    const deliveryFeePence = isFree ? 0 : Math.round(effectiveTier.fee * 100);
+
+    // Save updated branch and pending delivery
+    await updateConversation(from, {
+      branchId: effectiveBranch,
+      pendingDelivery: {
+        branchId: effectiveBranch,
+        postcode: geo.formatted || rawPostcode,
+        miles: effectiveMiles,
+        deliveryFeePence,
+      },
+    });
 
     // If street address was included in the same message (e.g. "14 High Street, UB4 0RU")
     if (streetPart.length >= 2) {
@@ -1076,7 +1296,8 @@ async function handleAddressInput(
         true,
         deliveryFeePence,
         geo.formatted || rawPostcode,
-        streetPart
+        streetPart,
+        effectiveBranch
       );
       return;
     }
@@ -1084,25 +1305,29 @@ async function handleAddressInput(
     // Otherwise they only gave the postcode: save quote & ask for house/street number
     await updateConversation(from, {
       state: 'awaiting_address',
+      branchId: effectiveBranch,
       pendingDelivery: {
+        branchId: effectiveBranch,
         postcode: geo.formatted || rawPostcode,
-        miles,
+        miles: effectiveMiles,
         deliveryFeePence,
       },
     });
 
     const feeDesc = deliveryFeePence === 0 ? '*FREE* 🎉' : formatPrice(deliveryFeePence / 100);
+    const est = loc.delivery.estimatedMinutes.delivery;
     await sendWhatsAppMessage(phoneId, from, {
       type: 'text',
       text: {
         body: [
-          `✅ *Postcode confirmed:* ${geo.formatted} (${miles.toFixed(1)} miles)`,
-          `🛵 Delivery: ${feeDesc} • Est. 35–45 mins`,
+          branchNotice ? branchNotice.trim() : null,
+          `✅ *Postcode confirmed:* ${geo.formatted} (${effectiveMiles.toFixed(1)} miles from ${loc.city})`,
+          `🛵 Delivery: ${feeDesc} • Est. ${est.min}–${est.max} mins`,
           ``,
           `🏠 *What is your street address?*`,
           `Please reply with your house/flat number and street name:`,
           `_(e.g., 14 High Street, Flat 2B)_`,
-        ].join('\n'),
+        ].filter(Boolean).join('\n'),
       },
     });
     return;
@@ -1118,6 +1343,7 @@ async function handleAddressInput(
       return;
     }
 
+    const effectiveBranch = conv.pendingDelivery.branchId || getEffectiveBranch(conv);
     await generateCheckoutLink(
       phoneId,
       from,
@@ -1126,7 +1352,8 @@ async function handleAddressInput(
       true,
       conv.pendingDelivery.deliveryFeePence || 0,
       conv.pendingDelivery.postcode,
-      trimmed
+      trimmed,
+      effectiveBranch
     );
     return;
   }
@@ -1135,7 +1362,7 @@ async function handleAddressInput(
   await sendWhatsAppMessage(phoneId, from, {
     type: 'text',
     text: {
-      body: `🛵 Please include your UK postcode with your delivery address:\n_(e.g., 14 High Street, UB4 0RU)_`,
+      body: `🛵 Please include your UK postcode with your delivery address:\n_(e.g., 14 High Street, UB4 0RU or SL1 4NL)_`,
     },
   });
 }
@@ -1144,12 +1371,16 @@ async function generateCheckoutLink(
   phoneId: string,
   from: string,
   name: string,
-  cart: { items: CartItem[]; basePence: number },
+  cart: { items: CartItem[]; basePence: number; branchId?: LocationId },
   isDelivery: boolean,
   deliveryFeePence: number,
   postcode?: string,
-  streetAddress?: string
+  streetAddress?: string,
+  branchId?: LocationId
 ) {
+  const effectiveBranch: LocationId = branchId || cart.branchId || DEFAULT_BRANCH_ID;
+  const loc = LOCATIONS[effectiveBranch];
+
   const items: CheckoutLineItem[] = cart.items.map(i => ({
     name: i.name,
     quantity: i.quantity,
@@ -1157,7 +1388,7 @@ async function generateCheckoutLink(
   }));
 
   const { url: squareLink, orderId, referenceId } = await createItemisedCheckoutLink({
-    branchId: BRANCH_ID,
+    branchId: effectiveBranch,
     items,
     isDelivery,
     deliveryFeePence,
@@ -1173,6 +1404,8 @@ async function generateCheckoutLink(
   const orderRecord = {
     orderId: orderId || referenceId,
     referenceId,
+    branchId: effectiveBranch,
+    branchName: loc.name,
     phone: from,
     phoneId,
     name,
@@ -1205,9 +1438,11 @@ async function generateCheckoutLink(
   // Preserve the active cart so it survives until payment is completed!
   await updateConversation(from, {
     state: 'idle',
+    branchId: effectiveBranch,
     pendingDelivery: null,
     activeCart: {
       ...cart,
+      branchId: effectiveBranch,
       checkoutLink: squareLink,
       checkoutOrderId: orderId || referenceId,
       checkoutReferenceId: referenceId,
@@ -1217,13 +1452,13 @@ async function generateCheckoutLink(
 
   if (isDelivery) {
     const feeText = deliveryFeePence === 0 ? '*FREE* 🎉' : formatPrice(deliveryFeePence / 100);
-    const est = LOC.delivery.estimatedMinutes.delivery;
+    const est = loc.delivery.estimatedMinutes.delivery;
     await sendWhatsAppMessage(phoneId, from, {
       type: 'text',
       text: {
         preview_url: false,
         body: [
-          '🛵 *Delivery Order Summary*',
+          `🛵 *${loc.name} Delivery Order*`,
           '',
           `📋 *Items:*`,
           cartSummaryText(cart.items),
@@ -1247,14 +1482,15 @@ async function generateCheckoutLink(
       text: {
         preview_url: false,
         body: [
-          '🏪 *Collection Order Summary*',
+          `🏪 *${loc.name} Collection Order*`,
           '',
           `📋 *Items:*`,
           cartSummaryText(cart.items),
           '',
           `*Total: ${formatPrice(totalPence / 100)}*`,
           '',
-          `📍 Pickup at: *${LOC.address}, ${LOC.city} ${LOC.postcode}*`,
+          `📍 Pickup at: *${loc.name}*`,
+          `_${loc.address}, ${loc.city} ${loc.postcode}_`,
           '',
           `💳 Pay securely via Apple Pay / Google Pay / Card:`,
           squareLink,
@@ -1326,6 +1562,10 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
   const hasCart = conv?.activeCart?.items?.length;
   const checkoutLink = conv?.activeCart?.checkoutLink;
 
+  const branchId = getEffectiveBranch(conv);
+  const loc = LOCATIONS[branchId];
+  const hasExplicitBranch = !!conv?.branchId;
+
   let cartSection = '';
   if (hasCart) {
     cartSection = `\n\n🛒 *Your Basket:* ${conv!.activeCart!.items.length} item(s) (${formatPrice(conv!.activeCart!.basePence / 100)})`;
@@ -1334,16 +1574,17 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
     }
   }
 
-  const fastMenuUrl = `https://tasteofvillagerestaurants.co.uk/${BRANCH_ID}/order?phone=${from}`;
+  const fastMenuUrl = `https://tasteofvillagerestaurants.co.uk/${branchId}/order?phone=${from}`;
 
   await sendWhatsAppMessage(phoneId, from, {
     type: 'interactive',
     interactive: {
       type: 'button',
-      header: { type: 'text', text: 'Taste of Village Hayes' },
+      header: { type: 'text', text: loc.name },
       body: {
         text: [
           `👋 *${timeGreeting}${cleanName}!* Welcome to Taste of Village.`,
+          `📍 Active Branch: *${loc.name}* (${loc.city})`,
           cartSection,
           ``,
           `✨ *Two easy ways to order:*`,
@@ -1360,7 +1601,14 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
               { type: 'reply', reply: { id: `tov_del_${encodeCart(conv!.activeCart!.items)}`, title: '🛵 Delivery' } },
               { type: 'reply', reply: { id: `tov_more_${encodeCart(conv!.activeCart!.items)}`, title: '📋 Browse Menu' } },
             ]
+          : hasExplicitBranch
+          ? [
+              { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
+              { type: 'reply', reply: { id: 'tov_choose_branch', title: '🔄 Switch Branch' } },
+            ]
           : [
+              { type: 'reply', reply: { id: 'tov_branch_hayes', title: '📍 Hayes (UB4)' } },
+              { type: 'reply', reply: { id: 'tov_branch_slough', title: '📍 Slough (SL1)' } },
               { type: 'reply', reply: { id: 'tov_menu', title: '📋 Browse Menu' } },
             ],
       },
@@ -1369,16 +1617,48 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
 }
 
 async function sendCategoryList(phoneId: string, from: string, carriedCart?: string) {
+  const conv = await getConversation(from);
+  const branchId = getEffectiveBranch(conv);
+  const loc = LOCATIONS[branchId];
   await sendWhatsAppMessage(phoneId, from, {
     type: 'interactive',
     interactive: {
       type: 'list',
-      header: { type: 'text', text: 'Taste of Village Menu' },
+      header: { type: 'text', text: `${loc.name} Menu` },
       body: { text: carriedCart ? 'Pick a category to add more dishes:' : 'Pick a category to browse dishes:' },
-      footer: { text: 'Authentic Pakistani & Indian Cuisine' },
+      footer: { text: `Taste of Village ${loc.city} • Open 10AM–2AM` },
       action: {
         button: '📋 Browse Menu',
         sections: buildMenuCategorySections(carriedCart),
+      },
+    },
+  });
+}
+
+async function sendBranchSelector(phoneId: string, from: string, conv?: ConversationState) {
+  const currentBranch = getEffectiveBranch(conv);
+  await sendWhatsAppMessage(phoneId, from, {
+    type: 'interactive',
+    interactive: {
+      type: 'button',
+      header: { type: 'text', text: 'Select Your Branch' },
+      body: {
+        text: [
+          `Welcome to *Taste of Village*!`,
+          `We have two branch locations serving authentic Lahore & Gujranwala food (10:00 AM – 02:00 AM daily):`,
+          ``,
+          `📍 *Hayes:* 766B Uxbridge Rd, UB4 0RU`,
+          `📍 *Slough:* 260 Farnham Road, SL1 4XL`,
+          ``,
+          `Active branch: *${LOCATIONS[currentBranch].name}*`,
+          `Tap below to select or switch your branch:`,
+        ].join('\n'),
+      },
+      action: {
+        buttons: [
+          { type: 'reply', reply: { id: 'tov_branch_hayes', title: '📍 Hayes (UB4)' } },
+          { type: 'reply', reply: { id: 'tov_branch_slough', title: '📍 Slough (SL1)' } },
+        ],
       },
     },
   });

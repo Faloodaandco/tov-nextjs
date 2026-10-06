@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import crypto from 'crypto';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { sendWhatsAppMessage } from '@/lib/waba';
+import { LOCATIONS, type LocationId } from '@/config/shopConfig';
 
 /**
  * POST /api/webhooks/square
@@ -170,21 +171,60 @@ export async function POST(req: NextRequest) {
                       lastPaidAt: new Date().toISOString(),
                     }, { merge: true });
 
-                    // Send Instant WhatsApp Receipt & Confirmation!
-                    const phoneId = waOrder.phoneId || process.env.TOV_WABA_PHONE_ID || '1353080021225827';
+                    // Dynamic Branch Resolution (Hayes vs Slough)
+                    const branchKey: LocationId = (waOrder.branchId === 'slough' ? 'slough' : 'hayes');
+                    const loc = LOCATIONS[branchKey];
+
+                    const displayId = orderRefId || (squareOrderId ? squareOrderId.slice(-6).toUpperCase() : 'TOV');
+                    const trackingOrderId = waOrder.orderId || orderRefId || squareOrderId || displayId;
+                    const trackingUrl = `https://tasteofvillagerestaurants.co.uk/track/${trackingOrderId}`;
+
                     const isDelivery = waOrder.fulfillmentType === 'delivery';
+                    const estMinutes = isDelivery
+                      ? `${loc.delivery.estimatedMinutes.delivery.min}–${loc.delivery.estimatedMinutes.delivery.max}`
+                      : `${loc.delivery.estimatedMinutes.collection.min}–${loc.delivery.estimatedMinutes.collection.max}`;
+
+                    // Mirror into main 'orders' collection for unified POS/KDS & tracking API
+                    await adminDb.collection('orders').doc(trackingOrderId).set({
+                      id: trackingOrderId,
+                      orderId: trackingOrderId,
+                      customerName: waOrder.name || 'WhatsApp Customer',
+                      customerPhone: waOrder.phone,
+                      type: waOrder.fulfillmentType || 'collection',
+                      fulfillmentType: waOrder.fulfillmentType || 'collection',
+                      branch: branchKey,
+                      branchId: branchKey,
+                      branchName: loc.name,
+                      status: 'CONFIRMED',
+                      paymentStatus: 'PAID',
+                      payment_status: 'paid',
+                      squarePaymentId: payment.id,
+                      squareOrderId: squareOrderId || null,
+                      items: (waOrder.items || []).map((i: any) => ({
+                        name: i.name,
+                        quantity: i.quantity,
+                        price: (i.pricePence || 0) / 100,
+                      })),
+                      total: (waOrder.totalPence || 0) / 100,
+                      deliveryAddress: isDelivery ? (waOrder.streetAddress ? `${waOrder.streetAddress}, ${waOrder.postcode || ''}` : waOrder.postcode) : null,
+                      paidAt: new Date().toISOString(),
+                      createdAt: waOrder.createdAt || new Date().toISOString(),
+                      updatedAt: new Date().toISOString(),
+                    }, { merge: true }).catch((err) => {
+                      console.warn('[Square Webhook] Non-blocking mirror to orders collection:', err);
+                    });
+
+                    // Send Instant WhatsApp Receipt, Dynamic Location & Live Tracking Link!
+                    const phoneId = waOrder.phoneId || process.env.TOV_WABA_PHONE_ID || '1353080021225827';
                     const addressLine = isDelivery
                       ? (waOrder.streetAddress
                           ? `📍 Delivering to: *${waOrder.streetAddress}, ${waOrder.postcode || ''}*`
                           : `📍 Delivering to: *${waOrder.postcode || 'Your address'}*`)
-                      : `📍 Pickup at: *766B Uxbridge Rd, Hayes UB4 0RU*`;
+                      : `📍 Pickup at: *${loc.name}*\n_${loc.address}, ${loc.city} ${loc.postcode}_`;
 
                     const itemsList = (waOrder.items || [])
                       .map((i: any) => `• ${i.quantity}x ${i.name}`)
                       .join('\n');
-
-                    const estMinutes = isDelivery ? '35–45' : '20–25';
-                    const displayId = orderRefId || (squareOrderId ? squareOrderId.slice(-6).toUpperCase() : 'TOV');
 
                     await sendWhatsAppMessage(phoneId, waOrder.phone, {
                       type: 'text',
@@ -194,18 +234,21 @@ export async function POST(req: NextRequest) {
                           `🎉 *Payment Confirmed!*`,
                           `Thank you ${waOrder.name || ''}! We've received your payment.`,
                           ``,
-                          `📋 *Order #${displayId}*`,
+                          `📋 *Order #${displayId}* (${loc.name})`,
                           itemsList,
                           ``,
                           addressLine,
                           `⏱️ *Estimated Time: ${estMinutes} mins*`,
+                          ``,
+                          `🔥 *Track Your Order Live:*`,
+                          trackingUrl,
                           ``,
                           `Our kitchen has started preparing your fresh food! 👨‍🍳🔥`,
                           `If you have any questions or dietary notes, simply reply to this chat.`
                         ].filter(Boolean).join('\n'),
                       },
                     });
-                    console.info(`[Square Webhook] Sent WhatsApp payment confirmation to ${waOrder.phone}`);
+                    console.info(`[Square Webhook] Sent WhatsApp payment confirmation with tracking link to ${waOrder.phone}`);
                   }
                 }
               }

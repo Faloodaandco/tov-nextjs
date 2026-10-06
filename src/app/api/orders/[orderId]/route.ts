@@ -40,6 +40,31 @@ export async function GET(
     }
 
     if (!docSnap.exists) {
+      // 3. Fallback: Check whatsapp_orders collection
+      const waDocSnap = await adminDb.collection('whatsapp_orders').doc(orderId).get();
+      if (waDocSnap.exists) {
+        const waData = waDocSnap.data() || {};
+        return NextResponse.json({
+          id: waData.orderId || waData.referenceId || orderId,
+          orderId: waData.orderId || waData.referenceId || orderId,
+          status: waData.status === 'PAID' ? 'CONFIRMED' : (waData.status || 'pending'),
+          fulfillmentType: waData.fulfillmentType || 'collection',
+          estimatedReadyMinutes: waData.fulfillmentType === 'delivery' ? 40 : 25,
+          estimatedReadyAt: waData.estimatedReadyAt || null,
+          branch: waData.branchId || 'hayes',
+          createdAt: waData.createdAt || null,
+          timestamp: waData.createdAt || null,
+          total: (waData.totalPence || 0) / 100,
+          customerName: waData.name || 'Customer',
+          items: (waData.items || []).map((item: any) => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: (item.pricePence || 0) / 100,
+            image: null,
+          })),
+        });
+      }
+
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
