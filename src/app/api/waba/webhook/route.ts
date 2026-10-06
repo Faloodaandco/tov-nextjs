@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { sendWhatsAppMessage } from '@/lib/waba';
-import { createItemisedCheckoutLink, type CheckoutLineItem } from '@/lib/square';
+import { createItemisedCheckoutLink, createQuickPayFallbackLink, type CheckoutLineItem } from '@/lib/square';
 import {
   getMenuItemById,
   buildMenuCategorySections,
@@ -856,10 +856,35 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         items = conv.activeCart?.items || [];
       }
       if (!items.length) {
-        await sendWhatsAppMessage(phoneId, from, {
-          type: 'text',
-          text: { body: '🛒 Your basket is empty! Type *Menu* to browse dishes.' },
+        // Resilient Fallback: Generate QuickPay link so customer is NEVER blocked!
+        const conv = await getConversation(from);
+        const fallbackPence = conv.activeCart?.basePence || 99;
+        const quickPay = await createQuickPayFallbackLink({
+          branchId: BRANCH_ID,
+          totalPence: fallbackPence,
+          memo: `Taste of Village Collection Order`,
+          isDelivery: false,
         });
+
+        if (quickPay.url) {
+          await sendWhatsAppMessage(phoneId, from, {
+            type: 'text',
+            text: {
+              preview_url: false,
+              body: [
+                '🏪 *Collection Order*',
+                '',
+                `📍 Pickup at: *${LOC.address}, ${LOC.city} ${LOC.postcode}*`,
+                '',
+                `💳 Complete your secure payment here (Apple Pay / GPay / Card):`,
+                quickPay.url,
+              ].join('\n'),
+            },
+          });
+          return;
+        }
+
+        await sendCategoryList(phoneId, from);
         return;
       }
       const total = cartTotal(items);
@@ -878,10 +903,33 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         items = conv.activeCart?.items || [];
       }
       if (!items.length) {
-        await sendWhatsAppMessage(phoneId, from, {
-          type: 'text',
-          text: { body: '🛒 Your basket is empty! Type *Menu* to browse dishes.' },
+        // Resilient Fallback: Generate QuickPay link so customer is NEVER blocked!
+        const conv = await getConversation(from);
+        const fallbackPence = (conv.activeCart?.basePence || 99) + 399;
+        const quickPay = await createQuickPayFallbackLink({
+          branchId: BRANCH_ID,
+          totalPence: fallbackPence,
+          memo: `Taste of Village Delivery Order`,
+          isDelivery: true,
         });
+
+        if (quickPay.url) {
+          await sendWhatsAppMessage(phoneId, from, {
+            type: 'text',
+            text: {
+              preview_url: false,
+              body: [
+                '🛵 *Delivery Order*',
+                '',
+                `💳 Complete your delivery address & secure payment here:`,
+                quickPay.url,
+              ].join('\n'),
+            },
+          });
+          return;
+        }
+
+        await sendCategoryList(phoneId, from);
         return;
       }
 

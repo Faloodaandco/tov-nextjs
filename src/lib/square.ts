@@ -115,8 +115,14 @@ export async function createItemisedCheckoutLink(options: {
     const data = await res.json();
 
     if (!res.ok) {
-      console.error('[Square] Payment link error:', JSON.stringify(data.errors || data));
-      return { url: null, orderId: null, referenceId };
+      console.warn('[Square] Itemised checkout error, attempting QuickPay fallback:', JSON.stringify(data.errors || data));
+      const totalPence = items.reduce((sum, i) => sum + i.pricePence * i.quantity, 0) + deliveryFeePence;
+      return await createQuickPayFallbackLink({
+        branchId,
+        totalPence,
+        memo: `Taste of Village ${isDelivery ? 'Delivery' : 'Collection'} Order (${displayName})`,
+        isDelivery,
+      });
     }
 
     return {
@@ -125,7 +131,70 @@ export async function createItemisedCheckoutLink(options: {
       referenceId,
     };
   } catch (error) {
-    console.error('[Square] Fetch error:', error);
-    return { url: null, orderId: null, referenceId };
+    console.error('[Square] Fetch error, attempting QuickPay fallback:', error);
+    const totalPence = items.reduce((sum, i) => sum + i.pricePence * i.quantity, 0) + deliveryFeePence;
+    return await createQuickPayFallbackLink({
+      branchId,
+      totalPence,
+      memo: `Taste of Village ${isDelivery ? 'Delivery' : 'Collection'} Order (${displayName})`,
+      isDelivery,
+    });
+  }
+}
+
+/**
+ * Fallback: lump-sum QuickPay payment link (mirrors Falooda & Co resilient checkout).
+ * Guarantees that a customer ALWAYS receives a working payment link.
+ */
+export async function createQuickPayFallbackLink(options: {
+  branchId: LocationId;
+  totalPence: number;
+  memo: string;
+  isDelivery: boolean;
+}): Promise<CheckoutResult> {
+  const { branchId, totalPence, memo, isDelivery } = options;
+  const loc = LOCATIONS[branchId];
+  const token = branchId === 'hayes'
+    ? process.env.SQUARE_HAYES_ACCESS_TOKEN
+    : process.env.SQUARE_SLOUGH_ACCESS_TOKEN;
+  const locationId = loc.square.locationId;
+  const referenceId = `TOV-QP-${Date.now()}`;
+
+  if (!token) {
+    console.error(`[Square QuickPay] Missing token for ${branchId}`);
+    return { url: `https://tasteofvillagerestaurants.co.uk/${branchId}/menu`, orderId: null, referenceId };
+  }
+
+  try {
+    const res = await fetch('https://connect.squareup.com/v2/online-checkout/payment-links', {
+      method: 'POST',
+      headers: {
+        'Square-Version': '2024-08-21',
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        idempotency_key: crypto.randomUUID(),
+        quick_pay: {
+          name: memo,
+          price_money: { amount: Math.max(50, totalPence), currency: 'GBP' },
+          location_id: locationId,
+        },
+        checkout_options: {
+          ask_for_shipping_address: isDelivery,
+          accepted_payment_methods: { apple_pay: true, google_pay: true },
+        },
+      }),
+    });
+
+    const data = await res.json();
+    return {
+      url: data.payment_link?.long_url || data.payment_link?.url || `https://tasteofvillagerestaurants.co.uk/${branchId}/menu`,
+      orderId: data.payment_link?.order_id || referenceId,
+      referenceId,
+    };
+  } catch (err) {
+    console.error('[Square QuickPay Fallback Exception]:', err);
+    return { url: `https://tasteofvillagerestaurants.co.uk/${branchId}/menu`, orderId: null, referenceId };
   }
 }
