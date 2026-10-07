@@ -786,23 +786,45 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
 
     // Category selected → show items
     if (listId.startsWith('cat_')) {
-      const rows = buildItemListRows(listId, carriedCart, activeBranch);
+      let rows = buildItemListRows(listId, carriedCart, activeBranch);
+      let effectiveBranch = activeBranch;
+
+      // Cross-branch resilience: if no items found, try the other branch
+      // (handles race where activeBranch resolved to wrong branch)
+      if (rows.length === 0) {
+        const otherBranch: LocationId = activeBranch === 'hayes' ? 'slough' : 'hayes';
+        rows = buildItemListRows(listId, carriedCart, otherBranch);
+        if (rows.length > 0) {
+          effectiveBranch = otherBranch;
+          // Silently fix the branch in the background
+          await updateConversation(from, { branchId: otherBranch });
+        }
+      }
+
       if (rows.length > 0) {
+        const branchLoc = LOCATIONS[effectiveBranch];
         await sendWhatsAppMessage(phoneId, from, {
           type: 'interactive',
           interactive: {
             type: 'list',
-            header: { type: 'text', text: getSectionTitle(listId, activeBranch) },
+            header: { type: 'text', text: getSectionTitle(listId, effectiveBranch) },
             body: { text: 'Tap an item to add it to your order:' },
-            footer: { text: `Taste of Village ${loc.city}` },
+            footer: { text: `Taste of Village ${branchLoc.city}` },
             action: {
               button: 'Select Item',
-              sections: [{ title: getSectionTitle(listId, activeBranch), rows }],
+              sections: [{ title: getSectionTitle(listId, effectiveBranch), rows }],
             },
           },
         });
         return;
       }
+
+      // Still nothing — tell the user instead of silent failure
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: { body: `No items found in this category. Type *Menu* to browse all categories.` },
+      });
+      return;
     }
 
     // Item selected → add to cart and offer immediate close options
@@ -893,23 +915,41 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     // ── Category Button (e.g. from curated dish alternative) ─────
     if (buttonId.startsWith('cat_')) {
       const [catId, carriedCart] = buttonId.split('~');
-      const rows = buildItemListRows(catId, carriedCart, activeBranch);
+      let rows = buildItemListRows(catId, carriedCart, activeBranch);
+      let effectiveBranch = activeBranch;
+
+      if (rows.length === 0) {
+        const otherBranch: LocationId = activeBranch === 'hayes' ? 'slough' : 'hayes';
+        rows = buildItemListRows(catId, carriedCart, otherBranch);
+        if (rows.length > 0) {
+          effectiveBranch = otherBranch;
+          await updateConversation(from, { branchId: otherBranch });
+        }
+      }
+
       if (rows.length > 0) {
+        const branchLoc = LOCATIONS[effectiveBranch];
         await sendWhatsAppMessage(phoneId, from, {
           type: 'interactive',
           interactive: {
             type: 'list',
-            header: { type: 'text', text: getSectionTitle(catId, activeBranch) },
-            body: { text: `Here are our ${getSectionTitle(catId, activeBranch)} options. Tap to add:` },
-            footer: { text: `Taste of Village ${loc.city}` },
+            header: { type: 'text', text: getSectionTitle(catId, effectiveBranch) },
+            body: { text: `Tap to add:` },
+            footer: { text: `Taste of Village ${branchLoc.city}` },
             action: {
               button: 'Select Dish',
-              sections: [{ title: getSectionTitle(catId, activeBranch), rows }],
+              sections: [{ title: getSectionTitle(catId, effectiveBranch), rows }],
             },
           },
         });
         return;
       }
+
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: { body: `No items found. Type *Menu* to browse all categories.` },
+      });
+      return;
     }
 
     // ── Direct Add Dish (e.g. from recommendation) ──────────────
@@ -1658,7 +1698,7 @@ async function sendCategoryList(phoneId: string, from: string, carriedCart?: str
       body: { text: carriedCart ? 'Pick a category to add more dishes:' : 'Pick a category to browse dishes:' },
       footer: { text: `Taste of Village ${loc.city} • Open 10AM–2AM` },
       action: {
-        button: '📋 Browse Menu',
+        button: 'Browse Menu',
         sections: buildMenuCategorySections(carriedCart, branchId),
       },
     },
