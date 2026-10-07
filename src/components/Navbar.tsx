@@ -173,68 +173,71 @@ export const Navbar = () => {
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex justify-start">
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-pine/40 backdrop-blur-sm animate-fade-in" onClick={() => setIsOpen(false)}></div>
+          <div className="absolute inset-0 bg-pine/60 backdrop-blur-md transition-opacity duration-300" onClick={() => setIsOpen(false)}></div>
           
           {/* Sliding Elegant Drawer (Left Side) */}
-          <div className="relative w-[85%] max-w-sm bg-bg-sand h-full shadow-2xl flex flex-col transform transition-transform animate-slide-in-left border-r border-pine/10">
+          <div 
+            className="relative w-[85%] max-w-sm bg-bg-sand h-full shadow-2xl flex flex-col transform transition-transform duration-400 ease-out animate-slide-in-left border-r border-pine/10 overflow-hidden"
+            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='1' fill='%231b4332' fill-opacity='0.04'/%3E%3C/svg%3E")`, backgroundSize: '24px 24px' }}
+          >
              
              {/* Header */}
-             <div className="px-8 py-6 flex justify-between items-center border-b border-pine/10">
-               <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="Taste of Village" className="h-10 object-contain drop-shadow-sm" />
-               <button  onClick={() => setIsOpen(false)} aria-label="Close navigation menu" className="p-2 rounded-full border border-pine/20 text-pine hover:bg-pine hover:text-bg-sand transition-all">
-                 <X size={20} strokeWidth={1.5} />
+             <div className="px-8 py-8 flex justify-between items-center border-b border-pine/5 relative z-10 bg-gradient-to-b from-bg-sand/80 to-transparent">
+               <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="Taste of Village" className="h-12 object-contain drop-shadow-sm" />
+               <button  onClick={() => setIsOpen(false)} aria-label="Close navigation menu" className="p-2.5 rounded-full border border-pine/10 text-pine hover:bg-pine/5 hover:scale-105 transition-all">
+                 <X size={22} strokeWidth={1.5} />
                </button>
              </div>
              
              {/* Scrollable Content */}
-             <div className="flex-1 overflow-y-auto flex flex-col">
+             <div className="flex-1 overflow-y-auto flex flex-col relative z-10 pb-6">
                 
-                {/* Main Links - Elegant List */}
-                <div className="flex flex-col py-4">
-                  <Link href={`/${loc?.id || 'hayes'}`} className={`px-8 py-4 text-2xl font-display font-black tracking-widest uppercase transition-colors hover:bg-pine/5 ${pathname === `/${loc?.id || 'hayes'}` ? 'text-terracotta' : 'text-pine'}`}>Home</Link>
-                  <Link href={`/${loc?.id || 'hayes'}/menu`} className={`px-8 py-4 text-2xl font-display font-black tracking-widest uppercase transition-colors hover:bg-pine/5 ${pathname.includes('/menu') ? 'text-terracotta' : 'text-pine'}`}>Our Menu</Link>
-                  <Link href="/franchise" className={`px-8 py-4 text-2xl font-display font-black tracking-widest uppercase transition-colors hover:bg-pine/5 ${pathname === '/franchise' ? 'text-terracotta' : 'text-pine'}`}>Franchise</Link>
-                  <Link href="/rewards" className={`px-8 py-4 text-2xl font-display font-black tracking-widest uppercase transition-colors hover:bg-pine/5 border-b border-pine/10 pb-6 ${pathname === '/rewards' ? 'text-terracotta' : 'text-pine'}`}>Rewards</Link>
+                {/* Main Links - Elegant Typography List */}
+                <div className="flex flex-col py-6">
+                  <Link href={`/${loc?.id || 'hayes'}`} className={`px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 ${pathname === `/${loc?.id || 'hayes'}` ? 'text-terracotta' : 'text-pine'}`}>Home</Link>
+                  <Link href={`/${loc?.id || 'hayes'}/menu`} className={`px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 ${pathname.includes('/menu') ? 'text-terracotta' : 'text-pine'}`}>Our Menu</Link>
+                  <Link href="/franchise" className={`px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 ${pathname === '/franchise' ? 'text-terracotta' : 'text-pine'}`}>Franchise</Link>
+                  <Link href="/rewards" className={`px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 border-b border-pine/5 pb-8 ${pathname === '/rewards' ? 'text-terracotta' : 'text-pine'}`}>Rewards</Link>
                 </div>
 
                 {/* Secondary Actions */}
-                <div className="px-8 py-6 flex flex-col gap-6">
+                <div className="px-8 py-6 flex flex-col gap-7">
                     {isLoggedIn ? (
-                      <Link href="/rewards" className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta transition-colors" onClick={() => setIsOpen(false)}><UserCircle2 size={20} /> My Account</Link>
+                      <Link href="/rewards" className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta hover:translate-x-1 transition-all" onClick={() => setIsOpen(false)}><UserCircle2 size={20} strokeWidth={1.5} /> My Account</Link>
                     ) : (
-                      <button  onClick={() => { setAuthTab('signup'); setShowAuth(true); setIsOpen(false); }} className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta transition-colors text-left"><UserCircle2 size={20} /> Sign Up / Login</button>
+                      <button  onClick={() => { setAuthTab('signup'); setShowAuth(true); setIsOpen(false); }} className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta hover:translate-x-1 transition-all text-left"><UserCircle2 size={20} strokeWidth={1.5} /> Sign Up / Login</button>
                     )}
-                    <Link href="/track" className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta transition-colors"><Truck size={20} /> Track Order</Link>
-                    <Link href="/book" className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta transition-colors"><MapPin size={20} /> Book A Table</Link>
+                    <Link href="/track" className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta hover:translate-x-1 transition-all"><Truck size={20} strokeWidth={1.5} /> Track Order</Link>
+                    <Link href="/book" className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta hover:translate-x-1 transition-all"><MapPin size={20} strokeWidth={1.5} /> Book A Table</Link>
                 </div>
 
                 {/* Spacer to push footer down */}
-                <div className="flex-1"></div>
+                <div className="flex-1 min-h-[40px]"></div>
 
                 {/* Contact & Location Block */}
-                <div className="px-8 py-8 bg-pine/5 border-t border-pine/10 flex flex-col gap-5">
+                <div className="px-6 py-6 mx-4 mb-6 rounded-2xl bg-white/40 border border-pine/10 shadow-sm backdrop-blur-sm flex flex-col gap-5">
                   <button  
                     onClick={() => { setShowLocationModal(true); setIsOpen(false); }}
-                    className="text-xs font-black tracking-[0.2em] uppercase flex items-center justify-between w-full p-4 border border-pine/20 hover:border-terracotta hover:text-terracotta transition-colors text-pine bg-white/50 shadow-sm"
+                    className="text-xs font-black tracking-[0.2em] uppercase flex items-center justify-between w-full p-4 rounded-xl border border-pine/10 hover:border-terracotta/50 hover:bg-terracotta/5 hover:text-terracotta transition-all text-pine bg-white/80 shadow-sm group"
                   >
-                    <span className="flex items-center gap-3"><MapPin size={16} /> Change Location</span>
+                    <span className="flex items-center gap-3"><MapPin size={16} className="group-hover:-translate-y-0.5 transition-transform" /> Change Location</span>
                     <span className="text-terracotta">{(loc?.name || 'Taste Of Village Hayes').replace('Taste Of Village ', '')}</span>
                   </button>
 
-                  <div className="flex items-center justify-between mt-2 px-2">
-                    <a href={`tel:${SHOP_CONFIG.phoneNumberRaw}`} className="text-xs font-bold tracking-widest uppercase text-pine hover:text-terracotta flex items-center gap-2 transition-colors">
-                      <Phone size={16} /> Call Us
+                  <div className="flex items-center justify-between mt-1 px-4">
+                    <a href={`tel:${SHOP_CONFIG.phoneNumberRaw}`} className="text-[11px] font-bold tracking-widest uppercase text-pine hover:text-terracotta flex items-center gap-2 hover:-translate-y-0.5 transition-all">
+                      <Phone size={14} /> Call Us
                     </a>
                     <div className="w-px h-4 bg-pine/20"></div>
-                    <a href={buildWhatsAppLink('Hi! I have a question.')} target="_blank" rel="noopener noreferrer" className="text-xs font-bold tracking-widest uppercase text-pine hover:text-terracotta flex items-center gap-2 transition-colors">
-                      <MessageCircle size={16} /> WhatsApp
+                    <a href={buildWhatsAppLink('Hi! I have a question.')} target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold tracking-widest uppercase text-pine hover:text-terracotta flex items-center gap-2 hover:-translate-y-0.5 transition-all">
+                      <MessageCircle size={14} /> WhatsApp
                     </a>
                   </div>
                 </div>
 
                 {/* Footer Links */}
-                <div className="px-8 py-5 flex justify-center items-center bg-pine text-bg-sand">
-                    <div className="flex gap-6 text-[10px] font-black tracking-[0.2em] uppercase">
+                <div className="px-8 pt-4 pb-2 flex justify-center items-center">
+                    <div className="flex gap-6 text-[10px] font-black tracking-[0.2em] uppercase text-pine/60">
                       <Link href="/info?tab=faq" className="hover:text-terracotta transition-colors">FAQs</Link>
                       <Link href="/info?tab=allergies" className="hover:text-terracotta transition-colors">Allergens</Link>
                       <Link href="/info?tab=terms" className="hover:text-terracotta transition-colors">Terms</Link>

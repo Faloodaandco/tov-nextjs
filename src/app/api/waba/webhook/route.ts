@@ -366,8 +366,8 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     return;
   }
 
-  // Pure branch greeting/selection text (e.g. user just texts "Slough", "Hayes", or GBP click-to-chat prefill)
-  if (/^(slough|hayes)(\s*(branch|restaurant|location|please))?$/i.test(text) || /^(i\s*(want|would like)\s*to\s*order\s*from\s*(slough|hayes))\b/i.test(text)) {
+  // Pure branch greeting/selection text (e.g. user just texts "Slough", "Hayes", or WhatsApp sends button title as text)
+  if (/^(slough|hayes)(\s*(\(sl1\)|\(ub4\)|branch|restaurant|location|please))?$/i.test(text) || /^(i\s*(want|would like)\s*to\s*order\s*from\s*(slough|hayes))\b/i.test(text)) {
     const activeBranch = getEffectiveBranch(conv);
     const loc = LOCATIONS[activeBranch];
     // Brief confirmation then immediate menu
@@ -788,6 +788,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
 
 async function handleInteractiveMessage(phoneId: string, from: string, name: string, message: any) {
   const replyType = message.interactive.type;
+  console.log(`[TOV WABA] Interactive: type=${replyType} id=${replyType === 'button_reply' ? message.interactive.button_reply?.id : replyType === 'list_reply' ? message.interactive.list_reply?.id : 'unknown'} from=${from}`);
   const conv = await getConversation(from);
   const activeBranch = getEffectiveBranch(conv);
   const loc = LOCATIONS[activeBranch];
