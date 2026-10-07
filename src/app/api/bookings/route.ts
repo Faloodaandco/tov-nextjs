@@ -59,7 +59,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ date, branch, slotCounts });
   } catch (error: any) {
     console.error('[Bookings API GET] Error:', error);
-    return NextResponse.json({ error: 'Failed to fetch bookings' }, { status: 500 });
+    const keys = Object.keys(process.env).filter(k => k.includes('FIRE') || k.includes('GOOG') || k.includes('GCP') || k.includes('SVC') || k.includes('CRED'));
+    return NextResponse.json({ error: 'Failed to fetch bookings', keys, errMessage: error.message }, { status: 500 });
   }
 }
 
