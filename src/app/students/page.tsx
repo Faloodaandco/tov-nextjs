@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, MapPin, GraduationCap, ArrowRight, Loader2 } from 'lucide-react';
-import Head from 'next/head';
+import { Loader2 } from 'lucide-react';
 
 export default function StudentPromoPage() {
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', postcode: '' });
@@ -29,127 +28,141 @@ export default function StudentPromoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-orange-500/30 flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Glow */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-orange-600/20 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-red-600/10 blur-[120px] rounded-full pointer-events-none" />
+    <div className="min-h-screen bg-[#F6F4EB] text-[#133026] flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans">
+      
+      {/* Subtle organic background decoration (leaf motifs) */}
+      <div className="absolute top-1/2 left-10 -translate-y-1/2 opacity-20 pointer-events-none hidden md:block">
+        <svg width="60" height="300" viewBox="0 0 60 300" fill="none" stroke="#133026" strokeWidth="1.5">
+          <path d="M30 0 Q40 50 20 100 T30 200 T20 300" fill="none" />
+          <path d="M30 40 Q50 30 40 60" fill="none" />
+          <path d="M25 80 Q5 70 15 100" fill="none" />
+          <path d="M28 140 Q48 130 38 160" fill="none" />
+          <path d="M22 190 Q2 180 12 210" fill="none" />
+          <path d="M28 250 Q48 240 38 270" fill="none" />
+        </svg>
+      </div>
+      <div className="absolute top-1/2 right-10 -translate-y-1/2 opacity-20 pointer-events-none hidden md:block scale-x-[-1]">
+        <svg width="60" height="300" viewBox="0 0 60 300" fill="none" stroke="#133026" strokeWidth="1.5">
+          <path d="M30 0 Q40 50 20 100 T30 200 T20 300" fill="none" />
+          <path d="M30 40 Q50 30 40 60" fill="none" />
+          <path d="M25 80 Q5 70 15 100" fill="none" />
+          <path d="M28 140 Q48 130 38 160" fill="none" />
+          <path d="M22 190 Q2 180 12 210" fill="none" />
+          <path d="M28 250 Q48 240 38 270" fill="none" />
+        </svg>
+      </div>
 
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-lg z-10"
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="w-full max-w-md z-10"
       >
         <div className="text-center mb-10">
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm text-orange-400 mb-6 backdrop-blur-md"
-          >
-            <GraduationCap size={16} />
-            <span>Brunel & Uxbridge Exclusive</span>
-          </motion.div>
-          <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-white/60 mb-4">
-            50% Off Your First 3 Orders.
+          <div className="flex items-center justify-center gap-4 mb-8">
+             <div className="h-[1px] w-12 bg-[#133026]/20"></div>
+             <span className="uppercase tracking-[0.2em] text-xs font-semibold text-[#133026]">Brunel & Uxbridge Exclusive</span>
+             <div className="h-[1px] w-12 bg-[#133026]/20"></div>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-serif text-[#133026] mb-4">
+            Student Pass
           </h1>
-          <p className="text-lg text-white/50 leading-relaxed">
-            Taste of Village is now delivering to Brunel University and Uxbridge. 
-            Claim your student pass below.
+          <p className="text-[#a44230] font-semibold tracking-widest text-sm uppercase mb-4">
+            50% Off First 3 Orders
+          </p>
+          <p className="text-sm text-[#133026]/70 leading-relaxed max-w-xs mx-auto">
+            Home-style flavours, made fresh daily. Delivered directly to Brunel University and Uxbridge.
           </p>
         </div>
 
         {status === 'success' ? (
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white/5 border border-green-500/30 rounded-3xl p-8 text-center backdrop-blur-xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-[#FAF8F3] border border-[#133026]/10 rounded-t-[140px] rounded-b-xl px-8 pt-20 pb-12 text-center shadow-sm relative overflow-hidden"
           >
-            <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h3 className="text-2xl font-semibold mb-2">You're on the list.</h3>
-            <p className="text-white/60 mb-6">
+            <div className="absolute top-10 left-1/2 -translate-x-1/2">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a44230" strokeWidth="1.5">
+                <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            
+            <h3 className="font-serif text-2xl text-[#133026] mb-3">You're on the list</h3>
+            <p className="text-sm text-[#133026]/70 mb-8 leading-relaxed">
               We'll send your 50% off promo codes to your WhatsApp shortly. Valid for both delivery and collection.
             </p>
             <a 
               href="https://tasteofvillagerestaurants.co.uk"
-              className="inline-flex items-center justify-center w-full bg-white text-black py-4 rounded-full font-medium hover:bg-gray-100 transition-colors"
+              className="inline-block uppercase tracking-widest text-[10px] font-semibold border border-[#133026] text-[#133026] px-8 py-3 rounded hover:bg-[#133026] hover:text-[#F6F4EB] transition-colors"
             >
-              Browse Menu
+              Order Now
             </a>
           </motion.div>
         ) : (
-          <form onSubmit={handleSubmit} className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-2xl">
-            <div className="space-y-5">
+          <form onSubmit={handleSubmit} className="bg-[#FAF8F3] border border-[#133026]/10 rounded-t-[140px] rounded-b-xl px-6 md:px-10 pt-16 pb-10 shadow-sm">
+            <div className="space-y-6">
+              
               <div>
-                <label className="block text-sm font-medium text-white/60 mb-2">Full Name</label>
                 <input 
                   required
                   type="text"
-                  placeholder="e.g. Sarah Smith"
-                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+                  placeholder="FULL NAME"
+                  className="w-full bg-transparent border-b border-[#133026]/20 px-2 py-3 text-sm text-[#133026] placeholder-[#133026]/40 focus:outline-none focus:border-[#a44230] transition-colors uppercase tracking-wider text-center"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white/60 mb-2">WhatsApp Number</label>
                 <input 
                   required
                   type="tel"
-                  placeholder="e.g. +44 7123 456789"
-                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
+                  placeholder="WHATSAPP NUMBER"
+                  className="w-full bg-transparent border-b border-[#133026]/20 px-2 py-3 text-sm text-[#133026] placeholder-[#133026]/40 focus:outline-none focus:border-[#a44230] transition-colors uppercase tracking-wider text-center"
                   value={formData.phone}
                   onChange={(e) => setFormData({...formData, phone: e.target.value})}
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-white/60 mb-2">University Email</label>
-                  <input 
-                    type="email"
-                    placeholder="@brunel.ac.uk"
-                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
-                    value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-white/60 mb-2">Postcode (e.g. UB8)</label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" size={18} />
-                    <input 
-                      required
-                      type="text"
-                      placeholder="UB8 3PH"
-                      className="w-full bg-black/50 border border-white/10 rounded-xl pl-10 pr-4 py-3.5 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all"
-                      value={formData.postcode}
-                      onChange={(e) => setFormData({...formData, postcode: e.target.value})}
-                    />
-                  </div>
-                </div>
+              <div>
+                <input 
+                  type="email"
+                  placeholder="UNI EMAIL (OPTIONAL)"
+                  className="w-full bg-transparent border-b border-[#133026]/20 px-2 py-3 text-sm text-[#133026] placeholder-[#133026]/40 focus:outline-none focus:border-[#a44230] transition-colors uppercase tracking-wider text-center"
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                />
+              </div>
+              
+              <div>
+                <input 
+                  required
+                  type="text"
+                  placeholder="POSTCODE (E.G. UB8)"
+                  className="w-full bg-transparent border-b border-[#133026]/20 px-2 py-3 text-sm text-[#133026] placeholder-[#133026]/40 focus:outline-none focus:border-[#a44230] transition-colors uppercase tracking-wider text-center"
+                  value={formData.postcode}
+                  onChange={(e) => setFormData({...formData, postcode: e.target.value})}
+                />
               </div>
 
               {status === 'error' && (
-                <p className="text-red-400 text-sm mt-2">Something went wrong. Please try again.</p>
+                <p className="text-[#a44230] text-xs text-center uppercase tracking-wider mt-4">Something went wrong. Please try again.</p>
               )}
 
-              <button 
-                type="submit"
-                disabled={status === 'loading'}
-                className="w-full bg-white text-black py-4 rounded-xl font-medium mt-4 hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
-              >
-                {status === 'loading' ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <>Claim 50% Off Pass <ArrowRight size={18} /></>
-                )}
-              </button>
+              <div className="pt-6 text-center">
+                <button 
+                  type="submit"
+                  disabled={status === 'loading'}
+                  className="inline-block uppercase tracking-widest text-[10px] font-semibold border border-[#133026] text-[#133026] px-10 py-3 rounded hover:bg-[#133026] hover:text-[#F6F4EB] transition-colors disabled:opacity-50"
+                >
+                  {status === 'loading' ? 'Processing...' : 'Claim Offer'}
+                </button>
+              </div>
             </div>
             
-            <p className="text-xs text-white/30 text-center mt-6">
-              By claiming this offer, you agree to receive WhatsApp notifications with your promo codes and order updates. You can opt out at any time.
+            <p className="text-[10px] text-[#133026]/40 text-center mt-8 uppercase tracking-wide leading-relaxed">
+              By claiming this offer, you agree to receive WhatsApp notifications.
             </p>
           </form>
         )}
