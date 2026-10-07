@@ -402,7 +402,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     await updateConversation(from, { activeCart: null, state: 'idle', pendingDelivery: null });
     await sendWhatsAppMessage(phoneId, from, {
       type: 'text',
-      text: { body: '🗑️ Basket cleared. Type *Menu* whenever you are ready to start fresh!' },
+      text: { body: 'Basket cleared. Type *Menu* whenever you are ready to start fresh!' },
     });
     return;
   }
@@ -418,12 +418,12 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
           text: {
             preview_url: false,
             body: [
-              `🛒 *Your Active Order:*`,
+              `*Your Active Order:*`,
               cartSummaryText(conv.activeCart.items),
               ``,
               `*Total: ${formatPrice(total / 100)}*`,
               ``,
-              `💳 Complete your payment here:`,
+              `Complete your payment here:`,
               checkoutLink,
               ``,
               `_Type *Clear* to discard this order and start a new one._`,
@@ -438,7 +438,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     } else {
       await sendWhatsAppMessage(phoneId, from, {
         type: 'text',
-        text: { body: '🛒 Your basket is currently empty. Type *Menu* to browse dishes or view our catalog!' },
+        text: { body: 'Your basket is empty. Type *Menu* to browse dishes.' },
       });
       return;
     }
@@ -453,7 +453,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     } else {
       await sendWhatsAppMessage(phoneId, from, {
         type: 'text',
-        text: { body: `To place a collection order from Taste of Village (${LOCATIONS[branchId].city}), please choose your dishes from our menu below 👇` },
+        text: { body: `To place a collection order from Taste of Village (${LOCATIONS[branchId].city}), choose from our menu below.` },
       });
       await sendCategoryList(phoneId, from);
       return;
@@ -465,13 +465,13 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
       await updateConversation(from, { state: 'awaiting_postcode' });
       await sendWhatsAppMessage(phoneId, from, {
         type: 'text',
-        text: { body: '🛵 Please reply with your delivery postcode or address (e.g. *14 High Street, UB4 0RU* or *SL1 4NL*) so we can calculate delivery distance and fee:' },
+        text: { body: 'Please reply with your delivery postcode or address (e.g. *14 High Street, UB4 0RU* or *SL1 4NL*) so we can calculate delivery distance and fee:' },
       });
       return;
     } else {
       await sendWhatsAppMessage(phoneId, from, {
         type: 'text',
-        text: { body: 'To place a delivery order, please choose your dishes from our menu below 👇' },
+        text: { body: 'To place a delivery order, choose from our menu below.' },
       });
       await sendCategoryList(phoneId, from);
       return;
@@ -483,7 +483,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     await sendWhatsAppMessage(phoneId, from, {
       type: 'text',
       text: {
-        body: '✅ *100% Halal Certified*\n\nAll meats, poultry, and ingredients at Taste of Village are strictly 100% Halal certified and prepared under the highest hygiene standards.\n\nType *Menu* to browse our dishes!',
+        body: '*100% Halal Certified*\n\nAll meats, poultry, and ingredients at Taste of Village are strictly 100% Halal certified and prepared under the highest hygiene standards.\n\nType *Menu* to browse dishes.',
       },
     });
     return;
@@ -718,7 +718,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
             await sendWhatsAppMessage(phoneId, from, {
               type: 'text',
               text: {
-                body: `✅ *Payment Verified!* Your order #${activeRef} has been received and confirmed by the kitchen. Fresh food is being prepared right now! 👨‍🍳🔥`,
+                body: `*Payment Verified.* Your order #${activeRef} has been received and confirmed by the kitchen. Fresh food is being prepared now.`,
               },
             });
             // Clear cart upon successful manual verification
@@ -747,7 +747,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     await sendWhatsAppMessage(phoneId, from, {
       type: 'text',
       text: {
-        body: '⏳ Thank you! Square is confirming your transaction. Once completed, your receipt will automatically appear here and on our kitchen screen.\n\nIf you experienced any card issue, reply to this chat anytime.',
+        body: 'Thank you. Square is confirming your transaction. Once completed, your receipt will automatically appear here and on our kitchen screen.\n\nIf you experienced any card issue, reply to this chat anytime.',
       },
     });
     return;
@@ -762,17 +762,17 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
       text: {
         preview_url: false,
         body: [
-          `📍 *Taste of Village Branches:*`,
+          `*Taste of Village — Two Branches:*`,
           ``,
-          `🏪 *${hayesLoc.name}*`,
+          `*${hayesLoc.name}*`,
           `${hayesLoc.address}, ${hayesLoc.city} ${hayesLoc.postcode}`,
-          `📞 ${hayesLoc.phone}`,
+          `${hayesLoc.phone}`,
           ``,
-          `🏪 *${sloughLoc.name}*`,
+          `*${sloughLoc.name}*`,
           `${sloughLoc.address}, ${sloughLoc.city} ${sloughLoc.postcode}`,
-          `📞 ${sloughLoc.phone}`,
+          `${sloughLoc.phone}`,
           ``,
-          `🕐 *Opening Hours:* 10:00 AM – 02:00 AM daily (7 days)`,
+          `*Opening Hours:* 10:00 AM – 02:00 AM daily (7 days)`,
           `Active branch: *${loc.name}*`,
           ``,
           `To switch branch, type *Slough* or *Hayes*, or type *Menu* to order!`,
@@ -864,9 +864,9 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
           header: { type: 'text', text: menuItem.name.slice(0, 60) },
           body: {
             text: [
-              `✅ *${menuItem.name}* (${formatPrice(menuItem.price)}) in your basket!`,
+              `*${menuItem.name}* (${formatPrice(menuItem.price)}) added.`,
               '',
-              `🛒 *Your Order:*`,
+              `*Your Order:*`,
               cartSummaryText(newItems),
               `*Total: ${formatPrice(total / 100)}*`,
               '',
@@ -980,7 +980,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
             header: { type: 'text', text: 'Dish Added' },
             body: {
               text: [
-                `🛒 *Your Basket:*`,
+                `*Your Basket:*`,
                 cartSummaryText(items),
                 `*Total: ${formatPrice(total / 100)}*`,
                 '',
@@ -1012,7 +1012,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       if (!items.length) {
         await sendWhatsAppMessage(phoneId, from, {
           type: 'text',
-          text: { body: '🛒 Your basket is empty! Type *Menu* to browse our dishes.' },
+          text: { body: 'Your basket is empty. Type *Menu* to browse dishes.' },
         });
         return;
       }
@@ -1025,7 +1025,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
           header: { type: 'text', text: 'Select Fulfillment' },
           body: {
             text: [
-              `🛒 *Your Order:*`,
+              `*Your Order:*`,
               cartSummaryText(items),
               `*Total: ${formatPrice(total / 100)}*`,
               '',
@@ -1058,7 +1058,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       await updateConversation(from, { activeCart: null, state: 'idle' });
       await sendWhatsAppMessage(phoneId, from, {
         type: 'text',
-        text: { body: '🗑️ Cart cleared. Type *Menu* to start a new order.' },
+        text: { body: 'Cart cleared. Type *Menu* to start a new order.' },
       });
       return;
     }
@@ -1091,12 +1091,12 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
             text: {
               preview_url: false,
               body: [
-                `🏪 *${branchLoc.name} Collection Order*`,
+                `*${branchLoc.name} Collection Order*`,
                 '',
-                `📍 Pickup at: *${branchLoc.name}*`,
+                `Pickup at: *${branchLoc.name}*`,
                 `_${branchLoc.address}, ${branchLoc.city} ${branchLoc.postcode}_`,
                 '',
-                `💳 Complete your secure payment here (Apple Pay / GPay / Card):`,
+                `Complete your secure payment here (Apple Pay / GPay / Card):`,
                 quickPay.url,
               ].join('\n'),
             },
@@ -1139,7 +1139,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         type: 'text',
         text: {
           body: [
-            `🛵 *${branchLoc.name} Delivery Order*`,
+            `*${branchLoc.name} Delivery Order*`,
             `Please reply with your delivery postcode or full address:`,
             `_(e.g., 14 High Street, UB4 0RU or SL1 4NL)_`,
             ``,
@@ -1150,6 +1150,9 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       return;
     }
   }
+
+  // ── Default fallback: unrecognized interactive reply → show welcome ──
+  await sendWelcome(phoneId, from, name, conv);
 }
 
 async function handleOrderMessage(phoneId: string, from: string, name: string, message: any) {
@@ -1193,7 +1196,7 @@ async function handleOrderMessage(phoneId: string, from: string, name: string, m
       type: 'button',
       header: { type: 'text', text: 'Order Received' },
       body: {
-        text: `🛒 *Your cart:*\n${cartSummaryText(cartItems)}\n\n*Total: ${formatPrice(totalPence / 100)}*\n\nHow would you like this?`,
+        text: `*Your cart:*\n${cartSummaryText(cartItems)}\n\n*Total: ${formatPrice(totalPence / 100)}*\n\nHow would you like this?`,
       },
       action: {
         buttons: [
@@ -1224,7 +1227,7 @@ async function handleAddressInput(
     await updateConversation(from, { state: 'idle', pendingDelivery: null });
     await sendWhatsAppMessage(phoneId, from, {
       type: 'text',
-      text: { body: '🛒 Your basket is empty! Type *Menu* to browse dishes.' },
+      text: { body: 'Your basket is empty. Type *Menu* to browse dishes.' },
     });
     return;
   }
@@ -1268,14 +1271,14 @@ async function handleAddressInput(
       effectiveMiles = milesHayes;
       effectiveTier = tierHayes;
       if (conv.branchId === 'slough') {
-        branchNotice = `📍 *${geo.formatted}* is within our Hayes delivery area (${milesHayes.toFixed(1)} mi). We've routed your delivery to *Taste of Village Hayes*!\n\n`;
+        branchNotice = `*${geo.formatted}* is within our Hayes delivery area (${milesHayes.toFixed(1)} mi). We've routed your delivery to *Taste of Village Hayes*!\n\n`;
       }
     } else if (tierSlough.eligible && !tierHayes.eligible) {
       effectiveBranch = 'slough';
       effectiveMiles = milesSlough;
       effectiveTier = tierSlough;
       if (conv.branchId === 'hayes') {
-        branchNotice = `📍 *${geo.formatted}* is within our Slough delivery area (${milesSlough.toFixed(1)} mi). We've routed your delivery to *Taste of Village Slough*!\n\n`;
+        branchNotice = `*${geo.formatted}* is within our Slough delivery area (${milesSlough.toFixed(1)} mi). We've routed your delivery to *Taste of Village Slough*!\n\n`;
       }
     } else if (tierHayes.eligible && tierSlough.eligible) {
       // Both branches can deliver — choose user preference or closer branch
@@ -1302,7 +1305,7 @@ async function handleAddressInput(
           header: { type: 'text', text: 'Out of Delivery Range' },
           body: {
             text: [
-              `📍 *${geo.formatted}* is outside our 5-mile delivery radius:`,
+              `*${geo.formatted}* is outside our 5-mile delivery radius:`,
               `• ${closestLoc.city}: ${closestMiles.toFixed(1)} miles away`,
               `• ${otherLoc.city}: ${otherMiles.toFixed(1)} miles away`,
               ``,
@@ -1336,7 +1339,7 @@ async function handleAddressInput(
           body: {
             text: [
               branchNotice.trim(),
-              `🛵 *${loc.name} Delivery*`,
+              `*${loc.name} Delivery*`,
               `Our minimum order for delivery is *£${minOrder.toFixed(2)}*.`,
               `Your basket total is *${formatPrice(subtotalPounds)}*.`,
               ``,
@@ -1403,8 +1406,8 @@ async function handleAddressInput(
       text: {
         body: [
           branchNotice ? branchNotice.trim() : null,
-          `✅ *Postcode confirmed:* ${geo.formatted} (${effectiveMiles.toFixed(1)} miles from ${loc.city})`,
-          `🛵 Delivery: ${feeDesc} • Est. ${est.min}–${est.max} mins`,
+          `*Postcode confirmed:* ${geo.formatted} (${effectiveMiles.toFixed(1)} miles from ${loc.city})`,
+          `Delivery: ${feeDesc} • Est. ${est.min}–${est.max} mins`,
           ``,
           `🏠 *What is your street address?*`,
           `Please reply with your house/flat number and street name:`,
@@ -1444,7 +1447,7 @@ async function handleAddressInput(
   await sendWhatsAppMessage(phoneId, from, {
     type: 'text',
     text: {
-      body: `🛵 Please include your UK postcode with your delivery address:\n_(e.g., 14 High Street, UB4 0RU or SL1 4NL)_`,
+      body: `Please include your UK postcode with your delivery address:\n_(e.g., 14 High Street, UB4 0RU or SL1 4NL)_`,
     },
   });
 }
@@ -1540,18 +1543,18 @@ async function generateCheckoutLink(
       text: {
         preview_url: false,
         body: [
-          `🛵 *${loc.name} Delivery Order*`,
+          `*${loc.name} Delivery Order*`,
           '',
-          `📋 *Items:*`,
+          `*Items:*`,
           cartSummaryText(cart.items),
           '',
           `Subtotal: ${formatPrice(cart.basePence / 100)}`,
           `Delivery: ${feeText}`,
           `*Total: ${formatPrice(totalPence / 100)}*`,
-          streetAddress ? `📍 ${streetAddress}, ${postcode}` : (postcode ? `📍 ${postcode}` : ''),
-          `⏱️ Est. ${est.min}–${est.max} mins`,
+          streetAddress ? `${streetAddress}, ${postcode}` : (postcode ? `${postcode}` : ''),
+          `Est. ${est.min}–${est.max} mins`,
           '',
-          `💳 Pay securely via Apple Pay / Google Pay / Card:`,
+          `Pay securely via Apple Pay / Google Pay / Card:`,
           squareLink,
           '',
           `_Your basket remains saved until payment completes._`,
@@ -1564,17 +1567,17 @@ async function generateCheckoutLink(
       text: {
         preview_url: false,
         body: [
-          `🏪 *${loc.name} Collection Order*`,
+          `*${loc.name} Collection Order*`,
           '',
-          `📋 *Items:*`,
+          `*Items:*`,
           cartSummaryText(cart.items),
           '',
           `*Total: ${formatPrice(totalPence / 100)}*`,
           '',
-          `📍 Pickup at: *${loc.name}*`,
+          `Pickup at: *${loc.name}*`,
           `_${loc.address}, ${loc.city} ${loc.postcode}_`,
           '',
-          `💳 Pay securely via Apple Pay / Google Pay / Card:`,
+          `Pay securely via Apple Pay / Google Pay / Card:`,
           squareLink,
           '',
           `_Your basket remains saved until payment completes._`,
@@ -1612,7 +1615,7 @@ async function sendFulfillmentChoice(
       header: { type: 'text', text: 'How would you like your order?' },
       body: {
         text: [
-          `🛒 *Your order:*`,
+          `*Your order:*`,
           cartSummaryText(cart.items),
           '',
           `*Subtotal: ${formatPrice(cart.basePence / 100)}*`,
@@ -1650,9 +1653,9 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
 
   let cartSection = '';
   if (hasCart) {
-    cartSection = `\n\n🛒 *Your Basket:* ${conv!.activeCart!.items.length} item(s) (${formatPrice(conv!.activeCart!.basePence / 100)})`;
+    cartSection = `\n\n*Your Basket:* ${conv!.activeCart!.items.length} item(s) (${formatPrice(conv!.activeCart!.basePence / 100)})`;
     if (checkoutLink) {
-      cartSection += `\n💳 *Payment Link Ready:* ${checkoutLink}`;
+      cartSection += `\n*Payment Link Ready:* ${checkoutLink}`;
     }
   }
 

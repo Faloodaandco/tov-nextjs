@@ -335,7 +335,9 @@ export function searchMenuDishes(query: string, branchId?: LocationId | string):
 
   const stopwords = new Set([
     'hi', 'hello', 'hey', 'hiya', 'salam', 'assalam', 'yo',
-    'want', 'need', 'give', 'some', 'please', 'like', 'have', 'the', 'and', 'with', 'for'
+    'want', 'need', 'give', 'some', 'please', 'like', 'have', 'the', 'and', 'with', 'for',
+    'menu', 'order', 'buy', 'eat', 'get', 'from', 'show', 'see', 'browse',
+    'slough', 'hayes', 'farnham', 'uxbridge', 'branch', 'delivery', 'collection',
   ]);
   const words = q.split(/\s+/).filter(w => w.length >= 3 && !stopwords.has(w));
   if (words.length === 0) return [];
@@ -371,7 +373,7 @@ export function getCuratedDish(query: string, branchId?: LocationId | string): C
       ? menu.find(i => i.id === 'tov_slough_afghani_pulao') || menu.find(i => i.name.toLowerCase().includes('pulao'))
       : menu.find(i => i.id === 'chicken_biryani') || menu.find(i => i.name.toLowerCase().includes('chicken biryani')) || menu.find(i => i.category === 'biryani_and_rice');
     if (item) {
-      return { item, categoryId: isSlough ? 'cat_rice' : 'cat_biryani', categoryTitle: isSlough ? '📋 Other Rice Dishes' : '📋 Other Biryanis' };
+      return { item, categoryId: isSlough ? 'cat_rice' : 'cat_biryani', categoryTitle: isSlough ? 'Other Rice Dishes' : 'Other Biryanis' };
     }
   }
 
@@ -381,7 +383,7 @@ export function getCuratedDish(query: string, branchId?: LocationId | string): C
       ? menu.find(i => i.id === 'tov_slough_chicken_charsi_karahi') || menu.find(i => i.name.toLowerCase().includes('karahi'))
       : menu.find(i => i.id === 'chicken_karahi') || menu.find(i => i.name.toLowerCase().includes('chicken karahi')) || menu.find(i => i.category === 'karahi_e_khaas');
     if (item) {
-      return { item, categoryId: isSlough ? 'cat_mains' : 'cat_karahi', categoryTitle: isSlough ? '📋 Other Village Classics' : '📋 Other Karahis' };
+      return { item, categoryId: isSlough ? 'cat_mains' : 'cat_karahi', categoryTitle: isSlough ? 'Other Village Classics' : 'Other Karahis' };
     }
   }
 
@@ -389,7 +391,7 @@ export function getCuratedDish(query: string, branchId?: LocationId | string): C
   if (isSlough && /\b(nihari|paya|haleem)\b/.test(q)) {
     const item = menu.find(i => i.id === 'tov_slough_special_nihari') || menu.find(i => i.name.toLowerCase().includes('nihari'));
     if (item) {
-      return { item, categoryId: 'cat_breakfast', categoryTitle: '📋 Other Breakfast Items' };
+      return { item, categoryId: 'cat_breakfast', categoryTitle: 'Other Breakfast Items' };
     }
   }
 
@@ -397,7 +399,7 @@ export function getCuratedDish(query: string, branchId?: LocationId | string): C
   if (isSlough && /\b(roast|sunday)\b/.test(q)) {
     const item = menu.find(i => i.category === 'sunday_roast');
     if (item) {
-      return { item, categoryId: 'cat_roast', categoryTitle: '📋 Other Roast Options' };
+      return { item, categoryId: 'cat_roast', categoryTitle: 'Other Roast Options' };
     }
   }
 
@@ -407,7 +409,7 @@ export function getCuratedDish(query: string, branchId?: LocationId | string): C
       ? menu.find(i => i.id === 'tov_slough_partner_grill_feast') || menu.find(i => i.name.toLowerCase().includes('platter'))
       : menu.find(i => i.id === 'village_special_platter') || menu.find(i => i.name.toLowerCase().includes('platter'));
     if (item) {
-      return { item, categoryId: 'cat_platters', categoryTitle: '📋 Other Platters' };
+      return { item, categoryId: 'cat_platters', categoryTitle: 'Other Platters' };
     }
   }
 
@@ -417,7 +419,7 @@ export function getCuratedDish(query: string, branchId?: LocationId | string): C
       ? menu.find(i => i.id === 'tov_slough_lamb_skewers') || menu.find(i => i.name.toLowerCase().includes('skewer'))
       : menu.find(i => i.id === 'seekh_kebab') || menu.find(i => i.id === 'chicken_tikka') || menu.find(i => i.name.toLowerCase().includes('tikka'));
     if (item) {
-      return { item, categoryId: isSlough ? 'cat_grill' : 'cat_bbq', categoryTitle: isSlough ? '📋 Other Grills' : '📋 Other Grills' };
+      return { item, categoryId: isSlough ? 'cat_grill' : 'cat_bbq', categoryTitle: isSlough ? 'Other Grills' : 'Other Grills' };
     }
   }
 
@@ -425,7 +427,7 @@ export function getCuratedDish(query: string, branchId?: LocationId | string): C
   if (/\b(butter chicken)\b/.test(q)) {
     const item = menu.find(i => i.id === 'butter_chicken') || menu.find(i => i.name.toLowerCase().includes('butter chicken'));
     if (item) {
-      return { item, categoryId: isSlough ? 'cat_mains' : 'cat_curries', categoryTitle: isSlough ? '📋 Other Village Classics' : '📋 Other Curries' };
+      return { item, categoryId: isSlough ? 'cat_mains' : 'cat_curries', categoryTitle: isSlough ? 'Other Village Classics' : 'Other Curries' };
     }
   }
 
