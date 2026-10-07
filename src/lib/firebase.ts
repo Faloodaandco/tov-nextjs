@@ -21,14 +21,17 @@ if (typeof window !== 'undefined') {
   if (process.env.NODE_ENV === 'development') {
     (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
   }
-  try {
-    initializeAppCheck(app, {
-      provider: new ReCaptchaEnterpriseProvider('6LfdnK0tAAAAAFAbUvaOlqTSHAX7We72a2dojtjh'),
-      isTokenAutoRefreshEnabled: true
-    });
-  } catch (error) {
-    console.error('AppCheck error', error);
-  }
+    // Defer AppCheck initialization to avoid "reCAPTCHA placeholder element must be an element or id" error
+    setTimeout(() => {
+      try {
+        initializeAppCheck(app, {
+          provider: new ReCaptchaEnterpriseProvider('6LfdnK0tAAAAAFAbUvaOlqTSHAX7We72a2dojtjh'),
+          isTokenAutoRefreshEnabled: true
+        });
+      } catch (error) {
+        console.error('AppCheck error', error);
+      }
+    }, 1000);
 }
 
 const db = typeof window !== 'undefined' 
