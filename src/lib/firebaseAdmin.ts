@@ -13,12 +13,16 @@ if (!getApps().length) {
   //   1. FIREBASE_SERVICE_ACCOUNT_BASE64 (Vercel production)
   //   2. GOOGLE_APPLICATION_CREDENTIALS file path (local dev / GCE)
   //   3. ADC fallback (gcloud auth application-default login)
-  const base64Key = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+  const base64Key = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64 || process.env.FIREBASE_SERVICE_ACCOUNT;
 
   if (base64Key) {
     // Vercel: decode base64-encoded service account JSON
     try {
-      const decoded = Buffer.from(base64Key, 'base64').toString('utf-8');
+      let decoded = base64Key;
+      // If it doesn't look like JSON, assume it's base64 encoded
+      if (!base64Key.trim().startsWith('{')) {
+        decoded = Buffer.from(base64Key, 'base64').toString('utf-8');
+      }
       const serviceAccount = JSON.parse(decoded);
       adminApp = initializeApp({
         credential: cert({
@@ -29,9 +33,8 @@ if (!getApps().length) {
         }),
         projectId: serviceAccount.project_id || 'taste-of-village-21052',
       });
-    } catch (parseErr) {
+    } catch (parseErr: any) {
       console.error('[FirebaseAdmin] Failed to parse FIREBASE_SERVICE_ACCOUNT_BASE64:', parseErr);
-      // Fall through to ADC
       adminApp = initializeApp({
         projectId: 'taste-of-village-21052',
       });
