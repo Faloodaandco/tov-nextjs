@@ -112,6 +112,11 @@ export default function BookClient() {
   const [paymentMethod, setPaymentMethod] = useState<'store' | 'online'>('store');
   const [showMenuPicker, setShowMenuPicker] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const timeSlots = useMemo(() => getBookingTimeSlots(formData.branch, formData.date), [formData.branch, formData.date]);
 
@@ -392,7 +397,7 @@ export default function BookClient() {
             <div>
               <label className="block text-xs font-bold text-pine uppercase tracking-widest mb-3">Select Date</label>
               <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar snap-x">
-                {Array.from({ length: 14 }).map((_, i) => {
+                {mounted && Array.from({ length: 14 }).map((_, i) => {
                   const date = new Date();
                   date.setDate(date.getDate() + i);
                   const isSelected = formData.date === date.toISOString().split('T')[0];
