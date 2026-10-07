@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse, after } from 'next/server';
 import crypto from 'crypto';
+
+// Vercel Serverless Function Timeout - 60s max to allow Gemini & Square API calls to complete
+export const maxDuration = 60;
 import { adminDb } from '@/lib/firebaseAdmin';
 import { sendWhatsAppMessage } from '@/lib/waba';
 import { createItemisedCheckoutLink, createQuickPayFallbackLink, verifySquareOrderPayment, type CheckoutLineItem } from '@/lib/square';
@@ -89,11 +92,9 @@ async function getConversation(phone: string): Promise<ConversationState> {
   }
 
   try {
-    const fetchPromise = adminDb.collection('whatsapp_conversations').doc(phone).get();
-    const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 250));
-    const snap = await Promise.race([fetchPromise, timeoutPromise]);
-    if (snap && typeof (snap as any).data === 'function') {
-      const data = (snap as any).data();
+    const snap = await adminDb.collection('whatsapp_conversations').doc(phone).get();
+    if (snap && snap.exists) {
+      const data = snap.data();
       const state: ConversationState = {
         state: data?.state || cached?.state?.state || 'idle',
         branchId: (data?.branchId as LocationId) || cached?.state?.branchId || undefined,
@@ -126,7 +127,11 @@ async function updateConversation(phone: string, updates: Record<string, unknown
   CONVERSATION_CACHE.set(phone, { state: merged, updatedAt: Date.now() });
 
   // Asynchronously attempt to sync to Firestore in background (NEVER block response)
-  adminDb.collection('whatsapp_conversations').doc(phone).set(updates, { merge: true }).catch(() => {});
+  try {
+    await adminDb.collection('whatsapp_conversations').doc(phone).set(updates, { merge: true });
+  } catch (err) {
+    console.error(`[TOV WABA] Error updating conversation ${phone}:`, err);
+  }
 }
 
 // ── Cart Helpers ─────────────────────────────────────────────────────
@@ -276,52 +281,53 @@ export async function POST(request: NextRequest) {
 
     const body = JSON.parse(rawBody);
 
-    after(async () => {
-      for (const entry of body.entry || []) {
-        for (const change of entry.changes || []) {
-          const phoneId = change.value?.metadata?.phone_number_id;
-          const messages = change.value?.messages || [];
-          const contacts = change.value?.contacts || [];
+    // Process synchronously to ensure serverless execution completes
+    for (const entry of body.entry || []) {
+      for (const change of entry.changes || []) {
+        const phoneId = change.value?.metadata?.phone_number_id;
+        const messages = change.value?.messages || [];
+        const contacts = change.value?.contacts || [];
 
-          // Process messages in parallel to avoid sequential blocking delays!
-          const messagePromises = messages.map(async (message: any) => {
-            // ── Fast In-Memory Deduplication (0ms) ───────────────────
-            if (SEEN_MESSAGE_IDS.has(message.id)) {
-              return;
+        const messagePromises = messages.map(async (message: any) => {
+          if (SEEN_MESSAGE_IDS.has(message.id)) return;
+          SEEN_MESSAGE_IDS.add(message.id);
+          if (SEEN_MESSAGE_IDS.size > 2000) {
+            const first = SEEN_MESSAGE_IDS.values().next().value;
+            if (first) SEEN_MESSAGE_IDS.delete(first);
+          }
+
+          const dedupRef = adminDb.collection('webhook_dedup').doc(`tov_${message.id}`);
+          const dedupSnap = await dedupRef.get();
+          if (dedupSnap.exists) {
+            console.warn(`[TOV WABA] Dropping duplicate message ${message.id} (Firestore Dedup)`);
+            return;
+          }
+          // Fire and forget the write to keep latency low
+          dedupRef.set({
+            messageId: message.id,
+            processedAt: new Date().toISOString(),
+            expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          }).catch(() => {});
+
+          const from = message.from;
+          const profileName = contacts[0]?.profile?.name || from;
+
+          try {
+            if (message.type === 'text') {
+              await handleTextMessage(phoneId, from, profileName, message.text?.body || '');
+            } else if (message.type === 'interactive') {
+              await handleInteractiveMessage(phoneId, from, profileName, message);
+            } else if (message.type === 'order') {
+              await handleOrderMessage(phoneId, from, profileName, message);
             }
-            SEEN_MESSAGE_IDS.add(message.id);
-            if (SEEN_MESSAGE_IDS.size > 2000) {
-              const first = SEEN_MESSAGE_IDS.values().next().value;
-              if (first) SEEN_MESSAGE_IDS.delete(first);
-            }
+          } catch (msgErr) {
+            console.error(`[TOV WABA] Error handling message ${message.id}:`, msgErr);
+          }
+        });
 
-            // Asynchronously persist to Firestore without blocking response
-            adminDb.collection('webhook_dedup').doc(`tov_${message.id}`).set({
-              messageId: message.id,
-              processedAt: new Date().toISOString(),
-              expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-            }).catch(() => {});
-
-            const from = message.from;
-            const profileName = contacts[0]?.profile?.name || from;
-
-            try {
-              if (message.type === 'text') {
-                await handleTextMessage(phoneId, from, profileName, message.text?.body || '');
-              } else if (message.type === 'interactive') {
-                await handleInteractiveMessage(phoneId, from, profileName, message);
-              } else if (message.type === 'order') {
-                await handleOrderMessage(phoneId, from, profileName, message);
-              }
-            } catch (msgErr) {
-              console.error(`[TOV WABA] Error handling message ${message.id}:`, msgErr);
-            }
-          });
-
-          await Promise.all(messagePromises);
-        }
+        await Promise.all(messagePromises);
       }
-    });
+    }
 
     return new NextResponse('EVENT_RECEIVED', { status: 200 });
   } catch (error) {
@@ -340,12 +346,12 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   const text = rawText.toLowerCase().trim();
 
   // Log conversation in background without blocking response
-  updateConversation(from, {
+  await updateConversation(from, {
     phone: from,
     name,
     lastMessage: rawText,
     timestamp: new Date().toISOString(),
-  }).catch(() => {});
+  });
 
   // ── Dynamic Branch Intent Detection (e.g. Slough vs Hayes, GBP pre-filled links) ──
   const isExplicitSlough = /\b(slough|farnham)\b/i.test(text);
@@ -803,7 +809,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
   if (replyId.includes('tov_slough_') || replyId.startsWith('tov_branch_slough')) {
     activeBranch = 'slough';
     conv.branchId = 'slough';
-    updateConversation(from, { branchId: 'slough' }).catch(() => {});
+    await updateConversation(from, { branchId: 'slough' });
   }
 
   console.log(`[TOV WABA] Interactive: type=${replyType} id=${replyId} branch=${activeBranch} from=${from}`);
@@ -819,7 +825,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     if (encodedBranch && encodedBranch !== activeBranch) {
       activeBranch = encodedBranch;
       conv.branchId = encodedBranch;
-      updateConversation(from, { branchId: encodedBranch }).catch(() => {});
+      await updateConversation(from, { branchId: encodedBranch });
     }
 
     // Category selected → show items

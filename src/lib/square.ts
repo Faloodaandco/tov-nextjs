@@ -7,6 +7,7 @@
  * Replaces the old quick_pay approach which showed a single lump sum.
  */
 
+import crypto from 'crypto';
 import { LOCATIONS, type LocationId } from '@/config/shopConfig';
 
 export interface CheckoutLineItem {
@@ -88,7 +89,7 @@ export async function createItemisedCheckoutLink(options: {
     : `${isDelivery ? 'DELIVERY' : 'Pickup'} — WA ${displayName}`;
 
   const payload = {
-    idempotency_key: crypto.randomUUID(),
+    idempotency_key: crypto.createHash('sha256').update(referenceId).digest('hex'),
     order: {
       location_id: locationId,
       reference_id: referenceId,
@@ -110,6 +111,7 @@ export async function createItemisedCheckoutLink(options: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(5000),
     });
 
     const data = await res.json();
@@ -174,7 +176,7 @@ export async function createQuickPayFallbackLink(options: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        idempotency_key: crypto.randomUUID(),
+        idempotency_key: crypto.createHash('sha256').update(referenceId).digest('hex'),
         quick_pay: {
           name: memo,
           price_money: { amount: Math.max(50, totalPence), currency: 'GBP' },
@@ -185,6 +187,7 @@ export async function createQuickPayFallbackLink(options: {
           accepted_payment_methods: { apple_pay: true, google_pay: true },
         },
       }),
+      signal: AbortSignal.timeout(5000),
     });
 
     const data = await res.json();
@@ -223,6 +226,7 @@ export async function verifySquareOrderPayment(
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      signal: AbortSignal.timeout(5000),
     });
 
     if (!res.ok) {
