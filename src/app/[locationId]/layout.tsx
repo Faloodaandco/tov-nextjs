@@ -36,6 +36,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locationI
         },
       ],
     },
+    other: {
+      'og:latitude': String(seo.lat),
+      'og:longitude': String(seo.lng),
+      'place:location:latitude': String(seo.lat),
+      'place:location:longitude': String(seo.lng),
+    }
   };
 }
 

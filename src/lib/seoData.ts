@@ -13,7 +13,7 @@ export function getBranchSeoMeta(locationId: string) {
       homeDescription: 'Taste of Village Slough serves authentic Lahori & Gujranwala cuisine at 260 Farnham Road (SL1 4XL). 5★ Hygiene Rating. Fresh Karahi, Slow-Cooked Nihari, Haleem, Sizzling BBQ & Weekend Desi Nashta.',
       menuTitle: 'Full Menu & Takeaway Prices | Taste of Village Slough',
       menuDescription: 'View the official Taste of Village takeaway menu at 260 Farnham Road, Slough. Order fresh Chicken & Lamb Karahi, Biryani, Tandoori Naan, and BBQ online for collection.',
-      canonicalBase: '/slough'
+      canonicalBase: '/slough', lat: 51.5273, lng: -0.6128
     };
   }
 
@@ -23,7 +23,7 @@ export function getBranchSeoMeta(locationId: string) {
     homeDescription: 'Taste of Village Hayes brings traditional Lahori cooking to 766B Uxbridge Road (UB4 0RU). 100% Halal certified. Indulge in Iron-Wok Karahi, Nihari, Haleem, BBQ Grill & Fresh Naan.',
     menuTitle: 'Full Menu & Takeaway Prices | Taste of Village Hayes',
     menuDescription: 'Browse the full takeaway menu for Taste of Village Hayes. Order signature Lamb Karahi, Chicken Tikka, Biryani, and Karak Chai online for quick collection.',
-    canonicalBase: '/hayes'
+    canonicalBase: '/hayes', lat: 51.5127, lng: -0.4211
   };
 }
 

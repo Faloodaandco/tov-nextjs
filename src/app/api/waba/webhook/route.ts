@@ -6,6 +6,7 @@ import { createItemisedCheckoutLink, createQuickPayFallbackLink, verifySquareOrd
 import {
   getMenuItemById,
   buildMenuCategorySections,
+  getMenuSections,
   buildItemListRows,
   getSectionTitle,
   formatPrice,
@@ -492,7 +493,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   // ── Intent: menu / food / order ────────────────────────────────
   if (/^(menu|food|order|browse|dishes|eat|show menu|see menu|menu please)$/i.test(text) || /^(slough|hayes)?\s*menu$/i.test(text)) {
     const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
-    await sendCategoryList(phoneId, from, carriedCartStr, getEffectiveBranch(conv));
+    await sendCategoryList(phoneId, from, carriedCartStr, getEffectiveBranch(conv), true);
     return;
   }
 
@@ -1069,12 +1070,16 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     }
 
     // ── Add More → category list (preserving existing encoded cart) ─
-    if (buttonId.startsWith('tov_more_') || buttonId === 'tov_add_more' || buttonId === 'tov_menu') {
+    if (buttonId.startsWith('tov_more_') || buttonId === 'tov_add_more' || buttonId === 'tov_menu' || buttonId.startsWith('tov_all_categories_')) {
       let carriedCart = '';
       if (buttonId.startsWith('tov_more_')) {
         carriedCart = buttonId.replace('tov_more_', '');
+      } else if (buttonId.startsWith('tov_all_categories_')) {
+        carriedCart = buttonId.replace('tov_all_categories_', '');
       }
-      await sendCategoryList(phoneId, from, carriedCart, activeBranch);
+      
+      const isAllCategories = buttonId.startsWith('tov_all_categories_');
+      await sendCategoryList(phoneId, from, carriedCart, activeBranch, isAllCategories);
       return;
     }
 
@@ -1726,19 +1731,64 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
   });
 }
 
-async function sendCategoryList(phoneId: string, from: string, carriedCart?: string, explicitBranch?: LocationId) {
+async function sendCategoryList(phoneId: string, from: string, carriedCart?: string, explicitBranch?: LocationId, forceList = false) {
   const branchId = explicitBranch || getEffectiveBranch(await getConversation(from));
   const loc = LOCATIONS[branchId];
+  
+  if (forceList) {
+    await sendWhatsAppMessage(phoneId, from, {
+      type: 'interactive',
+      interactive: {
+        type: 'list',
+        header: { type: 'text', text: `${loc.name} Menu` },
+        body: { text: carriedCart ? 'Pick a category to add more dishes:' : 'Pick a category to browse dishes:' },
+        footer: { text: `Taste of Village ${loc.city} • Open 10AM–2AM` },
+        action: {
+          button: 'Browse Menu',
+          sections: buildMenuCategorySections(carriedCart, branchId),
+        },
+      },
+    });
+    return;
+  }
+
+  const sections = getMenuSections(branchId);
+  const branchTag = branchId;
+  const suffix = carriedCart ? `~${carriedCart}~${branchTag}` : `~~${branchTag}`;
+  
+  // Create top 2 categories as buttons (strip emojis and slice to 20 chars)
+  const buttons = sections.slice(0, 2).map((section: any) => {
+    const cleanTitle = section.title.replace(/[^a-zA-Z0-9 &,]/g, '').trim();
+    return {
+      type: 'reply',
+      reply: {
+        id: `${section.id}${suffix}`.slice(0, 200),
+        title: cleanTitle.slice(0, 20),
+      }
+    };
+  });
+
+  // 3rd button to open the full list
+  buttons.push({
+    type: 'reply',
+    reply: {
+      id: `tov_all_categories_${carriedCart || ''}`.slice(0, 200),
+      title: 'All Categories',
+    }
+  });
+
   await sendWhatsAppMessage(phoneId, from, {
     type: 'interactive',
     interactive: {
-      type: 'list',
+      type: 'button',
       header: { type: 'text', text: `${loc.name} Menu` },
-      body: { text: carriedCart ? 'Pick a category to add more dishes:' : 'Pick a category to browse dishes:' },
-      footer: { text: `Taste of Village ${loc.city} • Open 10AM–2AM` },
+      body: { 
+        text: carriedCart 
+          ? 'Tap a category to add more dishes instantly:\n\n_Type *Menu* to see all categories._' 
+          : 'Tap a category to view dishes instantly:\n\n_Type *Menu* to see all categories._' 
+      },
       action: {
-        button: 'Browse Menu',
-        sections: buildMenuCategorySections(carriedCart, branchId),
+        buttons
       },
     },
   });
