@@ -490,13 +490,120 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   }
 
   // ── Intent: menu / food / order ────────────────────────────────
-  if (/^(menu|food|order|browse|dishes|eat)$/i.test(text)) {
+  if (/^(menu|food|order|browse|dishes|eat|show menu|see menu|menu please)$/i.test(text) || /^(slough|hayes)?\s*menu$/i.test(text)) {
     const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
     await sendCategoryList(phoneId, from, carriedCartStr);
     return;
   }
 
+  // ── Smart Curation: Fast-close on popular dishes (e.g. "karahi", "biryani", "grill") ──
+  // MUST run before Gemini AI — instant 0ms local pattern matching
+  const activeBranch = getEffectiveBranch(conv);
+  const loc = LOCATIONS[activeBranch];
+  const curated = getCuratedDish(text, activeBranch);
+  if (curated) {
+    const newItems = addToCart(conv.activeCart?.items, {
+      id: curated.item.id,
+      name: curated.item.name,
+      quantity: 1,
+      pricePence: Math.round(curated.item.price * 100),
+    });
+    const total = cartTotal(newItems);
+
+    await updateConversation(from, {
+      activeCart: { items: newItems, basePence: total, updatedAt: new Date().toISOString() },
+      state: 'idle',
+    });
+
+    await sendWhatsAppMessage(phoneId, from, {
+      type: 'interactive',
+      interactive: {
+        type: 'button',
+        header: { type: 'text', text: curated.item.name.slice(0, 60) },
+        body: {
+          text: [
+            `*${curated.item.name}* (${formatPrice(curated.item.price)}) added.`,
+            curated.item.description ? `_${curated.item.description.slice(0, 80)}_` : '',
+            '',
+            `Order total: *${formatPrice(total / 100)}*`,
+            '',
+            'Ready to checkout?',
+          ].filter(Boolean).join('\n'),
+        },
+        action: {
+          buttons: [
+            { type: 'reply', reply: { id: `tov_col_${encodeCart(newItems)}`, title: '🏪 Collection' } },
+            { type: 'reply', reply: { id: `tov_del_${encodeCart(newItems)}`, title: '🛵 Delivery' } },
+            { type: 'reply', reply: { id: `tov_more_${encodeCart(newItems)}`, title: '➕ Add More' } },
+          ],
+        },
+      },
+    });
+    return;
+  }
+
+  // ── Intent: Smart Category Match (e.g., "biryani", "karahi", "kebab", "naan") ──
+  const matchedCategory = findMatchingCategory(text, activeBranch);
+  if (matchedCategory) {
+    const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
+    let rows = buildItemListRows(matchedCategory.id, carriedCartStr, activeBranch);
+
+    // Cross-branch resilience
+    let effectiveBranch = activeBranch;
+    if (rows.length === 0) {
+      const otherBranch: LocationId = activeBranch === 'hayes' ? 'slough' : 'hayes';
+      rows = buildItemListRows(matchedCategory.id, carriedCartStr, otherBranch);
+      if (rows.length > 0) effectiveBranch = otherBranch;
+    }
+
+    if (rows.length > 0) {
+      const branchLoc = LOCATIONS[effectiveBranch];
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'interactive',
+        interactive: {
+          type: 'list',
+          header: { type: 'text', text: matchedCategory.title },
+          body: { text: `Tap any dish to add it to your order:` },
+          footer: { text: `Taste of Village ${branchLoc.city}` },
+          action: {
+            button: 'Select Dish',
+            sections: [{ title: matchedCategory.title, rows }],
+          },
+        },
+      });
+      return;
+    }
+  }
+
+  // ── Intent: Dish Keyword Search (e.g., "chicken tikka", "paneer", "lamb chops") ──
+  const matchingDishes = searchMenuDishes(text, activeBranch);
+  if (matchingDishes.length > 0) {
+    const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
+    const carriedSuffix = carriedCartStr ? `~${carriedCartStr}` : '';
+    const rows = matchingDishes.map(d => ({
+      id: `${d.id}${carriedSuffix}`.slice(0, 200),
+      title: d.name.slice(0, 24),
+      description: `${formatPrice(d.price)} • Tap to add`.slice(0, 72),
+    }));
+
+    await sendWhatsAppMessage(phoneId, from, {
+      type: 'interactive',
+      interactive: {
+        type: 'list',
+        header: { type: 'text', text: 'Dishes Found' },
+        body: { text: `${matchingDishes.length} dish(es) matching "${rawText.slice(0, 20)}". Tap to add:` },
+        footer: { text: `Taste of Village ${loc.city}` },
+        action: {
+          button: 'View Dishes',
+          sections: [{ title: 'Matching Dishes', rows }],
+        },
+      },
+    });
+    return;
+  }
+
   // ── Intelligent Gemini Assistant (Multi-dish order, recommendations, FAQs) ──
+  // LAST RESORT: only called when local matching fails. Slow (2-10s).
   const aiResult = await analyzeWithGemini(rawText);
   if (aiResult) {
     if (aiResult.intent === 'order' && aiResult.orderItems.length > 0) {
@@ -518,9 +625,9 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
           header: { type: 'text', text: 'Order Updated' },
           body: {
             text: [
-              `✅ ${aiResult.reply || 'Added to your order!'}`,
+              `${aiResult.reply || 'Added to your order.'}`,
               '',
-              `🛒 *Your Basket:*`,
+              `*Your Basket:*`,
               cartSummaryText(currentItems),
               `*Total: ${formatPrice(total / 100)}*`,
               '',
@@ -557,7 +664,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
             text: [
               aiResult.reply,
               '',
-              `⭐ *${sug.name}* (${formatPrice(sug.price)})`,
+              `*${sug.name}* (${formatPrice(sug.price)})`,
               sug.description ? `_${sug.description.slice(0, 80)}_` : '',
             ].filter(Boolean).join('\n'),
           },
@@ -587,101 +694,6 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
       });
       return;
     }
-  }
-
-  // ── Smart Curation: Fast-close on popular dishes (e.g. "I biryani", "karahi", "grill") ──
-  const activeBranch = getEffectiveBranch(conv);
-  const loc = LOCATIONS[activeBranch];
-  const curated = getCuratedDish(text, activeBranch);
-  if (curated) {
-    const newItems = addToCart(conv.activeCart?.items, {
-      id: curated.item.id,
-      name: curated.item.name,
-      quantity: 1,
-      pricePence: Math.round(curated.item.price * 100),
-    });
-    const total = cartTotal(newItems);
-
-    await updateConversation(from, {
-      activeCart: { items: newItems, basePence: total, updatedAt: new Date().toISOString() },
-      state: 'idle',
-    });
-
-    await sendWhatsAppMessage(phoneId, from, {
-      type: 'interactive',
-      interactive: {
-        type: 'button',
-        header: { type: 'text', text: curated.item.name.slice(0, 60) },
-        body: {
-          text: [
-            `✅ *${curated.item.name}* (${formatPrice(curated.item.price)}) in your basket!`,
-            curated.item.description ? `_${curated.item.description.slice(0, 80)}_` : '',
-            '',
-            `🛒 *Order Total: ${formatPrice(total / 100)}*`,
-            '',
-            'Ready to close your order?',
-          ].filter(Boolean).join('\n'),
-        },
-        action: {
-          buttons: [
-            { type: 'reply', reply: { id: `tov_col_${encodeCart(newItems)}`, title: '🏪 Collection' } },
-            { type: 'reply', reply: { id: `tov_del_${encodeCart(newItems)}`, title: '🛵 Delivery' } },
-            { type: 'reply', reply: { id: `tov_more_${encodeCart(newItems)}`, title: '➕ Add More' } },
-          ],
-        },
-      },
-    });
-    return;
-  }
-
-  // ── Intent: Smart Category Match (e.g., "biryani", "karahi", "kebab", "naan") ──
-  const matchedCategory = findMatchingCategory(text, activeBranch);
-  if (matchedCategory) {
-    const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
-    const rows = buildItemListRows(matchedCategory.id, carriedCartStr, activeBranch);
-    if (rows.length > 0) {
-      await sendWhatsAppMessage(phoneId, from, {
-        type: 'interactive',
-        interactive: {
-          type: 'list',
-          header: { type: 'text', text: matchedCategory.title },
-          body: { text: `Here are our freshly cooked ${matchedCategory.title} options. Tap any dish to add it to your order:` },
-          footer: { text: `Taste of Village ${loc.city}` },
-          action: {
-            button: 'Select Dish',
-            sections: [{ title: matchedCategory.title, rows }],
-          },
-        },
-      });
-      return;
-    }
-  }
-
-  // ── Intent: Dish Keyword Search (e.g., "chicken tikka", "paneer", "lamb chops") ──
-  const matchingDishes = searchMenuDishes(text, activeBranch);
-  if (matchingDishes.length > 0) {
-    const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
-    const carriedSuffix = carriedCartStr ? `~${carriedCartStr}` : '';
-    const rows = matchingDishes.map(d => ({
-      id: `${d.id}${carriedSuffix}`.slice(0, 200),
-      title: d.name.slice(0, 24),
-      description: `${formatPrice(d.price)} • Tap to add`.slice(0, 72),
-    }));
-
-    await sendWhatsAppMessage(phoneId, from, {
-      type: 'interactive',
-      interactive: {
-        type: 'list',
-        header: { type: 'text', text: 'Dishes Found' },
-        body: { text: `We found ${matchingDishes.length} dish(es) matching "${rawText.slice(0, 20)}". Tap an item to add it:` },
-        footer: { text: `Taste of Village ${loc.city}` },
-        action: {
-          button: 'View Dishes',
-          sections: [{ title: 'Matching Dishes', rows }],
-        },
-      },
-    });
-    return;
   }
 
   // ── Intent: I paid / Check Payment ─────────────────────────────
