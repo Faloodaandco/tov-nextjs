@@ -204,7 +204,9 @@ export function buildDeliveryProgressBar(currentPence: number, thresholdPence: n
 /** Build the top-level category list for the "Browse Menu" action. */
 export function buildMenuCategorySections(carriedCart?: string, branchId?: LocationId | string) {
   const sections = getMenuSections(branchId);
-  const suffix = carriedCart ? `~${carriedCart}` : '';
+  // Encode branch + cart into row ID: cat_xxx~cart~branch (branch at the END for easy extraction)
+  const branchTag = branchId || 'hayes';
+  const suffix = carriedCart ? `~${carriedCart}~${branchTag}` : `~~${branchTag}`;
   return [{
     title: 'Menu Categories',
     rows: sections.map(section => {

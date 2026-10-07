@@ -381,7 +381,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
         ].join('\n'),
       },
     });
-    await sendCategoryList(phoneId, from);
+    await sendCategoryList(phoneId, from, undefined, activeBranch);
     return;
   }
 
@@ -455,7 +455,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
         type: 'text',
         text: { body: `To place a collection order from Taste of Village (${LOCATIONS[branchId].city}), choose from our menu below.` },
       });
-      await sendCategoryList(phoneId, from);
+      await sendCategoryList(phoneId, from, undefined, branchId as LocationId);
       return;
     }
   }
@@ -473,7 +473,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
         type: 'text',
         text: { body: 'To place a delivery order, choose from our menu below.' },
       });
-      await sendCategoryList(phoneId, from);
+      await sendCategoryList(phoneId, from, undefined, getEffectiveBranch(conv));
       return;
     }
   }
@@ -492,7 +492,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   // ── Intent: menu / food / order ────────────────────────────────
   if (/^(menu|food|order|browse|dishes|eat|show menu|see menu|menu please)$/i.test(text) || /^(slough|hayes)?\s*menu$/i.test(text)) {
     const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
-    await sendCategoryList(phoneId, from, carriedCartStr);
+    await sendCategoryList(phoneId, from, carriedCartStr, getEffectiveBranch(conv));
     return;
   }
 
@@ -788,14 +788,38 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
 
 async function handleInteractiveMessage(phoneId: string, from: string, name: string, message: any) {
   const replyType = message.interactive.type;
-  console.log(`[TOV WABA] Interactive: type=${replyType} id=${replyType === 'button_reply' ? message.interactive.button_reply?.id : replyType === 'list_reply' ? message.interactive.list_reply?.id : 'unknown'} from=${from}`);
   const conv = await getConversation(from);
-  const activeBranch = getEffectiveBranch(conv);
+  let activeBranch = getEffectiveBranch(conv);
+
+  // ── Branch self-correction from item IDs ──────────────────────────
+  // Serverless containers lose in-memory cache between requests.
+  // Detect the actual branch from item IDs (Slough items have tov_slough_ prefix).
+  const replyId: string = replyType === 'button_reply'
+    ? message.interactive.button_reply?.id || ''
+    : replyType === 'list_reply'
+    ? message.interactive.list_reply?.id || ''
+    : '';
+  if (replyId.includes('tov_slough_') || replyId.startsWith('tov_branch_slough')) {
+    activeBranch = 'slough';
+    conv.branchId = 'slough';
+    updateConversation(from, { branchId: 'slough' }).catch(() => {});
+  }
+
+  console.log(`[TOV WABA] Interactive: type=${replyType} id=${replyId} branch=${activeBranch} from=${from}`);
   const loc = LOCATIONS[activeBranch];
 
   if (replyType === 'list_reply') {
     const rawListId: string = message.interactive.list_reply.id;
-    const [listId, carriedCart] = rawListId.split('~');
+    const parts = rawListId.split('~');
+    const listId = parts[0];
+    const carriedCart = parts[1] || undefined;
+    // Branch encoded in row ID (3rd segment) — authoritative, not from cache
+    const encodedBranch = (parts[2] === 'slough' || parts[2] === 'hayes') ? parts[2] as LocationId : undefined;
+    if (encodedBranch && encodedBranch !== activeBranch) {
+      activeBranch = encodedBranch;
+      conv.branchId = encodedBranch;
+      updateConversation(from, { branchId: encodedBranch }).catch(() => {});
+    }
 
     // Category selected → show items
     if (listId.startsWith('cat_')) {
@@ -921,7 +945,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
 
       // Immediately show the menu — no extra "Browse Menu" button tap needed
       const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
-      await sendCategoryList(phoneId, from, carriedCartStr);
+      await sendCategoryList(phoneId, from, carriedCartStr, selectedBranch);
       return;
     }
 
@@ -1050,7 +1074,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       if (buttonId.startsWith('tov_more_')) {
         carriedCart = buttonId.replace('tov_more_', '');
       }
-      await sendCategoryList(phoneId, from, carriedCart);
+      await sendCategoryList(phoneId, from, carriedCart, activeBranch);
       return;
     }
 
@@ -1105,7 +1129,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
           return;
         }
 
-        await sendCategoryList(phoneId, from);
+        await sendCategoryList(phoneId, from, undefined, activeBranch);
         return;
       }
       const total = cartTotal(items);
@@ -1123,7 +1147,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         items = conv.activeCart?.items || [];
       }
       if (!items.length) {
-        await sendCategoryList(phoneId, from);
+        await sendCategoryList(phoneId, from, undefined, activeBranch);
         return;
       }
 
@@ -1702,9 +1726,8 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
   });
 }
 
-async function sendCategoryList(phoneId: string, from: string, carriedCart?: string) {
-  const conv = await getConversation(from);
-  const branchId = getEffectiveBranch(conv);
+async function sendCategoryList(phoneId: string, from: string, carriedCart?: string, explicitBranch?: LocationId) {
+  const branchId = explicitBranch || getEffectiveBranch(await getConversation(from));
   const loc = LOCATIONS[branchId];
   await sendWhatsAppMessage(phoneId, from, {
     type: 'interactive',
