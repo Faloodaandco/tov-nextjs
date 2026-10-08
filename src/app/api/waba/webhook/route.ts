@@ -262,6 +262,18 @@ export async function POST(request: NextRequest) {
   try {
     const rawBody = await request.text();
 
+    // ── Boundary Trace: Log EVERY incoming webhook request ──────────
+    // This is the first observable point in the serverless function.
+    // If this line never appears in Vercel logs, requests aren't reaching Vercel.
+    console.log('[TOV WABA] POST received', {
+      ts: new Date().toISOString(),
+      ua: request.headers.get('user-agent')?.slice(0, 60),
+      hasSig: !!request.headers.get('x-hub-signature-256'),
+      ip: request.headers.get('x-forwarded-for')?.split(',')[0]?.trim(),
+      len: rawBody.length,
+      bodyPreview: rawBody.slice(0, 200),
+    });
+
     // ── Signature Verification ──────────────────────────────────────
     const signature = request.headers.get('x-hub-signature-256');
     const isProxy = request.headers.get('x-tenant-proxy') === 'falooda-master';
