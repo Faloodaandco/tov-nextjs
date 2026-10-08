@@ -194,14 +194,26 @@ export const Navbar = () => {
                 
                 {/* Main Links - Elegant Typography List */}
                 <div className="flex flex-col py-6">
-                  <Link href={`/${loc?.id || 'hayes'}`} className={`px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 ${pathname === `/${loc?.id || 'hayes'}` ? 'text-terracotta' : 'text-pine'}`}>Home</Link>
-                  <Link href={`/${loc?.id || 'hayes'}/menu`} className={`px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 ${pathname.includes('/menu') ? 'text-terracotta' : 'text-pine'}`}>Our Menu</Link>
-                  <Link href="/franchise" className={`px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 ${pathname === '/franchise' ? 'text-terracotta' : 'text-pine'}`}>Franchise</Link>
-                  <Link href="/rewards" className={`px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 border-b border-pine/5 pb-8 ${pathname === '/rewards' ? 'text-terracotta' : 'text-pine'}`}>Rewards</Link>
+                  <Link href={`/${loc?.id || 'hayes'}`} style={{ animationDuration: '400ms', animationDelay: '100ms' }} className={`opacity-0 animate-fade-in-up relative flex items-center px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 ${pathname === `/${loc?.id || 'hayes'}` ? 'text-terracotta' : 'text-pine'}`}>
+                    {pathname === `/${loc?.id || 'hayes'}` && <span className="absolute left-4 w-1.5 h-1.5 rounded-full bg-terracotta shadow-sm" />}
+                    Home
+                  </Link>
+                  <Link href={`/${loc?.id || 'hayes'}/menu`} style={{ animationDuration: '400ms', animationDelay: '150ms' }} className={`opacity-0 animate-fade-in-up relative flex items-center px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 ${pathname.includes('/menu') ? 'text-terracotta' : 'text-pine'}`}>
+                    {pathname.includes('/menu') && <span className="absolute left-4 w-1.5 h-1.5 rounded-full bg-terracotta shadow-sm" />}
+                    Our Menu
+                  </Link>
+                  <Link href="/franchise" style={{ animationDuration: '400ms', animationDelay: '200ms' }} className={`opacity-0 animate-fade-in-up relative flex items-center px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 ${pathname === '/franchise' ? 'text-terracotta' : 'text-pine'}`}>
+                    {pathname === '/franchise' && <span className="absolute left-4 w-1.5 h-1.5 rounded-full bg-terracotta shadow-sm" />}
+                    Franchise
+                  </Link>
+                  <Link href="/rewards" style={{ animationDuration: '400ms', animationDelay: '250ms' }} className={`opacity-0 animate-fade-in-up relative flex items-center px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 border-b border-pine/5 pb-8 ${pathname === '/rewards' ? 'text-terracotta' : 'text-pine'}`}>
+                    {pathname === '/rewards' && <span className="absolute left-4 w-1.5 h-1.5 rounded-full bg-terracotta shadow-sm" />}
+                    Rewards
+                  </Link>
                 </div>
 
                 {/* Secondary Actions */}
-                <div className="px-8 py-6 flex flex-col gap-7">
+                <div className="px-8 py-6 flex flex-col gap-7 opacity-0 animate-fade-in-up" style={{ animationDuration: '400ms', animationDelay: '300ms' }}>
                     {isLoggedIn ? (
                       <Link href="/rewards" className="text-sm font-bold tracking-widest uppercase flex items-center gap-4 text-pine hover:text-terracotta hover:translate-x-1 transition-all" onClick={() => setIsOpen(false)}><UserCircle2 size={20} strokeWidth={1.5} /> My Account</Link>
                     ) : (

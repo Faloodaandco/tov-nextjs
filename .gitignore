@@ -56,3 +56,9 @@ secrets/
 service-account.json
 build.log
 tsc.log
+
+# Debug artifacts
+build_output.txt
+dev.log
+fix-promises.js
+test-webhook.js
