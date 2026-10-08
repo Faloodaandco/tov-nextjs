@@ -10,6 +10,7 @@ import {
   getMenuItemById,
   buildMenuCategorySections,
   getMenuSections,
+  getItemsBySection,
   buildItemListRows,
   getSectionTitle,
   formatPrice,
@@ -63,6 +64,12 @@ interface ConversationState {
 
 // ── Branch & Location Resolution ─────────────────────────────────────
 const DEFAULT_BRANCH_ID: LocationId = 'hayes';
+
+// Meta Product Catalog IDs (for product_list / single product messages)
+const META_CATALOG_IDS: Record<LocationId, string> = {
+  hayes: '987964757674623',
+  slough: '1657059252594459',
+};
 
 function getEffectiveBranch(conv?: ConversationState): LocationId {
   if (conv?.branchId && (conv.branchId === 'hayes' || conv.branchId === 'slough')) {
@@ -510,8 +517,15 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
 
   // ── Intent: menu / food / order ────────────────────────────────
   if (/^(menu|food|order|browse|dishes|eat|show menu|see menu|menu please)$/i.test(text) || /^(slough|hayes)?\s*menu$/i.test(text)) {
-    const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
-    await sendCategoryList(phoneId, from, carriedCartStr, getEffectiveBranch(conv), true);
+    const activeBranchForMenu = getEffectiveBranch(conv);
+    if (conv.activeCart?.items?.length) {
+      // User has items in cart — use text list to preserve cart state
+      const carriedCartStr = encodeCart(conv.activeCart.items);
+      await sendCategoryList(phoneId, from, carriedCartStr, activeBranchForMenu, true);
+    } else {
+      // No cart — send rich catalog product list with images and add-to-cart
+      await sendFullCatalogMenu(phoneId, from, activeBranchForMenu);
+    }
     return;
   }
 
@@ -564,7 +578,14 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   // ── Intent: Smart Category Match (e.g., "biryani", "karahi", "kebab", "naan") ──
   const matchedCategory = findMatchingCategory(text, activeBranch);
   if (matchedCategory) {
-    const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
+    // No cart: send rich catalog product cards with images
+    if (!conv.activeCart?.items?.length) {
+      await sendCatalogProductList(phoneId, from, matchedCategory.id, activeBranch);
+      return;
+    }
+
+    // With cart: use text list to preserve cart state
+    const carriedCartStr = encodeCart(conv.activeCart.items);
     let rows = buildItemListRows(matchedCategory.id, carriedCartStr, activeBranch);
 
     // Cross-branch resilience
@@ -842,17 +863,24 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
 
     // Category selected → show items
     if (listId.startsWith('cat_')) {
+      const pureCatId = listId.split('~')[0];
+
+      // If no carried cart, send rich catalog product list with images
+      if (!carriedCart) {
+        await sendCatalogProductList(phoneId, from, pureCatId, activeBranch);
+        return;
+      }
+
+      // With cart: use text list to preserve cart state
       let rows = buildItemListRows(listId, carriedCart, activeBranch);
       let effectiveBranch = activeBranch;
 
       // Cross-branch resilience: if no items found, try the other branch
-      // (handles race where activeBranch resolved to wrong branch)
       if (rows.length === 0) {
         const otherBranch: LocationId = activeBranch === 'hayes' ? 'slough' : 'hayes';
         rows = buildItemListRows(listId, carriedCart, otherBranch);
         if (rows.length > 0) {
           effectiveBranch = otherBranch;
-          // Silently fix the branch in the background
           await updateConversation(from, { branchId: otherBranch });
         }
       }
@@ -971,6 +999,14 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     // ── Category Button (e.g. from curated dish alternative) ─────
     if (buttonId.startsWith('cat_')) {
       const [catId, carriedCart] = buttonId.split('~');
+
+      // If no carried cart, send rich catalog product list with images
+      if (!carriedCart) {
+        await sendCatalogProductList(phoneId, from, catId, activeBranch);
+        return;
+      }
+
+      // With cart: use text list to preserve cart state
       let rows = buildItemListRows(catId, carriedCart, activeBranch);
       let effectiveBranch = activeBranch;
 
@@ -1744,6 +1780,110 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
               { type: 'reply', reply: { id: 'tov_branch_hayes', title: 'Hayes (UB4)' } },
               { type: 'reply', reply: { id: 'tov_branch_slough', title: 'Slough (SL1)' } },
             ],
+      },
+    },
+  });
+}
+
+
+/**
+ * Send a Meta catalog product_list message for a specific category section.
+ * Shows product cards with images, prices, descriptions — customers can add to cart directly.
+ * Max 30 items across up to 10 sections. Each section max 30 items.
+ */
+async function sendCatalogProductList(
+  phoneId: string,
+  from: string,
+  sectionId: string,
+  branchId: LocationId,
+) {
+  const catalogId = META_CATALOG_IDS[branchId];
+  const items = getItemsBySection(sectionId, branchId);
+  const sectionTitle = getSectionTitle(sectionId, branchId);
+
+  if (!items.length) {
+    await sendWhatsAppMessage(phoneId, from, {
+      type: 'text',
+      text: { body: `No items found in ${sectionTitle}. Type *Menu* to browse categories.` },
+    });
+    return;
+  }
+
+  // WhatsApp product_list: max 30 products, max 10 sections
+  const productItems = items.slice(0, 30).map(item => ({
+    product_retailer_id: item.id,
+  }));
+
+  await sendWhatsAppMessage(phoneId, from, {
+    type: 'interactive',
+    interactive: {
+      type: 'product_list',
+      header: { type: 'text', text: sectionTitle.replace(/[^\w\s&,'-]/g, '').trim().slice(0, 60) },
+      body: {
+        text: `Browse ${items.length} items • Tap to add to cart\n_Prices include VAT_`,
+      },
+      footer: { text: `Taste of Village ${branchId === 'slough' ? 'Slough' : 'Hayes'} • Open 10AM–2AM` },
+      action: {
+        catalog_id: catalogId,
+        sections: [
+          {
+            title: sectionTitle.replace(/[^\w\s&,'-]/g, '').trim().slice(0, 24),
+            product_items: productItems,
+          },
+        ],
+      },
+    },
+  });
+}
+
+/**
+ * Send the full menu as a multi-section product_list (all categories).
+ * Shows browsable product cards grouped by category with images and add-to-cart.
+ */
+async function sendFullCatalogMenu(phoneId: string, from: string, branchId: LocationId) {
+  const catalogId = META_CATALOG_IDS[branchId];
+  const allSections = getMenuSections(branchId);
+  const loc = LOCATIONS[branchId];
+
+  // Build catalog sections — max 10 sections, max 30 products total
+  const catalogSections: { title: string; product_items: { product_retailer_id: string }[] }[] = [];
+  let totalProducts = 0;
+  const MAX_PRODUCTS = 30;
+
+  for (const section of allSections) {
+    if (totalProducts >= MAX_PRODUCTS) break;
+    const items = getItemsBySection(section.id, branchId);
+    if (!items.length) continue;
+
+    const remaining = MAX_PRODUCTS - totalProducts;
+    // Pick top items per section (popular/expensive first since they're sorted by price desc)
+    const sectionItems = items.slice(0, Math.min(remaining, 10));
+
+    catalogSections.push({
+      title: section.title.replace(/[^\w\s&,'-]/g, '').trim().slice(0, 24),
+      product_items: sectionItems.map(item => ({ product_retailer_id: item.id })),
+    });
+
+    totalProducts += sectionItems.length;
+  }
+
+  if (!catalogSections.length) {
+    await sendCategoryList(phoneId, from, undefined, branchId, true);
+    return;
+  }
+
+  await sendWhatsAppMessage(phoneId, from, {
+    type: 'interactive',
+    interactive: {
+      type: 'product_list',
+      header: { type: 'text', text: `${loc.name} Menu` },
+      body: {
+        text: `Our top picks across all categories\nTap any item to view details and add to cart`,
+      },
+      footer: { text: `${loc.name} • Open 10AM–2AM • Collection & Delivery` },
+      action: {
+        catalog_id: catalogId,
+        sections: catalogSections,
       },
     },
   });
