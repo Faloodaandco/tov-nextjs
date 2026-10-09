@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { LOCATIONS } from '@/config/shopConfig';
 import { trackBranchSelect } from '@/utils/analytics';
-import { MapPin, Flame } from 'lucide-react';
+import { MapPin, Flame, ArrowRight } from 'lucide-react';
 
 export default function HomeSelector() {
   const router = useRouter();
@@ -40,6 +40,7 @@ export default function HomeSelector() {
           <nav className="hidden md:flex items-center gap-8 text-[10px] tracking-[0.25em] font-medium text-pine/80 uppercase">
             <button aria-label="Scroll to branch selector" onClick={() => document.getElementById('branch-selector')?.scrollIntoView({ behavior: 'smooth', block: 'center' })} className="cursor-pointer hover:text-terracotta transition-colors duration-300 uppercase tracking-[0.25em]">Explore</button>
             <button aria-label="View Hayes menu" onClick={() => router.push('/hayes/menu')} className="cursor-pointer hover:text-terracotta transition-colors duration-300 uppercase tracking-[0.25em]">Menus</button>
+            <button aria-label="View offers" onClick={() => router.push('/offers')} className="cursor-pointer hover:text-terracotta transition-colors duration-300 uppercase tracking-[0.25em]">Offers</button>
             <button aria-label="Catering enquiry" onClick={() => { window.location.href = 'mailto:info@tasteofvillagerestaurants.co.uk?subject=Catering%20Inquiry'; }} className="cursor-pointer hover:text-terracotta transition-colors duration-300 uppercase tracking-[0.25em]">Catering</button>
           </nav>
         </div>
@@ -118,28 +119,32 @@ export default function HomeSelector() {
                       style={{ borderRadius: '160px 160px 0 0' }}
                     />
 
-                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 md:p-8 text-center pt-16">
-                      <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center mb-6 transition-all duration-500">
-                        {isSlough ? <Flame size={14} className="text-pine/60" /> : <MapPin size={14} className="text-pine/60" />}
+                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-between p-6 md:p-8 text-center pt-12 pb-8">
+                      <div className="flex flex-col items-center">
+                        <div className="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center mb-4 transition-all duration-500 bg-pine/5 group-hover:bg-terracotta/10">
+                          {isSlough ? <Flame size={15} className="text-terracotta transition-colors duration-500" /> : <MapPin size={15} className="text-pine/70 group-hover:text-terracotta transition-colors duration-500" />}
+                        </div>
+
+                        <h2 className="font-display text-2xl md:text-3xl text-pine tracking-widest uppercase mb-3 md:mb-4 group-hover:text-terracotta transition-colors duration-500">
+                          {loc.city}
+                        </h2>
+
+                        <div className="flex flex-col items-center gap-1.5">
+                          <span className="text-pine/80 text-[10px] md:text-[11px] tracking-[0.15em] font-medium uppercase">{loc.address}</span>
+                          <span className="text-terracotta font-bold text-[10px] md:text-[11px] tracking-[0.3em] uppercase">{loc.postcode}</span>
+                          <span className="text-pine/70 font-medium text-[11px] tracking-[0.1em] mt-0.5">{loc.phone}</span>
+                        </div>
                       </div>
 
-                      <h2 className="font-display text-2xl md:text-3xl text-pine tracking-widest uppercase mb-4 md:mb-6 group-hover:text-terracotta transition-colors duration-500">
-                        {loc.city}
-                      </h2>
-
-                      <div className="flex flex-col items-center gap-2 mb-8 md:mb-10">
-                        <span className="text-pine/80 text-[10px] md:text-[11px] tracking-[0.15em] font-medium uppercase">{loc.address}</span>
-                        <span className="text-terracotta font-bold text-[10px] md:text-[11px] tracking-[0.3em] uppercase">{loc.postcode}</span>
-                        <span className="text-pine/80 font-medium text-[11px] tracking-[0.1em] mt-1">{loc.phone}</span>
-                      </div>
-
-                      <div className="mt-auto mb-6">
+                      {/* Elevated Solid Accent Pill Button */}
+                      <div className="w-full flex justify-center pt-4">
                         <button
                           aria-label={`Order now from ${loc.city}`}
                           onClick={(e) => navigateTo(e, '/' + loc.id + '/menu', loc.id, loc.name)}
-                          className="px-6 py-2.5 border-[0.5px] border-pine/40 group-hover:border-terracotta text-pine group-hover:text-terracotta transition-all duration-500 flex items-center gap-2 bg-transparent"
+                          className="px-7 py-3 rounded-full bg-pine text-[#FDF9F1] group-hover:bg-terracotta transition-all duration-300 shadow-[0_4px_16px_rgba(26,60,52,0.18)] group-hover:shadow-[0_6px_22px_rgba(138,61,42,0.28)] group-hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer"
                         >
-                          <span className="font-sans font-bold text-[9px] tracking-[0.25em] uppercase">Order Now</span>
+                          <span className="font-sans font-bold text-[10px] tracking-[0.25em] uppercase">Order Now</span>
+                          <ArrowRight size={13} className="transition-transform duration-300 group-hover:translate-x-0.5" />
                         </button>
                       </div>
                     </div>
@@ -151,27 +156,48 @@ export default function HomeSelector() {
         </div>
       </main>
 
-      {/* Unified Editorial Footer */}
-      <footer className="w-full bg-[#0B140F] text-[#889B8D] mt-auto relative overflow-hidden border-t border-pine/30">
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: "url('/assets/tov-pattern.svg')", backgroundSize: '80px 80px', backgroundRepeat: 'repeat' }} />
+      {/* Editorial Trust Ribbon & Warm Gradient Transition into Footer */}
+      <div className="w-full bg-gradient-to-b from-[#F4F1EA] via-[#ECE6DA] to-[#0E1F1A] pt-10 pb-5 relative z-10">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="inline-flex items-center gap-3 text-[9px] sm:text-[10px] font-bold tracking-[0.25em] uppercase text-pine/70">
+            <span className="w-6 sm:w-10 h-px bg-terracotta/40" />
+            <span>100% Halal Certified · Prepared Fresh Daily · Hayes &amp; Slough</span>
+            <span className="w-6 sm:w-10 h-px bg-terracotta/40" />
+          </div>
+        </div>
+      </div>
 
-        {/* FHRS Official Food Hygiene Badges Tier */}
-        <div className="relative z-10 border-b border-white/10 py-8 px-6">
-          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-20">
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-[#889B8D] text-[9px] uppercase tracking-[0.25em] font-medium">Hayes Branch</span>
-              <img src="/assets/fhrs-badge-4-horizontal.svg" alt="Hayes Food Hygiene Rating 4 - Good" className="h-7 w-auto opacity-80 hover:opacity-100 transition-opacity duration-300" loading="lazy" />
-            </div>
-            <div className="hidden sm:block w-px h-8 bg-white/10" aria-hidden="true" />
-            <div className="flex flex-col items-center gap-2">
-              <span className="text-[#889B8D] text-[9px] uppercase tracking-[0.25em] font-medium">Slough Branch</span>
-              <img src="/assets/fhrs-badge-5-horizontal.svg" alt="Slough Food Hygiene Rating 5 - Very Good" className="h-7 w-auto opacity-80 hover:opacity-100 transition-opacity duration-300" loading="lazy" />
+      {/* Unified Editorial Footer in Deep Heritage Pine */}
+      <footer className="w-full bg-[#0E1F1A] text-[#889B8D] relative overflow-hidden border-t border-terracotta/20">
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "url('/assets/tov-pattern.svg')", backgroundSize: '80px 80px', backgroundRepeat: 'repeat' }} />
+        
+        {/* Subtle Top Rose Hairline Glow */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-terracotta/40 to-transparent pointer-events-none" />
+
+        {/* FHRS Official Food Hygiene Badges Tier — Side-by-Side on Mobile */}
+        <div className="relative z-10 border-b border-white/10 py-6 sm:py-8 px-4 sm:px-6">
+          <div className="max-w-xl mx-auto">
+            <p className="text-center text-[#889B8D]/80 text-[8px] sm:text-[9px] font-mono tracking-[0.3em] uppercase mb-4">
+              Official Food Standards Agency Ratings
+            </p>
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 items-center justify-center">
+              {/* Hayes Badge Container */}
+              <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-3 sm:py-3.5 sm:px-5 flex flex-col items-center gap-1.5 backdrop-blur-sm hover:bg-white/[0.08] transition-all">
+                <span className="text-[#A2B5A7] text-[8px] sm:text-[9px] uppercase tracking-[0.2em] font-medium">Hayes Branch</span>
+                <img src="/assets/fhrs-badge-4-horizontal.svg" alt="Hayes Food Hygiene Rating 4 - Good" className="h-5 sm:h-7 w-auto opacity-90 hover:opacity-100 transition-opacity" loading="lazy" />
+              </div>
+
+              {/* Slough Badge Container */}
+              <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-3 sm:py-3.5 sm:px-5 flex flex-col items-center gap-1.5 backdrop-blur-sm hover:bg-white/[0.08] transition-all">
+                <span className="text-[#A2B5A7] text-[8px] sm:text-[9px] uppercase tracking-[0.2em] font-medium">Slough Branch</span>
+                <img src="/assets/fhrs-badge-5-horizontal.svg" alt="Slough Food Hygiene Rating 5 - Very Good" className="h-5 sm:h-7 w-auto opacity-90 hover:opacity-100 transition-opacity" loading="lazy" />
+              </div>
             </div>
           </div>
         </div>
 
         {/* Brand Copyright & Nav Tier */}
-        <div className="max-w-7xl mx-auto py-8 px-8 md:px-16 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 relative z-10">
+        <div className="max-w-7xl mx-auto py-8 px-6 sm:px-8 md:px-16 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0 relative z-10">
           <div className="flex flex-col gap-1.5 items-center md:items-start text-center md:text-left">
             <span className="font-display text-terracotta text-xs tracking-[0.3em] uppercase font-semibold">Taste of Village</span>
             <span className="text-[#889B8D] text-[9px] tracking-[0.2em] uppercase font-sans">
@@ -181,7 +207,9 @@ export default function HomeSelector() {
 
           <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-[#889B8D] text-[9px] tracking-[0.25em] uppercase font-sans">
             <button aria-label="View menus" onClick={() => router.push('/hayes/menu')} className="hover:text-terracotta cursor-pointer transition-colors duration-300 uppercase tracking-[0.25em]">Menu</button>
+            <button aria-label="View offers" onClick={() => router.push('/offers')} className="hover:text-terracotta cursor-pointer transition-colors duration-300 uppercase tracking-[0.25em]">Offers</button>
             <button aria-label="Make a reservation" onClick={() => router.push('/book')} className="hover:text-terracotta cursor-pointer transition-colors duration-300 uppercase tracking-[0.25em]">Reservations</button>
+            <button aria-label="Quick links hub" onClick={() => router.push('/links')} className="hover:text-terracotta cursor-pointer transition-colors duration-300 uppercase tracking-[0.25em]">Quick Links</button>
             <button aria-label="Contact us" onClick={() => window.location.href='mailto:info@tasteofvillagerestaurants.co.uk'} className="hover:text-terracotta cursor-pointer transition-colors duration-300 uppercase tracking-[0.25em]">Contact</button>
           </div>
         </div>

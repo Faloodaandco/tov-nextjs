@@ -202,6 +202,10 @@ export const Navbar = () => {
                     {pathname.includes('/menu') && <span className="absolute left-4 w-1.5 h-1.5 rounded-full bg-terracotta shadow-sm" />}
                     Our Menu
                   </Link>
+                  <Link href="/offers" style={{ animationDuration: '400ms', animationDelay: '180ms' }} className={`opacity-0 animate-fade-in-up relative flex items-center px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 ${pathname === '/offers' ? 'text-terracotta' : 'text-pine'}`}>
+                    {pathname === '/offers' && <span className="absolute left-4 w-1.5 h-1.5 rounded-full bg-terracotta shadow-sm" />}
+                    Offers &amp; Specials
+                  </Link>
                   <Link href="/franchise" style={{ animationDuration: '400ms', animationDelay: '200ms' }} className={`opacity-0 animate-fade-in-up relative flex items-center px-8 py-4 text-3xl font-display font-medium tracking-wide transition-all duration-300 hover:translate-x-2 hover:bg-pine/5 ${pathname === '/franchise' ? 'text-terracotta' : 'text-pine'}`}>
                     {pathname === '/franchise' && <span className="absolute left-4 w-1.5 h-1.5 rounded-full bg-terracotta shadow-sm" />}
                     Franchise

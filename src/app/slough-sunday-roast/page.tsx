@@ -23,8 +23,8 @@ export const metadata: Metadata = {
 
 const ROAST_MAINS = [
   { name: 'Beef Roast', price: '14.99', desc: 'Succulent slow-roasted British beef, served with your choice of roast or creamy mashed potatoes, seasonal vegetables, rich gravy & Yorkshire pudding.', image: '/assets/menu/sunday-roast/sunday_roast_beef.webp' },
-  { name: 'Half Chicken Roast', price: '15.99', desc: 'Golden-roasted half chicken, tender and juicy, served with all the traditional trimmings.', image: null },
-  { name: 'Lamb Shank Roast', price: '16.99', desc: 'Slow-cooked lamb shank falling off the bone, served with roast or mashed potatoes, seasonal veg, gravy & Yorkshire pudding.', image: '/assets/menu/sunday-roast/sunday_roast_lamb_shank.webp' },
+  { name: 'Half Chicken Roast', price: '15.99', desc: 'Golden-roasted half chicken on ceramic platter, tender and juicy, served with Yorkshire pudding, roast carrots, broccoli, potatoes & rich gravy.', image: '/assets/menu/sunday-roast/roast_special_2.jpg' },
+  { name: 'Lamb Shank Roast', price: '16.99', desc: 'Slow-cooked lamb shank falling off the bone, served with roast or mashed potatoes, vine tomatoes, seasonal veg, gravy & Yorkshire pudding.', image: '/assets/menu/sunday-roast/roast_special_1.jpg' },
 ];
 
 const EXTRAS = [
@@ -47,7 +47,7 @@ export default function SloughSundayRoastPage() {
       {
         "@type": "Restaurant",
         "name": "Taste of Village Slough - Sunday Roast",
-        "image": "https://tasteofvillagerestaurants.co.uk/assets/og-share-preview.jpg",
+        "image": "https://tasteofvillagerestaurants.co.uk/assets/menu/sunday-roast/roast_special_3.jpg",
         "url": "https://tasteofvillagerestaurants.co.uk/slough-sunday-roast",
         "telephone": "+441753326341",
         "address": {
@@ -161,56 +161,110 @@ export default function SloughSundayRoastPage() {
       />
 
       {/* ── HERO ── Full-bleed cinematic banner */}
-      <div className="relative w-full h-[420px] sm:h-[520px] md:h-[600px] overflow-hidden">
+      <div className="relative w-full h-[460px] sm:h-[560px] md:h-[620px] overflow-hidden">
         <Image
-          src="/assets/menu/sunday-roast/sunday_roast_hero.webp"
-          alt="Sunday Roast spread at Taste of Village — beef, lamb shank, Yorkshire pudding, roasted vegetables and rich gravy"
+          src="/assets/menu/sunday-roast/roast_special_3.jpg"
+          alt="Sunday Roast feast spread at Taste of Village Slough — lamb shank, half chicken, beef, Yorkshire pudding, roast potatoes, seasonal vegetables and rich gravy"
           fill
           className="object-cover object-center"
           priority
           sizes="100vw"
         />
         {/* Cinematic gradient: dark bottom for text, subtle vignette top */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/40" />
         
-        <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 sm:pb-20 px-6 text-center">
-          <span className="inline-block bg-terracotta/90 backdrop-blur-sm text-white text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-5">
-            Every Sunday · 12 – 5 PM
-          </span>
-          <h1 className="font-serif text-[2.5rem] sm:text-6xl md:text-7xl text-white mb-4 leading-[1.05] drop-shadow-2xl">
+        <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 sm:pb-16 px-4 sm:px-6 text-center">
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
+            <span className="inline-block bg-[#D14836] text-white text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full shadow-lg animate-pulse">
+              Sunday Special · 30% OFF
+            </span>
+            <span className="inline-block bg-amber-400 text-pine text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full shadow-lg">
+              First 5 Orders · 50% OFF
+            </span>
+          </div>
+
+          <h1 className="font-serif text-[2.5rem] sm:text-6xl md:text-7xl text-white mb-3 leading-[1.05] drop-shadow-2xl">
             Sunday Roast
           </h1>
-          <p className="text-white/70 text-sm sm:text-base leading-relaxed max-w-md mx-auto mb-8">
-            Slow-roasted. Halal certified. Served with all the trimmings every Sunday at Farnham Road.
+          <p className="text-white/85 text-xs sm:text-base leading-relaxed max-w-lg mx-auto mb-6 drop-shadow">
+            Slow-roasted. Halal certified. All the trimmings. Enjoy <strong className="text-amber-300">30% OFF</strong> all Sunday long, and <strong className="text-amber-300">50% OFF</strong> for the first 5 orders!
           </p>
-          <Link
-            href="/slough/menu#sunday_roast"
-            className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-pine rounded-full font-black text-xs uppercase tracking-wider hover:bg-terracotta hover:text-white transition-all duration-300 shadow-xl active:scale-95"
-          >
-            Order Now
-            <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-          </Link>
+
+          {/* 3-Way Order CTAs */}
+          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 w-full max-w-xl">
+            <a
+              href="https://wa.me/441753326341?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-3 bg-[#25D366] text-white rounded-full font-black text-xs uppercase tracking-wider hover:bg-[#20ba59] transition-all shadow-xl active:scale-95"
+            >
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+              WhatsApp Order
+            </a>
+
+            <Link
+              href="/slough/menu#sunday_roast"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-pine rounded-full font-black text-xs uppercase tracking-wider hover:bg-terracotta hover:text-white transition-all duration-300 shadow-xl active:scale-95"
+            >
+              Website Order
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+            </Link>
+
+            <a
+              href="tel:01753326341"
+              className="inline-flex items-center gap-2 px-5 py-3 bg-white/15 backdrop-blur-md text-white border border-white/30 rounded-full font-black text-xs uppercase tracking-wider hover:bg-white hover:text-pine transition-all shadow-xl active:scale-95"
+            >
+              📞 01753 326341
+            </a>
+          </div>
+
+          <p className="text-[11px] text-amber-200/90 font-mono tracking-wider mt-4">
+            ★ Tell our team to apply under your loyalty program account to redeem
+          </p>
         </div>
       </div>
 
-      {/* ── AVAILABILITY PILL ── Floats between hero and content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-8 relative z-10 mb-16">
-        <div className="bg-pine text-white p-5 sm:p-6 rounded-2xl shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0">
-              <Clock size={18} className="text-amber-300" />
+      {/* ── PROMO HIGHLIGHT CARD ── Clear rules and redemption */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 -mt-10 relative z-20 mb-12">
+        <div className="bg-pine text-white p-6 sm:p-7 rounded-3xl shadow-2xl border border-amber-400/30">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div className="flex-1 text-center lg:text-left">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-2">
+                <span className="bg-amber-400 text-pine text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full">
+                  Limited Availability
+                </span>
+                <span className="text-amber-200 text-xs font-mono font-bold">
+                  Every Sunday 12:00 PM – 5:00 PM
+                </span>
+              </div>
+              <h2 className="font-serif text-2xl sm:text-3xl text-white font-bold leading-tight">
+                Sunday Roast Specials — Grab Yours Quick! <span className="text-amber-300 block text-lg sm:text-xl mt-1">30% OFF · First 5 Orders 50% OFF</span>
+              </h2>
+              <p className="text-white/80 text-xs sm:text-sm mt-1.5 leading-relaxed">
+                Order via WhatsApp, online, or call <span className="text-amber-300 font-bold">01753 326341</span>.
+                <strong className="text-white block mt-1">
+                  ⚡ Must tell our colleague to log it under your loyalty program account to redeem the offer!
+                </strong>
+              </p>
             </div>
-            <div>
-              <span className="font-black text-xs uppercase tracking-widest text-amber-300 block">Sunday Only</span>
-              <span className="text-white/70 text-xs">12:00 PM – 5:00 PM · Pre-order any day</span>
+
+            <div className="flex flex-row lg:flex-col gap-2 shrink-0">
+              <a
+                href="https://wa.me/441753326341?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-2.5 bg-[#25D366] text-white rounded-full font-black text-[11px] uppercase tracking-wider hover:bg-[#20ba59] transition-all text-center flex items-center justify-center gap-1.5"
+              >
+                1-Tap WhatsApp
+              </a>
+              <Link
+                href="/offers"
+                className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-full font-black text-[11px] uppercase tracking-wider transition-all text-center border border-white/20"
+              >
+                All TOV Offers
+              </Link>
             </div>
           </div>
-          <Link
-            href="/slough/menu#sunday_roast"
-            className="px-6 py-2.5 bg-terracotta text-white rounded-full font-black text-[11px] uppercase tracking-wider hover:bg-terracotta/80 transition-all active:scale-95 shrink-0"
-          >
-            View Menu
-          </Link>
         </div>
       </div>
 
@@ -233,58 +287,112 @@ export default function SloughSundayRoastPage() {
             />
           </div>
           <div className="p-6 sm:p-8 md:p-0">
-            <div className="flex items-baseline justify-between mb-2">
+            <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
               <h3 className="font-serif text-3xl text-pine">Beef Roast</h3>
-              <span className="text-terracotta font-black text-2xl">£14.99</span>
+              <div className="text-right">
+                <span className="text-pine/40 line-through text-sm mr-2">£14.99</span>
+                <span className="text-terracotta font-black text-2xl">£10.49</span>
+                <span className="block text-[10px] text-amber-700 font-bold uppercase tracking-wider">
+                  1st 5 Orders: £7.50
+                </span>
+              </div>
             </div>
             <div className="w-12 h-0.5 bg-terracotta/40 mb-4" />
             <p className="text-pine/70 leading-relaxed mb-6">
               Succulent slow-roasted British beef, carved thick and served with your choice of roast or creamy mashed potatoes, seasonal vegetables, rich gravy &amp; a golden Yorkshire pudding.
             </p>
-            <Link href="/slough/menu#sunday_roast" className="text-terracotta font-bold text-sm hover:underline inline-flex items-center gap-1">
-              Add to order →
-            </Link>
-          </div>
-        </div>
-
-        {/* Half Chicken — Text Only, Centered */}
-        <div className="bg-pine rounded-[2rem] p-8 sm:p-12 text-center mb-8 md:mb-14">
-          <div className="flex items-baseline justify-center gap-4 mb-3">
-            <h3 className="font-serif text-3xl text-white">Half Chicken Roast</h3>
-            <span className="text-amber-300 font-black text-2xl">£15.99</span>
-          </div>
-          <div className="w-12 h-0.5 bg-terracotta/60 mx-auto mb-4" />
-          <p className="text-white/70 leading-relaxed max-w-lg mx-auto mb-6">
-            Golden-roasted half chicken, tender and juicy, served with roast potatoes, seasonal veg, rich gravy and a freshly baked Yorkshire pudding. The classic done right.
-          </p>
-          <Link href="/slough/menu#sunday_roast" className="text-amber-300 font-bold text-sm hover:underline inline-flex items-center gap-1">
-            Add to order →
-          </Link>
-        </div>
-
-        {/* Lamb Shank — Image Right */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-8 items-center">
-          <div className="order-2 md:order-1 p-6 sm:p-8 md:p-0">
-            <div className="flex items-baseline justify-between mb-2">
-              <h3 className="font-serif text-3xl text-pine">Lamb Shank Roast</h3>
-              <span className="text-terracotta font-black text-2xl">£16.99</span>
+            <div className="flex items-center gap-4">
+              <Link href="/slough/menu#sunday_roast" className="text-terracotta font-bold text-sm hover:underline inline-flex items-center gap-1">
+                Order Online →
+              </Link>
+              <a href="https://wa.me/441753326341?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Beef%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program." target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold text-sm hover:underline inline-flex items-center gap-1">
+                WhatsApp Order →
+              </a>
             </div>
-            <div className="w-12 h-0.5 bg-terracotta/40 mb-4" />
-            <p className="text-pine/70 leading-relaxed mb-6">
-              Slow-cooked lamb shank, falling off the bone in its own rich juices. Served with creamy mash or roast potatoes, seasonal veg, gravy &amp; Yorkshire pudding.
-            </p>
-            <Link href="/slough/menu#sunday_roast" className="text-terracotta font-bold text-sm hover:underline inline-flex items-center gap-1">
-              Add to order →
-            </Link>
           </div>
-          <div className="order-1 md:order-2 relative aspect-[4/3] rounded-[2rem] overflow-hidden">
+        </div>
+
+        {/* Half Chicken Roast — Featured Platter */}
+        <div className="bg-pine text-white rounded-[2.5rem] p-6 sm:p-10 mb-8 md:mb-14 overflow-hidden border border-pine-light/30 shadow-2xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 items-center">
+            <div className="order-2 md:order-1">
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <span className="bg-amber-400 text-pine text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
+                  ★ Crowd Favourite
+                </span>
+                <span className="text-amber-200 text-xs font-mono font-bold tracking-wider">
+                  Halal Certified
+                </span>
+              </div>
+              <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
+                <h3 className="font-serif text-3xl sm:text-4xl text-white">Half Chicken Roast</h3>
+                <div className="text-right">
+                  <span className="text-white/40 line-through text-sm mr-2">£15.99</span>
+                  <span className="text-amber-300 font-black text-2xl sm:text-3xl">£11.19</span>
+                  <span className="block text-[10px] text-amber-200 font-bold uppercase tracking-wider">
+                    1st 5 Orders: £8.00
+                  </span>
+                </div>
+              </div>
+              <div className="w-12 h-0.5 bg-amber-400/60 mb-4" />
+              <p className="text-white/80 leading-relaxed mb-6 text-sm sm:text-base">
+                Succulent roasted half chicken served on traditional ceramic, tender and crispy-skinned. Accompanied by crisp Yorkshire pudding, roasted sweet carrots, parsnips, tender broccoli, fluffy potatoes and house gravy.
+              </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <Link href="/slough/menu#sunday_roast" className="px-6 py-3 bg-white text-pine rounded-full font-black text-xs uppercase tracking-wider hover:bg-amber-400 transition-all shadow-lg inline-flex items-center gap-1.5 active:scale-95">
+                  Order Online →
+                </Link>
+                <a href="https://wa.me/441753326341?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Half%20Chicken%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program." target="_blank" rel="noopener noreferrer" className="px-5 py-3 bg-[#25D366] text-white rounded-full font-black text-xs uppercase tracking-wider hover:bg-[#20ba59] transition-all shadow-lg inline-flex items-center gap-1.5 active:scale-95">
+                  WhatsApp Order →
+                </a>
+              </div>
+            </div>
+            <div className="order-1 md:order-2 relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl">
+              <Image
+                src="/assets/menu/sunday-roast/roast_special_2.jpg"
+                alt="Golden Half Chicken Roast on floral ceramic platter with Yorkshire pudding, roast carrots, broccoli, and rich gravy"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Lamb Shank — Image Left, Text Right */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-8 items-center">
+          <div className="order-1 md:order-1 relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-xl mb-6 md:mb-0">
             <Image
-              src="/assets/menu/sunday-roast/sunday_roast_lamb_shank.webp"
-              alt="Lamb Shank Roast with vine tomatoes, Yorkshire pudding, mash and roasted vegetables"
+              src="/assets/menu/sunday-roast/roast_special_1.jpg"
+              alt="Slow-cooked Lamb Shank Roast with vine tomatoes, Yorkshire pudding, mash and roasted potatoes"
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
+          </div>
+          <div className="order-2 md:order-2 p-6 sm:p-8 md:p-0">
+            <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
+              <h3 className="font-serif text-3xl text-pine">Lamb Shank Roast</h3>
+              <div className="text-right">
+                <span className="text-pine/40 line-through text-sm mr-2">£16.99</span>
+                <span className="text-terracotta font-black text-2xl">£11.89</span>
+                <span className="block text-[10px] text-amber-700 font-bold uppercase tracking-wider">
+                  1st 5 Orders: £8.50
+                </span>
+              </div>
+            </div>
+            <div className="w-12 h-0.5 bg-terracotta/40 mb-4" />
+            <p className="text-pine/70 leading-relaxed mb-6">
+              Slow-cooked bone-in lamb shank, braised until melt-in-the-mouth tender in rosemary jus. Served with roast potatoes, creamy mash, vine tomatoes, golden Yorkshire pudding &amp; rich gravy.
+            </p>
+            <div className="flex items-center gap-4">
+              <Link href="/slough/menu#sunday_roast" className="text-terracotta font-bold text-sm hover:underline inline-flex items-center gap-1">
+                Order Online →
+              </Link>
+              <a href="https://wa.me/441753326341?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Lamb%20Shank%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program." target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold text-sm hover:underline inline-flex items-center gap-1">
+                WhatsApp Order →
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -367,9 +475,54 @@ export default function SloughSundayRoastPage() {
         </div>
       </div>
 
-      {/* ── CTA FOOTER ── Dark editorial block */}
-      <div className="bg-pine text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-24 text-center">
+      {/* ── GRADIENT TRANSITION ── Smooth fade from sand into deep heritage pine */}
+      <div className="w-full bg-gradient-to-b from-sand via-[#EFE6DC] to-[#0E1F1A] pt-12 pb-6 relative z-10">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="inline-flex items-center gap-3 text-[9px] sm:text-[10px] font-bold tracking-[0.25em] uppercase text-pine/70">
+            <span className="w-6 sm:w-10 h-px bg-terracotta/40" />
+            <span>100% Halal Certified · Prepared Fresh Daily · Slough</span>
+            <span className="w-6 sm:w-10 h-px bg-terracotta/40" />
+          </div>
+        </div>
+      </div>
+
+      {/* ── CTA FOOTER ── Dark editorial block with subtle TOV diamond pattern */}
+      <footer className="w-full bg-[#0E1F1A] text-white relative overflow-hidden border-t border-terracotta/20">
+        {/* Subtle Diamond Pattern — Matching the first page */}
+        <div
+          className="absolute inset-0 opacity-[0.035] pointer-events-none"
+          style={{
+            backgroundImage: "url('/assets/tov-pattern-light.svg')",
+            backgroundSize: '80px 80px',
+            backgroundRepeat: 'repeat',
+          }}
+        />
+        {/* Subtle Top Rose Hairline Glow */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-terracotta/40 to-transparent pointer-events-none" />
+
+        {/* FHRS Official Food Hygiene Badges Tier — Side-by-Side as on First Page */}
+        <div className="relative z-10 border-b border-white/10 py-6 sm:py-8 px-4 sm:px-6">
+          <div className="max-w-xl mx-auto">
+            <p className="text-center text-[#889B8D]/80 text-[8px] sm:text-[9px] font-mono tracking-[0.3em] uppercase mb-4">
+              Official Food Standards Agency Ratings
+            </p>
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 items-center justify-center">
+              {/* Hayes Badge Container */}
+              <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-3 sm:py-3.5 sm:px-5 flex flex-col items-center gap-1.5 backdrop-blur-sm hover:bg-white/[0.08] transition-all">
+                <span className="text-[#A2B5A7] text-[8px] sm:text-[9px] uppercase tracking-[0.2em] font-medium">Hayes Branch</span>
+                <img src="/assets/fhrs-badge-4-horizontal.svg" alt="Hayes Food Hygiene Rating 4 - Good" className="h-5 sm:h-7 w-auto opacity-90 hover:opacity-100 transition-opacity" loading="lazy" />
+              </div>
+
+              {/* Slough Badge Container */}
+              <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-3 sm:py-3.5 sm:px-5 flex flex-col items-center gap-1.5 backdrop-blur-sm hover:bg-white/[0.08] transition-all">
+                <span className="text-[#A2B5A7] text-[8px] sm:text-[9px] uppercase tracking-[0.2em] font-medium">Slough Branch</span>
+                <img src="/assets/fhrs-badge-5-horizontal.svg" alt="Slough Food Hygiene Rating 5 - Very Good" className="h-5 sm:h-7 w-auto opacity-90 hover:opacity-100 transition-opacity" loading="lazy" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 sm:py-20 text-center relative z-10">
           <span className="text-terracotta font-bold tracking-widest uppercase text-[10px] block mb-4">260 Farnham Road, Slough</span>
           <h2 className="font-serif text-4xl sm:text-5xl mb-5">Your Sunday Sorted</h2>
           <p className="text-white/60 leading-relaxed max-w-md mx-auto mb-10">
@@ -396,8 +549,17 @@ export default function SloughSundayRoastPage() {
               📞 01753 326341
             </div>
           </div>
+
+          <div className="mt-12 pt-8 border-t border-white/10 text-center">
+            <span className="font-display text-terracotta text-xs tracking-[0.3em] uppercase font-semibold block mb-1">
+              Taste of Village
+            </span>
+            <span className="text-[#889B8D] text-[9px] tracking-[0.2em] uppercase font-sans">
+              &copy; {new Date().getFullYear()} Taste of Village | Slough &bull; 260 Farnham Road
+            </span>
+          </div>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
