@@ -155,7 +155,15 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-[#FAF6F0] text-[#1C2D22]">
       <header className="bg-[#1C2D22] text-[#FAF6F0] p-4 shadow-md sticky top-0 z-10">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold tracking-wider">TASTE OF VILLAGE — ADMIN</h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold tracking-wider">TASTE OF VILLAGE — ADMIN</h1>
+            <a 
+              href="/admin/waba" 
+              className="text-xs font-semibold bg-[#25D366]/20 text-[#25D366] border border-[#25D366]/40 px-2.5 py-1 rounded hover:bg-[#25D366] hover:text-black transition-colors flex items-center gap-1.5"
+            >
+              <span>💬</span> WABA Workflow Hub
+            </a>
+          </div>
           <button aria-label="Button" 
             onClick={() => { sessionStorage.removeItem('tov_admin_pin'); setIsAuthenticated(false); }}
             className="text-sm bg-[#354D3D] px-3 py-1 rounded hover:bg-[#a64036] transition-colors"
@@ -401,6 +409,27 @@ export default function AdminDashboard() {
           <section className="bg-white rounded-xl shadow-sm border border-[#e5e5e5] p-6 md:col-span-2 lg:col-span-1">
             <h2 className="text-lg font-bold text-[#1C2D22] mb-4">Controls & Quick Links</h2>
             
+            {/* WhatsApp WABA Node */}
+            <div className="mb-6 p-4 bg-emerald-50/70 border border-emerald-200/80 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">💬</span>
+                  <h3 className="font-bold text-[#1C2D22]">Meta WhatsApp WABA & Catalogs</h3>
+                </div>
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-emerald-600 text-white">Live Node</span>
+              </div>
+              <p className="text-xs text-[#354D3D] mb-3 leading-relaxed">
+                Visual pipeline monitor for Hayes (+44 7424 216045) & Slough (+44 7337 389133). Test outbound interactive messages and verify Meta Graph API health.
+              </p>
+              <a
+                href="/admin/waba"
+                className="inline-flex items-center justify-center bg-[#25D366] hover:bg-[#20ba59] text-black font-semibold text-xs py-2 px-3 rounded transition-all shadow-sm gap-1.5"
+              >
+                <span>Open Visual WABA Hub</span>
+                <span>→</span>
+              </a>
+            </div>
+
             <div className="mb-8 p-4 bg-[#FAF6F0] border border-[#e5e5e5] rounded-lg">
               <h3 className="font-bold text-[#1C2D22] mb-2">Search Engine Indexing</h3>
               <p className="text-sm text-[#354D3D] mb-4">Notify search engines of recent content changes.</p>
@@ -433,13 +462,17 @@ export default function AdminDashboard() {
                   <span className="text-xl mr-3 opacity-80 group-hover:opacity-100">🔥</span>
                   <span className="text-sm font-semibold text-[#1C2D22]">MS Clarity</span>
                 </a>
-                <a href="https://www.bing.com/webmasters/dashboard" target="_blank" rel="noopener noreferrer" className="flex items-center p-3 border border-[#e5e5e5] rounded hover:border-[#D3A762] hover:bg-[#FAF6F0] transition-all group">
-                  <span className="text-xl mr-3 opacity-80 group-hover:opacity-100">🔍</span>
-                  <span className="text-sm font-semibold text-[#1C2D22]">Bing Webmaster</span>
+                <a href="https://business.facebook.com/wa/manage/home/" target="_blank" rel="noopener noreferrer" className="flex items-center p-3 border border-[#e5e5e5] rounded hover:border-[#25D366] hover:bg-[#FAF6F0] transition-all group">
+                  <span className="text-xl mr-3 opacity-80 group-hover:opacity-100">💬</span>
+                  <span className="text-sm font-semibold text-[#1C2D22]">WhatsApp Manager</span>
+                </a>
+                <a href="https://business.facebook.com/commerce/" target="_blank" rel="noopener noreferrer" className="flex items-center p-3 border border-[#e5e5e5] rounded hover:border-[#25D366] hover:bg-[#FAF6F0] transition-all group">
+                  <span className="text-xl mr-3 opacity-80 group-hover:opacity-100">🛍️</span>
+                  <span className="text-sm font-semibold text-[#1C2D22]">Meta Commerce (Catalog)</span>
                 </a>
                 <a href="https://squareup.com/dashboard" target="_blank" rel="noopener noreferrer" className="flex items-center p-3 border border-[#e5e5e5] rounded hover:border-[#D3A762] hover:bg-[#FAF6F0] transition-all group">
                   <span className="text-xl mr-3 opacity-80 group-hover:opacity-100">💳</span>
-                  <span className="text-sm font-semibold text-[#1C2D22]">Square (Hayes)</span>
+                  <span className="text-sm font-semibold text-[#1C2D22]">Square POS</span>
                 </a>
               </div>
             </div>

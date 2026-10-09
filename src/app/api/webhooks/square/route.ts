@@ -213,7 +213,10 @@ export async function POST(req: NextRequest) {
                     });
 
                     // Send Instant WhatsApp Receipt, Dynamic Location & Live Tracking Link!
-                    const phoneId = waOrder.phoneId || process.env.TOV_WABA_PHONE_ID || '1353080021225827';
+                    const defaultPhoneId = branchKey === 'slough' 
+                      ? (process.env.TOV_SLOUGH_PHONE_ID || '1395146440346525') 
+                      : (process.env.TOV_HAYES_PHONE_ID || '1309829288888481');
+                    const phoneId = waOrder.phoneId || process.env.TOV_WABA_PHONE_ID || defaultPhoneId;
                     const addressLine = isDelivery
                       ? (waOrder.streetAddress
                           ? `📍 Delivering to: *${waOrder.streetAddress}, ${waOrder.postcode || ''}*`

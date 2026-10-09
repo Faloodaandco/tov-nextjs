@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
 
     // 3. Attempt WhatsApp (Free-form, might require a template in production)
     const { sendWhatsAppMessage } = await import('@/lib/waba');
-    const phoneId = process.env.WABA_PHONE_ID || '1353080021225827';
+    const phoneId = process.env.TOV_HAYES_PHONE_ID || process.env.WABA_PHONE_ID || '1309829288888481';
     await sendWhatsAppMessage(phoneId, cleanPhone, {
       type: 'text',
       text: { 
