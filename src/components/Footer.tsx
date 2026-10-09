@@ -41,10 +41,10 @@ export const Footer = () => {
       <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="" className="absolute -bottom-40 -right-40 w-[600px] h-[600px] opacity-[0.02] transform -rotate-12 pointer-events-none object-cover" />
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
           
           {/* Brand Col */}
-          <div className="col-span-1 md:col-span-1 flex flex-col items-start">
+          <div className="col-span-1 md:col-span-1 lg:col-span-2 flex flex-col items-start pr-0 lg:pr-12">
             <Link href="/" className="inline-flex flex-col items-start gap-5 mb-8 group">
               <img src="/assets/tov-logo-tree-terracotta-alpha.png" alt="Taste of Village" className="h-14 w-auto object-contain brightness-0 invert opacity-90 group-hover:scale-105 transition-transform duration-500" />
             </Link>
@@ -75,17 +75,30 @@ export const Footer = () => {
               <li><Link href={`/${loc.id}/menu`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Our Menu</Link></li>
               <li><Link href={`/${loc.id}/menu`} className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Order Takeaway</Link></li>
               <li><Link href="/book" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Book A Table</Link></li>
+              <li><Link href="/franchise" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Franchise</Link></li>
             </ul>
           </div>
 
           {/* Legal / Policy Hub */}
           <div>
-            <h4 className="font-sans font-bold text-xs mb-8 tracking-[0.2em] uppercase text-bg-sand/70">Legal & Policies</h4>
+            <h4 className="font-sans font-bold text-xs mb-8 tracking-[0.2em] uppercase text-bg-sand/70">Legal</h4>
             <ul className="space-y-5">
               <li><Link href="/info?tab=allergies" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Allergy Guide</Link></li>
-              <li><Link href="/info?tab=terms" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Terms & Conditions</Link></li>
+              <li><Link href="/info?tab=terms" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>T&Cs</Link></li>
               <li><Link href="/info?tab=privacy" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Privacy Policy</Link></li>
               <li><Link href="/info?tab=faq" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>FAQs</Link></li>
+            </ul>
+          </div>
+
+          {/* Areas We Serve */}
+          <div>
+            <h4 className="font-sans font-bold text-xs mb-8 tracking-[0.2em] uppercase text-bg-sand/70">Areas We Serve</h4>
+            <ul className="space-y-5">
+              <li><Link href="/hayes-delivery" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Hayes Delivery</Link></li>
+              <li><Link href="/slough-delivery" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Slough Delivery</Link></li>
+              <li><Link href="/burnham-takeaway" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Burnham</Link></li>
+              <li><Link href="/windsor-desserts" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>Windsor</Link></li>
+              <li><Link href="/high-wycombe-taste-of-village" className="text-bg-sand/70 hover:text-terracotta transition-colors font-bold text-xs uppercase tracking-[0.15em] flex items-center gap-2 group"><span className="w-0 h-px bg-terracotta transition-all duration-300 group-hover:w-4"></span>High Wycombe</Link></li>
             </ul>
           </div>
 

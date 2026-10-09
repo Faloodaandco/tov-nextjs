@@ -72,7 +72,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = `${item.name} — £${item.price.toFixed(2)} | Taste of Village ${branchName}`;
   const description = item.description || `Order ${item.name} online from Taste of Village ${branchName}. Collection & delivery available.`;
   const url = `https://tasteofvillagerestaurants.co.uk/${locId}/menu/${dishSlug}`;
-  const imageUrl = hasRealPhoto(item.image)
+  const hasPhoto = hasRealPhoto(item.image);
+  const imageUrl = hasPhoto
     ? `https://tasteofvillagerestaurants.co.uk${item.image}`
     : `https://tasteofvillagerestaurants.co.uk/assets/og-share-preview.jpg`;
 
@@ -80,6 +81,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title,
     description,
     alternates: { canonical: url },
+    robots: hasPhoto ? { index: true, follow: true } : { index: false, follow: true },
     openGraph: {
       title: `${item.name} — £${item.price.toFixed(2)}`,
       description,
