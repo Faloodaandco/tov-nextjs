@@ -313,12 +313,20 @@ export default function RootLayout({
       <body className="antialiased">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-pine focus:text-white focus:rounded-lg focus:text-sm">Skip to main content</a>
         <Providers><main id="main-content">{children}</main><MobileOrderDock /></Providers>
-        {/* Microsoft Clarity */}
+        {/* Microsoft Clarity — Project 1 */}
         <Script
-          id="clarity"
+          id="clarity-1"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "ymj4wrzgfx");`
+          }}
+        />
+        {/* Microsoft Clarity — Project 2 */}
+        <Script
+          id="clarity-2"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "ydv01vt483");`
           }}
         />
         {/* Google Analytics 4 */}
