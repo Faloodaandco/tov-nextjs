@@ -11,6 +11,14 @@ Guidance and configuration for automated agents working on the Taste of Village 
 5. **Canonical Domain Invariant:** The ONLY valid domain for Taste of Village is `https://tasteofvillagerestaurants.co.uk/`. NEVER assume, generate, or use placeholders like `tasteofvillage.co.uk`. All URLs, examples, Apple Pay domain verifications, webhooks, and tracking links MUST use `tasteofvillagerestaurants.co.uk`.
 6. **Next.js Vercel Build Strictness:** Vercel builds fail immediately on strict Next.js syntax/type errors. ALWAYS escape JSX entities (`&` must be `&amp;`, `<` must be `&lt;`). NEVER blindly import from UI libraries (like `lucide-react`) without verifying the export exists locally, to avoid `TS2305` build crashes. If Vercel isn't updating, check the dashboard for strict build failures or active dashboard filters (like Author or Status Error) hiding the latest deployment.
 7. **Multi-Brand Isolation & Webhook Invariant:** NEVER share or fallback Meta WhatsApp Phone IDs, WABA IDs, or Catalog IDs between brands (Falooda & Co vs Taste of Village Hayes vs Taste of Village Slough). Dynamic phone resolution MUST match the active branch/location explicitly (`branchKey === 'slough' ? TOV_SLOUGH_PHONE_ID : TOV_HAYES_PHONE_ID`). Square Webhook endpoints MUST be registered to the canonical WWW domain (`https://www.tasteofvillagerestaurants.co.uk/api/webhooks/square`) to avoid HTTP 308 redirect payload drops. In Square Webhook HMAC-SHA256 verification, NEVER confuse Webhook Subscription IDs (`wbhk_...`) with Signature Keys.
+8. **Brand Motif & Background Pattern Standard:**
+   - **Dark Backgrounds (`#0E1F1A`, `#1A3C34`):** ALWAYS use `/assets/tov-pattern-light.svg` with container opacity `0.6` to `0.8` (since the SVG has an internal `0.12` stroke opacity). NEVER use `tov-pattern.svg` on dark backgrounds.
+   - **Light Backgrounds (`#FAF5EE`, `#FDF5F2`):** ALWAYS use `/assets/tov-pattern.svg` with container opacity `0.03` to `0.05`.
+   - Never remove or obscure the signature cross-stitch diamond motif from page footers or hero sections without explicit approval.
+9. **Headless Git Push Protocol (WSL Environment):**
+   - Headless `git push` commands can stall on Windows GUI Credential Manager.
+   - When pushing programmatically in this environment, retrieve `GITHUB_TOKEN` from `.env.local` and execute via:
+     `GITHUB_TOKEN=$(grep -E "^GITHUB_TOKEN=" .env.local | cut -d'=' -f2) && git push "https://x-access-token:${GITHUB_TOKEN}@github.com/Faloodaandco/tov-nextjs.git" <branch>`
 
 
 ## Agent Skills
