@@ -97,7 +97,7 @@ export default function LinksPage() {
               </div>
               <div className="flex-1">
                 <h3 className="font-display text-lg tracking-widest text-amber-300 uppercase mb-1">Sunday Roast Specials</h3>
-                <p className="text-white/80 text-xs tracking-wider mb-2">Slow-roasted Halal Beef & Chicken with all the trimmings. Enjoy 30% OFF!</p>
+                <p className="text-white/80 text-xs tracking-wider mb-2">Slow-roasted Halal Beef &amp; Chicken with all the trimmings. Enjoy 30% OFF!</p>
                 <p className="text-amber-400/80 text-[10px] uppercase font-bold tracking-[0.2em]">Grab yours quick →</p>
               </div>
             </div>
@@ -181,7 +181,7 @@ export default function LinksPage() {
 
           <div className="flex flex-wrap justify-center gap-4 w-full">
             <Link href="/falooda" className="px-6 py-3 rounded-full bg-white border border-pine/10 hover:border-terracotta hover:text-terracotta transition-all text-[9px] tracking-[0.2em] uppercase font-bold text-pine flex items-center gap-2 shadow-sm">
-              Falooda & Co Dessert Lounge
+              Falooda &amp; Co Dessert Lounge
             </Link>
             <a href="https://www.instagram.com/tasteofvillageuk/" target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full bg-white border border-pine/10 hover:border-terracotta hover:text-terracotta transition-all text-[9px] tracking-[0.2em] uppercase font-bold text-pine flex items-center gap-2 shadow-sm">
               <Instagram size={14} /> Instagram
