@@ -19,7 +19,8 @@ Guidance and configuration for automated agents working on the Taste of Village 
    - Headless `git push` commands can stall on Windows GUI Credential Manager.
    - When pushing programmatically in this environment, retrieve `GITHUB_TOKEN` from `.env.local` and execute via:
      `GITHUB_TOKEN=$(grep -E "^GITHUB_TOKEN=" .env.local | cut -d'=' -f2) && git push "https://x-access-token:${GITHUB_TOKEN}@github.com/Faloodaandco/tov-nextjs.git" <branch>`
-
+10. **Git Push Hand-off (Fallback):** If the headless GitHub token is missing or fails (resulting in a 403 Forbidden), DO NOT attempt interactive `git push`. Commit the work locally and explicitly instruct the user to run `git push` in their authenticated Windows terminal.
+11. **Async Package Manager Safety:** Do not run overlapping global `npm install -g` commands as asynchronous background tasks. They will collide on global lockfiles and hang indefinitely. Chain them synchronously or prompt the user to install them manually.
 
 ## Agent Skills
 
