@@ -178,16 +178,14 @@ export default function SloughSundayRoastPage() {
             <span className="inline-block bg-[#D14836] text-white text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full shadow-lg animate-pulse">
               Sunday Special · 30% OFF
             </span>
-            <span className="inline-block bg-amber-400 text-pine text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full shadow-lg">
-              First 5 Orders · 50% OFF
-            </span>
+            
           </div>
 
           <h1 className="font-serif text-[2.5rem] sm:text-6xl md:text-7xl text-white mb-3 leading-[1.05] drop-shadow-2xl">
             Sunday Roast
           </h1>
           <p className="text-white/85 text-xs sm:text-base leading-relaxed max-w-lg mx-auto mb-6 drop-shadow">
-            Slow-roasted. Halal certified. All the trimmings. Enjoy <strong className="text-amber-300">30% OFF</strong> all Sunday long, and <strong className="text-amber-300">50% OFF</strong> for the first 5 orders!
+            Slow-roasted. Halal certified. All the trimmings. Enjoy <strong className="text-amber-300">30% OFF</strong> all Sunday long!
           </p>
 
           {/* 3-Way Order CTAs */}
@@ -238,7 +236,7 @@ export default function SloughSundayRoastPage() {
                 </span>
               </div>
               <h2 className="font-serif text-2xl sm:text-3xl text-white font-bold leading-tight">
-                Sunday Roast Specials — Grab Yours Quick! <span className="text-amber-300 block text-lg sm:text-xl mt-1">30% OFF · First 5 Orders 50% OFF</span>
+                Sunday Roast Specials — Grab Yours Quick! <span className="text-amber-300 block text-lg sm:text-xl mt-1">30% OFF</span>
               </h2>
               <p className="text-white/80 text-xs sm:text-sm mt-1.5 leading-relaxed">
                 Order via WhatsApp, online, or call <span className="text-amber-300 font-bold">01753 326341</span>.

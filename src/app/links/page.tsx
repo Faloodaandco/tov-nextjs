@@ -86,6 +86,24 @@ export default function LinksPage() {
           <div className="h-px w-8 md:w-16 bg-gradient-to-l from-transparent to-terracotta/50" />
         </div>
 
+        
+        {/* SUNDAY ROAST BANNER */}
+        <div className="w-full max-w-2xl mx-auto px-2 mb-8">
+          <Link href="/slough-sunday-roast" className="block relative w-full rounded-2xl overflow-hidden bg-gradient-to-br from-pine to-[#0b1a16] text-white p-5 border border-amber-400/30 shadow-lg hover:shadow-xl hover:border-amber-400 transition-all group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded-full blur-2xl pointer-events-none group-hover:bg-amber-400/20 transition-colors" />
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+              <div className="w-16 h-16 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0 border border-amber-400/30">
+                <span className="font-bold text-amber-300 text-sm leading-tight text-center">30%<br/>OFF</span>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-display text-lg tracking-widest text-amber-300 uppercase mb-1">Sunday Roast Specials</h3>
+                <p className="text-white/80 text-xs tracking-wider mb-2">Slow-roasted Halal Beef & Chicken with all the trimmings. Enjoy 30% OFF!</p>
+                <p className="text-amber-400/80 text-[10px] uppercase font-bold tracking-[0.2em]">Grab yours quick →</p>
+              </div>
+            </div>
+          </Link>
+        </div>
+
         <div className="relative w-full max-w-5xl mx-auto flex justify-center">
           {/* Vines */}
           <div className="absolute top-[30%] md:top-[20%] left-[5%] md:left-[10%] opacity-40 pointer-events-none w-10 md:w-12 h-auto rotate-[-5deg] z-0">
