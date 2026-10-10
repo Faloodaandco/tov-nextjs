@@ -12,6 +12,12 @@ Guidance and configuration for automated agents working on the Taste of Village 
 
 ## Agent Skills
 
+### Tooling & Workflow (Matt Pocock Skills)
+The full suite of Matt Pocock agent skills has been installed globally (prefix: `mattpocock-`). Use these for standard engineering workflows:
+- **Engineering**: `mattpocock-codebase-design`, `mattpocock-tdd`, `mattpocock-diagnosing-bugs`, `mattpocock-implement-spec`, `mattpocock-code-review`, `mattpocock-wizard`
+- **Productivity**: `mattpocock-grilling`, `mattpocock-grill-me`, `mattpocock-teach`, `mattpocock-writing-for-agents`
+- **Misc**: `mattpocock-setup-pre-commit`, `mattpocock-git-guardrails-claude-code`, `mattpocock-migrate-to-shoehorn`
+
 ### Issue Tracker
 GitHub Issues on `Faloodaandco/tov-nextjs`. See `docs/agents/issue-tracker.md`.
 
