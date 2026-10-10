@@ -169,7 +169,16 @@ export default function HomeSelector() {
 
       {/* Unified Editorial Footer in Deep Heritage Pine */}
       <footer className="w-full bg-[#0E1F1A] text-[#889B8D] relative overflow-hidden border-t border-terracotta/20">
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "url('/assets/tov-pattern.svg')", backgroundSize: '80px 80px', backgroundRepeat: 'repeat' }} />
+        {/* Authentic Diamond Cross-Stitch Pattern */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: "url('/assets/tov-pattern-light.svg')",
+            backgroundSize: '80px 80px',
+            backgroundRepeat: 'repeat',
+            opacity: 0.7,
+          }}
+        />
         
         {/* Subtle Top Rose Hairline Glow */}
         <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-terracotta/40 to-transparent pointer-events-none" />

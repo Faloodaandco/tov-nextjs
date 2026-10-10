@@ -486,13 +486,14 @@ export default function SloughSundayRoastPage() {
 
       {/* ── CTA FOOTER ── Dark editorial block with subtle TOV diamond pattern */}
       <footer className="w-full bg-[#0E1F1A] text-white relative overflow-hidden border-t border-terracotta/20">
-        {/* Subtle Diamond Pattern — Matching the first page */}
+        {/* Authentic Diamond Cross-Stitch Pattern — Matching the first page */}
         <div
-          className="absolute inset-0 opacity-[0.035] pointer-events-none"
+          className="absolute inset-0 pointer-events-none"
           style={{
             backgroundImage: "url('/assets/tov-pattern-light.svg')",
             backgroundSize: '80px 80px',
             backgroundRepeat: 'repeat',
+            opacity: 0.7,
           }}
         />
         {/* Subtle Top Rose Hairline Glow */}
