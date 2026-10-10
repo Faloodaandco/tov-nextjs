@@ -9,6 +9,7 @@ Guidance and configuration for automated agents working on the Taste of Village 
 3. **No Hallucinations:** Verify APIs, route contracts, and Square/Firebase integrations against source code and official specs.
 4. **Elite Design Standard:** ALWAYS apply the following design skills automatically for ANY UI/UX work without being asked: `design-taste-frontend`, `beautiful-web-ui-design`, `ui-ux-pro-max`, `owl-ui-design-mastery`, `owl-visual-critique`, `antigravity-design-expert`. UI must be clean, editorial, transparent, fast, and highly refined (no generic boxed cards or cheap drop shadows).
 5. **Canonical Domain Invariant:** The ONLY valid domain for Taste of Village is `https://tasteofvillagerestaurants.co.uk/`. NEVER assume, generate, or use placeholders like `tasteofvillage.co.uk`. All URLs, examples, Apple Pay domain verifications, webhooks, and tracking links MUST use `tasteofvillagerestaurants.co.uk`.
+6. **Next.js Vercel Build Strictness:** Vercel builds fail immediately on strict Next.js syntax/type errors. ALWAYS escape JSX entities (`&` must be `&amp;`, `<` must be `&lt;`). NEVER blindly import from UI libraries (like `lucide-react`) without verifying the export exists locally, to avoid `TS2305` build crashes. If Vercel isn't updating, check the dashboard for strict build failures or active dashboard filters (like Author or Status Error) hiding the latest deployment.
 
 ## Agent Skills
 
