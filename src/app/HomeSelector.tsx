@@ -54,7 +54,7 @@ export default function HomeSelector() {
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           />
           <span className="text-pine italic font-serif text-[8px] md:text-[9px] mt-1 hidden md:block">
-            Home-style flavours, made fresh daily
+            Authentic Pakistani Restaurant
           </span>
         </div>
 
