@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { MapPin, Flame, ArrowRight, Phone, MessageCircle, Star, Instagram, Facebook, Globe } from 'lucide-react';
+import { MapPin, Flame, ArrowRight, Phone, MessageCircle, Star, Globe } from 'lucide-react';
 
 const BRANCHES = {
   slough: {
@@ -184,10 +184,10 @@ export default function LinksPage() {
               Falooda &amp; Co Dessert Lounge
             </Link>
             <a href="https://www.instagram.com/tasteofvillageuk/" target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full bg-white border border-pine/10 hover:border-terracotta hover:text-terracotta transition-all text-[9px] tracking-[0.2em] uppercase font-bold text-pine flex items-center gap-2 shadow-sm">
-              <Instagram size={14} /> Instagram
+              Instagram
             </a>
             <a href="https://www.facebook.com/profile.php?id=61590779182784" target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-full bg-white border border-pine/10 hover:border-terracotta hover:text-terracotta transition-all text-[9px] tracking-[0.2em] uppercase font-bold text-pine flex items-center gap-2 shadow-sm">
-              <Facebook size={14} /> Facebook
+              Facebook
             </a>
           </div>
         </div>
