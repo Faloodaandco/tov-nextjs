@@ -44,3 +44,25 @@
 **Decision:** Stopwords include branch names (`slough`, `hayes`), action words (`menu`, `order`, `buy`, `eat`), and location words (`farnham`, `uxbridge`, `delivery`, `collection`).
 
 **Why:** Without these, "slough menu for karahi" matches every item with "menu" in its description.
+
+## 7. Meta Catalog Product List vs Text List (Oct 2026)
+
+**Decision:** Use `product_list` interactive messages (rich product cards with images, prices, add-to-cart) when the customer has no active cart. Fall back to text `list` messages when the cart contains items.
+
+**Why:** Product list messages show catalog items with images and prices, with native add-to-cart — far better UX than text-only lists. However, `product_list` messages don't support carrying cart state in row IDs. The existing text list system encodes cart state as `cat_xxx~cartdata~branch` in row IDs. So:
+- **Empty cart** → `sendFullCatalogMenu()` or `sendCatalogProductList()` → rich experience
+- **Has cart items** → `sendCategoryList()` / `buildItemListRows()` → preserves cart
+
+**Catalog IDs:** Hayes `987964757674623`, Slough `1657059252594459`.
+**Limits:** Max 30 products across up to 10 sections per product_list message.
+**retailer_id mapping:** Catalog `retailer_id` values match `item.id` from `tov-menu.json` / `tov-menu-slough.json`.
+
+## 8. Meta App Review — Webhook Delivery Requires All Test Calls (Oct 2026)
+
+**Decision:** Do NOT rely on system user token API calls to satisfy the Testing page requirements. Use Graph API Explorer with a User Token to make explicit test calls.
+
+**Why:** We spent 14+ hours debugging webhook non-delivery. Everything was configured correctly (subscriptions, callback URL, verify token). The root cause: Meta's App Review Testing page requires specific API test calls per permission before enabling real webhook delivery. System user API calls do NOT count — only Graph API Explorer calls with the app's own User Token are registered. The specific requirements:
+- `whatsapp_business_messaging` — send a test message
+- `whatsapp_business_management` — any WABA query
+- `business_management` — `GET /me/businesses` (1 call)
+- `public_profile` — `GET /me` (3 calls)
