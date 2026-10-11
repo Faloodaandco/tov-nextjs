@@ -71,7 +71,14 @@ const META_CATALOG_IDS: Record<LocationId, string> = {
   slough: '1657059252594459',
 };
 
-function getEffectiveBranch(conv?: ConversationState): LocationId {
+// WhatsApp Phone Number IDs
+const TOV_PHONE_BRANCH_MAP: Record<string, LocationId> = {
+  '1309829288888481': 'hayes', // +44 7424 216045
+  '1395146440346525': 'slough', // +44 7337 389133
+};
+
+function getEffectiveBranch(conv?: ConversationState, phoneId?: string): LocationId {
+  // 1. If explicit branch is set on the conversation, respect it
   if (conv?.branchId && (conv.branchId === 'hayes' || conv.branchId === 'slough')) {
     return conv.branchId;
   }
@@ -80,6 +87,10 @@ function getEffectiveBranch(conv?: ConversationState): LocationId {
   }
   if (conv?.activeCart?.branchId && (conv.activeCart.branchId === 'hayes' || conv.activeCart.branchId === 'slough')) {
     return conv.activeCart.branchId;
+  }
+  // 2. Strict Phone ID Resolution: If customer messaged the Slough number, default to Slough!
+  if (phoneId && TOV_PHONE_BRANCH_MAP[phoneId]) {
+    return TOV_PHONE_BRANCH_MAP[phoneId];
   }
   return DEFAULT_BRANCH_ID;
 }
@@ -171,10 +182,17 @@ const CATALOG_ITEM_CACHE = new Map<string, { name: string; pricePence: number }>
 
 function encodeCart(items: CartItem[]): string {
   if (!items?.length) return '';
-  return items.map(i => {
+  const parts: string[] = [];
+  let currentLen = 0;
+  for (const i of items) {
     const cleanId = i.id.startsWith(TOV_PREFIX) ? i.id.slice(TOV_PREFIX.length) : i.id;
-    return `${cleanId}:${i.quantity}:${i.pricePence}`;
-  }).join(',').slice(0, 200);
+    const part = `${cleanId}:${i.quantity}:${i.pricePence}`;
+    const addedLen = (parts.length > 0 ? 1 : 0) + part.length;
+    if (currentLen + addedLen > 230) break;
+    parts.push(part);
+    currentLen += addedLen;
+  }
+  return parts.join(',');
 }
 
 function decodeCart(str: string): CartItem[] {
@@ -472,7 +490,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
 
   // ── Intent: Direct Text "Collection" / "Delivery" ──────────────
   if (/^(collection|pickup|pick up)\b/i.test(text)) {
-    const branchId = getEffectiveBranch(conv);
+    const branchId = getEffectiveBranch(conv, phoneId);
     if (conv.activeCart?.items?.length) {
       await generateCheckoutLink(phoneId, from, name, conv.activeCart, false, 0, undefined, undefined, branchId);
       return;
@@ -499,7 +517,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
         type: 'text',
         text: { body: 'To place a delivery order, choose from our menu below.' },
       });
-      await sendCategoryList(phoneId, from, undefined, getEffectiveBranch(conv));
+      await sendCategoryList(phoneId, from, undefined, getEffectiveBranch(conv, phoneId));
       return;
     }
   }
@@ -517,7 +535,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
 
   // ── Intent: menu / food / order ────────────────────────────────
   if (/^(menu|food|order|browse|dishes|eat|show menu|see menu|menu please)$/i.test(text) || /^(slough|hayes)?\s*menu$/i.test(text)) {
-    const activeBranchForMenu = getEffectiveBranch(conv);
+    const activeBranchForMenu = getEffectiveBranch(conv, phoneId);
     if (conv.activeCart?.items?.length) {
       // User has items in cart — use text list to preserve cart state
       const carriedCartStr = encodeCart(conv.activeCart.items);
@@ -531,7 +549,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
 
   // ── Smart Curation: Fast-close on popular dishes (e.g. "karahi", "biryani", "grill") ──
   // MUST run before Gemini AI — instant 0ms local pattern matching
-  const activeBranch = getEffectiveBranch(conv);
+  const activeBranch = getEffectiveBranch(conv, phoneId);
   const loc = LOCATIONS[activeBranch];
   const curated = getCuratedDish(text, activeBranch);
   if (curated) {
@@ -829,11 +847,11 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
 async function handleInteractiveMessage(phoneId: string, from: string, name: string, message: any) {
   const replyType = message.interactive.type;
   const conv = await getConversation(from);
-  let activeBranch = getEffectiveBranch(conv);
+  let activeBranch = getEffectiveBranch(conv, phoneId);
 
   // ── Branch self-correction from item IDs ──────────────────────────
   // Serverless containers lose in-memory cache between requests.
-  // Detect the actual branch from item IDs (Slough items have tov_slough_ prefix).
+  // Detect the actual branch from item IDs (Slough items have tov_slough_ prefix, Hayes has tov_item_).
   const replyId: string = replyType === 'button_reply'
     ? message.interactive.button_reply?.id || ''
     : replyType === 'list_reply'
@@ -843,6 +861,10 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     activeBranch = 'slough';
     conv.branchId = 'slough';
     await updateConversation(from, { branchId: 'slough' });
+  } else if (replyId.includes('tov_item_') || replyId.startsWith('tov_branch_hayes')) {
+    activeBranch = 'hayes';
+    conv.branchId = 'hayes';
+    await updateConversation(from, { branchId: 'hayes' });
   }
 
   console.log(`[TOV WABA] Interactive: type=${replyType} id=${replyId} branch=${activeBranch} from=${from}`);
@@ -1156,7 +1178,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       if (!items.length) {
         items = conv.activeCart?.items || [];
       }
-      const branchKey = getEffectiveBranch(conv);
+      const branchKey = getEffectiveBranch(conv, phoneId);
       const branchLoc = LOCATIONS[branchKey];
 
       if (!items.length) {
@@ -1210,7 +1232,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         return;
       }
 
-      const branchKey = getEffectiveBranch(conv);
+      const branchKey = getEffectiveBranch(conv, phoneId);
       const branchLoc = LOCATIONS[branchKey];
       const total = cartTotal(items);
 
@@ -1244,7 +1266,20 @@ async function handleOrderMessage(phoneId: string, from: string, name: string, m
   if (!orderItems.length) return;
 
   const conv = await getConversation(from);
-  const branchId = getEffectiveBranch(conv);
+  let branchId = getEffectiveBranch(conv, phoneId);
+
+  // If order items clearly come from Slough or Hayes catalog, bind to that branch!
+  const hasSloughItems = orderItems.some((i: any) => i.product_retailer_id?.includes('tov_slough_'));
+  const hasHayesItems = orderItems.some((i: any) => i.product_retailer_id?.startsWith('tov_item_'));
+  if (hasSloughItems && !hasHayesItems) {
+    branchId = 'slough';
+    conv.branchId = 'slough';
+    await updateConversation(from, { branchId: 'slough' });
+  } else if (hasHayesItems && !hasSloughItems) {
+    branchId = 'hayes';
+    conv.branchId = 'hayes';
+    await updateConversation(from, { branchId: 'hayes' });
+  }
 
   const cartItems: CartItem[] = [];
   let totalPence = 0;
@@ -1512,7 +1547,7 @@ async function handleAddressInput(
       return;
     }
 
-    const effectiveBranch = conv.pendingDelivery.branchId || getEffectiveBranch(conv);
+    const effectiveBranch = conv.pendingDelivery.branchId || getEffectiveBranch(conv, phoneId);
     await generateCheckoutLink(
       phoneId,
       from,
@@ -1731,9 +1766,9 @@ async function sendWelcome(phoneId: string, from: string, name: string, conv?: C
   const hasCart = conv?.activeCart?.items?.length;
   const checkoutLink = conv?.activeCart?.checkoutLink;
 
-  const branchId = getEffectiveBranch(conv);
+  const branchId = getEffectiveBranch(conv, phoneId);
   const loc = LOCATIONS[branchId];
-  const hasExplicitBranch = !!conv?.branchId;
+  const hasExplicitBranch = !!conv?.branchId || !!TOV_PHONE_BRANCH_MAP[phoneId];
 
   let cartSection = '';
   if (hasCart) {
@@ -1890,7 +1925,7 @@ async function sendFullCatalogMenu(phoneId: string, from: string, branchId: Loca
 }
 
 async function sendCategoryList(phoneId: string, from: string, carriedCart?: string, explicitBranch?: LocationId, forceList = false) {
-  const branchId = explicitBranch || getEffectiveBranch(await getConversation(from));
+  const branchId = explicitBranch || getEffectiveBranch(await getConversation(from), phoneId);
   const loc = LOCATIONS[branchId];
   
   if (forceList) {
