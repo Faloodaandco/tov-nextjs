@@ -1,37 +1,17 @@
 /**
- * SMTP Email Service for WhatsApp Order Notifications
+ * Email Service for WhatsApp Order Notifications
  *
- * Uses nodemailer with Google Workspace SMTP (info@tasteofvillagerestaurants.co.uk).
- * Requires SMTP_EMAIL and SMTP_APP_PASSWORD in environment.
+ * Strategy: Resend API (primary, zero-config) → SMTP/nodemailer (fallback).
+ * - RESEND_API_KEY → uses Resend (free tier: 100 emails/day)
+ * - SMTP_APP_PASSWORD → falls back to Google Workspace SMTP
  *
  * Non-fatal: email failures never block order processing.
  */
-import nodemailer, { type Transporter } from 'nodemailer';
 
+const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const SMTP_EMAIL = process.env.SMTP_EMAIL || 'info@tasteofvillagerestaurants.co.uk';
 const SMTP_PASSWORD = process.env.SMTP_APP_PASSWORD || '';
-
-let transporter: Transporter | null = null;
-
-function getTransporter(): Transporter | null {
-  if (!SMTP_PASSWORD) {
-    console.warn('[Email] SMTP_APP_PASSWORD not configured — email notifications disabled');
-    return null;
-  }
-
-  if (!transporter) {
-    transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
-      auth: {
-        user: SMTP_EMAIL,
-        pass: SMTP_PASSWORD,
-      },
-    });
-  }
-  return transporter;
-}
+const RECIPIENT = 'info@tasteofvillagerestaurants.co.uk';
 
 export interface OrderEmailData {
   orderDisplayId: string;
@@ -47,14 +27,7 @@ export interface OrderEmailData {
   deliveryPostcode?: string;
 }
 
-/**
- * Send order notification email to the restaurant.
- * Non-fatal — NEVER blocks order processing.
- */
-export async function sendOrderNotificationEmail(data: OrderEmailData): Promise<void> {
-  const transport = getTransporter();
-  if (!transport) return;
-
+function buildEmailContent(data: OrderEmailData) {
   const itemLines = data.items
     .map(i => `  ${i.quantity}x ${i.name} — £${(i.pricePence / 100).toFixed(2)}`)
     .join('\n');
@@ -63,7 +36,7 @@ export async function sendOrderNotificationEmail(data: OrderEmailData): Promise<
     ? `\nDelivery Address: ${data.deliveryAddress}, ${data.deliveryPostcode || ''}`
     : '';
 
-  const textBody = [
+  const text = [
     `New WhatsApp Order — ${data.branchName}`,
     `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
     ``,
@@ -82,7 +55,7 @@ export async function sendOrderNotificationEmail(data: OrderEmailData): Promise<
     `Square Payment: ${data.paymentId}`,
   ].filter(Boolean).join('\n');
 
-  const htmlBody = `
+  const html = `
     <div style="font-family: 'Outfit', sans-serif; max-width: 600px; margin: 0 auto;">
       <div style="background: #1A3C34; color: white; padding: 20px; text-align: center;">
         <h1 style="font-family: 'Cinzel', serif; margin: 0; font-size: 18px; letter-spacing: 2px;">
@@ -116,15 +89,84 @@ export async function sendOrderNotificationEmail(data: OrderEmailData): Promise<
     </div>
   `;
 
+  const subject = `🍽️ WhatsApp Order #${data.orderDisplayId} — ${data.branchName} — £${data.totalPounds.toFixed(2)}`;
+
+  return { text, html, subject };
+}
+
+/** Send via Resend API (free, no SMTP config needed) */
+async function sendViaResend(data: OrderEmailData): Promise<boolean> {
+  if (!RESEND_API_KEY) return false;
+
+  const { text, html, subject } = buildEmailContent(data);
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'TOV Orders <onboarding@resend.dev>',
+      to: [RECIPIENT],
+      subject,
+      text,
+      html,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error(`[Email/Resend] Failed (HTTP ${res.status}):`, err);
+    return false;
+  }
+
+  console.info(`[Email/Resend] Sent order notification for #${data.orderDisplayId}`);
+  return true;
+}
+
+/** Send via SMTP/nodemailer (fallback, requires Google App Password) */
+async function sendViaSMTP(data: OrderEmailData): Promise<boolean> {
+  if (!SMTP_PASSWORD) return false;
+
+  const nodemailer = (await import('nodemailer')).default;
+  const transport = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: { user: SMTP_EMAIL, pass: SMTP_PASSWORD },
+  });
+
+  const { text, html, subject } = buildEmailContent(data);
+
+  await transport.sendMail({
+    from: `"TOV Orders" <${SMTP_EMAIL}>`,
+    to: RECIPIENT,
+    subject,
+    text,
+    html,
+  });
+
+  console.info(`[Email/SMTP] Sent order notification for #${data.orderDisplayId}`);
+  return true;
+}
+
+/**
+ * Send order notification email to the restaurant.
+ * Tries Resend first (zero config), falls back to SMTP.
+ * Non-fatal — NEVER blocks order processing.
+ */
+export async function sendOrderNotificationEmail(data: OrderEmailData): Promise<void> {
   try {
-    await transport.sendMail({
-      from: `"TOV Orders" <${SMTP_EMAIL}>`,
-      to: SMTP_EMAIL,
-      subject: `🍽️ WhatsApp Order #${data.orderDisplayId} — ${data.branchName} — £${data.totalPounds.toFixed(2)}`,
-      text: textBody,
-      html: htmlBody,
-    });
-    console.info(`[Email] Sent order notification for #${data.orderDisplayId}`);
+    // Strategy 1: Resend (free API, no SMTP setup)
+    const sentViaResend = await sendViaResend(data);
+    if (sentViaResend) return;
+
+    // Strategy 2: SMTP via nodemailer (Google Workspace)
+    const sentViaSMTP = await sendViaSMTP(data);
+    if (sentViaSMTP) return;
+
+    console.warn('[Email] No email provider configured. Set RESEND_API_KEY or SMTP_APP_PASSWORD on Vercel.');
   } catch (error) {
     console.error('[Email] Failed to send order notification (non-fatal):', error);
   }
