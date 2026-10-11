@@ -162,7 +162,7 @@ export async function issueFirstTimeBuyerPack(
       branch: 'hayes',
       type: 'FIRST_TIME_50',
       discountPercent: 50,
-      minOrderPence: 1000,
+      minOrderPence: 0,
       maxUses: 1,
       usedCount: 0,
       usedOrderIds: [],
