@@ -40,7 +40,7 @@ interface CartItem {
 }
 
 interface ConversationState {
-  state: 'idle' | 'awaiting_postcode' | 'awaiting_address' | 'awaiting_branch' | 'awaiting_name_confirmation';
+  state: 'idle' | 'awaiting_postcode' | 'awaiting_address' | 'awaiting_branch' | 'awaiting_name_confirmation' | 'awaiting_voucher_code';
   branchId?: LocationId;
   pendingDelivery?: {
     branchId?: LocationId;
@@ -67,6 +67,7 @@ interface ConversationState {
   } | null;
   readyAlertRequested?: boolean;
   readyAlertOrderId?: string;
+  pendingFulfillment?: 'collection' | 'delivery' | null;
 }
 
 // ── Branch & Location Resolution ─────────────────────────────────────
@@ -469,8 +470,77 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     await updateConversation(from, { state: 'idle' });
   }
 
+  // ── State: awaiting voucher code input ────────────────────────
+  if (conv.state === 'awaiting_voucher_code') {
+    const code = rawText.trim().toUpperCase();
+    const branchKey = getEffectiveBranch(conv, phoneId);
+    const cartTotal = conv.activeCart?.basePence || 0;
+
+    try {
+      const { validateVoucher } = await import('@/services/VoucherService');
+      const result = await validateVoucher(code, from, branchKey, cartTotal);
+
+      if (result.valid && result.discountPercent > 0) {
+        await updateConversation(from, {
+          state: 'idle',
+          appliedVoucher: { code, discountPercent: result.discountPercent, voucherId: result.voucherId },
+        });
+
+        const discountPence = cartTotal > 0 ? Math.round(cartTotal * (result.discountPercent / 100)) : 0;
+        const newTotal = cartTotal - discountPence;
+
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'interactive',
+          interactive: {
+            type: 'button',
+            body: {
+              text: [
+                `✅ *${result.discountPercent}% Discount Applied!*`,
+                `Code: ${code}`,
+                cartTotal > 0 ? `Saving: £${(discountPence / 100).toFixed(2)}` : '',
+                cartTotal > 0 ? `New Total: *£${(newTotal / 100).toFixed(2)}*` : '',
+                ``,
+                `Tap below to complete your order:`,
+              ].filter(Boolean).join('\n'),
+            },
+            action: {
+              buttons: conv.pendingFulfillment === 'delivery'
+                ? [{ type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Checkout Delivery' } }]
+                : [{ type: 'reply', reply: { id: 'tov_collection', title: '🏪 Checkout Collection' } }],
+            },
+          },
+        });
+      } else {
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'interactive',
+          interactive: {
+            type: 'button',
+            body: { text: `❌ ${result.reason}\n\nTry another code or skip to checkout:` },
+            action: {
+              buttons: conv.pendingFulfillment === 'delivery'
+                ? [
+                    { type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Skip & Checkout' } },
+                  ]
+                : [
+                    { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Skip & Checkout' } },
+                  ],
+            },
+          },
+        });
+      }
+    } catch (e) {
+      console.error('[WABA] Voucher validation error:', e);
+      await updateConversation(from, { state: 'idle' });
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: { body: `Something went wrong. Proceeding without discount — type *menu* to try again.` },
+      });
+    }
+    return;
+  }
+
   // ── Intent: Voucher Code Redemption (TOV50-XXXX, TOV30-XXXX) ──
-  const voucherMatch = text.match(/\b(TOV(?:50|30)-[A-Z0-9]{6,10})\b/i);
+  const voucherMatch = text.match(/\b((?:HALF|SAVE|TOV50|TOV30)-[A-Z0-9]{3,10})\b/i);
   if (voucherMatch) {
     const code = voucherMatch[1].toUpperCase();
     const branchKey = getEffectiveBranch(conv, phoneId);
@@ -1182,6 +1252,22 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       return;
     }
 
+    // ── Discount Code Prompt Button ───────────────────────────────
+    if (buttonId === 'tov_has_voucher') {
+      await updateConversation(from, { state: 'awaiting_voucher_code' });
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: {
+          body: [
+            `🎫 *Enter your discount code*`,
+            ``,
+            `Type your code below (e.g. HALF-AB12 or SAVE-XY34):`,
+          ].join('\n'),
+        },
+      });
+      return;
+    }
+
     // ── Marketing Opt-In Buttons (post-first-order flow) ──────────
     if (buttonId === 'tov_marketing_yes') {
       try {
@@ -1463,6 +1549,37 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         return;
       }
       const total = cartTotal(items);
+
+      // ── Discount Code Prompt (only if no voucher already applied) ──
+      if (!conv.appliedVoucher && !buttonId.includes('_skip_voucher')) {
+        // Save cart and fulfillment choice, then ask about discount
+        await updateConversation(from, {
+          activeCart: { items, basePence: total, branchId: branchKey, updatedAt: new Date().toISOString() },
+          pendingFulfillment: 'collection',
+        });
+
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'interactive',
+          interactive: {
+            type: 'button',
+            body: {
+              text: [
+                `🏪 *${branchLoc.name} Collection*`,
+                `Cart: £${(total / 100).toFixed(2)}`,
+                ``,
+                `🎫 Do you have a discount code?`,
+              ].join('\n'),
+            },
+            action: {
+              buttons: [
+                { type: 'reply', reply: { id: 'tov_has_voucher', title: '🎫 Yes, I have one' } },
+                { type: 'reply', reply: { id: 'tov_col_skip_voucher', title: '🏪 No, Checkout' } },
+              ],
+            },
+          },
+        });
+        return;
+      }
 
       // Apply voucher discount if one was stored — reduce item prices proportionally
       const voucher = conv.appliedVoucher;
