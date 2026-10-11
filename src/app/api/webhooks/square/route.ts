@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { headers } from 'next/headers';
 import crypto from 'crypto';
 import { adminDb } from '@/lib/firebaseAdmin';
@@ -7,6 +7,9 @@ import { LOCATIONS, type LocationId } from '@/config/shopConfig';
 import { serverUpsertCustomerOnOrder, calculateLoyaltyTier, TIER_NAMES, type ServerCustomerRecord } from '@/services/serverCustomerService';
 import { isFirstTimeBuyer, hasActiveVouchers, issueFirstTimeBuyerPack } from '@/services/VoucherService';
 import { generateContextualCrossSell } from '@/lib/geminiCrossSell';
+
+// Keep serverless function alive for after() callbacks (cross-sell, name prompt, email)
+export const maxDuration = 60;
 
 /**
  * POST /api/webhooks/square
@@ -308,9 +311,11 @@ export async function POST(req: NextRequest) {
                     const crossSell = generateContextualCrossSell(crossSellItems, branchKey);
 
                     if (crossSell) {
-                      // Fire-and-forget: delay 5s then send cross-sell
-                      setTimeout(async () => {
+                      // Use Next.js after() — runs reliably after response on Vercel
+                      after(async () => {
                         try {
+                          // Small delay so confirmation arrives first
+                          await new Promise(r => setTimeout(r, 3000));
                           await sendWhatsAppMessage(phoneId, waOrder.phone, {
                             type: 'interactive',
                             interactive: {
@@ -336,13 +341,14 @@ export async function POST(req: NextRequest) {
                         } catch (csErr) {
                           console.error('[Square Webhook] Cross-sell send failed (non-fatal):', csErr);
                         }
-                      }, 5000);
+                      });
                     }
 
-                    // ── First-Order Name Confirmation (10s delay) ────────────
+                    // ── First-Order Name Confirmation ────────────────────────
                     if (customerProfile && customerProfile.orderCount === 1) {
-                      setTimeout(async () => {
+                      after(async () => {
                         try {
+                          await new Promise(r => setTimeout(r, 8000));
                           await adminDb.collection('whatsapp_conversations').doc(waOrder.phone).set({
                             state: 'awaiting_name_confirmation',
                           }, { merge: true });
@@ -371,8 +377,48 @@ export async function POST(req: NextRequest) {
                         } catch (ncErr) {
                           console.error('[Square Webhook] Name confirmation failed (non-fatal):', ncErr);
                         }
-                      }, 10000);
+                      });
                     }
+
+                    // ── Email Notification for WhatsApp Orders ───────────────
+                    after(async () => {
+                      try {
+                        const emailBody = [
+                          `New WhatsApp Order — ${loc.name}`,
+                          ``,
+                          `Order #${displayId}`,
+                          `Customer: ${waOrder.name || 'WhatsApp Customer'}`,
+                          `Phone: +${waOrder.phone}`,
+                          `Type: ${isDelivery ? 'Delivery' : 'Collection'}`,
+                          isDelivery ? `Address: ${waOrder.streetAddress || ''}, ${waOrder.postcode || ''}` : '',
+                          ``,
+                          `Items:`,
+                          ...(waOrder.items || []).map((i: any) => `  ${i.quantity}x ${i.name} — £${((i.pricePence || 0) / 100).toFixed(2)}`),
+                          ``,
+                          `Total: £${orderTotalPounds.toFixed(2)}`,
+                          `Tracking: ${trackingUrl}`,
+                          ``,
+                          `Square Payment ID: ${payment.id}`,
+                        ].filter(Boolean).join('\n');
+
+                        await fetch('https://api.resend.com/emails', {
+                          method: 'POST',
+                          headers: {
+                            'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            from: 'TOV Orders <orders@tasteofvillagerestaurants.co.uk>',
+                            to: ['info@tasteofvillagerestaurants.co.uk'],
+                            subject: `🍽️ WhatsApp Order #${displayId} — ${loc.name} — £${orderTotalPounds.toFixed(2)}`,
+                            text: emailBody,
+                          }),
+                        });
+                        console.info(`[Square Webhook] Sent email notification for order ${displayId}`);
+                      } catch (emailErr) {
+                        console.error('[Square Webhook] Email notification failed (non-fatal):', emailErr);
+                      }
+                    });
                   }
                 }
               }

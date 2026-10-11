@@ -55,8 +55,8 @@ export async function createItemisedCheckoutLink(options: {
     : process.env.SQUARE_SLOUGH_ACCESS_TOKEN;
   const locationId = loc.square.locationId;
 
-  if (!token) {
-    console.error(`[Square] Missing SQUARE_${branchId.toUpperCase()}_ACCESS_TOKEN`);
+  if (!token || token.trim().length === 0) {
+    console.error(`[Square] Missing or empty SQUARE_${branchId.toUpperCase()}_ACCESS_TOKEN (length=${token?.length ?? 0}, trimmed=${token?.trim()?.length ?? 0})`);
     return { url: `https://tasteofvillagerestaurants.co.uk/${branchId}/menu`, orderId: null, referenceId: '' };
   }
 
@@ -117,7 +117,7 @@ export async function createItemisedCheckoutLink(options: {
     const data = await res.json();
 
     if (!res.ok) {
-      console.warn('[Square] Itemised checkout error, attempting QuickPay fallback:', JSON.stringify(data.errors || data));
+      console.warn(`[Square] Itemised checkout error for ${branchId} (HTTP ${res.status}):`, JSON.stringify(data.errors || data));
       const totalPence = items.reduce((sum, i) => sum + i.pricePence * i.quantity, 0) + deliveryFeePence;
       return await createQuickPayFallbackLink({
         branchId,
