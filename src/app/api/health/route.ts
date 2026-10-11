@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
   }
 
   // 2. Square Payment Configuration Integrity
-  const hasSquareToken = !!process.env.SQUARE_ACCESS_TOKEN;
+  const hasSquareToken = !!(process.env.SQUARE_HAYES_ACCESS_TOKEN || process.env.SQUARE_SLOUGH_ACCESS_TOKEN);
   const hasHayesWebhook = !!process.env.SQUARE_HAYES_WEBHOOK_SIGNATURE_KEY;
   const hasSloughWebhook = !!process.env.SQUARE_SLOUGH_WEBHOOK_SIGNATURE_KEY;
 

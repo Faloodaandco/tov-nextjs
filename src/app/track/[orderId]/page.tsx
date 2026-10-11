@@ -2,10 +2,11 @@
 'use client';
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Clock, CheckCircle2, ChefHat, Package, MapPin, ChevronLeft, Phone, MessageCircle, Sparkles, Timer, Bell, Coffee, Plus, Star } from 'lucide-react';
-import { SHOP_CONFIG, LOCATIONS, buildWhatsAppLink } from '@/config/shopConfig';
+import { Clock, CheckCircle2, ChefHat, Package, MapPin, ChevronLeft, Phone, MessageCircle, Sparkles, Timer, Bell, Coffee, Plus, Star, RotateCcw } from 'lucide-react';
+import { LOCATIONS, buildWhatsAppLink } from '@/config/shopConfig';
+import { useStore } from '@/context/StoreContext';
 import { requestPushPermission, setupForegroundNotifications } from '@/utils/pushService';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -17,6 +18,8 @@ const TRACKING_STEPS = [
 ];
 
 export default function TrackOrder() {
+  const router = useRouter();
+  const { reorderItems } = useStore();
   const params = useParams();
   const orderId = params.orderId as string;
   const [order, setOrder] = useState<any>(null);
@@ -374,6 +377,23 @@ export default function TrackOrder() {
                 <span className="text-[10px] text-pine/80 font-black uppercase tracking-[0.3em]">Total</span>
                 <span className="font-display text-4xl font-black text-pine">£{order.total.toFixed(2)}</span>
               </div>
+
+              {/* 1-Click "Re-Order My Usual" Button */}
+              <div className="mt-6 pt-6 border-t border-pine/10">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (order?.items?.length) {
+                      reorderItems(order.items);
+                      router.push(`/${branchKey}/menu`);
+                    }
+                  }}
+                  className="w-full py-4 px-6 rounded-2xl bg-terracotta hover:bg-pine text-white font-black text-xs uppercase tracking-[0.2em] transition-all shadow-md hover:-translate-y-0.5 flex items-center justify-center gap-2 group cursor-pointer"
+                >
+                  <RotateCcw size={16} className="group-hover:-rotate-90 transition-transform duration-300" />
+                  <span>Re-Order This Meal (1-Click)</span>
+                </button>
+              </div>
             </div>
 
             {/* Smart Upsell Modal block */}
@@ -395,8 +415,8 @@ export default function TrackOrder() {
             <div className="bg-[#101E17] text-white p-1 shadow-2xl relative">
               <div className="p-8 pb-0 relative z-10">
                 <h3 className="font-black text-white/40 uppercase tracking-[0.2em] text-[10px] mb-6 flex items-center gap-2"><MapPin size={14}/> Base Station</h3>
-                <p className="font-display text-2xl font-black mb-1 tracking-widest uppercase text-white">{SHOP_CONFIG.name}</p>
-                <p className="text-white/50 text-xs font-mono mb-8">{SHOP_CONFIG.address}<br/>{SHOP_CONFIG.postcode}</p>
+                <p className="font-display text-2xl font-black mb-1 tracking-widest uppercase text-white">{branchConfig.name}</p>
+                <p className="text-white/50 text-xs font-mono mb-8">{branchConfig.address}<br/>{branchConfig.postcode}</p>
               </div>
               
               {/* Radar Map Vis */}
@@ -410,7 +430,7 @@ export default function TrackOrder() {
                 </div>
               </div>
               
-              <a href={`https://maps.google.com/?q=${encodeURIComponent(SHOP_CONFIG.name + ' ' + SHOP_CONFIG.address)}`} target="_blank" rel="noopener noreferrer" className="absolute bottom-4 right-4 bg-white/10 hover:bg-white text-white hover:text-[#101E17] px-4 py-2 font-black text-[10px] uppercase tracking-widest transition-colors backdrop-blur-sm z-20">
+              <a href={`https://maps.google.com/?q=${encodeURIComponent(branchConfig.name + ' ' + branchConfig.address + ' ' + branchConfig.postcode)}`} target="_blank" rel="noopener noreferrer" className="absolute bottom-4 right-4 bg-white/10 hover:bg-white text-white hover:text-[#101E17] px-4 py-2 font-black text-[10px] uppercase tracking-widest transition-colors backdrop-blur-sm z-20">
                 Navigate
               </a>
             </div>

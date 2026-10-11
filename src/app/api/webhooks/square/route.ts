@@ -244,6 +244,7 @@ export async function POST(req: NextRequest) {
                           `🔥 *Track Your Order Live:*`,
                           trackingUrl,
                           ``,
+                          `📞 *Call us:* ${loc.phone}`,
                           `Our kitchen has started preparing your fresh food! 👨‍🍳🔥`,
                           `If you have any questions or dietary notes, simply reply to this chat.`
                         ].filter(Boolean).join('\n'),
