@@ -262,7 +262,7 @@ export async function POST(req: NextRequest) {
                     }
 
                     // ── Build Enhanced Confirmation Message ──────────────────
-                    const pointsEarned = Math.floor(orderTotalPounds);
+                    const pointsEarned = Math.max(1, Math.floor(orderTotalPounds));
                     const loyaltyLine = customerProfile
                       ? `\n⭐ *Village Rewards:* +${pointsEarned} points earned → Balance: ${customerProfile.loyaltyPoints} (${TIER_NAMES[customerProfile.loyaltyTier] || 'Silver Village'})`
                       : '';
@@ -272,7 +272,7 @@ export async function POST(req: NextRequest) {
                       : '';
 
                     const voucherLines = voucherCodes.length > 0
-                      ? `\n\n🎁 *Welcome Gift!* Your exclusive voucher codes:\n${voucherCodes.map((c: string) => `  • ${c}`).join('\n')}\n_Use at checkout on your next order!_`
+                      ? `\n\n🎁 *Welcome Gift!* Your exclusive discount codes:\n${voucherCodes.map((c: string) => `  • ${c}`).join('\n')}\n_To redeem: type your code in this WhatsApp chat before checkout on your next order!_`
                       : '';
 
                     await sendWhatsAppMessage(phoneId, waOrder.phone, {
@@ -383,38 +383,24 @@ export async function POST(req: NextRequest) {
                     // ── Email Notification for WhatsApp Orders ───────────────
                     after(async () => {
                       try {
-                        const emailBody = [
-                          `New WhatsApp Order — ${loc.name}`,
-                          ``,
-                          `Order #${displayId}`,
-                          `Customer: ${waOrder.name || 'WhatsApp Customer'}`,
-                          `Phone: +${waOrder.phone}`,
-                          `Type: ${isDelivery ? 'Delivery' : 'Collection'}`,
-                          isDelivery ? `Address: ${waOrder.streetAddress || ''}, ${waOrder.postcode || ''}` : '',
-                          ``,
-                          `Items:`,
-                          ...(waOrder.items || []).map((i: any) => `  ${i.quantity}x ${i.name} — £${((i.pricePence || 0) / 100).toFixed(2)}`),
-                          ``,
-                          `Total: £${orderTotalPounds.toFixed(2)}`,
-                          `Tracking: ${trackingUrl}`,
-                          ``,
-                          `Square Payment ID: ${payment.id}`,
-                        ].filter(Boolean).join('\n');
-
-                        await fetch('https://api.resend.com/emails', {
-                          method: 'POST',
-                          headers: {
-                            'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-                            'Content-Type': 'application/json',
-                          },
-                          body: JSON.stringify({
-                            from: 'TOV Orders <orders@tasteofvillagerestaurants.co.uk>',
-                            to: ['info@tasteofvillagerestaurants.co.uk'],
-                            subject: `🍽️ WhatsApp Order #${displayId} — ${loc.name} — £${orderTotalPounds.toFixed(2)}`,
-                            text: emailBody,
-                          }),
+                        const { sendOrderNotificationEmail } = await import('@/lib/emailService');
+                        await sendOrderNotificationEmail({
+                          orderDisplayId: displayId,
+                          branchName: loc.name,
+                          customerName: waOrder.name || 'WhatsApp Customer',
+                          customerPhone: waOrder.phone,
+                          fulfillmentType: isDelivery ? 'delivery' : 'collection',
+                          items: (waOrder.items || []).map((i: any) => ({
+                            name: i.name,
+                            quantity: i.quantity || 1,
+                            pricePence: i.pricePence || 0,
+                          })),
+                          totalPounds: orderTotalPounds,
+                          trackingUrl,
+                          paymentId: payment.id,
+                          deliveryAddress: waOrder.streetAddress,
+                          deliveryPostcode: waOrder.postcode,
                         });
-                        console.info(`[Square Webhook] Sent email notification for order ${displayId}`);
                       } catch (emailErr) {
                         console.error('[Square Webhook] Email notification failed (non-fatal):', emailErr);
                       }

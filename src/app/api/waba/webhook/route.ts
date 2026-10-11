@@ -60,6 +60,13 @@ interface ConversationState {
   };
   lastPaidOrderId?: string;
   lastPaidAt?: string;
+  appliedVoucher?: {
+    code: string;
+    discountPercent: number;
+    voucherId: string | null;
+  } | null;
+  readyAlertRequested?: boolean;
+  readyAlertOrderId?: string;
 }
 
 // ── Branch & Location Resolution ─────────────────────────────────────
@@ -460,6 +467,136 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     }
     // If they sent something too short or a command, reset state and fall through
     await updateConversation(from, { state: 'idle' });
+  }
+
+  // ── Intent: Voucher Code Redemption (TOV50-XXXX, TOV30-XXXX) ──
+  const voucherMatch = text.match(/\b(TOV(?:50|30)-[A-Z0-9]{6,10})\b/i);
+  if (voucherMatch) {
+    const code = voucherMatch[1].toUpperCase();
+    const branchKey = getEffectiveBranch(conv, phoneId);
+    const cartTotal = conv.activeCart?.basePence || 0;
+
+    try {
+      const { validateVoucher } = await import('@/services/VoucherService');
+      const result = await validateVoucher(code, from, branchKey, cartTotal);
+
+      if (result.valid && result.discountPercent > 0) {
+        // Store voucher on conversation for checkout
+        await updateConversation(from, {
+          appliedVoucher: { code, discountPercent: result.discountPercent, voucherId: result.voucherId },
+        });
+
+        const discountDesc = `${result.discountPercent}% off`;
+        if (cartTotal > 0) {
+          const discountPence = Math.round(cartTotal * (result.discountPercent / 100));
+          const newTotal = cartTotal - discountPence;
+          await sendWhatsAppMessage(phoneId, from, {
+            type: 'text',
+            text: {
+              body: [
+                `✅ *Voucher Applied!* ${code}`,
+                `Discount: ${discountDesc} (-£${(discountPence / 100).toFixed(2)})`,
+                `New Total: *£${(newTotal / 100).toFixed(2)}*`,
+                ``,
+                `Tap Collection or Delivery to checkout with your discount!`,
+              ].join('\n'),
+            },
+          });
+        } else {
+          await sendWhatsAppMessage(phoneId, from, {
+            type: 'text',
+            text: { body: `✅ *Voucher ${code} saved!* (${discountDesc})\nAdd items to your cart, then the discount will apply at checkout.` },
+          });
+        }
+      } else {
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'text',
+          text: { body: `❌ ${result.reason}\n\nPlease check the code and try again, or type *menu* to browse dishes.` },
+        });
+      }
+    } catch (e) {
+      console.error('[WABA] Voucher validation error:', e);
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: { body: `Something went wrong validating your code. Please try again or contact us.` },
+      });
+    }
+    return;
+  }
+
+  // ── Intent: Order Tracking / Waiting / Notify Me ──────────────
+  if (/\b(waiting.*order|track|where.*order|order.*status|notify.*ready|order.*ready|how\s*long|my order|is it ready|order\s*#|ETA)\b/i.test(text)) {
+    // Try to extract 6-char order ID from message
+    const orderIdMatch = text.match(/#([A-Z0-9]{5,8})/i) || text.match(/\b([A-Z0-9]{6})\b/);
+    const shortId = orderIdMatch?.[1]?.toUpperCase();
+    const branchKey = getEffectiveBranch(conv, phoneId);
+    const loc = LOCATIONS[branchKey];
+
+    if (shortId) {
+      // Look up order by matching the last 6 chars of orderId
+      try {
+        const ordersSnap = await adminDb.collection('whatsapp_orders')
+          .where('phone', '==', from)
+          .limit(10)
+          .get();
+
+        const matchedOrder = ordersSnap.docs.find(d => {
+          const oid = d.data().orderId || d.id;
+          return oid.slice(-6).toUpperCase() === shortId;
+        });
+
+        if (matchedOrder) {
+          const od = matchedOrder.data();
+          const status = od.status === 'PAID' || od.status === 'COMPLETED'
+            ? '✅ Payment confirmed — kitchen is preparing'
+            : od.status === 'READY'
+              ? '🔔 Ready for pickup!'
+              : `📋 Status: ${od.status || 'Processing'}`;
+
+          // Save ready alert request
+          await updateConversation(from, {
+            readyAlertRequested: true,
+            readyAlertOrderId: matchedOrder.id,
+          });
+
+          const trackUrl = `https://tasteofvillagerestaurants.co.uk/track/${matchedOrder.id}`;
+          await sendWhatsAppMessage(phoneId, from, {
+            type: 'text',
+            text: {
+              body: [
+                `📋 *Order #${shortId}* — ${loc.name}`,
+                status,
+                ``,
+                `🔔 We'll message you here as soon as your food is ready!`,
+                ``,
+                `🔥 Track live: ${trackUrl}`,
+                `📞 Call us: ${loc.phone}`,
+              ].join('\n'),
+            },
+          });
+          return;
+        }
+      } catch (e) {
+        console.error('[WABA] Order lookup failed:', e);
+      }
+    }
+
+    // No specific order ID found or no match — check for recent orders
+    await sendWhatsAppMessage(phoneId, from, {
+      type: 'text',
+      text: {
+        body: [
+          `👨‍🍳 We're on it! Your fresh food is being prepared.`,
+          ``,
+          `🔔 We'll notify you right here when it's ready for pickup.`,
+          `📞 For urgent queries, call us: ${loc.phone}`,
+        ].join('\n'),
+      },
+    });
+
+    // Save alert preference
+    await updateConversation(from, { readyAlertRequested: true });
+    return;
   }
 
   // ── Intent: Greetings (Hi, Hello, Hey, Salam, etc.) ───────────
@@ -1326,7 +1463,33 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         return;
       }
       const total = cartTotal(items);
-      await generateCheckoutLink(phoneId, from, name, { items, basePence: total, branchId: branchKey }, false, 0, undefined, undefined, branchKey);
+
+      // Apply voucher discount if one was stored — reduce item prices proportionally
+      const voucher = conv.appliedVoucher;
+      let finalItems = items;
+      let discountApplied = false;
+      if (voucher && voucher.discountPercent > 0 && total > 0) {
+        const multiplier = (100 - voucher.discountPercent) / 100;
+        finalItems = items.map(i => ({
+          ...i,
+          pricePence: Math.max(1, Math.round(i.pricePence * multiplier)),
+          name: `${i.name} (${voucher.discountPercent}% off)`,
+        }));
+        discountApplied = true;
+        // Clear the applied voucher after use
+        await updateConversation(from, { appliedVoucher: null });
+        // Mark voucher as used in Firestore
+        if (voucher.voucherId) {
+          try {
+            const { redeemVoucher } = await import('@/services/VoucherService');
+            await redeemVoucher(voucher.voucherId, 'whatsapp_checkout');
+          } catch (e) {
+            console.error('[WABA] Voucher redeem failed:', e);
+          }
+        }
+      }
+      const finalTotal = cartTotal(finalItems);
+      await generateCheckoutLink(phoneId, from, name, { items: finalItems, basePence: finalTotal, branchId: branchKey }, false, 0, undefined, undefined, branchKey);
       return;
     }
 

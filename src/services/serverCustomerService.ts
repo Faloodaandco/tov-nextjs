@@ -69,7 +69,7 @@ export async function serverUpsertCustomerOnOrder(
     const ref = adminDb.collection(CUSTOMERS_COLLECTION).doc(docId);
     const snap = await ref.get();
     const now = new Date().toISOString();
-    const pointsEarned = Math.floor(orderTotalPounds);
+    const pointsEarned = Math.max(1, Math.floor(orderTotalPounds));
 
     if (snap.exists) {
       const existing = snap.data() as Partial<ServerCustomerRecord>;
