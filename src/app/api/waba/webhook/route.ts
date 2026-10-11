@@ -40,7 +40,7 @@ interface CartItem {
 }
 
 interface ConversationState {
-  state: 'idle' | 'awaiting_postcode' | 'awaiting_address' | 'awaiting_branch';
+  state: 'idle' | 'awaiting_postcode' | 'awaiting_address' | 'awaiting_branch' | 'awaiting_name_confirmation';
   branchId?: LocationId;
   pendingDelivery?: {
     branchId?: LocationId;
@@ -439,6 +439,27 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   if (conv.state === 'awaiting_postcode' || conv.state === 'awaiting_address') {
     await handleAddressInput(phoneId, from, name, rawText, conv);
     return;
+  }
+
+  // ── State: awaiting name confirmation (post-first-order) ──────
+  if (conv.state === 'awaiting_name_confirmation') {
+    const confirmedName = rawText.trim().slice(0, 50);
+    if (confirmedName.length >= 2 && !/^(yes|no|menu|order|hi|hello|hey)$/i.test(confirmedName)) {
+      try {
+        const { confirmCustomerName } = await import('@/services/serverCustomerService');
+        await confirmCustomerName(from, confirmedName);
+      } catch (e) {
+        console.error('[WABA] Name confirmation save failed:', e);
+      }
+      await updateConversation(from, { state: 'idle' });
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: { body: `Perfect, ${confirmedName}! ✅ We'll remember you. You're now earning Village Rewards on every order. 🎁\n\nType *menu* anytime to browse our dishes!` },
+      });
+      return;
+    }
+    // If they sent something too short or a command, reset state and fall through
+    await updateConversation(from, { state: 'idle' });
   }
 
   // ── Intent: Greetings (Hi, Hello, Hey, Salam, etc.) ───────────
@@ -1021,6 +1042,91 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       // Immediately show the menu — no extra "Browse Menu" button tap needed
       const carriedCartStr = conv.activeCart?.items?.length ? encodeCart(conv.activeCart.items) : '';
       await sendCategoryList(phoneId, from, carriedCartStr, selectedBranch);
+      return;
+    }
+
+    // ── Marketing Opt-In Buttons (post-first-order flow) ──────────
+    if (buttonId === 'tov_marketing_yes') {
+      try {
+        const { setMarketingOptIn } = await import('@/services/serverCustomerService');
+        await setMarketingOptIn(from, true);
+      } catch (e) {
+        console.error('[WABA] Marketing opt-in save failed:', e);
+      }
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: { body: `You're in! 🎉 We'll send you exclusive deals and early access to new dishes. You can opt out anytime by replying STOP.` },
+      });
+      return;
+    }
+
+    if (buttonId === 'tov_marketing_no') {
+      try {
+        const { setMarketingOptIn } = await import('@/services/serverCustomerService');
+        await setMarketingOptIn(from, false);
+      } catch (e) {
+        console.error('[WABA] Marketing opt-out save failed:', e);
+      }
+      // Silent acknowledgment
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: { body: `No worries! You can always change your mind later. Enjoy your meal! 🍽️` },
+      });
+      return;
+    }
+
+    // ── Reorder Same (from cross-sell or tracking page) ──────────
+    if (buttonId === 'tov_reorder') {
+      const lastOrderId = conv.lastPaidOrderId;
+      if (lastOrderId) {
+        try {
+          const orderSnap = await adminDb.collection('whatsapp_orders').doc(lastOrderId).get();
+          if (orderSnap.exists) {
+            const lastOrder = orderSnap.data();
+            const items: CartItem[] = (lastOrder?.items || []).map((i: any) => ({
+              id: i.id,
+              name: i.name,
+              quantity: i.quantity || 1,
+              pricePence: i.pricePence || 0,
+            }));
+            if (items.length > 0) {
+              const total = cartTotal(items);
+              await updateConversation(from, {
+                activeCart: { items, basePence: total, branchId: activeBranch, updatedAt: new Date().toISOString() },
+                state: 'idle',
+              });
+              await sendWhatsAppMessage(phoneId, from, {
+                type: 'interactive',
+                interactive: {
+                  type: 'button',
+                  header: { type: 'text', text: '🔁 Previous Order Loaded' },
+                  body: {
+                    text: [
+                      `*Your Basket:*`,
+                      cartSummaryText(items),
+                      `*Total: ${formatPrice(total / 100)}*`,
+                      '',
+                      'Ready to checkout?',
+                    ].join('\n'),
+                  },
+                  action: {
+                    buttons: [
+                      { type: 'reply', reply: { id: `tov_col_${encodeCart(items)}`, title: '🏪 Collection' } },
+                      { type: 'reply', reply: { id: `tov_del_${encodeCart(items)}`, title: '🛵 Delivery' } },
+                      { type: 'reply', reply: { id: `tov_more_${encodeCart(items)}`, title: '➕ Add More' } },
+                    ],
+                  },
+                },
+              });
+              return;
+            }
+          }
+        } catch (e) {
+          console.error('[WABA] Reorder failed:', e);
+        }
+      }
+      // Fallback: show menu if no previous order found
+      await sendFullCatalogMenu(phoneId, from, activeBranch);
       return;
     }
 

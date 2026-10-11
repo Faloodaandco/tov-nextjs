@@ -229,8 +229,35 @@ export function getFaqSchema(locationId: string) {
         "@type": "Answer",
         "text": `Yes, table reservations can be made instantly online via our website booking tool or by calling our branch directly on ${loc.phone}.`
       }
+    },
+    {
+      "@type": "Question",
+      "name": "Are high chairs and family seating available for children?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Both our Hayes and Slough locations are family-friendly, offering spacious dining booths and clean high chairs for toddlers and infants."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do you offer wedding, party, and corporate catering?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Taste of Village offers full Daawat-e-Khaas party packages (from 4–5 guests up to 250+ guests) with live tandoor and hot chafing buffets for family events, Nikah gatherings, and corporate office lunches across London and Berkshire."
+      }
     }
   ];
+
+  if (!isSlough) {
+    baseFaqs.push({
+      "@type": "Question",
+      "name": "Where can I park near Taste of Village Hayes on Uxbridge Road?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Free street parking is available along Uxbridge Road after 6:30 PM, with daytime pay-and-display bays and quick 20-minute collection bays adjacent to 766B Uxbridge Road."
+      }
+    });
+  }
 
   if (isSlough) {
     baseFaqs.push(

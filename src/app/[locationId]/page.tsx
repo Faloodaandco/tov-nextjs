@@ -9,6 +9,8 @@ import { SHOP_CONFIG, LOCATIONS } from '@/config/shopConfig';
 import { LocationSelectorModal } from '@/components/LocationSelectorModal';
 import { useLocationConfig } from '@/hooks/useLocationConfig';
 import { getBranchSeoMeta, getRestaurantSchema, getFaqSchema } from '@/lib/seoData';
+import { GoogleReviewsSection } from '@/components/GoogleReviewsSection';
+import { KitchenStatusBadge } from '@/components/KitchenStatusBadge';
 
 const HERO_IMAGES = [
   '/assets/bg-food.webp',
@@ -125,6 +127,9 @@ export default function TOVHome() {
             transition={{ duration: 0.8, delay: 0.1 }}
             className="flex flex-col items-center mb-6"
           >
+            <div className="mb-4">
+              <KitchenStatusBadge branchId={branchLoc.id} />
+            </div>
             <img 
               src="/assets/tov-logo-full-terracotta-alpha.png" 
               alt="Taste of Village"
@@ -892,52 +897,8 @@ export default function TOVHome() {
         </div>
       </motion.section>
 
-      {/* Reviews Masonry Section */}
-      <motion.section 
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8 }}
-        className="py-32 px-6 bg-white text-pine border-t-[12px] border-pine relative overflow-hidden"
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="font-display text-4xl md:text-6xl font-black tracking-[0.15em] text-pine mb-4">WHAT OUR GUESTS SAY</h2>
-            <div className="flex items-center justify-center gap-2 text-yellow-500 mb-4">
-              {[...Array(5)].map((_, i) => <span key={i} className="text-2xl">★</span>)}
-            </div>
-            <p className="font-serif italic text-xl text-pine/60 normal-case">Over 1,000+ happy customers on UberEats and Google</p>
-          </div>
-
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-            {[
-              { text: "Absolutely fantastic! The Lamb Charsi Karahi is incredibly authentic and the meat is perfectly cooked. Best we've had.", author: "Google Reviewer", platform: "Google" },
-              { text: "One of the best Pakistani restaurants in Slough. The food is always fresh and the staff, especially Simran, go out of their way to make you feel welcome.", author: "Google Reviewer", platform: "Google" },
-              { text: "Amazing service and great food. Special thanks to Arsh and Zia for their extremely attentive and friendly service!", author: "Google Reviewer", platform: "Google" },
-              { text: "The Lamb Biryani and fresh kebabs are highly recommended. A genuinely clean, warm, and welcoming environment for families.", author: "Google Reviewer", platform: "Google" },
-              { text: "Their traditional Charsi Karahi is unmatched. The atmosphere is warm, and you can tell they care about their hygiene and food quality.", author: "Google Reviewer", platform: "Google" },
-              { text: "Consistently good food. The mixed kebabs are perfect, and the customer service is always professional and fast.", author: "Google Reviewer", platform: "Google" }
-            ].map((review, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="bg-bg-sand p-8 rounded-3xl border border-pine/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all inline-block w-full break-inside-avoid relative group"
-              >
-                <div className="absolute top-0 left-0 w-full h-1 bg-terracotta scale-x-0 group-hover:scale-x-100 transition-transform origin-left rounded-t-3xl"></div>
-                <div className="text-yellow-500 mb-4 text-sm tracking-widest">★★★★★</div>
-                <p className="text-lg leading-relaxed text-pine/90 font-medium normal-case mb-6">"{review.text}"</p>
-                <div className="flex justify-between items-end border-t border-pine/10 pt-4 mt-auto">
-                  <span className="font-black text-pine text-sm uppercase tracking-widest">{review.author}</span>
-                  <span className="text-[10px] font-bold text-pine/40 uppercase tracking-[0.2em] px-2 py-1 bg-white rounded-md">{review.platform}</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.section>
+      {/* Real Verified Google Reviews Section */}
+      <GoogleReviewsSection currentBranch={branchLoc.id} />
 
       {/* 🌟 Local Diner & SEO FAQs */}
       <section className="py-20 px-6 bg-white border-t border-pine/10">

@@ -4,6 +4,9 @@ import crypto from 'crypto';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { sendWhatsAppMessage } from '@/lib/waba';
 import { LOCATIONS, type LocationId } from '@/config/shopConfig';
+import { serverUpsertCustomerOnOrder, calculateLoyaltyTier, TIER_NAMES, type ServerCustomerRecord } from '@/services/serverCustomerService';
+import { isFirstTimeBuyer, hasActiveVouchers, issueFirstTimeBuyerPack } from '@/services/VoucherService';
+import { generateContextualCrossSell } from '@/lib/geminiCrossSell';
 
 /**
  * POST /api/webhooks/square
@@ -227,6 +230,48 @@ export async function POST(req: NextRequest) {
                       .map((i: any) => `• ${i.quantity}x ${i.name}`)
                       .join('\n');
 
+                    // ── Loyalty + Voucher Processing (non-blocking) ──────────
+                    const orderTotalPounds = (waOrder.totalPence || 0) / 100;
+                    const itemNames = (waOrder.items || []).map((i: any) => i.name);
+
+                    let customerProfile: ServerCustomerRecord | null = null;
+                    try {
+                      customerProfile = await serverUpsertCustomerOnOrder(
+                        waOrder.phone,
+                        waOrder.name || 'Customer',
+                        orderTotalPounds,
+                        branchKey,
+                        itemNames,
+                      );
+                    } catch (e) {
+                      console.error('[Square Webhook] Customer upsert failed (non-fatal):', e);
+                    }
+
+                    let voucherCodes: string[] = [];
+                    try {
+                      const isNew = await isFirstTimeBuyer(waOrder.phone);
+                      const hasVoucher = await hasActiveVouchers(waOrder.phone);
+                      if (isNew && !hasVoucher) {
+                        voucherCodes = await issueFirstTimeBuyerPack(waOrder.phone);
+                      }
+                    } catch (e) {
+                      console.error('[Square Webhook] Voucher check failed (non-fatal):', e);
+                    }
+
+                    // ── Build Enhanced Confirmation Message ──────────────────
+                    const pointsEarned = Math.floor(orderTotalPounds);
+                    const loyaltyLine = customerProfile
+                      ? `\n⭐ *Village Rewards:* +${pointsEarned} points earned → Balance: ${customerProfile.loyaltyPoints} (${TIER_NAMES[customerProfile.loyaltyTier] || 'Silver Village'})`
+                      : '';
+
+                    const totalLine = waOrder.totalPence
+                      ? `\n💰 *Total: £${(waOrder.totalPence / 100).toFixed(2)}*`
+                      : '';
+
+                    const voucherLines = voucherCodes.length > 0
+                      ? `\n\n🎁 *Welcome Gift!* Your exclusive voucher codes:\n${voucherCodes.map((c: string) => `  • ${c}`).join('\n')}\n_Use at checkout on your next order!_`
+                      : '';
+
                     await sendWhatsAppMessage(phoneId, waOrder.phone, {
                       type: 'text',
                       text: {
@@ -237,20 +282,97 @@ export async function POST(req: NextRequest) {
                           ``,
                           `📋 *Order #${displayId}* (${loc.name})`,
                           itemsList,
+                          totalLine,
                           ``,
                           addressLine,
                           `⏱️ *Estimated Time: ${estMinutes} mins*`,
+                          loyaltyLine,
                           ``,
                           `🔥 *Track Your Order Live:*`,
                           trackingUrl,
                           ``,
                           `📞 *Call us:* ${loc.phone}`,
                           `Our kitchen has started preparing your fresh food! 👨‍🍳🔥`,
-                          `If you have any questions or dietary notes, simply reply to this chat.`
+                          voucherLines,
                         ].filter(Boolean).join('\n'),
                       },
                     });
-                    console.info(`[Square Webhook] Sent WhatsApp payment confirmation with tracking link to ${waOrder.phone}`);
+                    console.info(`[Square Webhook] Sent enhanced WhatsApp payment confirmation to ${waOrder.phone}`);
+
+                    // ── Contextual Cross-Sell (5s delay, non-blocking) ───────
+                    const crossSellItems = (waOrder.items || []).map((i: any) => ({
+                      name: i.name,
+                      category: undefined, // Resolved inside the engine
+                      pricePence: i.pricePence,
+                    }));
+                    const crossSell = generateContextualCrossSell(crossSellItems, branchKey);
+
+                    if (crossSell) {
+                      // Fire-and-forget: delay 5s then send cross-sell
+                      setTimeout(async () => {
+                        try {
+                          await sendWhatsAppMessage(phoneId, waOrder.phone, {
+                            type: 'interactive',
+                            interactive: {
+                              type: 'button',
+                              body: {
+                                text: [
+                                  `🍽️ *Chef's Pick for Next Time*`,
+                                  ``,
+                                  crossSell.reason,
+                                  ``,
+                                  `*${crossSell.itemName}* — ${crossSell.itemPrice}`,
+                                ].join('\n'),
+                              },
+                              action: {
+                                buttons: [
+                                  { type: 'reply', reply: { id: 'tov_reorder', title: '🔁 Reorder Same' } },
+                                  { type: 'reply', reply: { id: 'tov_menu', title: '📋 Full Menu' } },
+                                ],
+                              },
+                            },
+                          });
+                          console.info(`[Square Webhook] Sent cross-sell to ${waOrder.phone}: ${crossSell.itemName}`);
+                        } catch (csErr) {
+                          console.error('[Square Webhook] Cross-sell send failed (non-fatal):', csErr);
+                        }
+                      }, 5000);
+                    }
+
+                    // ── First-Order Name Confirmation (10s delay) ────────────
+                    if (customerProfile && customerProfile.orderCount === 1) {
+                      setTimeout(async () => {
+                        try {
+                          await adminDb.collection('whatsapp_conversations').doc(waOrder.phone).set({
+                            state: 'awaiting_name_confirmation',
+                          }, { merge: true });
+
+                          await sendWhatsAppMessage(phoneId, waOrder.phone, {
+                            type: 'interactive',
+                            interactive: {
+                              type: 'button',
+                              body: {
+                                text: [
+                                  `One last thing — what name should we save for your orders? 😊`,
+                                  `Just reply with your preferred name and we'll remember you!`,
+                                  ``,
+                                  `Would you also like exclusive offers & early access to new dishes?`,
+                                ].join('\n'),
+                              },
+                              action: {
+                                buttons: [
+                                  { type: 'reply', reply: { id: 'tov_marketing_yes', title: 'Yes please 🎁' } },
+                                  { type: 'reply', reply: { id: 'tov_marketing_no', title: 'No thanks' } },
+                                ],
+                              },
+                            },
+                          });
+                          console.info(`[Square Webhook] Sent name confirmation prompt to ${waOrder.phone}`);
+                        } catch (ncErr) {
+                          console.error('[Square Webhook] Name confirmation failed (non-fatal):', ncErr);
+                        }
+                      }, 10000);
+                    }
                   }
                 }
               }

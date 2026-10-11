@@ -66,3 +66,16 @@
 - `whatsapp_business_management` — any WABA query
 - `business_management` — `GET /me/businesses` (1 call)
 - `public_profile` — `GET /me` (3 calls)
+
+## 9. WhatsApp Commerce Settings Activation (Mandatory for Catalogs)
+
+**Decision:** Always verify `GET /{PHONE_NUMBER_ID}/whatsapp_commerce_settings`. If `data: []`, immediately execute `POST /{PHONE_NUMBER_ID}/whatsapp_commerce_settings` with:
+```json
+{
+  "is_catalog_visible": true,
+  "is_cart_enabled": true
+}
+```
+
+**Why:** Without this explicit call, Meta hides the storefront icon and disables cart checkout on the WhatsApp Business mobile app, even if catalogs are uploaded and connected in Meta Commerce Manager.
+

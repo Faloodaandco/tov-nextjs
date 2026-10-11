@@ -1041,28 +1041,37 @@ function MenuPageContent() {
         scrollToCategory={scrollToCategory}
       />
 
-      {/* UK FSA Food Allergy Notice — Natasha's Law (2021) Compliance */}
+      {/* UK FSA Food Allergy Notice & 100% Halal Certified Notice */}
       <div className="max-w-7xl mx-auto px-4 pt-3">
-        <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-white/60 backdrop-blur-sm border border-pine/10 text-pine text-xs leading-relaxed">
-          <Info size={15} className="text-terracotta shrink-0" aria-hidden="true" />
-          <p className="flex-1">
-            <strong className="text-pine font-medium">Food Allergies &amp; Dietary Requirements:</strong> If you or someone you are ordering for has a food allergy or intolerance, please speak with our team directly on{' '}
-            <a aria-label="Phone" href={`tel:${activeLocation.phone}`} className="font-semibold text-pine underline decoration-terracotta/40 underline-offset-2 hover:text-terracotta transition-colors">
-              {activeLocation.phone}
-            </a>{' '}
-            before placing your order. All our meat is 100% Halal certified.
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-white/70 backdrop-blur-sm border border-pine/10 text-pine text-xs leading-relaxed shadow-sm">
+          <div className="flex items-center gap-3">
+            <span className="shrink-0 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[11px] uppercase tracking-wider flex items-center gap-1 border border-emerald-300">
+              <CheckCircle2 size={13} /> 100% Halal Certified
+            </span>
+            <p className="flex-1 text-pine/80">
+              <strong className="text-pine font-semibold">Allergies &amp; Nut Guidance:</strong> Please inform our team on{' '}
+              <a aria-label="Phone" href={`tel:${activeLocation.phone}`} className="font-semibold text-pine underline decoration-terracotta/40 underline-offset-2 hover:text-terracotta transition-colors">
+                {activeLocation.phone}
+              </a>{' '}
+              if you have severe nut or gluten allergies before ordering.
+            </p>
+          </div>
+          <Link href="/info?tab=allergies" className="text-[11px] font-bold text-terracotta hover:underline shrink-0 flex items-center gap-1">
+            <Info size={13} /> View 14-Allergen Guide
+          </Link>
         </div>
       </div>
 
       {/* ─── Dietary Filter Bar ─── */}
       <div className="max-w-7xl mx-auto px-4 pt-3 pb-1">
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <span className="text-[10px] font-bold text-pine/40 uppercase tracking-widest shrink-0 mr-1">Filter:</span>
+          <span className="text-[10px] font-bold text-pine/40 uppercase tracking-widest shrink-0 mr-1">Dietary:</span>
           {([
-            { key: 'halal', label: 'Halal', emoji: '🟢' },
+            { key: 'halal', label: '100% Halal', emoji: '🟢' },
             { key: 'vegetarian', label: 'Vegetarian', emoji: '🥬' },
             { key: 'vegan', label: 'Vegan', emoji: '🌱' },
+            { key: 'gluten_free', label: 'Gluten-Free', emoji: '🌾' },
+            { key: 'nut_free', label: 'Nut-Safe', emoji: '🥜' },
             { key: 'spicy', label: 'Spicy', emoji: '🌶️' },
           ] as const).map(({ key, label, emoji }) => {
             const isActive = activeDietaryFilters.includes(key);

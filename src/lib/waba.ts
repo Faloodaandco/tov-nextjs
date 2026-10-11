@@ -14,24 +14,36 @@ export async function sendWhatsAppMessage(phoneId: string, to: string, messagePa
     ...messagePayload,
   };
 
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(5000),
-    });
+  const maxAttempts = 2;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(10000),
+      });
 
-    const data = await res.json();
-    if (!res.ok) {
-      console.error('[WABA API] Error sending message:', data);
+      const data = await res.json();
+      if (!res.ok) {
+        console.error(`[WABA API] Error sending message (attempt ${attempt}):`, data);
+        if (attempt < maxAttempts && res.status >= 500) {
+          await new Promise((r) => setTimeout(r, 600));
+          continue;
+        }
+      }
+      return data;
+    } catch (error: any) {
+      console.error(`[WABA API] Fetch error (attempt ${attempt}):`, error?.message || error);
+      if (attempt < maxAttempts) {
+        await new Promise((r) => setTimeout(r, 600));
+        continue;
+      }
+      return null;
     }
-    return data;
-  } catch (error) {
-    console.error('[WABA API] Fetch error:', error);
-    return null;
   }
+  return null;
 }

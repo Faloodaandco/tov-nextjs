@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { Clock, CheckCircle2, ChefHat, Package, MapPin, ChevronLeft, Phone, MessageCircle, Sparkles, Timer, Bell, Coffee, Plus, Star, RotateCcw } from 'lucide-react';
 import { LOCATIONS, buildWhatsAppLink } from '@/config/shopConfig';
 import { useStore } from '@/context/StoreContext';
-import { requestPushPermission, setupForegroundNotifications } from '@/utils/pushService';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const TRACKING_STEPS = [
@@ -28,24 +27,7 @@ export default function TrackOrder() {
   const [timeRemaining, setTimeRemaining] = useState({ minutes: 0, seconds: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
   const [showReviewPrompt, setShowReviewPrompt] = useState(false);
-  const [pushState, setPushState] = useState<'idle' | 'loading' | 'granted' | 'denied'>('idle');
   const prevStatus = useRef<string>('');
-
-  useEffect(() => {
-    if (orderId) {
-      try {
-        requestPushPermission(orderId).catch(() => {});
-      } catch (e) {}
-    }
-    const unsubscribe = setupForegroundNotifications((payload) => {
-      console.log('[TrackOrder] Foreground push alert received:', payload);
-    });
-    return () => {
-      if (typeof unsubscribe === 'function') {
-        try { unsubscribe(); } catch (e) {}
-      }
-    };
-  }, [orderId]);
 
   // Poll order status via API (no direct Firestore reads — orders collection is staff-only)
   const fetchOrder = useCallback(async () => {
@@ -199,6 +181,9 @@ export default function TrackOrder() {
   const whatsappMessage = `Hi, I have a question about my order ${order.id}. My name is ${order.customerName}.`;
   const whatsappUrl = buildWhatsAppLink(whatsappMessage, branchConfig.whatsappPhone);
 
+  const whatsappAlertMessage = `Hi, I'm waiting for order #${order?.id?.slice(-6).toUpperCase()}. Please notify me when it's ready! 🔔`;
+  const whatsappAlertUrl = buildWhatsAppLink(whatsappAlertMessage, branchConfig.whatsappPhone);
+
   return (
     <div className="min-h-screen bg-bg-sand pt-20 pb-20 selection:bg-terracotta selection:text-white overflow-hidden relative">
       
@@ -282,56 +267,27 @@ export default function TrackOrder() {
           </div>
         )}
 
-        {/* Mobile Push Notification Card */}
+        {/* TOV WhatsApp Alert Card */}
         {!isCompleted && !isNoShow && (
-          <div className={`border-2 p-5 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm transition-colors ${
-            pushState === 'granted' ? 'bg-green-50 border-green-300' : pushState === 'denied' ? 'bg-red-50 border-red-300' : 'bg-white border-pine/15'
-          }`}>
-            <div className="flex items-center gap-3">
-              <div className={`p-2.5 rounded-full shrink-0 ${
-                pushState === 'granted' ? 'bg-green-100 text-green-600' : 'bg-terracotta/10 text-terracotta'
-              }`}>
-                {pushState === 'granted' ? <CheckCircle2 size={20} /> : <Bell size={20} />}
-              </div>
-              <div>
-                <p className="text-xs font-black text-pine uppercase tracking-wider">
-                  {pushState === 'granted' ? '🔔 Alerts Enabled' : pushState === 'denied' ? 'Notifications Blocked' : 'Buzz My Phone When Food Is Ready'}
-                </p>
-                <p className="text-xs text-pine/60 font-medium">
-                  {pushState === 'granted' 
-                    ? 'We\'ll buzz your phone the moment your order is ready for pickup.'
-                    : pushState === 'denied'
-                    ? 'Please enable notifications in your browser settings to receive alerts.'
-                    : 'Get a mobile alert the moment your bag is packed at the counter.'}
-                </p>
-              </div>
+          <div className="relative overflow-hidden bg-pine text-white p-6 md:p-8 mb-8 border-2 border-pine/20 shadow-[4px_4px_0px_rgba(20,40,29,1)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div className="absolute inset-0 opacity-[0.07] pointer-events-none" style={{ backgroundImage: "url('/assets/tov-pattern-light.svg')" }} />
+            <div className="relative z-10 flex-1">
+              <h3 className="font-display font-black tracking-wider uppercase text-white text-lg md:text-xl mb-1">
+                🔔 GET READY ALERT
+              </h3>
+              <p className="text-sm font-medium text-white/70">
+                We&apos;ll WhatsApp you the moment your food is ready for pickup.
+              </p>
             </div>
-            {pushState !== 'granted' && (
-              <button aria-label="Enable phone alerts"
-                type="button"
-                disabled={pushState === 'loading'}
-                onClick={async () => {
-                  if (orderId) {
-                    setPushState('loading');
-                    try {
-                      const token = await requestPushPermission(orderId);
-                      if (token) {
-                        setPushState('granted');
-                      } else {
-                        setPushState('denied');
-                      }
-                    } catch {
-                      setPushState('denied');
-                    }
-                  }
-                }}
-                className={`w-full sm:w-auto px-5 py-3 text-white text-xs font-black uppercase tracking-wider transition-colors shrink-0 ${
-                  pushState === 'loading' ? 'bg-pine/50 cursor-wait' : 'bg-pine hover:bg-terracotta'
-                }`}
-              >
-                {pushState === 'loading' ? 'Enabling...' : 'Enable Phone Alerts'}
-              </button>
-            )}
+            <a
+              href={whatsappAlertUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative z-10 w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-[#25D366] hover:bg-[#20BD5A] text-white font-black text-xs uppercase tracking-wider transition-all shrink-0 shadow-sm border-2 border-[#25D366]"
+            >
+              <MessageCircle size={18} />
+              <span>Enable WhatsApp Alert</span>
+            </a>
           </div>
         )}
 
