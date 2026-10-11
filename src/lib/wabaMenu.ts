@@ -433,5 +433,36 @@ export function getCuratedDish(query: string, branchId?: LocationId | string): C
     }
   }
 
+  // Roti (distinct from Naan — MUST NOT substitute)
+  if (/\b(roti|tandoori roti)\b/.test(q) && !/naan/.test(q)) {
+    const item = isSlough
+      ? menu.find(i => i.id === 'tov_slough_plain_roti') || menu.find(i => i.name.toLowerCase() === 'plain roti')
+      : menu.find(i => i.id === 'tov_item_1777480501499_b5x9x') || menu.find(i => i.name.toLowerCase() === 'roti');
+    if (item) {
+      return { item, categoryId: 'cat_breads', categoryTitle: isSlough ? 'Other Breads' : 'Other Breads & Naans' };
+    }
+  }
+
+  // Naan / Bread
+  if (/\b(naan|plain naan|garlic naan|cheese naan|peshwari naan|kulcha)\b/.test(q)) {
+    const specific = q.match(/\b(garlic|cheese|peshwari|ajwain|keema|butter)\s*naan\b/);
+    const item = specific
+      ? menu.find(i => i.name.toLowerCase().includes(specific[0]))
+      : isSlough
+        ? menu.find(i => i.id === 'tov_slough_plain_naan') || menu.find(i => i.name.toLowerCase() === 'plain naan')
+        : menu.find(i => i.id === 'tov_item_1777480501499_taghc') || menu.find(i => i.name.toLowerCase() === 'naan');
+    if (item) {
+      return { item, categoryId: 'cat_breads', categoryTitle: isSlough ? 'Other Breads' : 'Other Breads & Naans' };
+    }
+  }
+
+  // Paratha
+  if (/\b(paratha|anda paratha|aloo paratha)\b/.test(q)) {
+    const item = menu.find(i => i.name.toLowerCase().includes('paratha'));
+    if (item) {
+      return { item, categoryId: 'cat_breads', categoryTitle: 'Other Breads & Parathas' };
+    }
+  }
+
   return null;
 }
