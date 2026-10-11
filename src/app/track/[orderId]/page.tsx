@@ -28,6 +28,7 @@ export default function TrackOrder() {
   const [timeRemaining, setTimeRemaining] = useState({ minutes: 0, seconds: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
   const [showReviewPrompt, setShowReviewPrompt] = useState(false);
+  const [pushState, setPushState] = useState<'idle' | 'loading' | 'granted' | 'denied'>('idle');
   const prevStatus = useRef<string>('');
 
   useEffect(() => {
@@ -189,14 +190,14 @@ export default function TrackOrder() {
   const isCompleted = order.status === 'completed';
   const isNoShow = order.status === 'no_show';
   const progressPercent = isCompleted ? 100 : Math.min(100, (currentIndex / (TRACKING_STEPS.length - 1)) * 100);
-  const branchKey = (order.branch || (order.tenant_id === LOCATIONS.slough.tenant_id ? 'slough' : 'hayes')) as 'hayes' | 'slough';
+  const branchKey = (order.branchId || order.branch || (order.tenant_id === LOCATIONS.slough.tenant_id ? 'slough' : 'hayes')) as 'hayes' | 'slough';
   const branchConfig = LOCATIONS[branchKey] || LOCATIONS.hayes;
   const googleReviewUrl = branchConfig.googleReviewUrl;
   const whatsappReviewMessage = `Hi Taste of Village (${branchConfig.city}), regarding my order ${order.id}: `;
-  const whatsappReviewUrl = buildWhatsAppLink(whatsappReviewMessage, branchConfig.phone);
+  const whatsappReviewUrl = buildWhatsAppLink(whatsappReviewMessage, branchConfig.whatsappPhone);
 
   const whatsappMessage = `Hi, I have a question about my order ${order.id}. My name is ${order.customerName}.`;
-  const whatsappUrl = buildWhatsAppLink(whatsappMessage, branchConfig.phone);
+  const whatsappUrl = buildWhatsAppLink(whatsappMessage, branchConfig.whatsappPhone);
 
   return (
     <div className="min-h-screen bg-bg-sand pt-20 pb-20 selection:bg-terracotta selection:text-white overflow-hidden relative">
@@ -283,30 +284,54 @@ export default function TrackOrder() {
 
         {/* Mobile Push Notification Card */}
         {!isCompleted && !isNoShow && (
-          <div className="bg-white border-2 border-pine/15 p-5 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+          <div className={`border-2 p-5 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm transition-colors ${
+            pushState === 'granted' ? 'bg-green-50 border-green-300' : pushState === 'denied' ? 'bg-red-50 border-red-300' : 'bg-white border-pine/15'
+          }`}>
             <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-terracotta/10 text-terracotta rounded-full shrink-0">
-                <Bell size={20} />
+              <div className={`p-2.5 rounded-full shrink-0 ${
+                pushState === 'granted' ? 'bg-green-100 text-green-600' : 'bg-terracotta/10 text-terracotta'
+              }`}>
+                {pushState === 'granted' ? <CheckCircle2 size={20} /> : <Bell size={20} />}
               </div>
               <div>
-                <p className="text-xs font-black text-pine uppercase tracking-wider">Buzz My Phone When Food Is Ready</p>
-                <p className="text-xs text-pine/60 font-medium">Get a mobile alert the moment your bag is packed at the counter.</p>
+                <p className="text-xs font-black text-pine uppercase tracking-wider">
+                  {pushState === 'granted' ? '🔔 Alerts Enabled' : pushState === 'denied' ? 'Notifications Blocked' : 'Buzz My Phone When Food Is Ready'}
+                </p>
+                <p className="text-xs text-pine/60 font-medium">
+                  {pushState === 'granted' 
+                    ? 'We\'ll buzz your phone the moment your order is ready for pickup.'
+                    : pushState === 'denied'
+                    ? 'Please enable notifications in your browser settings to receive alerts.'
+                    : 'Get a mobile alert the moment your bag is packed at the counter.'}
+                </p>
               </div>
             </div>
-            <button aria-label="Button"
-              type="button"
-              onClick={async () => {
-                if (orderId) {
-                  const token = await requestPushPermission(orderId);
-                  if (token) {
-                    alert('🔔 Push notifications enabled! We will buzz your phone the second your food is ready.');
+            {pushState !== 'granted' && (
+              <button aria-label="Enable phone alerts"
+                type="button"
+                disabled={pushState === 'loading'}
+                onClick={async () => {
+                  if (orderId) {
+                    setPushState('loading');
+                    try {
+                      const token = await requestPushPermission(orderId);
+                      if (token) {
+                        setPushState('granted');
+                      } else {
+                        setPushState('denied');
+                      }
+                    } catch {
+                      setPushState('denied');
+                    }
                   }
-                }
-              }}
-              className="w-full sm:w-auto px-5 py-3 bg-pine text-white text-xs font-black uppercase tracking-wider hover:bg-terracotta transition-colors shrink-0"
-            >
-              Enable Phone Alerts
-            </button>
+                }}
+                className={`w-full sm:w-auto px-5 py-3 text-white text-xs font-black uppercase tracking-wider transition-colors shrink-0 ${
+                  pushState === 'loading' ? 'bg-pine/50 cursor-wait' : 'bg-pine hover:bg-terracotta'
+                }`}
+              >
+                {pushState === 'loading' ? 'Enabling...' : 'Enable Phone Alerts'}
+              </button>
+            )}
           </div>
         )}
 
