@@ -103,14 +103,19 @@ function getLocationConfig(branchId: LocationId = DEFAULT_BRANCH_ID) {
 const CONVERSATION_CACHE = new Map<string, { state: ConversationState; updatedAt: number }>();
 const CACHE_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
 
-async function getConversation(phone: string): Promise<ConversationState> {
-  const cached = CONVERSATION_CACHE.get(phone);
+function getSessionKey(phone: string, phoneId?: string): string {
+  return phoneId ? `${phone}_${phoneId}` : phone;
+}
+
+async function getConversation(phone: string, phoneId?: string): Promise<ConversationState> {
+  const sessionKey = getSessionKey(phone, phoneId);
+  const cached = CONVERSATION_CACHE.get(sessionKey);
   if (cached && (Date.now() - cached.updatedAt < CACHE_TTL_MS)) {
     return cached.state;
   }
 
   try {
-    const snap = await adminDb.collection('whatsapp_conversations').doc(phone).get();
+    const snap = await adminDb.collection('whatsapp_conversations').doc(sessionKey).get();
     if (snap && snap.exists) {
       const data = snap.data();
       const state: ConversationState = {
@@ -121,7 +126,7 @@ async function getConversation(phone: string): Promise<ConversationState> {
         lastPaidOrderId: data?.lastPaidOrderId || cached?.state?.lastPaidOrderId || undefined,
         lastPaidAt: data?.lastPaidAt || cached?.state?.lastPaidAt || undefined,
       };
-      CONVERSATION_CACHE.set(phone, { state, updatedAt: Date.now() });
+      CONVERSATION_CACHE.set(sessionKey, { state, updatedAt: Date.now() });
       return state;
     }
   } catch (err) {
@@ -130,9 +135,10 @@ async function getConversation(phone: string): Promise<ConversationState> {
   return cached?.state || { state: 'idle' };
 }
 
-async function updateConversation(phone: string, updates: Record<string, unknown>) {
+async function updateConversation(phone: string, updates: Record<string, unknown>, phoneId?: string) {
+  const sessionKey = getSessionKey(phone, phoneId);
   // Update in-memory session immediately so cart and delivery details survive
-  const existing = CONVERSATION_CACHE.get(phone)?.state || { state: 'idle' };
+  const existing = CONVERSATION_CACHE.get(sessionKey)?.state || { state: 'idle' };
   const merged: ConversationState = {
     ...existing,
     ...(updates.state ? { state: updates.state as any } : {}),
@@ -142,13 +148,13 @@ async function updateConversation(phone: string, updates: Record<string, unknown
     ...(updates.lastPaidOrderId ? { lastPaidOrderId: updates.lastPaidOrderId as any } : {}),
     ...(updates.lastPaidAt ? { lastPaidAt: updates.lastPaidAt as any } : {}),
   };
-  CONVERSATION_CACHE.set(phone, { state: merged, updatedAt: Date.now() });
+  CONVERSATION_CACHE.set(sessionKey, { state: merged, updatedAt: Date.now() });
 
   // Asynchronously attempt to sync to Firestore in background (NEVER block response)
   try {
-    await adminDb.collection('whatsapp_conversations').doc(phone).set(updates, { merge: true });
+    await adminDb.collection('whatsapp_conversations').doc(sessionKey).set(updates, { merge: true });
   } catch (err) {
-    console.error(`[TOV WABA] Error updating conversation ${phone}:`, err);
+    console.error(`[TOV WABA] Error updating conversation ${sessionKey}:`, err);
   }
 }
 
@@ -378,8 +384,8 @@ export async function POST(request: NextRequest) {
 // ══════════════════════════════════════════════════════════════════════
 
 async function handleTextMessage(phoneId: string, from: string, name: string, rawText: string) {
-  // Read conversation state immediately
-  const conv = await getConversation(from);
+  // Read conversation state immediately scoped by receiving phoneId
+  const conv = await getConversation(from, phoneId);
   const text = rawText.toLowerCase().trim();
 
   // Log conversation in background without blocking response
@@ -388,7 +394,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     name,
     lastMessage: rawText,
     timestamp: new Date().toISOString(),
-  });
+  }, phoneId);
 
   // ── Dynamic Branch Intent Detection (e.g. Slough vs Hayes, GBP pre-filled links) ──
   const isExplicitSlough = /\b(slough|farnham)\b/i.test(text);
@@ -846,7 +852,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
 
 async function handleInteractiveMessage(phoneId: string, from: string, name: string, message: any) {
   const replyType = message.interactive.type;
-  const conv = await getConversation(from);
+  const conv = await getConversation(from, phoneId);
   let activeBranch = getEffectiveBranch(conv, phoneId);
 
   // ── Branch self-correction from item IDs ──────────────────────────
@@ -1265,7 +1271,7 @@ async function handleOrderMessage(phoneId: string, from: string, name: string, m
   const orderItems: any[] = message.order?.product_items || [];
   if (!orderItems.length) return;
 
-  const conv = await getConversation(from);
+  const conv = await getConversation(from, phoneId);
   let branchId = getEffectiveBranch(conv, phoneId);
 
   // If order items clearly come from Slough or Hayes catalog, bind to that branch!
@@ -1925,7 +1931,7 @@ async function sendFullCatalogMenu(phoneId: string, from: string, branchId: Loca
 }
 
 async function sendCategoryList(phoneId: string, from: string, carriedCart?: string, explicitBranch?: LocationId, forceList = false) {
-  const branchId = explicitBranch || getEffectiveBranch(await getConversation(from), phoneId);
+  const branchId = explicitBranch || getEffectiveBranch(await getConversation(from, phoneId), phoneId);
   const loc = LOCATIONS[branchId];
   
   if (forceList) {
