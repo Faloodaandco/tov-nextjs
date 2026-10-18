@@ -320,7 +320,7 @@ export const SHOP_CONFIG = {
   get coords() { return getActiveLocation().coords; },
 
   tagline: 'Authentic Desi Taste from Lahore & Gujranwala',
-  get whatsappNumber() { return getActiveLocation().phone.replace(/\s+/g, '').replace(/^0/, '44'); },
+  get whatsappNumber() { return getActiveLocation().whatsappPhone.replace(/\D/g, ''); },
   get phoneNumber() { return getActiveLocation().phone; },
   get phoneNumberRaw() { return '+' + getActiveLocation().phone.replace(/\s+/g, '').replace(/^0/, '44'); },
   get googleReviewUrl() { return getActiveLocation().googleReviewUrl; },

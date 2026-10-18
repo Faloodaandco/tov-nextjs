@@ -895,8 +895,8 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
   }
 
   // ── Intelligent Gemini Assistant (Multi-dish order, recommendations, FAQs) ──
-  // LAST RESORT: only called when local matching fails. Slow (2-10s).
-  const aiResult = await analyzeWithGemini(rawText);
+  // LAST RESORT: only called when local matching fails.
+  const aiResult = await analyzeWithGemini(rawText, activeBranch);
   if (aiResult) {
     if (aiResult.intent === 'order' && aiResult.orderItems.length > 0) {
       let currentItems = conv.activeCart?.items || [];
@@ -2241,7 +2241,7 @@ async function sendCatalogProductList(
     product_retailer_id: item.id,
   }));
 
-  await sendWhatsAppMessage(phoneId, from, {
+  const res = await sendWhatsAppMessage(phoneId, from, {
     type: 'interactive',
     interactive: {
       type: 'product_list',
@@ -2261,11 +2261,47 @@ async function sendCatalogProductList(
       },
     },
   });
+
+  // Tiered Fallback: if product_list fails, fall back to interactive list
+  if (!res?.messages?.[0]?.id) {
+    console.warn(`[WABA] sendCatalogProductList product_list failed for section ${sectionId}, falling back to list`);
+    let rows = buildItemListRows(sectionId, undefined, branchId);
+    if (rows.length) {
+      const listRes = await sendWhatsAppMessage(phoneId, from, {
+        type: 'interactive',
+        interactive: {
+          type: 'list',
+          header: { type: 'text', text: sectionTitle.slice(0, 60) },
+          body: { text: `Browse ${items.length} dishes in ${sectionTitle}. Tap to add:` },
+          footer: { text: `Taste of Village • 10AM–2AM` },
+          action: {
+            button: 'Select Dish',
+            sections: [{ title: sectionTitle.slice(0, 24), rows: rows.slice(0, 10) }],
+          },
+        },
+      });
+
+      if (!listRes?.messages?.[0]?.id) {
+        // Plain text fallback
+        const lines = items.slice(0, 8).map(i => `• *${i.name}* - ${formatPrice(i.price)}`);
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'text',
+          text: {
+            body: `*${sectionTitle}*\n\n${lines.join('\n')}\n\n📱 Order online: https://tasteofvillagerestaurants.co.uk/menu`,
+          },
+        });
+      }
+    }
+  }
 }
 
 /**
  * Send the full menu as a multi-section product_list (all categories).
  * Shows browsable product cards grouped by category with images and add-to-cart.
+ * Tiered Fail-Safe Ladder:
+ *  1. Rich Meta Catalog product_list
+ *  2. Interactive category list (sendCategoryList)
+ *  3. Plain-text menu summary with web direct link
  */
 async function sendFullCatalogMenu(phoneId: string, from: string, branchId: LocationId) {
   const catalogId = META_CATALOG_IDS[branchId];
@@ -2299,7 +2335,7 @@ async function sendFullCatalogMenu(phoneId: string, from: string, branchId: Loca
     return;
   }
 
-  await sendWhatsAppMessage(phoneId, from, {
+  const res = await sendWhatsAppMessage(phoneId, from, {
     type: 'interactive',
     interactive: {
       type: 'product_list',
@@ -2314,6 +2350,12 @@ async function sendFullCatalogMenu(phoneId: string, from: string, branchId: Loca
       },
     },
   });
+
+  // Tiered Fallback: if product_list fails or is rejected by Meta, immediately fall back to category list
+  if (!res?.messages?.[0]?.id) {
+    console.warn(`[WABA] sendFullCatalogMenu product_list rejected/failed for ${phoneId}. Triggering category list fallback.`);
+    await sendCategoryList(phoneId, from, undefined, branchId, true);
+  }
 }
 
 async function sendCategoryList(phoneId: string, from: string, carriedCart?: string, explicitBranch?: LocationId, forceList = false) {
@@ -2321,7 +2363,7 @@ async function sendCategoryList(phoneId: string, from: string, carriedCart?: str
   const loc = LOCATIONS[branchId];
   
   if (forceList) {
-    await sendWhatsAppMessage(phoneId, from, {
+    const res = await sendWhatsAppMessage(phoneId, from, {
       type: 'interactive',
       interactive: {
         type: 'list',
@@ -2334,6 +2376,18 @@ async function sendCategoryList(phoneId: string, from: string, carriedCart?: str
         },
       },
     });
+
+    if (!res?.messages?.[0]?.id) {
+      console.warn(`[WABA] sendCategoryList interactive list failed. Triggering plain text fallback.`);
+      const sections = getMenuSections(branchId);
+      const catList = sections.map(s => `• *${s.title}*`).join('\n');
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: {
+          body: `*${loc.name} Menu*\n\nBrowse our fresh specialties:\n${catList}\n\n📱 Order online directly:\nhttps://tasteofvillagerestaurants.co.uk/menu\n\nOr reply with the name of any dish (e.g. *Karahi*, *Biryani*, *Naan*) to order!`,
+        },
+      });
+    }
     return;
   }
 

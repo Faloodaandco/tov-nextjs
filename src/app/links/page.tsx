@@ -16,7 +16,7 @@ const BRANCHES = {
     phone: '01753326341',
     phoneDisplay: '01753 326341',
     menuPath: '/slough/menu',
-    whatsAppHref: "https://wa.me/441753326341?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20view%20the%20menu%20and%20place%20an%20order.",
+    whatsAppHref: "https://wa.me/447337389133?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20view%20the%20menu%20and%20place%20an%20order.",
     googleReviewHref: 'https://g.page/r/CU4P6ZjGio6HEAE/review',
   },
   hayes: {
@@ -29,7 +29,7 @@ const BRANCHES = {
     phone: '02034093786',
     phoneDisplay: '020 3409 3786',
     menuPath: '/hayes/menu',
-    whatsAppHref: "https://wa.me/442034093786?text=Hi%20Taste%20of%20Village%20Hayes!%20I'd%20like%20to%20view%20the%20menu%20and%20place%20an%20order.",
+    whatsAppHref: "https://wa.me/447424216045?text=Hi%20Taste%20of%20Village%20Hayes!%20I'd%20like%20to%20view%20the%20menu%20and%20place%20an%20order.",
     googleReviewHref: 'https://share.google/t7BsnOEW5Zxb87xRv',
   },
 };

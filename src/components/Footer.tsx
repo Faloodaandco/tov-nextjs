@@ -58,10 +58,10 @@ export const Footer = () => {
               <a aria-label="Facebook" href={SHOP_CONFIG.facebook} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg">
                 <Facebook size={20} />
               </a>
-              <a aria-label="WhatsApp Hayes" href="https://wa.me/442034093786" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Hayes">
+              <a aria-label="WhatsApp Hayes" href="https://wa.me/447424216045" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Hayes">
                 <MessageCircle size={20} />
               </a>
-              <a aria-label="WhatsApp Slough" href="https://wa.me/441753326341" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Slough">
+              <a aria-label="WhatsApp Slough" href="https://wa.me/447337389133" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-bg-sand/20 text-bg-sand flex items-center justify-center hover:bg-terracotta hover:border-terracotta hover:scale-110 hover:-translate-y-1 transition-all duration-300 shadow-lg" title="WhatsApp Slough">
                 <MessageCircle size={20} />
               </a>
             </div>

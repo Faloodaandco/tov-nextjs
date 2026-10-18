@@ -115,7 +115,12 @@ function getClient(): GoogleGenAI | null {
   return null;
 }
 
-const SYSTEM_INSTRUCTION = `You are the Executive Chef & Master Food Consultant for Taste of Village Hayes (766B Uxbridge Rd, Hayes UB4 0RU, London | https://tasteofvillagerestaurants.co.uk/).
+function getSystemInstruction(branch: 'hayes' | 'slough' = 'hayes'): string {
+  const branchInfo = branch === 'slough'
+    ? 'Taste of Village Slough (260 Farnham Road, Slough SL1 4XL, Berkshire | Phone: 01753 326341 | https://tasteofvillagerestaurants.co.uk/)'
+    : 'Taste of Village Hayes (766B Uxbridge Rd, Hayes UB4 0RU, London | Phone: 020 3409 3786 | https://tasteofvillagerestaurants.co.uk/)';
+
+  return `You are the Executive Chef & Master Food Consultant for ${branchInfo}.
 You embody an Asian culinary food master (chef/taster level) AND an elite, warm, charismatic WhatsApp salesman.
 
 CHEF CULINARY EXPERTISE:
@@ -161,12 +166,59 @@ RULES:
 2. 'recommendation': If the user asks for suggestions, recommendations, or popular dishes, recommend authentic TOV dishes using chef sensory terms, set 'suggestedDishId', and use an assumptive closing prompt.
 3. 'faq': If the user asks about Halal status, opening hours, address, parking, delivery, or allergens, answer accurately using the KNOWLEDGE BASE above.
 4. STRICT INVARIANT: ONLY recommend dishes from the Taste of Village menu above. Never invent dishes. Never mention other restaurants. Canonical domain is https://tasteofvillagerestaurants.co.uk/.`;
+}
 
 /**
- * Analyze a customer's message using Gemini 2.5 Flash.
- * Enforces a strict 2500ms safety timeout — if Gemini takes too long or fails,
- * returns null so the caller can fall back to instant deterministic routing.
+ * Deterministic Chef & FAQ fallback when both Cloud Gemini and Edge Ollama fail or time out.
+ * Ensures customers always receive an appetizing culinary response or accurate FAQ.
  */
+function getDeterministicChefFallback(userText: string, branch: 'hayes' | 'slough' = 'hayes'): AssistantResult | null {
+  const lower = userText.toLowerCase().trim();
+
+  // Halal inquiry
+  if (/\b(halal|hmc|zabihah|meat)\b/i.test(lower)) {
+    return {
+      intent: 'faq',
+      reply: 'All meats and ingredients at Taste of Village are 100% Halal certified and prepared under strict hygiene standards. What may I cook fresh for you today?',
+      orderItems: [],
+    };
+  }
+
+  // Hours inquiry
+  if (/\b(hours|opening|close|open today|time)\b/i.test(lower)) {
+    return {
+      intent: 'faq',
+      reply: `Taste of Village ${branch === 'slough' ? 'Slough' : 'Hayes'} is open daily from 10:00 AM to 02:00 AM (7 days) for hot collection and local delivery.`,
+      orderItems: [],
+    };
+  }
+
+  // Location/address inquiry
+  if (/\b(address|location|where are you|postcode|find you)\b/i.test(lower)) {
+    const addr = branch === 'slough' ? '260 Farnham Road, Slough SL1 4XL' : '766B Uxbridge Rd, Hayes UB4 0RU';
+    return {
+      intent: 'faq',
+      reply: `We are located at ${addr}. Fired fresh on roaring flames daily 10AM–2AM!`,
+      orderItems: [],
+    };
+  }
+
+  // Recommendations / chef suggestions
+  if (/\b(recommend|suggest|what('?s| is) good|popular|special|best dish|chef special)\b/i.test(lower)) {
+    const karahi = (menuItems as MenuItem[]).find(m => m.name.toLowerCase().includes('charsi') || m.name.toLowerCase().includes('karahi'))
+      || (menuItems as MenuItem[])[0];
+
+    return {
+      intent: 'recommendation',
+      reply: 'I highly recommend our signature Lamb Charsi Karahi, seared in an iron wok with fresh ginger and tomatoes over high flame. Shall I add a hot Butter Naan to scoop that rich gravy?',
+      orderItems: [],
+      suggestedDish: karahi || null,
+    };
+  }
+
+  return null;
+}
+
 /**
  * Validate & parse raw assistant JSON output into a verified AssistantResult.
  * Resolves ordered dishes and recommendations strictly against tov-menu.json.
@@ -225,7 +277,8 @@ const EDGE_OLLAMA_NODES: string[] = [
  * Query Redundant Edge Ollama Cluster (mkr4 & rnw2 running Qwen2.5:3b).
  * Provides sub-second local failover if Google Gemini API times out or is offline.
  */
-async function queryEdgeOllama(userText: string): Promise<AssistantResult | null> {
+async function queryEdgeOllama(userText: string, branch: 'hayes' | 'slough' = 'hayes'): Promise<AssistantResult | null> {
+  const systemInstruction = getSystemInstruction(branch);
   for (const baseUrl of EDGE_OLLAMA_NODES) {
     try {
       const controller = new AbortController();
@@ -238,7 +291,7 @@ async function queryEdgeOllama(userText: string): Promise<AssistantResult | null
           model: 'qwen2.5:3b',
           format: 'json',
           messages: [
-            { role: 'system', content: SYSTEM_INSTRUCTION },
+            { role: 'system', content: systemInstruction },
             { role: 'user', content: userText },
           ],
           stream: false,
@@ -267,19 +320,23 @@ async function queryEdgeOllama(userText: string): Promise<AssistantResult | null
 
 /**
  * Analyze a customer's message using Multi-Tier Redundant RAG Architecture:
- * 1. Primary: Google Gemini 2.5 Flash API (2500ms safety cap)
+ * 1. Primary: Google Gemini 2.0 Flash API (6000ms safety cap)
  * 2. Secondary Failover: Edge Node 1 (mkr4 Ollama Qwen2.5 on Tailscale/LAN)
  * 3. Tertiary Failover: Edge Node 2 (rnw2 Ollama Qwen2.5 on Tailscale/LAN)
- * 4. Quaternary Fallback: Safe deterministic regex routing in wabaMenu
+ * 4. Quaternary Fallback: Safe deterministic sensory chef fallback in wabaMenu
  */
-export async function analyzeWithGemini(userText: string): Promise<AssistantResult | null> {
+export async function analyzeWithGemini(
+  userText: string,
+  branch: 'hayes' | 'slough' = 'hayes'
+): Promise<AssistantResult | null> {
   const client = getClient();
+  const systemInstruction = getSystemInstruction(branch);
 
   if (client) {
-    const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+    const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
 
     const timeoutPromise = new Promise<null>((resolve) => {
-      setTimeout(() => resolve(null), 2500);
+      setTimeout(() => resolve(null), 6000);
     });
 
     const queryPromise = (async (): Promise<AssistantResult | null> => {
@@ -287,7 +344,7 @@ export async function analyzeWithGemini(userText: string): Promise<AssistantResu
         const response = await client.models.generateContent({
           model,
           config: {
-            systemInstruction: SYSTEM_INSTRUCTION,
+            systemInstruction,
             responseMimeType: 'application/json',
           },
           contents: userText,
@@ -311,6 +368,11 @@ export async function analyzeWithGemini(userText: string): Promise<AssistantResu
   }
 
   // Failover to local Edge RAG cluster (mkr4 / rnw2)
-  const edgeResult = await queryEdgeOllama(userText);
-  return edgeResult;
+  const edgeResult = await queryEdgeOllama(userText, branch);
+  if (edgeResult) {
+    return edgeResult;
+  }
+
+  // Quaternary Fallback: deterministic sensory chef & FAQ router
+  return getDeterministicChefFallback(userText, branch);
 }
