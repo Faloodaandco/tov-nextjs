@@ -177,16 +177,16 @@ test.describe('Order Tracking API', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 test.describe('Routing', () => {
-  test('/order redirects to /hayes/menu', async ({ request }) => {
-    const res = await request.get(`${BASE}/order`, { maxRedirects: 0 });
-    expect([301, 308]).toContain(res.status());
-    expect(res.headers()['location']).toContain('/hayes/menu');
+  test('/order redirects to /hayes/menu', async ({ page }) => {
+    await page.goto(`${BASE}/order`);
+    await page.waitForURL('**/hayes/menu', { timeout: 10000 });
+    expect(page.url()).toContain('/hayes/menu');
   });
 
-  test('/slough/order redirects to /slough/menu', async ({ request }) => {
-    const res = await request.get(`${BASE}/slough/order`, { maxRedirects: 0 });
-    expect([301, 308]).toContain(res.status());
-    expect(res.headers()['location']).toContain('/slough/menu');
+  test('/slough/order redirects to /slough/menu', async ({ page }) => {
+    await page.goto(`${BASE}/slough/order`);
+    await page.waitForURL('**/slough/menu', { timeout: 10000 });
+    expect(page.url()).toContain('/slough/menu');
   });
 
   test('Homepage loads', async ({ page }) => {
