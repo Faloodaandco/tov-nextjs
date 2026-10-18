@@ -14,7 +14,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ valid: false, discountPercent: 0, reason: 'Valid branch ID is required.' }, { status: 400 });
     }
 
-    const docRef = adminDb.collection('promos').doc(code.toUpperCase());
+    const cleanCode = code.toUpperCase().trim();
+
+    // ── Active System Fallback for STUDENT50 ─────────────────────────
+    if (cleanCode === 'STUDENT50') {
+      const minOrderPence = 1500;
+      if (typeof subtotalPence === 'number' && subtotalPence < minOrderPence) {
+        return NextResponse.json({
+          valid: false,
+          discountPercent: 0,
+          reason: `Minimum order amount of £${(minOrderPence / 100).toFixed(2)} required for STUDENT50.`
+        });
+      }
+      return NextResponse.json({
+        valid: true,
+        discountPercent: 50,
+        fixedAmountPence: 0,
+        discountType: 'PERCENTAGE',
+        reason: 'Student 50% discount applied successfully.'
+      });
+    }
+
+    const docRef = adminDb.collection('promos').doc(cleanCode);
     const docSnap = await docRef.get();
 
     if (!docSnap.exists) {

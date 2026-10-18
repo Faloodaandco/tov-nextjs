@@ -33,6 +33,25 @@ export class CampaignService {
     const voucherCode = lead.voucherCode || `TOV50-${randomSuffix}`;
 
     try {
+      // 1. Primary: Serverless API creates lead AND provisions voucher in vouchers collection
+      const res = await fetch('/api/leads/check-in', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...lead, voucherCode }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.voucherCode) {
+          return { voucherCode: data.voucherCode };
+        }
+      }
+    } catch (apiErr) {
+      console.warn('[CampaignService] Check-in API failed, falling back to direct Firestore:', apiErr);
+    }
+
+    // 2. Fallback: Direct Firestore client write
+    try {
       await addDoc(collection(db, this.COLLECTION_NAME), {
         name: lead.name.trim(),
         email: (lead.email || '').trim().toLowerCase(),

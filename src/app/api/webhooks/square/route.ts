@@ -163,6 +163,7 @@ export async function POST(req: NextRequest) {
                     status: 'PAID',
                     paidAt: new Date().toISOString(),
                     squarePaymentId: payment.id,
+                    squareOrderId: squareOrderId || null,
                   });
                   console.info(`[Square Webhook] whatsapp_orders/${waDocRef!.id} marked as PAID`);
 
@@ -344,8 +345,8 @@ export async function POST(req: NextRequest) {
                       });
                     }
 
-                    // ── First-Order Name Confirmation ────────────────────────
-                    if (customerProfile && customerProfile.orderCount === 1) {
+                    // ── Name Confirmation (any customer without a confirmed name) ──
+                    if (customerProfile && !customerProfile.confirmedName) {
                       after(async () => {
                         try {
                           await new Promise(r => setTimeout(r, 8000));
@@ -353,18 +354,26 @@ export async function POST(req: NextRequest) {
                             state: 'awaiting_name_confirmation',
                           }, { merge: true });
 
+                          const isFirstOrder = customerProfile.orderCount === 1;
+                          const namePromptText = isFirstOrder
+                            ? [
+                                `One last thing — what name should we save for your orders? 😊`,
+                                `Just reply with your preferred name and we'll remember you!`,
+                                ``,
+                                `Would you also like exclusive offers & early access to new dishes?`,
+                              ].join('\n')
+                            : [
+                                `We notice we don't have your name yet! 😊`,
+                                `Reply with your preferred name and we'll remember you for all future orders.`,
+                                ``,
+                                `Would you also like exclusive offers & early access to new dishes?`,
+                              ].join('\n');
+
                           await sendWhatsAppMessage(phoneId, waOrder.phone, {
                             type: 'interactive',
                             interactive: {
                               type: 'button',
-                              body: {
-                                text: [
-                                  `One last thing — what name should we save for your orders? 😊`,
-                                  `Just reply with your preferred name and we'll remember you!`,
-                                  ``,
-                                  `Would you also like exclusive offers & early access to new dishes?`,
-                                ].join('\n'),
-                              },
+                              body: { text: namePromptText },
                               action: {
                                 buttons: [
                                   { type: 'reply', reply: { id: 'tov_marketing_yes', title: 'Yes please 🎁' } },
@@ -373,7 +382,7 @@ export async function POST(req: NextRequest) {
                               },
                             },
                           });
-                          console.info(`[Square Webhook] Sent name confirmation prompt to ${waOrder.phone}`);
+                          console.info(`[Square Webhook] Sent name confirmation prompt to ${waOrder.phone} (orderCount: ${customerProfile.orderCount})`);
                         } catch (ncErr) {
                           console.error('[Square Webhook] Name confirmation failed (non-fatal):', ncErr);
                         }
@@ -417,9 +426,72 @@ export async function POST(req: NextRequest) {
       }
 
       case 'order.updated': {
-        const order = event?.data?.object?.order_updated;
-        if (order) {
-          console.info(`[Square Webhook] Order ${order.order_id}: state=${order.state}`);
+        const orderUpdate = event?.data?.object?.order_updated;
+        if (!orderUpdate) break;
+
+        const squareOrderId = orderUpdate.order_id;
+        const state = orderUpdate.state;
+        console.info(`[Square Webhook] Order ${squareOrderId}: state=${state}`);
+
+        // Detect kitchen-ready state (COMPLETED = order fulfilled on Square KDS)
+        if (state === 'COMPLETED' && squareOrderId) {
+          try {
+            // Look up whatsapp_orders by doc ID first (orderId is used as doc key),
+            // then fall back to a field query on squareOrderId
+            let waDoc: FirebaseFirestore.QueryDocumentSnapshot | FirebaseFirestore.DocumentSnapshot | null = null;
+
+            const directSnap = await adminDb.collection('whatsapp_orders').doc(squareOrderId).get();
+            if (directSnap.exists) {
+              waDoc = directSnap;
+            } else {
+              const querySnap = await adminDb.collection('whatsapp_orders')
+                .where('squareOrderId', '==', squareOrderId)
+                .limit(1)
+                .get();
+              if (!querySnap.empty) {
+                waDoc = querySnap.docs[0];
+              }
+            }
+
+            if (waDoc?.exists) {
+              const waData = waDoc.data()!;
+
+              // Only notify if we have a phone and haven't already sent the notification
+              if (waData.phone && !waData.readyNotificationSent) {
+                const displayId = waDoc.id.slice(-5).toUpperCase();
+                const phoneId = waData.phoneId || process.env.TOV_HAYES_PHONE_ID || '';
+                const branchName = waData.branchName || 'Taste of Village';
+
+                await sendWhatsAppMessage(phoneId, waData.phone, {
+                  type: 'interactive',
+                  interactive: {
+                    type: 'button',
+                    body: {
+                      text: [
+                        `🔔 *Your Order is Ready!*`,
+                        ``,
+                        `Order #${displayId} is freshly prepared and waiting for you at ${branchName}. 🍽️`,
+                        ``,
+                        `Come collect your delicious food!`,
+                      ].join('\n'),
+                    },
+                    action: {
+                      buttons: [
+                        { type: 'reply', reply: { id: 'tov_reorder', title: '🔁 Reorder Same' } },
+                        { type: 'reply', reply: { id: 'tov_menu', title: '📋 Order Again' } },
+                      ],
+                    },
+                  },
+                });
+
+                // Mark as sent to prevent duplicate notifications
+                await waDoc.ref.update({ readyNotificationSent: true });
+                console.info(`[Square Webhook] Sent kitchen-ready notification to ${waData.phone} for order ${displayId}`);
+              }
+            }
+          } catch (readyErr) {
+            console.error('[Square Webhook] Kitchen-ready notification failed (non-fatal):', readyErr);
+          }
         }
         break;
       }

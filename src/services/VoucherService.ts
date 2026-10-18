@@ -152,14 +152,14 @@ export async function issueFirstTimeBuyerPack(
 
   const batch = adminDb.batch();
 
-  // 3× 50% vouchers (Hayes only, min £10)
+  // 3× 50% vouchers (all branches)
   for (let i = 0; i < 3; i++) {
     const code = `HALF-${crypto.randomUUID().slice(0, 4).toUpperCase()}`;
     const ref = adminDb.collection(COLLECTION).doc();
     batch.set(ref, {
       code,
       phone,
-      branch: 'hayes',
+      branch: 'all',
       type: 'FIRST_TIME_50',
       discountPercent: 50,
       minOrderPence: 0,

@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       code,
       name: `Weather Promo: ${reason || 'Special Weather Discount'}`,
       discountPercent,
-      discountType: 'percentage',
+      discountType: 'PERCENTAGE',
       fixedAmountPence: 0,
       branches: [branch],
       minOrderPence: 0,

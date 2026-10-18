@@ -100,20 +100,53 @@ async function sendViaResend(data: OrderEmailData): Promise<boolean> {
 
   const { text, html, subject } = buildEmailContent(data);
 
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: 'TOV Orders <onboarding@resend.dev>',
-      to: [RECIPIENT],
-      subject,
-      text,
-      html,
-    }),
+  const payload = JSON.stringify({
+    from: 'TOV Orders <onboarding@resend.dev>',
+    reply_to: 'info@tasteofvillagerestaurants.co.uk',
+    to: [RECIPIENT],
+    subject,
+    text,
+    html,
   });
+
+  const attemptSend = async (): Promise<Response> => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    try {
+      return await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: payload,
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+  };
+
+  // First attempt
+  let res: Response;
+  try {
+    res = await attemptSend();
+  } catch (err) {
+    console.error('[Email/Resend] Fetch failed (timeout or network):', err);
+    return false;
+  }
+
+  // Retry once on 429 (rate limited) or 5xx with 500ms backoff
+  if (res.status === 429 || res.status >= 500) {
+    console.warn(`[Email/Resend] Retryable error (HTTP ${res.status}), retrying in 500ms…`);
+    await new Promise(r => setTimeout(r, 500));
+    try {
+      res = await attemptSend();
+    } catch (err) {
+      console.error('[Email/Resend] Retry fetch failed (timeout or network):', err);
+      return false;
+    }
+  }
 
   if (!res.ok) {
     const err = await res.text();
@@ -139,13 +172,18 @@ async function sendViaSMTP(data: OrderEmailData): Promise<boolean> {
 
   const { text, html, subject } = buildEmailContent(data);
 
-  await transport.sendMail({
-    from: `"TOV Orders" <${SMTP_EMAIL}>`,
-    to: RECIPIENT,
-    subject,
-    text,
-    html,
-  });
+  try {
+    await transport.sendMail({
+      from: `"TOV Orders" <${SMTP_EMAIL}>`,
+      to: RECIPIENT,
+      subject,
+      text,
+      html,
+    });
+  } catch (err) {
+    console.error(`[Email/SMTP] sendMail failed for order #${data.orderDisplayId}:`, err);
+    return false;
+  }
 
   console.info(`[Email/SMTP] Sent order notification for #${data.orderDisplayId}`);
   return true;
@@ -160,11 +198,17 @@ export async function sendOrderNotificationEmail(data: OrderEmailData): Promise<
   try {
     // Strategy 1: Resend (free API, no SMTP setup)
     const sentViaResend = await sendViaResend(data);
-    if (sentViaResend) return;
+    if (sentViaResend) {
+      console.info(`[Email] Order #${data.orderDisplayId} notification sent via Resend (primary)`);
+      return;
+    }
 
     // Strategy 2: SMTP via nodemailer (Google Workspace)
     const sentViaSMTP = await sendViaSMTP(data);
-    if (sentViaSMTP) return;
+    if (sentViaSMTP) {
+      console.info(`[Email] Order #${data.orderDisplayId} notification sent via SMTP (fallback)`);
+      return;
+    }
 
     console.warn('[Email] No email provider configured. Set RESEND_API_KEY or SMTP_APP_PASSWORD on Vercel.');
   } catch (error) {

@@ -677,7 +677,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
 
   // ── Intent: Clear / Cancel / Reset ─────────────────────────────
   if (/\b(clear|cancel|reset|start over)\b/.test(text)) {
-    await updateConversation(from, { activeCart: null, state: 'idle', pendingDelivery: null });
+    await updateConversation(from, { activeCart: null, state: 'idle', pendingDelivery: null }, phoneId);
     await sendWhatsAppMessage(phoneId, from, {
       type: 'text',
       text: { body: 'Basket cleared. Type *Menu* whenever you are ready to start fresh!' },
@@ -798,7 +798,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     await updateConversation(from, {
       activeCart: { items: newItems, basePence: total, updatedAt: new Date().toISOString() },
       state: 'idle',
-    });
+    }, phoneId);
 
     await sendWhatsAppMessage(phoneId, from, {
       type: 'interactive',
@@ -894,6 +894,28 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     return;
   }
 
+  // ── Safety Net: customer has active checkout, redirect them ─────
+  if (conv.activeCart?.items?.length && conv.activeCart?.checkoutLink) {
+    await sendWhatsAppMessage(phoneId, from, {
+      type: 'text',
+      text: {
+        preview_url: false,
+        body: [
+          `You have an active order ready for payment! 🛒`,
+          ``,
+          cartSummaryText(conv.activeCart.items),
+          `*Total: ${formatPrice((conv.activeCart.basePence || 0) / 100)}*`,
+          ``,
+          `Complete your payment here:`,
+          conv.activeCart.checkoutLink,
+          ``,
+          `_Type *clear* to cancel or *menu* to start a new order._`,
+        ].join('\n'),
+      },
+    });
+    return;
+  }
+
   // ── Intelligent Gemini Assistant (Multi-dish order, recommendations, FAQs) ──
   // LAST RESORT: only called when local matching fails.
   const aiResult = await analyzeWithGemini(rawText, activeBranch);
@@ -908,7 +930,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
       await updateConversation(from, {
         activeCart: { items: currentItems, basePence: total, updatedAt: new Date().toISOString() },
         state: 'idle',
-      });
+      }, phoneId);
 
       await sendWhatsAppMessage(phoneId, from, {
         type: 'interactive',
@@ -1019,7 +1041,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
               state: 'idle',
               lastPaidOrderId: activeRef,
               lastPaidAt: new Date().toISOString(),
-            });
+            }, phoneId);
             return;
           } else if (orderData?.paymentLinkUrl) {
             await sendWhatsAppMessage(phoneId, from, {
@@ -1628,6 +1650,36 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       const branchLoc = LOCATIONS[branchKey];
       const total = cartTotal(items);
 
+      // ── Discount Code Prompt (only if no voucher already applied) ──
+      if (!conv.appliedVoucher && !buttonId.includes('_skip_voucher')) {
+        await updateConversation(from, {
+          activeCart: { items, basePence: total, branchId: branchKey, updatedAt: new Date().toISOString() },
+          pendingFulfillment: 'delivery',
+        });
+
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'interactive',
+          interactive: {
+            type: 'button',
+            body: {
+              text: [
+                `🛵 *${branchLoc.name} Delivery*`,
+                `Cart: £${(total / 100).toFixed(2)}`,
+                ``,
+                `🎫 Do you have a discount code?`,
+              ].join('\n'),
+            },
+            action: {
+              buttons: [
+                { type: 'reply', reply: { id: 'tov_has_voucher', title: '🎫 Yes, I have one' } },
+                { type: 'reply', reply: { id: 'tov_del_skip_voucher', title: '🛵 No, Checkout' } },
+              ],
+            },
+          },
+        });
+        return;
+      }
+
       await updateConversation(from, {
         state: 'awaiting_postcode',
         activeCart: { items, basePence: total, branchId: branchKey, updatedAt: new Date().toISOString() },
@@ -2011,6 +2063,7 @@ async function generateCheckoutLink(
     paymentLinkUrl: squareLink,
     postcode: postcode || null,
     streetAddress: streetAddress || null,
+    squareOrderId: orderId || null,
     totalPence,
     createdAt: new Date().toISOString(),
   };
@@ -2044,7 +2097,7 @@ async function generateCheckoutLink(
       checkoutReferenceId: referenceId,
       checkoutAt: new Date().toISOString(),
     },
-  });
+  }, phoneId);
 
   if (isDelivery) {
     const feeText = deliveryFeePence === 0 ? '*FREE* 🎉' : formatPrice(deliveryFeePence / 100);

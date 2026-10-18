@@ -60,39 +60,70 @@ export async function GET(request: NextRequest) {
 
       if (!phone) continue;
 
-      const messagePayload = {
-        type: 'interactive',
-        interactive: {
-          type: 'button',
-          header: { type: 'text', text: 'Weekend Desi Feast' },
-          body: {
-            text: `Salam ${name}! Weekend dinner is sorted at Taste of Village ${branchName}.\n\nIndulge in our slow-simmered Handi Karahi, sizzling Mixed Grills, and fresh Roghni Naans hot from the clay tandoor.\n\nOrder online for prompt collection or local delivery!`,
-          },
-          action: {
-            buttons: [
+      // Meta 24-Hour Policy Invariant:
+      // Business-initiated broadcasts outside the 24h window MUST use pre-approved templates.
+      // If a template is configured, attempt template send; otherwise, send interactive with safe 131047 suppression.
+      const templateName = process.env.META_FRIDAY_TEMPLATE_NAME;
+      let res: any = null;
+
+      if (templateName) {
+        res = await sendWhatsAppMessage(phoneId, phone, {
+          type: 'template',
+          template: {
+            name: templateName,
+            language: { code: 'en_GB' },
+            components: [
               {
-                type: 'reply',
-                reply: {
-                  id: `tov_wknd_${branch}`,
-                  title: '🍛 View Menu',
-                },
-              },
-              {
-                type: 'reply',
-                reply: {
-                  id: `tov_book_${branch}`,
-                  title: '📅 Book Table',
-                },
+                type: 'body',
+                parameters: [
+                  { type: 'text', text: name },
+                  { type: 'text', text: branchName },
+                ],
               },
             ],
           },
-        },
-      };
+        });
+      }
 
-      const res = await sendWhatsAppMessage(phoneId, phone, messagePayload);
+      if (!res?.messages?.[0]?.id) {
+        const messagePayload = {
+          type: 'interactive',
+          interactive: {
+            type: 'button',
+            header: { type: 'text', text: 'Weekend Desi Feast' },
+            body: {
+              text: `Salam ${name}! Weekend dinner is sorted at Taste of Village ${branchName}.\n\nIndulge in our slow-simmered Handi Karahi, sizzling Mixed Grills, and fresh Roghni Naans hot from the clay tandoor.\n\nOrder online for prompt collection or local delivery!`,
+            },
+            action: {
+              buttons: [
+                {
+                  type: 'reply',
+                  reply: {
+                    id: `tov_wknd_${branch}`,
+                    title: '🍛 View Menu',
+                  },
+                },
+                {
+                  type: 'reply',
+                  reply: {
+                    id: `tov_book_${branch}`,
+                    title: '📅 Book Table',
+                  },
+                },
+              ],
+            },
+          },
+        };
+        res = await sendWhatsAppMessage(phoneId, phone, messagePayload);
+      }
+
       if (res?.messages?.[0]?.id) {
         sentCount++;
       } else {
+        const errorCode = res?.error?.code || res?.error?.error_subcode;
+        if (errorCode === 131047) {
+          console.info(`[Friday Broadcast] Customer ${phone} outside 24h service window (error 131047). Handled gracefully.`);
+        }
         failedCount++;
       }
     }

@@ -128,7 +128,7 @@ export default function OffersPage() {
               {/* CTAs */}
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
                 <a
-                  href="https://wa.me/441753326341?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program."
+                  href="https://wa.me/447337389133?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-6 py-3 bg-[#25D366] text-white rounded-full font-black text-xs uppercase tracking-wider hover:bg-[#20ba59] transition-all flex items-center gap-2 shadow-lg active:scale-95"

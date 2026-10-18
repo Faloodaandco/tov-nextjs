@@ -224,7 +224,7 @@ function CheckInContent() {
   };
 
   // WhatsApp 1-tap claim deep link
-  const whatsappNumber = selectedBranch === 'hayes' ? '442034093786' : '441753326341';
+  const whatsappNumber = selectedBranch === 'hayes' ? '447424216045' : '447337389133';
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     `Hi Taste of Village ${selectedBranch === 'hayes' ? 'Hayes' : 'Slough'}! Please send me my 50% OFF dining voucher code.`
   )}`;

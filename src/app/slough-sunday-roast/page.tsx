@@ -191,7 +191,7 @@ export default function SloughSundayRoastPage() {
           {/* 3-Way Order CTAs */}
           <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 w-full max-w-xl">
             <a
-              href="https://wa.me/441753326341?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program."
+              href="https://wa.me/447337389133?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-3 bg-[#25D366] text-white rounded-full font-black text-xs uppercase tracking-wider hover:bg-[#20ba59] transition-all shadow-xl active:scale-95"
@@ -248,7 +248,7 @@ export default function SloughSundayRoastPage() {
 
             <div className="flex flex-row lg:flex-col gap-2 shrink-0">
               <a
-                href="https://wa.me/441753326341?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program."
+                href="https://wa.me/447337389133?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-5 py-2.5 bg-[#25D366] text-white rounded-full font-black text-[11px] uppercase tracking-wider hover:bg-[#20ba59] transition-all text-center flex items-center justify-center gap-1.5"
@@ -303,7 +303,7 @@ export default function SloughSundayRoastPage() {
               <Link href="/slough/menu#sunday_roast" className="text-terracotta font-bold text-sm hover:underline inline-flex items-center gap-1">
                 Order Online →
               </Link>
-              <a href="https://wa.me/441753326341?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Beef%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program." target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold text-sm hover:underline inline-flex items-center gap-1">
+              <a href="https://wa.me/447337389133?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Beef%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program." target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold text-sm hover:underline inline-flex items-center gap-1">
                 WhatsApp Order →
               </a>
             </div>
@@ -340,7 +340,7 @@ export default function SloughSundayRoastPage() {
                 <Link href="/slough/menu#sunday_roast" className="px-6 py-3 bg-white text-pine rounded-full font-black text-xs uppercase tracking-wider hover:bg-amber-400 transition-all shadow-lg inline-flex items-center gap-1.5 active:scale-95">
                   Order Online →
                 </Link>
-                <a href="https://wa.me/441753326341?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Half%20Chicken%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program." target="_blank" rel="noopener noreferrer" className="px-5 py-3 bg-[#25D366] text-white rounded-full font-black text-xs uppercase tracking-wider hover:bg-[#20ba59] transition-all shadow-lg inline-flex items-center gap-1.5 active:scale-95">
+                <a href="https://wa.me/447337389133?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Half%20Chicken%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program." target="_blank" rel="noopener noreferrer" className="px-5 py-3 bg-[#25D366] text-white rounded-full font-black text-xs uppercase tracking-wider hover:bg-[#20ba59] transition-all shadow-lg inline-flex items-center gap-1.5 active:scale-95">
                   WhatsApp Order →
                 </a>
               </div>
@@ -387,7 +387,7 @@ export default function SloughSundayRoastPage() {
               <Link href="/slough/menu#sunday_roast" className="text-terracotta font-bold text-sm hover:underline inline-flex items-center gap-1">
                 Order Online →
               </Link>
-              <a href="https://wa.me/441753326341?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Lamb%20Shank%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program." target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold text-sm hover:underline inline-flex items-center gap-1">
+              <a href="https://wa.me/447337389133?text=Hi%20Taste%20of%20Village%20Slough!%20I'd%20like%20to%20order%20the%20Lamb%20Shank%20Sunday%20Roast%20special%20offer.%20Please%20put%20it%20under%20my%20loyalty%20program." target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold text-sm hover:underline inline-flex items-center gap-1">
                 WhatsApp Order →
               </a>
             </div>

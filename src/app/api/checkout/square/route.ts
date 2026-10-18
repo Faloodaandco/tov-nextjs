@@ -324,8 +324,13 @@ export async function POST(req: NextRequest) {
           discountLabel = `ONLINE: ${ACTIVE_PROMO.cartLabel}`;
           console.info(`[Square] Promo ${cleanVoucherCode}: -£${promoResult.discount.toFixed(2)} on ${promoResult.eligibleItemsCount} items`);
         }
-      } else if (cleanVoucherCode.startsWith('TOV30-') || cleanVoucherCode.startsWith('TOV50-')) {
-        // ── Firestore-Validated Voucher (TOV30/TOV50) ──────────────────
+      } else if (
+        cleanVoucherCode.startsWith('TOV30-') ||
+        cleanVoucherCode.startsWith('TOV50-') ||
+        cleanVoucherCode.startsWith('HALF-') ||
+        cleanVoucherCode.startsWith('SAVE-')
+      ) {
+        // ── Firestore-Validated Voucher (TOV30/TOV50/HALF/SAVE) ────────
         try {
           const voucherResult = await validateVoucher(
             cleanVoucherCode,
@@ -347,6 +352,15 @@ export async function POST(req: NextRequest) {
           console.error('[Square] Voucher validation error:', voucherErr);
           // Don't block checkout on voucher service failure — proceed without discount
         }
+      } else if (cleanVoucherCode === 'STUDENT50') {
+        // ── Student 50% Off First 3 Orders ────────────────────────────
+        const minOrder = 1500; // £15 min order
+        if (subtotalPence < minOrder) {
+          return NextResponse.json({ error: 'Minimum order of £15.00 required for STUDENT50.' }, { status: 400 });
+        }
+        discountPence = Math.round(subtotalPence * 0.50);
+        discountLabel = `ONLINE: STUDENT50 (50% Off)`;
+        console.info(`[Square] Student promo STUDENT50: -£${(discountPence / 100).toFixed(2)}`);
       } else {
         // ── Custom Promo from Firestore promos collection ─────────────
         try {
