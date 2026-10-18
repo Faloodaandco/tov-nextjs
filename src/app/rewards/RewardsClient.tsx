@@ -3,7 +3,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Gift, ChevronRight, Loader2, Store, Smartphone, UserCircle2, LogOut, Crown, Star, Award } from 'lucide-react';
+import QRCode from 'react-qr-code';
+import { Gift, ChevronRight, Loader2, Store, Smartphone, UserCircle2, LogOut, Crown, Star, Award, CheckCircle2, Ticket } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getCustomer } from '@/services/customerService';
 import { useAuth } from '@/context/AuthContext';
@@ -36,6 +37,9 @@ export default function RewardsClient() {
   const [loading, setLoading] = useState(false);
   const [account, setAccount] = useState<LoyaltyAccount | null>(null);
   const [error, setError] = useState('');
+  const [claiming, setClaiming] = useState<string | null>(null); // rewardId being claimed
+  const [claimedReward, setClaimedReward] = useState<{ code: string; url: string; title: string } | null>(null);
+  const [activeRewards, setActiveRewards] = useState<{ code: string; title: string; redeemUrl: string; expiresAt: string }[]>([]);
 
   useEffect(() => {
     if (user?.phoneNumber) {
@@ -95,6 +99,44 @@ export default function RewardsClient() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const REWARD_ID_MAP: Record<string, string> = {
+    '£5 OFF Voucher': 'voucher_5',
+    'Free Dessert': 'free_dessert',
+    'Free Mixed Grill': 'free_mixed_grill',
+    "VIP Chef's Table": 'vip_chefs_table',
+  };
+
+  const handleClaimReward = async (rewardTitle: string) => {
+    if (!account?.phone || claiming) return;
+    const rewardId = REWARD_ID_MAP[rewardTitle];
+    if (!rewardId) return;
+
+    setClaiming(rewardId);
+    setError('');
+    try {
+      const res = await fetch('/api/rewards/claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: account.phone, rewardId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to claim reward');
+
+      setClaimedReward({
+        code: data.code,
+        url: data.redeemUrl,
+        title: rewardTitle,
+      });
+
+      // Refresh account to show updated points
+      await fetchLoyalty(account.phone);
+    } catch (err: any) {
+      setError(err.message || 'Failed to claim reward');
+    } finally {
+      setClaiming(null);
     }
   };
 
@@ -360,9 +402,19 @@ export default function RewardsClient() {
                             </div>
                           )}
                           {isUnlocked && (
-                            <p className="text-xs text-terracotta font-bold uppercase tracking-widest flex items-center gap-1">
-                              <Crown size={12} /> UNLOCKED
-                            </p>
+                            <button
+                              aria-label={`Claim ${reward.title}`}
+                              onClick={() => handleClaimReward(reward.title)}
+                              disabled={!!claiming}
+                              className="mt-1 px-4 py-2 bg-terracotta text-white text-xs font-black uppercase tracking-widest hover:bg-pine transition-all shadow-[2px_2px_0px_rgba(138,61,42,0.3)] hover:-translate-y-0.5 disabled:opacity-50 flex items-center gap-2"
+                            >
+                              {claiming === REWARD_ID_MAP[reward.title] ? (
+                                <Loader2 size={12} className="animate-spin" />
+                              ) : (
+                                <Ticket size={12} />
+                              )}
+                              {claiming === REWARD_ID_MAP[reward.title] ? 'Claiming...' : 'Claim Reward'}
+                            </button>
                           )}
                         </div>
                       </motion.div>
@@ -370,6 +422,61 @@ export default function RewardsClient() {
                   })}
                 </div>
               </div>
+
+              {/* ── Claimed Reward QR Modal ───────────────────────────── */}
+              <AnimatePresence>
+                {claimedReward && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+                    onClick={() => setClaimedReward(null)}
+                  >
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      onClick={e => e.stopPropagation()}
+                      className="bg-white max-w-sm w-full p-8 shadow-2xl text-center"
+                    >
+                      <CheckCircle2 size={48} className="text-emerald-600 mx-auto mb-4" />
+                      <h3 className="font-display text-2xl font-black text-pine uppercase tracking-widest mb-2">
+                        Reward Claimed!
+                      </h3>
+                      <p className="text-pine/60 text-sm font-medium mb-6">{claimedReward.title}</p>
+
+                      {/* QR Code */}
+                      <div className="bg-white p-4 border-2 border-pine/10 inline-block mb-4">
+                        <QRCode value={claimedReward.url} size={180} />
+                      </div>
+
+                      <p className="font-mono text-lg font-bold text-pine mb-2">{claimedReward.code}</p>
+                      <p className="text-pine/50 text-xs font-medium mb-6">
+                        Show this QR code to staff at the restaurant to redeem your reward.
+                      </p>
+
+                      <div className="space-y-3">
+                        <a
+                          href={claimedReward.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block w-full py-3 bg-pine text-white font-black text-xs uppercase tracking-[0.2em] hover:bg-terracotta transition-all text-center"
+                        >
+                          Open Redemption Link
+                        </a>
+                        <button
+                          aria-label="Close"
+                          onClick={() => setClaimedReward(null)}
+                          className="block w-full py-3 border-2 border-pine/10 text-pine font-black text-xs uppercase tracking-[0.2em] hover:border-pine transition-all"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
 
               {/* Call to Action */}
