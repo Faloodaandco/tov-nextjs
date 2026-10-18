@@ -7,6 +7,8 @@ import { LOCATIONS, type LocationId } from '@/config/shopConfig';
 import { serverUpsertCustomerOnOrder, calculateLoyaltyTier, TIER_NAMES, type ServerCustomerRecord } from '@/services/serverCustomerService';
 import { isFirstTimeBuyer, hasActiveVouchers, issueFirstTimeBuyerPack } from '@/services/VoucherService';
 import { generateContextualCrossSell } from '@/lib/geminiCrossSell';
+import { detectMilestoneNudges } from '@/lib/loyaltyMilestoneEngine';
+import { sendTelegramMessage } from '@/lib/telegramService';
 
 // Keep serverless function alive for after() callbacks (cross-sell, name prompt, email)
 export const maxDuration = 60;
@@ -412,6 +414,79 @@ export async function POST(req: NextRequest) {
                         });
                       } catch (emailErr) {
                         console.error('[Square Webhook] Email notification failed (non-fatal):', emailErr);
+                      }
+                    });
+
+                    // ── Loyalty Milestone Nudges (WhatsApp + Telegram) ────────
+                    if (customerProfile) {
+                      after(async () => {
+                        try {
+                          await new Promise(r => setTimeout(r, 12000)); // After cross-sell + name prompt
+
+                          // Calculate points before this order
+                          const pointsBefore = (customerProfile!.loyaltyPoints || 0) - pointsEarned;
+                          const pointsAfter = customerProfile!.loyaltyPoints || 0;
+
+                          const nudges = detectMilestoneNudges(
+                            pointsBefore,
+                            pointsAfter,
+                            customerProfile!.confirmedName || customerProfile!.name || 'Customer',
+                            orderTotalPounds,
+                          );
+
+                          for (const nudge of nudges) {
+                            // Send via WhatsApp
+                            await sendWhatsAppMessage(phoneId, waOrder.phone, {
+                              type: 'text',
+                              text: { preview_url: true, body: nudge.whatsappMessage },
+                            });
+                            console.info(`[Milestone] WhatsApp ${nudge.type} sent to ${waOrder.phone}`);
+
+                            // Send via Telegram (if customer has a Telegram chat ID)
+                            // For now, send to the owner's Telegram for visibility
+                            try {
+                              const ownerChatId = process.env.TELEGRAM_OWNER_CHAT_ID;
+                              if (ownerChatId) {
+                                await sendTelegramMessage(
+                                  ownerChatId,
+                                  nudge.telegramMessage,
+                                );
+                              }
+                            } catch (tgErr) {
+                              console.error('[Milestone] Telegram send failed (non-fatal):', tgErr);
+                            }
+                          }
+                        } catch (msErr) {
+                          console.error('[Square Webhook] Milestone nudge failed (non-fatal):', msErr);
+                        }
+                      });
+                    }
+
+                    // ── Telegram Order Notification for Owner ─────────────────
+                    after(async () => {
+                      try {
+                        const ownerChatId = process.env.TELEGRAM_OWNER_CHAT_ID;
+                        if (!ownerChatId) return;
+
+                        const tgMsg = [
+                          `🔔 <b>New Order</b> #${displayId}`,
+                          `📍 ${loc.name}`,
+                          `👤 ${waOrder.name || 'Customer'} (${waOrder.phone})`,
+                          ``,
+                          `<b>Items:</b>`,
+                          ...(waOrder.items || []).map((i: any) =>
+                            `  • ${i.quantity || 1}× ${i.name} — £${((i.pricePence || 0) / 100).toFixed(2)}`
+                          ),
+                          ``,
+                          `💰 <b>Total: £${orderTotalPounds.toFixed(2)}</b>`,
+                          `📦 ${isDelivery ? 'Delivery' : 'Collection'}`,
+                          customerProfile ? `⭐ Points: ${customerProfile.loyaltyPoints} (${TIER_NAMES[customerProfile.loyaltyTier] || 'Silver Village'})` : '',
+                        ].filter(Boolean).join('\n');
+
+                        await sendTelegramMessage(ownerChatId, tgMsg);
+                        console.info(`[Telegram] Order notification sent for #${displayId}`);
+                      } catch (tgErr) {
+                        console.error('[Square Webhook] Telegram order notification failed (non-fatal):', tgErr);
                       }
                     });
                   }

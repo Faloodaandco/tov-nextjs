@@ -539,6 +539,52 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
     return;
   }
 
+  // ── Intent: Claim Loyalty Reward (from milestone nudge) ──────────
+  const claimMatch = text.match(/^CLAIM\s+(\w+)/i);
+  if (claimMatch) {
+    const rewardId = claimMatch[1].toLowerCase();
+    try {
+      const { claimReward, REWARDS_CATALOGUE } = await import('@/services/RewardService');
+      const reward = REWARDS_CATALOGUE.find(r => r.id === rewardId);
+      if (!reward) {
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'text',
+          text: { body: `❌ Unknown reward. Available rewards: ${REWARDS_CATALOGUE.map(r => r.id).join(', ')}` },
+        });
+        return;
+      }
+
+      const result = await claimReward(from, rewardId);
+
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: {
+          preview_url: true,
+          body: [
+            `🎉 *Reward Claimed!*`,
+            ``,
+            `${reward.icon} *${reward.title}*`,
+            `${reward.description}`,
+            ``,
+            `🎫 *Code: ${result.code}*`,
+            ``,
+            `Show this to staff at the restaurant, or open the link below:`,
+            result.redeemUrl,
+            ``,
+            `Valid for 90 days. Single use only.`,
+          ].join('\n'),
+        },
+      });
+      console.info(`[WABA] Reward claimed via WhatsApp: ${result.code} by ${from}`);
+    } catch (claimErr: any) {
+      await sendWhatsAppMessage(phoneId, from, {
+        type: 'text',
+        text: { body: `❌ ${claimErr.message || 'Failed to claim reward. Check your points balance at tasteofvillagerestaurants.co.uk/rewards'}` },
+      });
+    }
+    return;
+  }
+
   // ── Intent: Voucher Code Redemption (TOV50-XXXX, TOV30-XXXX) ──
   const voucherMatch = text.match(/\b((?:HALF|SAVE|TOV50|TOV30)-[A-Z0-9]{3,10})\b/i);
   if (voucherMatch) {
