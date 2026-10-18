@@ -8,6 +8,8 @@
  */
 import { NextResponse } from 'next/server';
 import { redeemReward, getRedemption } from '@/services/RewardService';
+import { createRewardCollectionOrder } from '@/lib/square';
+import type { LocationId } from '@/config/shopConfig';
 
 export async function POST(request: Request) {
   try {
@@ -27,8 +29,29 @@ export async function POST(request: Request) {
       branch,
     );
 
+    // For free-item rewards (no discountPounds), create a £0 pickup order
+    // visible on the KDS so kitchen staff can prepare the item.
+    let kdsOrderId: string | null = null;
+    if (!result.discountPounds) {
+      try {
+        const kdsResult = await createRewardCollectionOrder({
+          branchId: (result.redeemedAtBranch as LocationId) || 'hayes',
+          rewardTitle: result.rewardTitle,
+          rewardDescription: result.rewardDescription,
+          customerName: result.customerName,
+          customerPhone: result.phone,
+          rewardCode: result.code,
+        });
+        kdsOrderId = kdsResult.orderId;
+      } catch (kdsErr: any) {
+        // Log but don't fail the redemption — reward is already redeemed
+        console.error('[Rewards Redeem] KDS order creation failed:', kdsErr.message);
+      }
+    }
+
     return NextResponse.json({
       status: 'redeemed',
+      kdsOrderId,
       redemption: {
         code: result.code,
         customerName: result.customerName,

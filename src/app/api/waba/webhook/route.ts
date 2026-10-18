@@ -30,6 +30,7 @@ import {
   getDeliveryFeeByDistance,
 } from '@/config/shopConfig';
 import { analyzeWithGemini } from '@/lib/geminiAssistant';
+import { checkRateLimit } from '@/lib/wabaRateLimiter';
 
 // ── Types ────────────────────────────────────────────────────────────
 interface CartItem {
@@ -392,6 +393,16 @@ export async function POST(request: NextRequest) {
 // ══════════════════════════════════════════════════════════════════════
 
 async function handleTextMessage(phoneId: string, from: string, name: string, rawText: string) {
+  // ── Rate Limit / Anti-Spam Gate ─────────────────────────────────────
+  const rateLimitResult = checkRateLimit(from, rawText);
+  if (!rateLimitResult.allowed) {
+    console.warn(`[TOV WABA] Rate-limited ${from}: ${rateLimitResult.reason}`);
+    if (rateLimitResult.warningMessage) {
+      await sendWhatsAppMessage(phoneId, from, rateLimitResult.warningMessage);
+    }
+    return; // Silently drop if no warning (already warned too many times)
+  }
+
   // Read conversation state immediately scoped by receiving phoneId
   const conv = await getConversation(from, phoneId);
   const text = rawText.toLowerCase().trim();

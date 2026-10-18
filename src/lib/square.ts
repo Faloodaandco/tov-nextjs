@@ -242,3 +242,89 @@ export async function verifySquareOrderPayment(
     return false;
   }
 }
+
+/**
+ * Create a £0.00 collection order for a redeemed loyalty reward.
+ * The order appears on POS/KDS so kitchen can prepare the free item.
+ *
+ * For free-item rewards (dessert, mixed grill, etc.) — NOT for discount vouchers.
+ */
+export async function createRewardCollectionOrder(options: {
+  branchId: LocationId;
+  rewardTitle: string;
+  rewardDescription: string;
+  customerName: string;
+  customerPhone: string;
+  rewardCode: string;
+}): Promise<CheckoutResult> {
+  const { branchId, rewardTitle, rewardDescription, customerName, customerPhone, rewardCode } = options;
+  const loc = LOCATIONS[branchId];
+  const token = branchId === 'hayes'
+    ? process.env.SQUARE_HAYES_ACCESS_TOKEN
+    : process.env.SQUARE_SLOUGH_ACCESS_TOKEN;
+  const locationId = loc.square.locationId;
+
+  if (!token) {
+    console.error(`[Square Reward Order] Missing token for ${branchId}`);
+    return { url: null, orderId: null, referenceId: '' };
+  }
+
+  const referenceId = `TOV-RWD-${rewardCode}`;
+
+  try {
+    const res = await fetch('https://connect.squareup.com/v2/orders', {
+      method: 'POST',
+      headers: {
+        'Square-Version': '2024-08-21',
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        idempotency_key: crypto.createHash('sha256').update(referenceId).digest('hex'),
+        order: {
+          location_id: locationId,
+          reference_id: referenceId,
+          line_items: [{
+            name: `🎁 REWARD: ${rewardTitle}`,
+            quantity: '1',
+            base_price_money: { amount: 0, currency: 'GBP' },
+            note: `${rewardDescription} — Loyalty Reward ${rewardCode} for ${customerName}`,
+          }],
+          ticket_name: `🎁 REWARD Pickup — ${customerName} (${rewardCode})`.slice(0, 100),
+          fulfillments: [{
+            type: 'PICKUP',
+            state: 'PROPOSED',
+            pickup_details: {
+              recipient: {
+                display_name: customerName,
+                phone_number: customerPhone.startsWith('+') ? customerPhone : `+${customerPhone}`,
+              },
+              note: `Loyalty Reward: ${rewardTitle} — Code: ${rewardCode}`,
+              schedule_type: 'ASAP',
+            },
+          }],
+        },
+      }),
+      signal: AbortSignal.timeout(5000),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error(`[Square Reward Order] Error:`, JSON.stringify(data.errors || data));
+      return { url: null, orderId: null, referenceId };
+    }
+
+    const orderId = data.order?.id || referenceId;
+    console.info(`[Square Reward Order] Created ${orderId} for ${rewardCode} at ${branchId}`);
+
+    return {
+      url: null, // No payment needed — it's free
+      orderId,
+      referenceId,
+    };
+  } catch (err) {
+    console.error('[Square Reward Order] Exception:', err);
+    return { url: null, orderId: null, referenceId };
+  }
+}
