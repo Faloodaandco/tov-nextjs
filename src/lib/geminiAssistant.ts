@@ -68,13 +68,15 @@ const DIAGNOSTICS_TEXT = TOV_PSYCHOLOGICAL_DIAGNOSTICS.map(
   d => `• If customer is undecided (${d.qualificationGoal}): Ask: "${d.question}"`
 ).join('\n');
 
+import { INFRA } from '@/config/infrastructure';
+
 let cachedClient: GoogleGenAI | null = null;
 
 function getClient(): GoogleGenAI | null {
   if (cachedClient) return cachedClient;
 
   // 1. Google AI Studio API key
-  if (process.env.GEMINI_API_KEY) {
+  if (process.env.GEMINI_API_KEY && process.env.USE_GEMINI_API_KEY === 'true') {
     cachedClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     return cachedClient;
   }
@@ -84,6 +86,9 @@ function getClient(): GoogleGenAI | null {
     process.env.GCP_SERVICE_ACCOUNT_KEY ||
     process.env.FIREBASE_SERVICE_ACCOUNT_KEY ||
     process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
+
+  const projectId = process.env.GOOGLE_CLOUD_PROJECT || INFRA.GCP_PROJECT;
+  const location = process.env.GOOGLE_CLOUD_LOCATION || INFRA.VERTEX_AI_REGION;
 
   if (rawKey && rawKey.trim()) {
     try {
@@ -95,14 +100,14 @@ function getClient(): GoogleGenAI | null {
       if (parsed?.client_email && parsed?.private_key) {
         cachedClient = new GoogleGenAI({
           vertexai: true,
-          project: parsed.project_id || 'falooda-js',
-          location: process.env.GOOGLE_CLOUD_LOCATION || 'us-central1',
+          project: parsed.project_id || projectId,
+          location,
           googleAuthOptions: {
             credentials: {
               client_email: parsed.client_email,
               private_key: parsed.private_key.replace(/\\n/g, '\n'),
             },
-            projectId: parsed.project_id || 'falooda-js',
+            projectId: parsed.project_id || projectId,
           },
         });
         return cachedClient;
@@ -110,6 +115,18 @@ function getClient(): GoogleGenAI | null {
     } catch (err) {
       console.warn('[geminiAssistant] Failed to parse service account key:', err);
     }
+  }
+
+  // 3. Application Default Credentials (e.g. gcloud auth application-default login in local dev)
+  try {
+    cachedClient = new GoogleGenAI({
+      vertexai: true,
+      project: projectId,
+      location,
+    });
+    return cachedClient;
+  } catch (err) {
+    console.warn('[geminiAssistant] ADC initialization failed:', err);
   }
 
   return null;
@@ -285,34 +302,96 @@ function parseAssistantJson(parsed: any): AssistantResult | null {
   };
 }
 
-/**
- * Redundant Edge Nodes on Local Mesh (Priority: LAN -> Tailscale)
- */
-const EDGE_OLLAMA_NODES: string[] = [
-  // Removed private LAN and Tailscale IPs as Vercel cannot reach them.
-  // Add a public Cloudflare Tunnel URL here when available.
-];
+import { buildLlamaRagPrompt } from '@/lib/edgeRag';
 
 /**
- * Query Redundant Edge Ollama Cluster (mkr4 & rnw2 running Qwen2.5:3b).
- * Provides sub-second local failover if Google Gemini API times out or is offline.
+ * Redundant Edge Nodes on Local Mesh (Priority: Configured URL -> Tailscale -> Localhost)
+ */
+function getEdgeOllamaNodes(): string[] {
+  const nodes = [
+    process.env.EDGE_OLLAMA_URL,
+    ...(process.env.EDGE_OLLAMA_NODES ? process.env.EDGE_OLLAMA_NODES.split(',') : []),
+    'http://100.108.236.35:11434',
+    'http://127.0.0.1:11434',
+  ].filter(Boolean) as string[];
+
+  return Array.from(new Set(nodes.map(n => n.trim().replace(/\/$/, ''))));
+}
+
+interface NodeCircuitState {
+  failures: number;
+  lastFailure: number;
+  state: 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+  nextProbeTime: number;
+}
+
+const circuitMap = new Map<string, NodeCircuitState>();
+const FAILURE_THRESHOLD = 3;
+const RESET_TIMEOUT_MS = 60000;
+
+function getCircuitState(nodeUrl: string): NodeCircuitState {
+  let state = circuitMap.get(nodeUrl);
+  if (!state) {
+    state = { failures: 0, lastFailure: 0, state: 'CLOSED', nextProbeTime: 0 };
+    circuitMap.set(nodeUrl, state);
+  }
+
+  const now = Date.now();
+  if (state.state === 'OPEN' && now >= state.nextProbeTime) {
+    state.state = 'HALF_OPEN';
+  }
+  return state;
+}
+
+function recordCircuitSuccess(nodeUrl: string) {
+  const state = getCircuitState(nodeUrl);
+  state.failures = 0;
+  state.state = 'CLOSED';
+}
+
+function recordCircuitFailure(nodeUrl: string) {
+  const state = getCircuitState(nodeUrl);
+  state.failures++;
+  state.lastFailure = Date.now();
+  if (state.failures >= FAILURE_THRESHOLD || state.state === 'HALF_OPEN') {
+    state.state = 'OPEN';
+    state.nextProbeTime = Date.now() + RESET_TIMEOUT_MS;
+    console.warn(`[Edge RAG Circuit Breaker] Tripped OPEN for node ${nodeUrl}. Cooling down for 60s.`);
+  }
+}
+
+/**
+ * Query Redundant Edge Ollama Cluster running Llama 3.2 with dynamic RAG retrieval
+ * and a Self-Healing Circuit Breaker.
  */
 async function queryEdgeOllama(userText: string, branch: 'hayes' | 'slough' = 'hayes'): Promise<AssistantResult | null> {
-  const systemInstruction = getSystemInstruction(branch);
-  for (const baseUrl of EDGE_OLLAMA_NODES) {
+  const edgeNodes = getEdgeOllamaNodes();
+  if (!edgeNodes.length) return null;
+
+  const model = process.env.EDGE_OLLAMA_MODEL || 'llama3.2:3b';
+  const { systemInstruction, userPrompt } = buildLlamaRagPrompt(userText, branch);
+
+  for (const baseUrl of edgeNodes) {
+    const circuit = getCircuitState(baseUrl);
+    // Self-healing bypass: If node is failing, skip in 0ms to protect WhatsApp responsiveness
+    if (circuit.state === 'OPEN') {
+      continue;
+    }
+
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
 
       const res = await fetch(`${baseUrl}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'qwen2.5:3b',
+          model,
           format: 'json',
+          keep_alive: '24h',
           messages: [
             { role: 'system', content: systemInstruction },
-            { role: 'user', content: userText },
+            { role: 'user', content: userPrompt },
           ],
           stream: false,
         }),
@@ -321,18 +400,26 @@ async function queryEdgeOllama(userText: string, branch: 'hayes' | 'slough' = 'h
 
       clearTimeout(timeoutId);
 
-      if (!res.ok) continue;
+      if (!res.ok) {
+        recordCircuitFailure(baseUrl);
+        continue;
+      }
       const data = await res.json();
       const content = data?.message?.content?.trim();
-      if (!content) continue;
+      if (!content) {
+        recordCircuitFailure(baseUrl);
+        continue;
+      }
 
       const parsed = JSON.parse(content);
       const result = parseAssistantJson(parsed);
       if (result) {
+        recordCircuitSuccess(baseUrl); // Self-healing reset upon success
         return result;
       }
     } catch {
-      // Failover to next node in cluster
+      recordCircuitFailure(baseUrl);
+      // Failover to next node in cluster or deterministic fallback
     }
   }
   return null;
@@ -353,7 +440,7 @@ export async function analyzeWithGemini(
   const systemInstruction = getSystemInstruction(branch);
 
   if (client) {
-    const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+    const model = process.env.GEMINI_MODEL || INFRA.GEMINI_MODEL;
 
     const timeoutPromise = new Promise<null>((resolve) => {
       setTimeout(() => resolve(null), 6000);

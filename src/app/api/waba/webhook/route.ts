@@ -112,19 +112,28 @@ function getLocationConfig(branchId: LocationId = DEFAULT_BRANCH_ID) {
 const CONVERSATION_CACHE = new Map<string, { state: ConversationState; updatedAt: number }>();
 const CACHE_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
 
-function getSessionKey(phone: string, phoneId?: string): string {
-  return phoneId ? `${phone}_${phoneId}` : phone;
+function getSessionKey(phone: string, _phoneId?: string): string {
+  // Normalize session key strictly to customer phone so cart and state never diverge
+  return phone;
 }
 
 async function getConversation(phone: string, phoneId?: string): Promise<ConversationState> {
-  const sessionKey = getSessionKey(phone, phoneId);
-  const cached = CONVERSATION_CACHE.get(sessionKey);
+  const sessionKey = phone;
+  // 1. Check in-memory session cache for primary key
+  let cached = CONVERSATION_CACHE.get(sessionKey);
+  if (!cached && phoneId) {
+    cached = CONVERSATION_CACHE.get(`${phone}_${phoneId}`);
+  }
   if (cached && (Date.now() - cached.updatedAt < CACHE_TTL_MS)) {
     return cached.state;
   }
 
   try {
-    const snap = await adminDb.collection('whatsapp_conversations').doc(sessionKey).get();
+    // 2. Check Firestore doc for primary phone, fallback to composite phone_phoneId
+    let snap = await adminDb.collection('whatsapp_conversations').doc(sessionKey).get();
+    if ((!snap || !snap.exists) && phoneId) {
+      snap = await adminDb.collection('whatsapp_conversations').doc(`${phone}_${phoneId}`).get();
+    }
     if (snap && snap.exists) {
       const data = snap.data();
       const state: ConversationState = {
@@ -134,8 +143,15 @@ async function getConversation(phone: string, phoneId?: string): Promise<Convers
         activeCart: data?.activeCart || cached?.state?.activeCart || undefined,
         lastPaidOrderId: data?.lastPaidOrderId || cached?.state?.lastPaidOrderId || undefined,
         lastPaidAt: data?.lastPaidAt || cached?.state?.lastPaidAt || undefined,
+        appliedVoucher: data?.appliedVoucher || cached?.state?.appliedVoucher || undefined,
+        pendingFulfillment: data?.pendingFulfillment || cached?.state?.pendingFulfillment || undefined,
+        readyAlertRequested: data?.readyAlertRequested || cached?.state?.readyAlertRequested || undefined,
+        readyAlertOrderId: data?.readyAlertOrderId || cached?.state?.readyAlertOrderId || undefined,
       };
       CONVERSATION_CACHE.set(sessionKey, { state, updatedAt: Date.now() });
+      if (phoneId) {
+        CONVERSATION_CACHE.set(`${phone}_${phoneId}`, { state, updatedAt: Date.now() });
+      }
       return state;
     }
   } catch (err) {
@@ -145,23 +161,27 @@ async function getConversation(phone: string, phoneId?: string): Promise<Convers
 }
 
 async function updateConversation(phone: string, updates: Record<string, unknown>, phoneId?: string) {
-  const sessionKey = getSessionKey(phone, phoneId);
-  // Update in-memory session immediately so cart and delivery details survive
-  const existing = CONVERSATION_CACHE.get(sessionKey)?.state || { state: 'idle' };
+  const sessionKey = phone;
+  // Retrieve existing state from memory cache across both primary and composite keys
+  const existing = CONVERSATION_CACHE.get(sessionKey)?.state
+    || (phoneId ? CONVERSATION_CACHE.get(`${phone}_${phoneId}`)?.state : undefined)
+    || { state: 'idle' };
+
   const merged: ConversationState = {
     ...existing,
-    ...(updates.state ? { state: updates.state as any } : {}),
-    ...(updates.branchId ? { branchId: updates.branchId as LocationId } : {}),
-    ...(updates.pendingDelivery !== undefined ? { pendingDelivery: updates.pendingDelivery as any } : {}),
-    ...(updates.activeCart !== undefined ? { activeCart: updates.activeCart as any } : {}),
-    ...(updates.lastPaidOrderId ? { lastPaidOrderId: updates.lastPaidOrderId as any } : {}),
-    ...(updates.lastPaidAt ? { lastPaidAt: updates.lastPaidAt as any } : {}),
+    ...(updates as Partial<ConversationState>),
   };
   CONVERSATION_CACHE.set(sessionKey, { state: merged, updatedAt: Date.now() });
+  if (phoneId) {
+    CONVERSATION_CACHE.set(`${phone}_${phoneId}`, { state: merged, updatedAt: Date.now() });
+  }
 
   // Asynchronously attempt to sync to Firestore in background (NEVER block response)
   try {
     await adminDb.collection('whatsapp_conversations').doc(sessionKey).set(updates, { merge: true });
+    if (phoneId) {
+      adminDb.collection('whatsapp_conversations').doc(`${phone}_${phoneId}`).set(updates, { merge: true }).catch(() => {});
+    }
   } catch (err) {
     console.error(`[TOV WABA] Error updating conversation ${sessionKey}:`, err);
   }
@@ -500,6 +520,7 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
         const discountPence = cartTotal > 0 ? Math.round(cartTotal * (result.discountPercent / 100)) : 0;
         const newTotal = cartTotal - discountPence;
 
+        const cartStr = encodeCart(conv.activeCart?.items || []);
         await sendWhatsAppMessage(phoneId, from, {
           type: 'interactive',
           interactive: {
@@ -516,12 +537,13 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
             },
             action: {
               buttons: conv.pendingFulfillment === 'delivery'
-                ? [{ type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Checkout Delivery' } }]
-                : [{ type: 'reply', reply: { id: 'tov_collection', title: '🏪 Checkout Collection' } }],
+                ? [{ type: 'reply', reply: { id: `tov_del_skip_${cartStr}`, title: '🛵 Checkout Delivery' } }]
+                : [{ type: 'reply', reply: { id: `tov_col_skip_${cartStr}`, title: '🏪 Checkout Collection' } }],
             },
           },
         });
       } else {
+        const cartStr = encodeCart(conv.activeCart?.items || []);
         await sendWhatsAppMessage(phoneId, from, {
           type: 'interactive',
           interactive: {
@@ -530,10 +552,10 @@ async function handleTextMessage(phoneId: string, from: string, name: string, ra
             action: {
               buttons: conv.pendingFulfillment === 'delivery'
                 ? [
-                    { type: 'reply', reply: { id: 'tov_delivery', title: '🛵 Skip & Checkout' } },
+                    { type: 'reply', reply: { id: `tov_del_skip_${cartStr}`, title: '🛵 Skip & Checkout' } },
                   ]
                 : [
-                    { type: 'reply', reply: { id: 'tov_collection', title: '🏪 Skip & Checkout' } },
+                    { type: 'reply', reply: { id: `tov_col_skip_${cartStr}`, title: '🏪 Skip & Checkout' } },
                   ],
             },
           },
@@ -1332,8 +1354,19 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     }
 
     // ── Discount Code Prompt Button ───────────────────────────────
-    if (buttonId === 'tov_has_voucher') {
-      await updateConversation(from, { state: 'awaiting_voucher_code' });
+    if (buttonId === 'tov_has_voucher' || buttonId.startsWith('tov_has_voucher_')) {
+      if (buttonId.startsWith('tov_has_voucher_')) {
+        const carriedCart = buttonId.slice('tov_has_voucher_'.length);
+        const items = decodeCart(carriedCart);
+        if (items.length) {
+          const total = cartTotal(items);
+          const branchKey = getEffectiveBranch(conv, phoneId);
+          await updateConversation(from, {
+            activeCart: { items, basePence: total, branchId: branchKey, updatedAt: new Date().toISOString() },
+          }, phoneId);
+        }
+      }
+      await updateConversation(from, { state: 'awaiting_voucher_code' }, phoneId);
       await sendWhatsAppMessage(phoneId, from, {
         type: 'text',
         text: {
@@ -1586,8 +1619,13 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     // ── Collection → generate payment link (Stateless & Resilient) ──
     if (buttonId.startsWith('tov_col_') || buttonId === 'tov_collection') {
       let items: CartItem[] = [];
-      if (buttonId.startsWith('tov_col_')) {
-        items = decodeCart(buttonId.replace('tov_col_', ''));
+      if (buttonId.startsWith('tov_col_skip_')) {
+        items = decodeCart(buttonId.slice('tov_col_skip_'.length));
+      } else if (buttonId.startsWith('tov_col_')) {
+        const payload = buttonId.slice('tov_col_'.length);
+        if (payload !== 'skip_voucher') {
+          items = decodeCart(payload);
+        }
       }
       if (!items.length) {
         items = conv.activeCart?.items || [];
@@ -1596,46 +1634,23 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       const branchLoc = LOCATIONS[branchKey];
 
       if (!items.length) {
-        // Resilient Fallback: Generate QuickPay link so customer is NEVER blocked!
-        const fallbackPence = conv.activeCart?.basePence || 99;
-        const quickPay = await createQuickPayFallbackLink({
-          branchId: branchKey,
-          totalPence: fallbackPence,
-          memo: `Taste of Village ${branchLoc.city} Collection Order`,
-          isDelivery: false,
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'text',
+          text: { body: 'Your basket is empty. Please select dishes from the menu to place an order.' },
         });
-
-        if (quickPay.url) {
-          await sendWhatsAppMessage(phoneId, from, {
-            type: 'text',
-            text: {
-              preview_url: false,
-              body: [
-                `*${branchLoc.name} Collection Order*`,
-                '',
-                `Pickup at: *${branchLoc.name}*`,
-                `_${branchLoc.address}, ${branchLoc.city} ${branchLoc.postcode}_`,
-                '',
-                `Complete your secure payment here (Apple Pay / GPay / Card):`,
-                quickPay.url,
-              ].join('\n'),
-            },
-          });
-          return;
-        }
-
-        await sendCategoryList(phoneId, from, undefined, activeBranch);
+        await sendCategoryList(phoneId, from, undefined, branchKey);
         return;
       }
       const total = cartTotal(items);
 
-      // ── Discount Code Prompt (only if no voucher already applied) ──
-      if (!conv.appliedVoucher && !buttonId.includes('_skip_voucher')) {
+      // ── Discount Code Prompt (only if no voucher already applied and not skipping) ──
+      const isSkipping = buttonId.startsWith('tov_col_skip_') || buttonId === 'tov_col_skip_voucher';
+      if (!conv.appliedVoucher && !isSkipping) {
         // Save cart and fulfillment choice, then ask about discount
         await updateConversation(from, {
           activeCart: { items, basePence: total, branchId: branchKey, updatedAt: new Date().toISOString() },
           pendingFulfillment: 'collection',
-        });
+        }, phoneId);
 
         await sendWhatsAppMessage(phoneId, from, {
           type: 'interactive',
@@ -1651,8 +1666,8 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
             },
             action: {
               buttons: [
-                { type: 'reply', reply: { id: 'tov_has_voucher', title: '🎫 Yes, I have one' } },
-                { type: 'reply', reply: { id: 'tov_col_skip_voucher', title: '🏪 No, Checkout' } },
+                { type: 'reply', reply: { id: `tov_has_voucher_${encodeCart(items)}`, title: '🎫 Yes, I have one' } },
+                { type: 'reply', reply: { id: `tov_col_skip_${encodeCart(items)}`, title: '🏪 No, Checkout' } },
               ],
             },
           },
@@ -1673,7 +1688,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
         }));
         discountApplied = true;
         // Clear the applied voucher after use
-        await updateConversation(from, { appliedVoucher: null });
+        await updateConversation(from, { appliedVoucher: null }, phoneId);
         // Mark voucher as used in Firestore
         if (voucher.voucherId) {
           try {
@@ -1692,27 +1707,38 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
     // ── Delivery → prompt for postcode or use pending delivery ──
     if (buttonId.startsWith('tov_del_') || buttonId === 'tov_delivery') {
       let items: CartItem[] = [];
-      if (buttonId.startsWith('tov_del_')) {
-        items = decodeCart(buttonId.replace('tov_del_', ''));
+      if (buttonId.startsWith('tov_del_skip_')) {
+        items = decodeCart(buttonId.slice('tov_del_skip_'.length));
+      } else if (buttonId.startsWith('tov_del_')) {
+        const payload = buttonId.slice('tov_del_'.length);
+        if (payload !== 'skip_voucher') {
+          items = decodeCart(payload);
+        }
       }
       if (!items.length) {
         items = conv.activeCart?.items || [];
       }
+      const branchKey = getEffectiveBranch(conv, phoneId);
+      const branchLoc = LOCATIONS[branchKey];
+
       if (!items.length) {
-        await sendCategoryList(phoneId, from, undefined, activeBranch);
+        await sendWhatsAppMessage(phoneId, from, {
+          type: 'text',
+          text: { body: 'Your basket is empty. Please select dishes from the menu to place a delivery order.' },
+        });
+        await sendCategoryList(phoneId, from, undefined, branchKey);
         return;
       }
 
-      const branchKey = getEffectiveBranch(conv, phoneId);
-      const branchLoc = LOCATIONS[branchKey];
       const total = cartTotal(items);
 
-      // ── Discount Code Prompt (only if no voucher already applied) ──
-      if (!conv.appliedVoucher && !buttonId.includes('_skip_voucher')) {
+      // ── Discount Code Prompt (only if no voucher already applied and not skipping) ──
+      const isSkipping = buttonId.startsWith('tov_del_skip_') || buttonId === 'tov_del_skip_voucher';
+      if (!conv.appliedVoucher && !isSkipping) {
         await updateConversation(from, {
           activeCart: { items, basePence: total, branchId: branchKey, updatedAt: new Date().toISOString() },
           pendingFulfillment: 'delivery',
-        });
+        }, phoneId);
 
         await sendWhatsAppMessage(phoneId, from, {
           type: 'interactive',
@@ -1728,8 +1754,8 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
             },
             action: {
               buttons: [
-                { type: 'reply', reply: { id: 'tov_has_voucher', title: '🎫 Yes, I have one' } },
-                { type: 'reply', reply: { id: 'tov_del_skip_voucher', title: '🛵 No, Checkout' } },
+                { type: 'reply', reply: { id: `tov_has_voucher_${encodeCart(items)}`, title: '🎫 Yes, I have one' } },
+                { type: 'reply', reply: { id: `tov_del_skip_${encodeCart(items)}`, title: '🛵 No, Checkout' } },
               ],
             },
           },
@@ -1740,7 +1766,7 @@ async function handleInteractiveMessage(phoneId: string, from: string, name: str
       await updateConversation(from, {
         state: 'awaiting_postcode',
         activeCart: { items, basePence: total, branchId: branchKey, updatedAt: new Date().toISOString() },
-      });
+      }, phoneId);
 
       await sendWhatsAppMessage(phoneId, from, {
         type: 'text',
