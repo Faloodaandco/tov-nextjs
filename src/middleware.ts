@@ -9,7 +9,6 @@ const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
 
-
 function isRateLimited(ip: string, maxRequests: number): boolean {
   const now = Date.now();
 
@@ -35,6 +34,16 @@ function isRateLimited(ip: string, maxRequests: number): boolean {
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // ── Admin Route Edge Protection ────────────────────────────────────
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
+    const sessionCookie = req.cookies.get('tov_admin_session')?.value;
+    if (!sessionCookie) {
+      const loginUrl = new URL('/admin/login', req.url);
+      loginUrl.searchParams.set('next', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
 
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
     || req.headers.get('x-real-ip')
@@ -69,9 +78,9 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
+    '/admin/:path*',
     '/api/loyalty/:path*',
     '/api/checkout/:path*',
     '/api/delivery/:path*',
   ],
 };
-

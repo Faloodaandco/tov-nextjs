@@ -1,13 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-function verifyPin(request: NextRequest) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return false;
-  }
-  const pin = authHeader.split(' ')[1];
-  return pin === process.env.STAFF_PIN;
-}
+import { authenticateAdminRequest } from '@/lib/adminServerGuard';
 
 const META_GRAPH_URL = 'https://graph.facebook.com/v21.0';
 
@@ -30,7 +22,8 @@ async function fetchFromMeta(endpoint: string, token: string) {
 }
 
 export async function GET(request: NextRequest) {
-  if (!verifyPin(request)) {
+  const admin = await authenticateAdminRequest(request);
+  if (!admin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -81,7 +74,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  if (!verifyPin(request)) {
+  const admin = await authenticateAdminRequest(request);
+  if (!admin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

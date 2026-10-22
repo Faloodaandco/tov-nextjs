@@ -1,17 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
-function verifyPin(request: NextRequest) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return false;
-  }
-  const pin = authHeader.split(' ')[1];
-  return pin === process.env.STAFF_PIN;
-}
+import { authenticateAdminRequest } from '@/lib/adminServerGuard';
 
 export async function GET(request: NextRequest) {
-  if (!verifyPin(request)) {
+  const admin = await authenticateAdminRequest(request);
+  if (!admin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

@@ -1,7 +1,15 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { signAdminJWT } from '@/lib/adminAuth';
 
 const rateLimitMap = new Map<string, { attempts: number; resetTime: number }>();
+
+const VALID_PINS: Record<string, { id: string; name: string; role: 'owner' | 'manager' | 'admin' }> = {
+  '2244': { id: 'owner_aziz', name: 'Aziz / Owner', role: 'owner' },
+  '2580': { id: 'manager_slough', name: 'Store Manager (Slough)', role: 'manager' },
+  '2233': { id: 'manager_hayes', name: 'Ijaz / Manager (Hayes)', role: 'manager' },
+  '7860': { id: 'admin_tov', name: 'Master Admin', role: 'admin' },
+};
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? request.headers.get('x-real-ip') ?? 'unknown-ip';
@@ -23,16 +31,31 @@ export async function POST(request: NextRequest) {
 
   try {
     const { pin } = await request.json();
-    const correctPin = process.env.STAFF_PIN;
+    const correctEnvPin = process.env.STAFF_PIN?.trim();
 
-    if (!correctPin) {
-      console.error('STAFF_PIN environment variable is not set');
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const isMatch = (correctEnvPin && pin === correctEnvPin) || !!VALID_PINS[pin];
 
-    if (pin === correctPin) {
+    if (isMatch) {
       rateLimitMap.delete(ip);
-      return NextResponse.json({ authenticated: true });
+      const staff = VALID_PINS[pin] || { id: 'staff_env', name: 'Staff Member', role: 'manager' as const };
+      const token = await signAdminJWT({
+        id: staff.id,
+        name: staff.name,
+        role: staff.role,
+        branch: 'all',
+        method: 'pin',
+      });
+
+      const response = NextResponse.json({ authenticated: true, token, user: staff });
+      response.cookies.set('tov_admin_session', token, {
+        path: '/',
+        maxAge: 86400,
+        sameSite: 'lax',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+      });
+
+      return response;
     } else {
       const currentAttempts = rateLimitMap.get(ip)?.attempts || 0;
       rateLimitMap.set(ip, {
@@ -42,7 +65,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({ error: 'Invalid PIN' }, { status: 401 });
     }
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Bad Request' }, { status: 400 });
   }
 }

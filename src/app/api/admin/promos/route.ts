@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebaseAdmin';
-
-function verifyPin(request: NextRequest) {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return false;
-  }
-  const pin = authHeader.split(' ')[1];
-  return pin === process.env.STAFF_PIN;
-}
+import { authenticateAdminRequest } from '@/lib/adminServerGuard';
 
 export async function GET(request: NextRequest) {
-  if (!verifyPin(request)) {
+  const admin = await authenticateAdminRequest(request);
+  if (!admin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -26,7 +19,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  if (!verifyPin(request)) {
+  const admin = await authenticateAdminRequest(request);
+  if (!admin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -84,7 +78,8 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  if (!verifyPin(request)) {
+  const admin = await authenticateAdminRequest(request);
+  if (!admin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -113,7 +108,8 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  if (!verifyPin(request)) {
+  const admin = await authenticateAdminRequest(request);
+  if (!admin) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

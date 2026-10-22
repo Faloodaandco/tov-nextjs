@@ -8,15 +8,15 @@
  * The service account email must be added as a user in Google Search Console.
  */
 import { NextRequest, NextResponse } from 'next/server';
+import { authenticateAdminRequest } from '@/lib/adminServerGuard';
 
 const GSC_CLIENT_EMAIL = process.env.GSC_CLIENT_EMAIL;
 const GSC_PRIVATE_KEY = process.env.GSC_PRIVATE_KEY?.replace(/\\n/g, '\n');
 const GSC_SITE_URL = process.env.GSC_SITE_URL || 'https://www.tasteofvillagerestaurants.co.uk/';
 
-function verifyAuth(request: NextRequest): boolean {
-  const auth = request.headers.get('authorization');
-  if (!auth?.startsWith('Bearer ')) return false;
-  return auth.slice(7) === process.env.STAFF_PIN;
+async function verifyAuth(request: NextRequest): Promise<boolean> {
+  const admin = await authenticateAdminRequest(request);
+  return !!admin;
 }
 
 /**
@@ -69,7 +69,7 @@ async function getAccessToken(): Promise<string> {
 }
 
 export async function GET(request: NextRequest) {
-  if (!verifyAuth(request)) {
+  if (!(await verifyAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

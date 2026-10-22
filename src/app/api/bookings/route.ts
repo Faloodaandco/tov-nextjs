@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebaseAdmin';
 import { Timestamp } from 'firebase-admin/firestore';
+import { authenticateAdminRequest } from '@/lib/adminServerGuard';
 
 /**
  * Validates UK phone number format (starts with 07 or +44, 10-11 digits).
@@ -32,6 +33,17 @@ function isValidUKPhone(rawPhone: string): boolean {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
+
+    // Admin overview query
+    if (searchParams.get('admin') === 'true' || searchParams.get('all') === 'true') {
+      const admin = await authenticateAdminRequest(req);
+      if (admin) {
+        const snapshot = await adminDb.collection('bookings').limit(100).get();
+        const bookings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        return NextResponse.json({ success: true, bookings });
+      }
+    }
+
     const date = searchParams.get('date');
     const branch = searchParams.get('branch')?.toLowerCase() || 'hayes';
 
