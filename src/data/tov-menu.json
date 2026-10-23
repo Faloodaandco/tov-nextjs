@@ -13,7 +13,7 @@
   },
   {
     "id": "tov_item_1777480501499_qapc9",
-    "name": "Muttar Paneer",
+    "name": "Mutter Paneer",
     "description": "",
     "price": 7.49,
     "allergens": [
@@ -29,9 +29,9 @@
     "id": "tov_item_1777480501499_rdvk7",
     "name": "Aloo Gobi",
     "description": "",
-    "price": 5,
+    "price": 5.99,
     "allergens": [],
-    "originalPrice": 5,
+    "originalPrice": 5.99,
     "category": "desi_handi",
     "image": "/assets/menu/mix_vegetable.webp",
     "popular": false,
@@ -41,11 +41,11 @@
     "id": "tov_item_1777480501499_6j1g1",
     "name": "Saag Paneer",
     "description": "",
-    "price": 7.49,
+    "price": 6.99,
     "allergens": [
       "milk"
     ],
-    "originalPrice": 7.49,
+    "originalPrice": 6.99,
     "category": "desi_handi",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
     "popular": false,
@@ -53,11 +53,11 @@
   },
   {
     "id": "tov_item_1777480501499_rn5hh",
-    "name": "Tadka Daal",
+    "name": "Tarka Daal",
     "description": "",
-    "price": 5,
+    "price": 5.99,
     "allergens": [],
-    "originalPrice": 5,
+    "originalPrice": 5.99,
     "category": "desi_handi",
     "image": "/assets/deliveroo/daal_makhni.webp",
     "popular": false,
@@ -67,9 +67,9 @@
     "id": "tov_item_1777480501499_2diy7",
     "name": "Chana Daal",
     "description": "",
-    "price": 5,
+    "price": 5.99,
     "allergens": [],
-    "originalPrice": 5,
+    "originalPrice": 5.99,
     "category": "desi_handi",
     "image": "/assets/menu/chana_daal.webp",
     "popular": false,
@@ -77,11 +77,11 @@
   },
   {
     "id": "tov_item_1777480501499_nm8u4",
-    "name": "Kidney Beans (Rajma)",
+    "name": "Rajma (Kidney Beans Curry)",
     "description": "",
-    "price": 5,
+    "price": 5.99,
     "allergens": [],
-    "originalPrice": 5,
+    "originalPrice": 5.99,
     "category": "desi_handi",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
     "popular": false,
@@ -101,7 +101,7 @@
   },
   {
     "id": "tov_item_1777480501499_u7p9r",
-    "name": "Daal Makhni",
+    "name": "Daal Makhani",
     "description": "",
     "price": 7.49,
     "allergens": [
@@ -116,7 +116,7 @@
   },
   {
     "id": "tov_item_1777480501499_vl23c",
-    "name": "Kadhi Pakoda",
+    "name": "Kadhi Pakora",
     "description": "",
     "price": 6.99,
     "allergens": [
@@ -133,11 +133,11 @@
     "id": "tov_item_1777480501499_66px6",
     "name": "Paneer Tikka Masala",
     "description": "",
-    "price": 8.49,
+    "price": 7.99,
     "allergens": [
       "milk"
     ],
-    "originalPrice": 8.49,
+    "originalPrice": 7.99,
     "category": "desi_handi",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
     "popular": false,
@@ -203,7 +203,7 @@
   },
   {
     "id": "tov_item_1777480501499_3p4u4",
-    "name": "Lamb Qeema",
+    "name": "Lamb Keema",
     "description": "",
     "price": 8.99,
     "allergens": [
@@ -245,7 +245,7 @@
   },
   {
     "id": "tov_item_1777480501499_py9v3",
-    "name": "Chicken Curry (Boneless)",
+    "name": "Chicken Curry",
     "description": "",
     "price": 8.49,
     "allergens": [
@@ -374,7 +374,7 @@
   },
   {
     "id": "tov_item_1777480501499_jgrug",
-    "name": "Lamb Karahi (On The Bone)",
+    "name": "Lamb Karahi",
     "description": "",
     "price": 9.49,
     "allergens": [
@@ -434,13 +434,13 @@
     "id": "tov_item_1777480501499_uovsq",
     "name": "Chicken Pulao",
     "description": "",
-    "price": 7.49,
+    "price": 6.49,
     "allergens": [
       "milk",
       "nuts",
       "sulphites"
     ],
-    "originalPrice": 7.49,
+    "originalPrice": 6.49,
     "category": "weekend_special",
     "image": "/assets/menu/afghani_pulao.webp",
     "popular": false,
@@ -463,7 +463,7 @@
   },
   {
     "id": "tov_item_1777480501499_xs1ra",
-    "name": "Cholay Bhaturay",
+    "name": "Chole Bhature",
     "description": "",
     "price": 7.99,
     "allergens": [
@@ -478,7 +478,7 @@
   },
   {
     "id": "tov_item_1777480501499_3onzv",
-    "name": "Chaplii Kebab Chicken",
+    "name": "Chapli Kebab Chicken",
     "description": "",
     "price": 4.99,
     "allergens": [
@@ -493,7 +493,7 @@
   },
   {
     "id": "tov_item_1777480501499_cvpg3",
-    "name": "Chaplii Kebab Lamb",
+    "name": "Chapli Kebab Lamb",
     "description": "",
     "price": 6.49,
     "allergens": [
@@ -568,7 +568,7 @@
   },
   {
     "id": "tov_item_1777480501499_3g9h4",
-    "name": "Garlic",
+    "name": "Garlic Naan",
     "description": "",
     "price": 1.99,
     "allergens": [
@@ -583,7 +583,7 @@
   },
   {
     "id": "tov_item_1777480501499_io09b",
-    "name": "Garlic And Chilli Naan",
+    "name": "Garlic & Chilli Naan",
     "description": "",
     "price": 2.49,
     "allergens": [
@@ -628,7 +628,7 @@
   },
   {
     "id": "tov_item_1777480501499_xgbg5",
-    "name": "Qeema Naan",
+    "name": "Keema Naan",
     "description": "",
     "price": 4.79,
     "allergens": [
@@ -654,7 +654,7 @@
     "category": "naan_n_roti",
     "image": "/assets/deliveroo/tandoori_naan.webp",
     "popular": false,
-    "dineInPrice": 2.96
+    "dineInPrice": 2.99
   },
   {
     "id": "tov_item_1777480501499_eye5m",
@@ -703,7 +703,7 @@
   },
   {
     "id": "tov_item_1777480501499_wgqnr",
-    "name": "Aalo Kulcha",
+    "name": "Aloo Kulcha",
     "description": "",
     "price": 3.49,
     "allergens": [
@@ -1109,12 +1109,12 @@
     "id": "tov_item_1777480501499_ppzmi",
     "name": "Gajar Halwa With (2 PCS) Gulab Jamun",
     "description": "",
-    "price": 5.49,
+    "price": 4.99,
     "allergens": [
       "milk",
       "nuts"
     ],
-    "originalPrice": 5.49,
+    "originalPrice": 4.99,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
     "popular": false,
@@ -1122,14 +1122,14 @@
   },
   {
     "id": "tov_item_1777480501499_9nq47",
-    "name": "Rasmalai (2 PCS)",
+    "name": "Ras Malai",
     "description": "",
-    "price": 3.99,
+    "price": 2.99,
     "allergens": [
       "milk",
       "nuts"
     ],
-    "originalPrice": 3.99,
+    "originalPrice": 2.99,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
     "popular": false,
@@ -1137,7 +1137,7 @@
   },
   {
     "id": "tov_item_1777480501499_5iast",
-    "name": "Kheer (250g)",
+    "name": "Kheer",
     "description": "",
     "price": 2.99,
     "allergens": [
@@ -1206,13 +1206,13 @@
     "id": "tov_item_1777480501499_j6vqe",
     "name": "Sooji Halwa (Weekend Only)",
     "description": "",
-    "price": 3.99,
+    "price": 2.99,
     "allergens": [
       "cereals",
       "milk",
       "nuts"
     ],
-    "originalPrice": 3.99,
+    "originalPrice": 2.99,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
     "popular": false,
@@ -1235,7 +1235,7 @@
   },
   {
     "id": "tov_item_1777480501499_kgfcu",
-    "name": "Lamb Seekh Kebab (4PC)",
+    "name": "Lamb Seekh Kebab",
     "description": "Served with fresh salad & signature sauce.",
     "price": 6.49,
     "allergens": [
@@ -1250,7 +1250,7 @@
   },
   {
     "id": "tov_item_1777480501499_o6xz5",
-    "name": "Lamb Tikka (1 Skewer)",
+    "name": "Lamb Tikka",
     "description": "Served with fresh salad & signature sauce.",
     "price": 7.99,
     "allergens": [
@@ -1265,7 +1265,7 @@
   },
   {
     "id": "tov_item_1777480501499_37fer",
-    "name": "Lamb Chops (4PC)",
+    "name": "Lamb Chops",
     "description": "Served with fresh salad & signature sauce.",
     "price": 7.99,
     "allergens": [
@@ -1294,7 +1294,7 @@
   },
   {
     "id": "tov_item_1777480501499_luce3",
-    "name": "Chicken Wings (5PC)",
+    "name": "Chicken Wings",
     "description": "Served with fresh salad & signature sauce.",
     "price": 6.99,
     "allergens": [
@@ -1339,7 +1339,7 @@
   },
   {
     "id": "tov_item_1777480501499_ijd7m",
-    "name": "Paneer Tikka (1 Skewer)",
+    "name": "Paneer Tikka",
     "description": "Served with fresh salad & signature sauce.",
     "price": 6.99,
     "allergens": [
@@ -2305,14 +2305,14 @@
   },
   {
     "id": "tov_item_1777480501499_gajar_new",
-    "name": "Gajar Halwa (Carrot Halwa)",
+    "name": "Gajar Halwa (Carrot Pudding)",
     "description": "",
-    "price": 5.99,
+    "price": 3.49,
     "allergens": [
       "milk",
       "nuts"
     ],
-    "originalPrice": 5.99,
+    "originalPrice": 3.49,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
     "popular": false,
@@ -2322,13 +2322,13 @@
     "id": "tov_item_1777480501499_gulab_new",
     "name": "Gulab Jamun (3 PCS)",
     "description": "",
-    "price": 3.49,
+    "price": 2.99,
     "allergens": [
       "cereals",
       "milk",
       "nuts"
     ],
-    "originalPrice": 3.49,
+    "originalPrice": 2.99,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
     "popular": false,
@@ -2464,7 +2464,7 @@
   },
   {
     "id": "tov_item_1777480501499_chaat_new_1",
-    "name": "Gol Gappe",
+    "name": "Gol Gappe (Pani Puri)",
     "description": "",
     "price": 4.99,
     "allergens": [
@@ -2925,8 +2925,8 @@
   },
   {
     "id": "tov_item_1777480501499_5t5sk",
-    "name": "Talii Hui Machli",
-    "description": "",
+    "name": "Tali Hui Machli (Fried Masala Fish)",
+    "description": "Crispy golden fried fish marinated in traditional aromatic spices and masala.",
     "price": 8.49,
     "allergens": [
       "cereals",
@@ -2968,7 +2968,7 @@
   },
   {
     "id": "tov_item_1777480501499_txcof",
-    "name": "Sam-O-Say",
+    "name": "Samosa",
     "description": "",
     "price": 4.49,
     "allergens": [
@@ -3015,7 +3015,7 @@
   },
   {
     "id": "tov_item_1777480501499_j9jom",
-    "name": "Talii Fish Pakora",
+    "name": "Tali Fish Pakora (Crispy Fish Fritters)",
     "description": "",
     "price": 5.49,
     "allergens": [
@@ -3049,13 +3049,13 @@
     "id": "tov_item_1777480501499_wjcjv",
     "name": "Gulab Jamun (3 PCS) With Rabri",
     "description": "",
-    "price": 5.99,
+    "price": 4.99,
     "allergens": [
       "cereals",
       "milk",
       "nuts"
     ],
-    "originalPrice": 5.99,
+    "originalPrice": 4.99,
     "category": "desserts",
     "image": "/assets/tov-logo-tree-terracotta-alpha.png",
     "popular": false,
